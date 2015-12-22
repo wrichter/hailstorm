@@ -1,7 +1,7 @@
 # Hailstorm Architecture
 
 The demo has a layered Architecture which looks as follows:
- 
+
                              +---------+
                              |Container|
                              |(12)     |                                   Layer 4
@@ -70,6 +70,8 @@ From bottom to top:
   - (potentially) Subscribed in 3. Satellite
 10. CloudForms
   - Guest on RHEV (Nested Hypervisor 1)
+  - Manages underlying Hypervisors
+  - Manages OpenShift (Note: even though the graphic suggests otherwise, CF and OpenShift are on the same layer (3)).
 11. OpenShift V3
   - One or three Masters
   - two Nodes
