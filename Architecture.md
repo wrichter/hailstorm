@@ -4,16 +4,16 @@ The demo has a layered Architecture which looks as follows:
 
                              +---------+
                              |Container|
-                             |(12)     |                                   Layer 4
+                             |(12)     |                                  Layer 4
                              +---------+--+
                              |OpenShift   |
                              |V3.x (11)   |
-                             +----------------+ +-----+                     Layer 3
+                             +----------------+ +-----+                   Layer 3
                              | Virtual Guests | |Cloud|                  
                              | / Instances (9)| |Forms|(10)
      +---------+ +---------+ +----------+------------+ +-------+ +---+
      |Satellite| |Infra-   | |Nested    | |Nested    | |RH     | |RH |
-     |         | |structure| |Hypervisor| |Hypervisor| |Storage| |IDM|     Layer 2
+     |         | |structure| |Hypervisor| |Hypervisor| |Storage| |IDM|    Layer 2
      |      (3)| |      (4)| |1      (5)| |2      (6)| |    (7)| |(8)|
     ++-----------+-------------------------------------+--------------+
     |                        RHEL (KVM Host)     (2)                  |   Layer 1
@@ -41,6 +41,7 @@ From bottom to top:
   - Runtime environment for scripts / playbooks / ... which
     1. configure the OS itself (Kernel Params, OVS config, NAT config, ...)
     2. bring up the KVM instances running on top of it
+  - There is NO explicit GUI / WebUI on this layer
 3. Satellite:
   - Core service (not in nested virt)
   - Subscription Management for ALL virtual machines on Layer 2 and up
@@ -84,3 +85,21 @@ From bottom to top:
 
 ## Principles
 - Dependencies may only go down or sideways, never up (e.g. from Layer 2 to Layer 3)
+- Componentization / Design for upgradability: Strive for self-contained components so that they can be upgraded independently of each other.
+- Immutable Infrastructure: No manual configuration, EVERYTHING needs to be scripted.
+  - "Scripts" in this context means code that is checked into a repository,
+  be it puppet classes, ansible playbooks, shell scripts or similar
+  - Events to create scripts for:
+    - Creation
+    - Deletion
+    - Startup
+    - Shutdown
+    - Data Export (e.g. satellite subscription data, openstack base images, ....)
+    - Data Import
+    - Reset to known state (demo reset)
+  - This will reduce the need for backup / restore: Instead of backup up/restoring a known good configuration, we can recreate it from scratch
+- Test (Driven/Augmented) Development: For all use cases, tests should be added
+to the repository so a correct behavior can be validated. This includes testing the scripts to set up / tear down components as well as testing demo use cases.
+  - To be discussed:
+    - Level/Rigor of testing
+    - Test Automation / Continuous Build
