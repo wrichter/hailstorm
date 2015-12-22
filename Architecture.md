@@ -85,7 +85,8 @@ From bottom to top:
 
 ## Principles
 - Dependencies may only go down or sideways, never up (e.g. from Layer 2 to Layer 3)
-- Componentization / Design for upgradability: Strive for self-contained components so that they can be upgraded independently of each other.
+- Componentization / Design for upgradability: Strive for self-contained components so that they can be upgraded independently of each other. For example:
+  - RHEL-OSP with default SDN can be replaced whith RHEL-OSP with 3rd party SDN without affecting any other component
 - Immutable Infrastructure: No manual configuration, EVERYTHING needs to be scripted.
   - "Scripts" in this context means code that is checked into a repository,
   be it puppet classes, ansible playbooks, shell scripts or similar
