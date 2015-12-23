@@ -6,5 +6,7 @@ Integrated Cloud Demo spanning multipe Red Hat Cloud technologies:
 * Red Hat Satellite
 * Red Hat CloudForms
 * Red Hat OpenShift
+* (Optional) Red Hat Storage
+* (Optional) Red Hat Identity Management and/or KeyCloak
 
 See [Architecture.md](Architecture.md "Architecture Description") for details on the planned setup

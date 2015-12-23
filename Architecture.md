@@ -64,8 +64,10 @@ From bottom to top:
 7. Red Hat Storage (OPTIONAL):
   - Optional component to provide NFS, Block or Object Storage
   - Augments or replaces NFS server in 4. Infrastructure
-8. Red Hat Identity Management (OPTIONAL):
+8. Red Hat Identity Management and/or KeyCloak (OPTIONAL):
   - Single point of authentication
+  - Primarily for web authentication
+  - LDAP containing SSH public keys so we don't have to copy&paste keys
 9. Virtual Guests / Instances
   - Image-based deployment of RHEL and Windows
   - (potentially) Subscribed in 3. Satellite
@@ -87,6 +89,7 @@ From bottom to top:
 - Dependencies may only go down or sideways, never up (e.g. from Layer 2 to Layer 3)
 - Componentization / Design for upgradability: Strive for self-contained components so that they can be upgraded independently of each other. For example:
   - RHEL-OSP with default SDN can be replaced whith RHEL-OSP with 3rd party SDN without affecting any other component
+  - A subset of the demo with smaller footprint can be extracted easily, e.g. just OpenStack (running on bare metal) + CloudForms + OpenShift
 - Immutable Infrastructure: No manual configuration, EVERYTHING needs to be scripted.
   - "Scripts" in this context means code that is checked into a repository,
   be it puppet classes, ansible playbooks, shell scripts or similar
