@@ -1,0 +1,34 @@
+<domain type='vbox'>
+  <name>vbox-test</name>
+    <os>
+    <type>hvm</type>
+    <boot dev='cdrom'/>
+    <boot dev='hd'/>
+    <boot dev='fd'/>
+    <boot dev='network'/>
+  </os>
+
+  <memory>654321</memory>
+  <vcpu>1</vcpu>
+
+  <features>
+    <pae/>
+    <acpi/>
+    <apic/>
+  </features>
+  <devices>
+    <disk type='file' device='cdrom'>
+      <source file='/Users/wolfram/Desktop/Red_Hat_Products/RHEL Versions/rhel-server-7.1-x86_64-dvd.iso'/>
+      <target dev='hdc'/>
+      <readonly/>
+    </disk>
+    <disk type='file' device='disk'>
+      <source file="/Users/wolfram/test.vdi" />
+      <target dev='hda'/>
+    </disk>
+    <interface type='network'>
+      <source network='vboxnet0'/>
+    </interface>
+    <graphics type='vnc' port='-1'/>
+  </devices>
+</domain>
