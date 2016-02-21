@@ -1,2 +1,11 @@
 [layer1]
 10.211.55.33
+
+[layer2]
+ose3-master
+
+[ose3-node]
+ose3-master
+
+[ose3-master]
+ose3-master

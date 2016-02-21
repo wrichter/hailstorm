@@ -1,0 +1,9 @@
+# define storage pool
+- name: define storage pool
+  virt_pool: uri=qemu:///system name={{ item.name }} command=define xml='{{ lookup("template", "libvirt_pool.xml.j2") }}'
+  with_items:
+    - "{{ storage_default }}"
+- name: autostart storage pool
+  virt_pool: uri=qemu:///system name={{ item.name }} autostart=yes
+  with_items:
+    - "{{ storage_default }}"

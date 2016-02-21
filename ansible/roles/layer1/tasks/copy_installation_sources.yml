@@ -1,0 +1,6 @@
+# copy rhel kvm base image to host
+#- name: copy rhel kvm base image
+#  copy:  src=../binary/{{ rhel_kvm_img }} dest={{ disk_img_path }}/{{ rhel_kvm_img }} mode=0644
+# copy rhel isoimage to host
+- name: copy rhel iso image
+  copy:  src=../binary/{{ rhel_iso_img }} dest={{ disk_img_path }}/{{ rhel_iso_img }} mode=0644

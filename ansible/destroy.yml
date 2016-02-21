@@ -1,0 +1,11 @@
+---
+- hosts: ose3-node
+  remote_user: root
+  roles:
+    - { role: layer2_openshiftv3_node, tags: [ 'openshiftv3' ], mode: destroy }
+
+- hosts: layer1
+  remote_user: root
+  roles:
+    - { role: layer1, tags: [ 'layer1' ], mode: destroy }
+    - { role: layer1_openshiftv3, tags: [ 'openshiftv3' ], mode: destroy }

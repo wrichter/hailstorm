@@ -1,0 +1,34 @@
+---
+disk_img_path: /var/lib/libvirt/images
+
+storage_default:
+  name: 'virtimages'
+  path: '/var/lib/libvirt/images'
+
+network_default:
+  name: 'default'
+  bridge: 'virbr0'
+  forward_mode: 'nat'
+  gw_ip: 192.168.100.1
+  netmask: 255.255.255.0
+  dhcp_start: 192.168.100.64
+  dhcp_end: 192.168.100.254
+
+network_admin:
+  name: 'admin'
+  bridge: 'virbr3'
+  gw_ip: 192.168.103.1
+  netmask: 255.255.255.0
+
+networks:
+  - "{{ network_default }}"
+  - { name: 'osp_inst', bridge: 'virbr1', gw_ip: 192.168.101.1, netmask: 255.255.255.0 }
+  - { name: 'osp_mgmt', bridge: 'virbr2', gw_ip: 192.168.102.1, netmask: 255.255.255.0 }
+  - "{{ network_admin }}"
+
+rhel_kvm_img: rhel-guest-image-7.2-20151102.0.x86_64.qcow2
+rhel_iso_img: rhel-server-7.2-x86_64-dvd.iso
+
+kickstart_path: /srv/kickstart
+
+ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

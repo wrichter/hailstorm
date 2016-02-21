@@ -1,0 +1,9 @@
+
+- name: ensure firewalld is running
+  service: name=firewalld state=started
+- name: ensure admin networkc is in firewall internal zone
+  command: firewall-cmd --zone=internal --change-interface={{ item.bridge }}
+  with_items:
+    - "{{ network_admin }}"
+- name: trigger firewall reload
+  command: firewall-cmd --reload

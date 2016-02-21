@@ -1,0 +1,9 @@
+- block:
+    - include: prepare_host.yml
+    - include: docker_setup.yml
+  when: mode=="create"
+
+- block:
+    - redhat_subscription: state=absent
+      ignore_errors: true
+  when: mode=="destroy"

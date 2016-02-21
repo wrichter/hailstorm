@@ -1,0 +1,3 @@
+---
+ose3_vms:
+  - '{{ lookup("file", "../../../host_vars/ose3-master.yml") | from_yaml }}'

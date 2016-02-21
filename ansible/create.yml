@@ -1,0 +1,17 @@
+---
+- hosts: layer1
+  remote_user: root
+  roles:
+    - { role: layer1, tags: [ 'layer1' ], mode: create }
+    - { role: layer1_openshiftv3, tags: [ 'layer1','openshiftv3' ], mode: create }
+
+- hosts: ose3-node
+  remote_user: root
+  roles:
+    - { role: layer2_openshiftv3_node, tags: [ 'layer2','openshiftv3' ], mode: create }
+  vars_prompt:
+    - name: "rhsm_username"
+      prompt: "what is your Red Hat Subscription Manager username?"
+      default: "wrichter"
+    - name: "rhsm_password"
+      prompt: "what is your Red Hat Subscription Manager password?"

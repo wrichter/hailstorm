@@ -1,0 +1,14 @@
+# prepare host
+- name: copy ssh pubkey to layer1
+  authorized_key: user=root key={{ ssh_key }}
+# TODO: configure kernel params to allow nested virt
+# TODO: ensure proper subscription & configure channels
+- name: system-upgrade
+  yum: name=* state=latest
+- name: ensure prerequisite packages are present
+  yum: name=libvirt,libvirt-client,qemu-kvm,qemu-img,libvirt-python,virt-install,nfs-utils state=latest
+  notify: #reboot machine if necessary https://bugzilla.redhat.com/show_bug.cgi?id=950436
+    - restart machine
+    - waiting for server to come back
+- name: enable and start libvirtd
+  service: name=libvirtd enabled=yes state=started
