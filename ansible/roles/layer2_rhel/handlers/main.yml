@@ -5,4 +5,4 @@
   ignore_errors: true
 - name: waiting for server to come back
   wait_for: host={{ ansible_host }} port=22 delay=30 timeout=300
-  delegate_to: 10.211.55.33
+  delegate_to: 10.211.55.33 #TODO - make this a reference to the inventory

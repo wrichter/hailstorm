@@ -1,0 +1,9 @@
+- block:
+    - include: prepare_host.yml
+  when: mode=="create"
+
+- block:
+    - name: unsubscribe VM
+      redhat_subscription: state=absent
+      ignore_errors: yes
+  when: mode=="destroy"

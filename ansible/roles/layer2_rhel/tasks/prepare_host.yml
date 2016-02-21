@@ -1,0 +1,14 @@
+- name: subscribe RHEL
+  redhat_subscription: state=present username={{ rhsm_username }} password={{ rhsm_password }} autosubscribe=false
+- name: attach to pool
+  command: 'subscription-manager attach --pool={{ poolid }}'
+  #TODO: make command idempotent (currently it fails on the 2nd invocation)
+- name: enable repos
+  command: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
+- name: upgrade packages
+  yum: name=* state=latest
+- name: install all prerequisites
+  yum: name="{{ packages }}" state=latest
+  notify:
+    - reboot server
+    - waiting for server to come back

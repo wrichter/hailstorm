@@ -1,11 +1,32 @@
 ---
 - hosts: ose3-node
+  gather_facts: false
   remote_user: root
   roles:
-    - { role: layer2_openshiftv3_node, tags: [ 'openshiftv3' ], mode: destroy }
+    - role: layer2_rhel
+      tags: [ 'layer2','openshiftv3' ]
+      mode: destroy
+
+- hosts: satellite
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_rhel
+      tags: [ 'layer2','satellite' ]
+      mode: destroy
+
 
 - hosts: layer1
   remote_user: root
   roles:
-    - { role: layer1, tags: [ 'layer1' ], mode: destroy }
-    - { role: layer1_openshiftv3, tags: [ 'openshiftv3' ], mode: destroy }
+    - role: layer1
+      tags: [ 'layer1' ]
+      mode: destroy
+    - role: layer1_vms
+      tags: [ 'openshiftv3', 'layer1' ]
+      mode: destroy
+      group: ose3-node
+    - role: layer1_vms
+      tags: [ 'satellite', 'layer1' ]
+      mode: destroy
+      group: satellite

@@ -3,9 +3,13 @@
 
 [layer2]
 ose3-master
+satellite
 
 [ose3-node]
 ose3-master
 
-[ose3-master]
+[ose3-installer]
 ose3-master
+
+[satellite]
+satellite

@@ -18,15 +18,19 @@ lang en_US.UTF-8
 
 # Network information
 #network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
-{% for nic in item.nic %}
-network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ nic.network.netmask }} {% if nic.default_route %} --gateway={{ nic.network.gw_ip }} --nameserver={{ nic.network.gw_ip }} {% endif %} --activate
+{% for network in networks %}
+{% for nic in hostvars[item].nic %}
+{% if network.name == nic.network %}
+network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ network.netmask }} {% if nic.default_route %} --gateway={{ network.gw_ip }} --nameserver={{ network.gw_ip }} {% endif %} --activate
+{% endif %}
 {% endfor %}
-network  --hostname={{ item.hostname }}
+{% endfor %}
+network  --hostname={{ hostvars[item].hostname }}
 repo --name="Server-HighAvailability" --baseurl=file:///run/install/repo/addons/HighAvailability
 repo --name="Server-ResilientStorage" --baseurl=file:///run/install/repo/addons/ResilientStorage
 # Root password
 #rootpw --iscrypted $6$IbQO5zowD8OhiKtl$3/.k3q.e5F9JuRqRXRkggL2AcOxPirviOoJeRTTIjinjUk4W1oOAnFQkeCjFoYrrgFcW3b6Eik13qcUR4JwUi/
-rootpw "{{ item.root_password }}"
+rootpw "{{ hostvars[item].root_password }}"
 # System services
 services --enabled="chronyd"
 # System timezone
@@ -37,11 +41,11 @@ bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
 clearpart --none --initlabel
 # Disk partitioning information
 part /boot --fstype="xfs" --ondisk=sda --size=500
-part pv.123 --fstype="lvmpv" --ondisk=sda --size={{ item.disk.partition_table.lvmpv }}
+part pv.123 --fstype="lvmpv" --ondisk=sda --size={{ hostvars[item].disk.partition_table.lvmpv }}
 volgroup rhel --pesize=4096 pv.123
-logvol swap  --fstype="swap" --size={{ item.disk.partition_table.swap }} --name=swap --vgname=rhel
-logvol /home  --fstype="xfs" --size={{ item.disk.partition_table.home }} --name=home --vgname=rhel
-logvol /  --fstype="xfs" --size={{ item.disk.partition_table.root }} --name=root --vgname=rhel
+logvol swap  --fstype="swap" --size={{ hostvars[item].disk.partition_table.swap }} --name=swap --vgname=rhel
+logvol /home  --fstype="xfs" --size={{ hostvars[item].disk.partition_table.home }} --name=home --vgname=rhel
+logvol /  --fstype="xfs" --size={{ hostvars[item].disk.partition_table.root }} --name=root --vgname=rhel
 
 %packages
 @core

@@ -1,0 +1,43 @@
+- name: get list of vms
+  virt: command=list_vms
+  register: virt_vms
+- name: create kickstart files
+  template: src=kickstart.cfg.j2 dest={{ kickstart_path }}/{{ hostvars[item].name }}.cfg  mode=0644
+  when: "{{ hostvars[item].name not in virt_vms.list_vms }}"
+  with_items: groups[group]
+- name: create vms
+  command: "virt-install  --name {{ hostvars[item].name }}
+                          --ram {{ hostvars[item].mem }}
+                          --vcpus {{ hostvars[item].vcpu }}
+                          --location {{ disk_img_path }}/{{ rhel_iso_img }}
+                          --os-type linux
+                          --os-variant rhel7
+                          {% for nic in hostvars[item].nic %}
+                          --network network={{ nic.network }}
+                          {% endfor %}
+                          --hvm
+                          --virt-type kvm
+                          --disk size={{ hostvars[item].disk.size }},path={{ disk_img_path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=scsi
+                          --nographics
+                          --noautoconsole
+                          --wait 10
+                          --extra-args='ks=nfs:{{ network_admin.gw_ip }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8'"
+  when: "{{ hostvars[item].name not in virt_vms.list_vms }}"
+  with_items: groups[group]
+ #TODO: Check why virtio does not work, i.e. does not provide device /dev/sda
+ #TODO: Check why async creation of the VMs does not work (error message: "The async task did not return valid JSON: No JSON object could be decoded")
+#  async: 7200
+#  poll: 0
+#  register: kvm_images
+
+#- name: Wait for image creation to complete
+#  async_status: jid={{ item.ansible_job_id }}
+#  register: virt_install_jobs
+#  until: virt_install_jobs.finished
+#  retries: 300
+#  with_items: kvm_images.results
+
+- name: wait for VMs finishing rebooting
+  wait_for: host={{ hostvars[item].ansible_host }} port=22 delay=0 timeout=300
+  when: "{{ hostvars[item].name not in virt_vms.list_vms }}"
+  with_items: groups[group]

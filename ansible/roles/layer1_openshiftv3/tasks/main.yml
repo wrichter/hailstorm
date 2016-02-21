@@ -1,8 +1,0 @@
-- block:
-    - include: ../../common/tasks/prepare_firewall.yml
-    - include: ../../common/tasks/create_vms.yml vms={{ ose3_vms }}
-  when: mode == "create"
-
-- block:
-    - include: ../../common/tasks/destroy_vms.yml vms={{ ose3_vms }}
-  when: mode == "destroy"

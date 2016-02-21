@@ -1,0 +1,3 @@
+- block:
+    - command: katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }}
+  when: mode=="create"

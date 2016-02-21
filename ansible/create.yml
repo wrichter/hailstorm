@@ -1,17 +1,45 @@
 ---
-- hosts: layer1
+- hosts: all
   remote_user: root
-  roles:
-    - { role: layer1, tags: [ 'layer1' ], mode: create }
-    - { role: layer1_openshiftv3, tags: [ 'layer1','openshiftv3' ], mode: create }
-
-- hosts: ose3-node
-  remote_user: root
-  roles:
-    - { role: layer2_openshiftv3_node, tags: [ 'layer2','openshiftv3' ], mode: create }
+  gather_facts: false
+  tasks:
+    - set_fact:
+        rhsm_username: "{{ rhsm_username }}"
+        rhsm_password: "{{ rhsm_password }}"
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
       default: "wrichter"
     - name: "rhsm_password"
       prompt: "what is your Red Hat Subscription Manager password?"
+
+- hosts: layer1
+  remote_user: root
+  roles:
+    - role: layer1
+      tags: [ 'layer1' ]
+      mode: create
+
+- hosts: layer1
+  remote_user: root
+  roles:
+    - role: layer1_vms
+      tags: [ 'layer1','openshiftv3' ]
+      mode: create
+      group: ose3-node
+    - role: layer1_vms
+      tags: [ 'layer1','satellite' ]
+      mode: create
+      group: satellite
+
+- hosts: ose3-node
+  remote_user: root
+  roles:
+    - { role: layer2_rhel, tags: [ 'layer2','openshiftv3' ], mode: create }
+    - { role: layer2_openshiftv3_node, tags: [ 'layer2','openshiftv3' ], mode: create }
+
+- hosts: satellite
+  remote_user: root
+  roles:
+    - { role: layer2_rhel, tags: [ 'layer2','satellite' ], mode: create }
+    - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
