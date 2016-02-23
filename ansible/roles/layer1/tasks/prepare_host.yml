@@ -1,8 +1,15 @@
 # prepare host
 - name: copy ssh pubkey to layer1
   authorized_key: user=root key={{ ssh_key }}
-# TODO: configure kernel params to allow nested virt
+- name: ensure KVM nested virtualization is enabled
+  lineinfile: dest=/etc/modprobe.d/kvm-intel.conf line="options kvm-intel nested=y" create=yes state=present
+  notify:
+    - restart machine
+    - waiting for server to come back
+
 # TODO: ensure proper subscription & configure channels
+# see layer2_rhel
+
 - name: system-upgrade
   yum: name=* state=latest
 - name: ensure prerequisite packages are present
