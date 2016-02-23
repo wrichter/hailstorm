@@ -6,6 +6,10 @@
     - set_fact:
         rhsm_username: "{{ rhsm_username }}"
         rhsm_password: "{{ rhsm_password }}"
+      tags:
+        - layer1
+        - openshiftv3
+        - satellite
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
