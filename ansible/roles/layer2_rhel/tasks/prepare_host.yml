@@ -1,8 +1,13 @@
 - name: subscribe RHEL
   redhat_subscription: state=present username={{ rhsm_username }} password={{ rhsm_password }} autosubscribe=false
+- name: check subscriptions
+  shell: subscription-manager list --consumed | grep "Pool ID"
+  register: subscription_list
+  changed_when: False
+  ignore_errors: True
 - name: attach to pool
   command: 'subscription-manager attach --pool={{ poolid }}'
-  #TODO: make command idempotent (currently it fails on the 2nd invocation)
+  when: subscription_list.stdout is not defined or poolid != subscription_list.stdout | regex_replace('Pool ID:\\s+(\\S*).*', '\\1')
 - name: enable repos
   command: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
 - name: upgrade packages
@@ -12,3 +17,13 @@
   notify:
     - reboot server
     - waiting for server to come back
+- block:
+  - name: enable services
+    service: name={{ item }} enabled=yes state=started
+    with_items: enable_services
+  when: enable_services is defined
+- block:
+  - name: disable services
+    service: name={{item}} enabled=no state=stopped
+    with_items: disable_services
+  when: disable_services is defined

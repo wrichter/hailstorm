@@ -1,0 +1,15 @@
+poolid: 8a85f9814f220b7c014f221083430791
+repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-optional-rpms
+  - rhel-7-server-extras-rpms
+  - rhel-7-server-openstack-7.0-rpms
+  - rhel-7-server-openstack-7.0-director-rpms
+packages: python-rdomanager-oscplugin,ahc-tools
+disable_services:
+  - NetworkManager
+
+image_path: /home/stack/images
+deploy_ramdisk_image: deploy-ramdisk-ironic-7.1.0-39.tar
+discovery_ramdisk_image: discovery-ramdisk-7.3.0-56.tar
+overcloud_image: overcloud-full-7.3.0-56.tar

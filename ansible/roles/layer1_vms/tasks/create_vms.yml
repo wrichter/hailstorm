@@ -3,29 +3,13 @@
   register: virt_vms
 - name: create kickstart files
   template: src=kickstart.cfg.j2 dest={{ kickstart_path }}/{{ hostvars[item].name }}.cfg  mode=0644
-  when: "{{ hostvars[item].name not in virt_vms.list_vms }}"
+  when: "{{ hostvars[item].name not in virt_vms.list_vms and (hostvars[item].skip_install is not defined or hostvars[item].skip_install != true) }}"
   with_items: groups[group]
 - name: create vms
-  command: "virt-install  --name {{ hostvars[item].name }}
-                          --ram {{ hostvars[item].mem }}
-                          --vcpus {{ hostvars[item].vcpu }}
-                          --location {{ disk_img_path }}/{{ rhel_iso_img }}
-                          --os-type linux
-                          --os-variant rhel7
-                          {% for nic in hostvars[item].nic %}
-                          --network network={{ nic.network }}
-                          {% endfor %}
-                          --hvm
-                          --virt-type kvm
-                          --disk size={{ hostvars[item].disk.size }},path={{ disk_img_path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=scsi
-                          --nographics
-                          --noautoconsole
-                          --wait 10
-                          --extra-args='ks=nfs:{{ network_admin.gw_ip }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8'"
-  when: "{{ hostvars[item].name not in virt_vms.list_vms }}"
+  command: "{{ lookup('template','virt-install-command.j2') }}"
+  when: "{{ hostvars[item].name not in virt_vms.list_vms and (hostvars[item].skip_install is not defined or hostvars[item].skip_install != true) }}"
   with_items: groups[group]
- #TODO: Check why virtio does not work, i.e. does not provide device /dev/sda
- #TODO: Check why async creation of the VMs does not work (error message: "The async task did not return valid JSON: No JSON object could be decoded")
+#TODO: Check why async creation of the VMs does not work (error message: "The async task did not return valid JSON: No JSON object could be decoded")
 #  async: 7200
 #  poll: 0
 #  register: kvm_images
@@ -37,7 +21,56 @@
 #  retries: 300
 #  with_items: kvm_images.results
 
-- name: wait for VMs finishing rebooting
-  wait_for: host={{ hostvars[item].ansible_host }} port=22 delay=0 timeout=300
-  when: "{{ hostvars[item].name not in virt_vms.list_vms }}"
+- name: ensure that VMs are running
+  virt: name="{{ hostvars[item].name }}" state=running uri=qemu:///system
+  when: "{{ hostvars[item].skip_install is not defined or hostvars[item].skip_install != true }}"
   with_items: groups[group]
+- name: wait for VMs finishing (re)booting
+  wait_for: host={{ hostvars[item].ansible_host }} port=22 delay=0 timeout=300
+  when: "{{ hostvars[item].skip_install is not defined or hostvars[item].skip_install != true }}"
+  with_items: groups[group]
+
+#- name: determine VM ssh host key
+#  command: ssh-keyscan -t rsa {{ hostvars[item].ansible_host }}
+#  register: host_key
+#  when: "{{ hostvars[item].name not in virt_vms.list_vms and (hostvars[item].skip_install is not defined or hostvars[item].skip_install != true) }}"
+#  with_items: groups[group]
+#- debug: msg="{{ item.stdout | regex_replace('(^\\S+)\\s+(ssh\\S+\\s\\S+).*$', '\\1') }}"
+#  when: item.stdout is defined
+#  with_items: host_key.results
+#- debug: msg="{{ item.stdout | regex_replace('(^\\S+)\\s*(ssh\\S+\\s\\S+).*$', '\\2') }}"
+#  when: item.stdout is defined
+#  with_items: host_key.results
+#- name: add ssh host to from local known_hosts
+#  local_action: known_hosts state=present name="{{ item.stdout | regex_replace('(^\\S+)\\s+(ssh\\S+\\s\\S+).*$', '\\1') }}" key="{{ item.stdout | regex_replace('(^\\S+)\\s*(ssh\\S+\\s\\S+).*$', '\\2') }}"
+#  when: item.stdout is defined
+#  with_items: host_key.results
+
+
+# ALTERNATIVE APPROACH FOR VMs NOT TO BE INSTALLED
+
+#- name: create VM disk image
+#  command: qemu-img create -f qcow2 {{ disk_img_path }}/{{ hostvars[item].disk.path }} {{ hostvars[item].disk.size }}G
+#  when: "{{ hostvars[item].name not in virt_vms.list_vms and hostvars[item].skip_install is defined and hostvars[item].skip_install == true }}"
+#  with_items: groups[group]
+#- name: create volume description
+#  template: src=volume.xml.j2 dest=/tmp/{{ hostvars[item].disk.path }}.xml  mode=0644
+#  when: "{{ hostvars[item].name not in virt_vms.list_vms and hostvars[item].skip_install is defined and hostvars[item].skip_install == true }}"
+#  with_items: groups[group]
+#- name: create volume
+#  command: virsh vol-create {{ storage_default.name }} /tmp/{{ hostvars[item].disk.path }}.xml --prealloc-metadata
+#  when: "{{ hostvars[item].name not in virt_vms.list_vms and hostvars[item].skip_install is defined and hostvars[item].skip_install == true }}"
+#  with_items: groups[group]
+#- name: create VM
+#  virt: command=define name={{ hostvars[item].name }} uri=qemu:///system xml={{ lookup('template','domain.xml.j2') }}
+#  when: "{{ hostvars[item].name not in virt_vms.list_vms and hostvars[item].skip_install is defined and hostvars[item].skip_install == true }}"
+#  with_items: groups[group]
+- name: create VM template
+  command: "{{ lookup('template','virt-install-command.j2') }}"
+  register: domain_xml
+  when: "{{ hostvars[item].name not in virt_vms.list_vms and hostvars[item].skip_install is defined and hostvars[item].skip_install == true }}"
+  with_items: groups[group]
+- name: create VM without installation
+  virt: command=define name={{ hostvars[item.item].name }} uri=qemu:///system xml={{ item.stdout }}
+  when: item.stdout is defined
+  with_items: domain_xml.results

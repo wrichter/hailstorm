@@ -1,0 +1,29 @@
+---
+name: rhosp-director
+mem: 4096
+vcpu: 2
+disk:
+  path: rhosp-director.qcow2
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 4096
+    home: 2048
+    root: 20000
+nic:
+  - ip: 192.168.100.30
+    dev: eth0
+    network: default
+    default_route: true
+  - ip: 192.168.101.30
+    dev: eth1
+    network: rhosp_provisioning
+    default_route: false
+  - ip: 192.168.103.30
+    dev: eth2
+    network: admin
+    default_route: false
+hostname: rhosp-director.example.com
+root_password: redhat01
+ansible_host: 192.168.103.30

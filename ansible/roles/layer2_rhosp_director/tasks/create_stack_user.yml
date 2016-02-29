@@ -1,0 +1,16 @@
+- name: Create RHOSP stack user in rhosp-director
+  user: name={{ rhosp_stack_user }}
+- name: Create .ssh directory
+  file: path=~/.ssh state=directory mode=0700
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- name: Copy ssh private key
+  copy: content="{{ ssh_priv_key_undercloud }}" dest=~/.ssh/id_rsa mode=0600
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- name: Copy ssh public key
+  copy: content="{{ ssh_pub_key_undercloud }}" dest=~/.ssh/id_rsa.pub mode=0644
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- name: Add user to sudoers file
+  lineinfile: dest=/etc/sudoers.d/{{ rhosp_stack_user }} state=present create=yes regexp="{{ rhosp_stack_user }}  .*" line="{{ rhosp_stack_user }}  ALL=(ALL) NOPASSWD:ALL"

@@ -1,0 +1,5 @@
+- block:
+    - include: prepare_host.yml
+    - include: create_stack_user.yml
+    - include: create_undercloud.yml
+  when: mode=="create"

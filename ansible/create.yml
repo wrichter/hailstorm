@@ -10,6 +10,7 @@
         - layer1
         - openshiftv3
         - satellite
+        - rhosp
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
@@ -28,22 +29,44 @@
   remote_user: root
   roles:
     - role: layer1_vms
-      tags: [ 'layer1','openshiftv3' ]
+      tags: [ 'layer2','openshiftv3' ]
       mode: create
       group: ose3-node
     - role: layer1_vms
-      tags: [ 'layer1','satellite' ]
+      tags: [ 'layer2','satellite' ]
       mode: create
       group: satellite
+    - role: layer1_vms
+      tags: [ 'layer2','rhosp' ]
+      mode: create
+      group: rhosp-all
 
 - hosts: ose3-node
   remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2','openshiftv3' ]
   roles:
     - { role: layer2_rhel, tags: [ 'layer2','openshiftv3' ], mode: create }
     - { role: layer2_openshiftv3_node, tags: [ 'layer2','openshiftv3' ], mode: create }
 
 - hosts: satellite
   remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2','satellite' ]
   roles:
     - { role: layer2_rhel, tags: [ 'layer2','satellite' ], mode: create }
     - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
+
+- hosts: rhosp-director
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2','rhosp' ]
+  roles:
+    - { role: layer2_rhel, tags: [ 'layer2', 'rhosp'], mode: create }
+    - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp'], mode: create }

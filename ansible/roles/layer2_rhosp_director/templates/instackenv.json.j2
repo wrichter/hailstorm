@@ -1,0 +1,24 @@
+{
+  "ssh-user": "{{ rhosp_stack_user }}",
+  "ssh-key": "{{ ssh_priv_key_undercloud.replace('\n','\\n') }}",
+  "power_manager": "nova.virt.baremetal.virtual_power_driver.VirtualPowerManager",
+  "host-ip": "{{ hostvars[groups['layer1'][0]].network_admin.gw_ip }}",
+  "arch": "x86_64",
+  "nodes": [
+    {% for node in groups['rhosp-undercloud'] %}
+    {
+      "pm_addr": "{{ hostvars[groups['layer1'][0]].network_admin.gw_ip }}",
+      "pm_password": "{{ ssh_priv_key_undercloud.replace('\n','\\n') }}",
+      "pm_type": "pxe_ssh",
+      "mac": [
+        "{{ hostvars[node].nic[1].mac }}"
+      ],
+      "cpu": " {{ hostvars[node].vcpu }}",
+      "memory": "{{ hostvars[node].mem }}",
+      "disk": "{{ hostvars[node].disk.size }}",
+      "arch": "x86_64",
+      "pm_user": "{{ rhosp_stack_user }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}

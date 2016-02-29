@@ -1,0 +1,12 @@
+[DEFAULT]
+local_ip = {{ nic[1].ip }}/24
+undercloud_public_vip = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ nic[1].ip.split('.')[3] | int + 1 }}
+undercloud_admin_vip = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ nic[1].ip.split('.')[3] | int + 2 }}
+local_interface = {{ nic[1].dev }}
+masquerade_network = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}0/24
+dhcp_start = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ nic[1].ip.split('.')[3] | int + 10 }}
+dhcp_end = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ nic[1].ip.split('.')[3] | int + 40 }}
+network_cidr = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}0/24
+network_gateway = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}1
+discovery_iprange = {{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ nic[1].ip.split('.')[3] | int + 50 }},{{ nic[1].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ nic[1].ip.split('.')[3] | int + 100 }}
+[auth]

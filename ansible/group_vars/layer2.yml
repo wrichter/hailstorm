@@ -1,1 +1,1 @@
-ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q root@10.211.55.33"'
+ansible_ssh_common_args: '-i ./binary/hailstorm -o ProxyCommand="ssh -W %h:%p -q root@10.211.55.33" -o StrictHostKeyChecking=no'

@@ -1,0 +1,3 @@
+rhosp_stack_user: stack
+ssh_pub_key_undercloud: "{{ lookup('file', '../binary/undercloud.pub') }}"
+ssh_priv_key_undercloud: "{{ lookup('file', '../binary/undercloud') }}"

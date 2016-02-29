@@ -1,9 +1,10 @@
 [layer1]
-10.211.55.33
+layer1 ansible_host=10.211.55.33
 
 [layer2]
 ose3-master
 satellite
+rhosp-director
 
 [ose3-node]
 ose3-master
@@ -13,3 +14,19 @@ ose3-master
 
 [satellite]
 satellite
+
+[rhosp-all]
+rhosp-director
+rhosp-controller
+rhosp-node
+
+[rhosp-director]
+rhosp-director
+
+[rhosp-undercloud]
+rhosp-controller
+rhosp-node
+
+[ssh-kvm-powermanagement-emulation]
+rhosp-director
+layer1

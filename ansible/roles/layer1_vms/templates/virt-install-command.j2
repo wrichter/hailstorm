@@ -1,0 +1,20 @@
+virt-install  --name {{ hostvars[item].name }}
+              --ram {{ hostvars[item].mem }}
+              --vcpus {{ hostvars[item].vcpu }}
+              --os-type linux
+              --os-variant rhel7
+            {% for nic in hostvars[item].nic %}
+              --network network={{ nic.network }}{% if nic.mac is defined %},mac={{ nic.mac }}{% endif %},model=virtio
+            {% endfor %}
+              --hvm
+              --virt-type kvm
+              --disk size={{ hostvars[item].disk.size }},path={{ disk_img_path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=virtio
+              --nographics
+            {% if hostvars[item].skip_install is defined and hostvars[item].skip_install == true %}
+              --print-xml
+            {% else %}
+              --noautoconsole
+              --wait 10
+              --location {{ disk_img_path }}/{{ rhel_iso_img }}
+              --extra-args='ks=nfs:{{ network_admin.gw_ip }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8'
+            {% endif %}

@@ -21,3 +21,6 @@
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
   with_items: groups[group]
   ignore_errors: true
+#- name: remove ssh host key from local known_hosts
+#  local_action: known_hosts name={{ hostvars[item].ansible_host }} state=absent
+#  with_items: groups[group]

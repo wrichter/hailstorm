@@ -1,0 +1,5 @@
+  - name: enable ipv4 forwarding
+    lineinfile: dest=/etc/sysctl.conf line="net.ipv4.ip_forward=1" create=yes state=present
+    notify: reload kernel params
+  - name: set static hostname in /etc/hosts
+    lineinfile: dest=/etc/hosts line="{{ nic[0].ip }} {{ hostname }}"

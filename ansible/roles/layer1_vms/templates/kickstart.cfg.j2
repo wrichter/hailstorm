@@ -10,7 +10,7 @@ text
 reboot
 # Run the Setup Agent on first boot
 firstboot --enable
-ignoredisk --only-use=sda
+ignoredisk --only-use=vda
 # Keyboard layouts
 keyboard --vckeymap=us --xlayouts='us'
 # System language
@@ -36,12 +36,12 @@ services --enabled="chronyd"
 # System timezone
 timezone Europe/Berlin --isUtc --ntpservers=0.rhel.pool.ntp.org,1.rhel.pool.ntp.org,2.rhel.pool.ntp.org,3.rhel.pool.ntp.org
 # System bootloader configuration
-bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=vda
 # Partition clearing information
 clearpart --none --initlabel
 # Disk partitioning information
-part /boot --fstype="xfs" --ondisk=sda --size=500
-part pv.123 --fstype="lvmpv" --ondisk=sda --size={{ hostvars[item].disk.partition_table.lvmpv }}
+part /boot --fstype="xfs" --ondisk=vda --size=500
+part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ hostvars[item].disk.partition_table.lvmpv }}
 volgroup rhel --pesize=4096 pv.123
 logvol swap  --fstype="swap" --size={{ hostvars[item].disk.partition_table.swap }} --name=swap --vgname=rhel
 logvol /home  --fstype="xfs" --size={{ hostvars[item].disk.partition_table.home }} --name=home --vgname=rhel
@@ -61,6 +61,6 @@ kexec-tools
 %post
 mkdir /root/.ssh
 cat  << xxEOFxx >> /root/.ssh/authorized_keys
-{{ ssh_key }}
+{{ ssh_pub_key_hailstorm }}
 xxEOFxx
 %end

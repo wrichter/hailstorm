@@ -4,4 +4,5 @@
     - include: define_libvirt_networks.yml
     - include: copy_installation_sources.yml
     - include: prepare_kickstart_folder.yml
+    - include: prepare_rhosp_settings.yml
   when: mode=='create'

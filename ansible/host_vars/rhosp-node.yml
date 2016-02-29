@@ -1,0 +1,33 @@
+---
+name: rhosp-node
+mem: 2048
+vcpu: 2
+disk:
+  path: rhosp-node.qcow2
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 4096
+    home: 2048
+    root: 20000
+nic:
+  - ip: 192.168.100.32
+    dev: eth0
+    network: default
+    default_route: true
+    mac: 00:00:C0:A8:64:20
+  - ip: 192.168.101.32
+    dev: eth1
+    network: rhosp_provisioning
+    default_route: false
+    mac: 00:00:C0:A8:65:20
+  - ip: 192.168.103.32
+    dev: eth2
+    network: admin
+    default_route: false
+    mac: 00:00:C0:A8:67:20
+hostname: rhosp-director.example.com
+root_password: redhat01
+ansible_host: 192.168.103.32
+skip_install: true
