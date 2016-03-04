@@ -2,25 +2,38 @@
   template: src=undercloud.conf.j2 dest=~/undercloud.conf mode=0644
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  notify: install undercloud (you can grab a coffee now, this takes a while)
-- meta: flush_handlers
-
-#- name: configure DNS for undercloud
+  register: undercloud_conf
+- name: install undercloud (you can grab a coffee now, this takes a while)
+  command: openstack undercloud install
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: undercloud_conf.changed
 
 # tweak timeouts
-- command: openstack-config --set /etc/nova/nova.conf DEFAULT rpc_response_timeout 600
-- command: openstack-config --set /etc/ironic/ironic.conf DEFAULT rpc_response_timeout 600
+- command: openstack-config --get /etc/nova/nova.conf DEFAULT rpc_response_timeout
+  register: nova_rpc_response_timeout
+  changed_when: False
+- command: openstack-config --get /etc/ironic/ironic.conf DEFAULT rpc_response_timeout
+  register: ironic_rpc_response_timeout
+  changed_when: False
+- command: openstack-config --set /etc/nova/nova.conf DEFAULT rpc_response_timeout {{ nova_rpc_timeout }}
+  when: nova_rpc_response_timeout.stdout != nova_rpc_timeout
+- command: openstack-config --set /etc/ironic/ironic.conf DEFAULT rpc_response_timeout {{ ironic_rpc_timeout }}
+  when: ironic_rpc_response_timeout.stdout != ironic_rpc_timeout
 - command: openstack-service restart nova
+  when: nova_rpc_response_timeout.stdout != nova_rpc_timeout
 - command: openstack-service restart ironic
+  when: ironic_rpc_response_timeout.stdout != ironic_rpc_timeout
 
-# install bootif fix
+
+# install bootif fix - see https://bugzilla.redhat.com/show_bug.cgi?id=1234601
 - name: create bootif-fix command
   copy: src=../templates/bootif-fix dest=/usr/bin/bootif-fix mode=0755
 - name: create bootif-fix service
   copy: src=../templates/bootif-fix.service dest=/usr/lib/systemd/system/bootif-fix.service mode=0644
-- name: start bootif-fix
-  service: name=bootif-fix state=started
-- name: enabled bootif-fix
+- name: (re)start bootif-fix
+  service: name=bootif-fix state=restarted
+- name: enable bootif-fix
   service: name=bootif-fix enabled=yes
 
 #upload images to Glance
@@ -62,6 +75,7 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 
+#import node configs
 - name: create instackenv.json
   template: src=instackenv.json.j2 dest=~/instackenv.json mode=0644
   become: yes
@@ -74,7 +88,13 @@
   shell: . ~/stackrc && openstack baremetal configure boot
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-#- name: discover nodes
-#  command: openstack baremetal introspection bulk start
-#  become: yes
-#  become_user: "{{ rhosp_stack_user }}"
+- name: configure ironic flavor #TODO change to values from rhosp-compute
+  shell: . ~/stackrc && openstack flavor create --id auto --ram 4096 --disk 30 --vcpus 2 baremetal
+- shell: . ~/stackrc && openstack flavor set --property "cpu_arch"="x86_64" --property "capabilities:boot_option"="local" baremetal
+- name: discover nodes
+  shell: . ~/stackrc &&  openstack baremetal introspection bulk start
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- shell: . ~/stackrc && openstack overcloud deploy --templates --control-scale 1 --compute-scale 1 --neutron-tunnel-types vxlan --neutron-network-type vxlan
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

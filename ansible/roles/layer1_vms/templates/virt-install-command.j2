@@ -9,7 +9,7 @@ virt-install  --name {{ hostvars[item].name }}
               --hvm
               --virt-type kvm
               --disk size={{ hostvars[item].disk.size }},path={{ disk_img_path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=virtio
-              --nographics
+              --graphics {% if hostvars[item].graphics is defined %}{{ hostvars[item].graphics }} {% else %}none{% endif %}
             {% if hostvars[item].skip_install is defined and hostvars[item].skip_install == true %}
               --print-xml
             {% else %}

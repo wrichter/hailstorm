@@ -1,7 +1,3 @@
 - include: ../../common/handlers/reboot.yml
 - name: reload kernel params
   command: sysctl -p /etc/sysctl.conf
-- name: install undercloud (you can grab a coffee now, this takes a while)
-  command: openstack undercloud install
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"

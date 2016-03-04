@@ -5,4 +5,5 @@
   ignore_errors: true
 - name: waiting for server to come back
   wait_for: host={{ ansible_host }} port=22 delay=30 timeout=300
-  delegate_to: hostvars[groups['layer1']].ansible_host
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  # https://github.com/ansible/ansible/issues/11705

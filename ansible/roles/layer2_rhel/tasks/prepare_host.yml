@@ -27,3 +27,4 @@
     service: name={{item}} enabled=no state=stopped
     with_items: disable_services
   when: disable_services is defined
+- meta: flush_handlers

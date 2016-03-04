@@ -12,16 +12,16 @@ disk:
     home: 2048
     root: 20000
 nic:
-  - ip: 192.168.100.31
-    dev: eth0
-    network: default
-    default_route: true
-    mac: 00:00:C0:A8:64:1F
   - ip: 192.168.101.31
-    dev: eth1
+    dev: eth0
     network: rhosp_provisioning
     default_route: false
     mac: 00:00:C0:A8:65:1F
+  - ip: 192.168.100.31
+    dev: eth1
+    network: default
+    default_route: true
+    mac: 00:00:C0:A8:64:1F
   - ip: 192.168.103.31
     dev: eth2
     network: admin
@@ -31,3 +31,4 @@ hostname: rhosp-director.example.com
 root_password: redhat01
 ansible_host: 192.168.103.31
 skip_install: true
+graphics: vnc,listen=0.0.0.0,password=redhat01
