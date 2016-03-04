@@ -16,3 +16,24 @@
   - deploy_ramdisk_image
   - discovery_ramdisk_image
   - overcloud_image
+1. Adapt the hosts file and change the ansible_host value of the layer1 node to point to the IP address of your layer1 (which is prepared with a minimal RHEL install). If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see http://docs.ansible.com/ansible/intro_inventory.html)
+## Running the playbook
+Run all commands from the ansible directory
+### Setting up the environment
+Everything:
+```
+$ ansible-playbook -i hosts create.yml
+```
+Only layer1 and OpenStack (see create.yml source code for available tags):
+```
+$ ansible-playbook -i hosts create.yml --tags layer1,rhosp
+```
+### Tearing down the environment
+Everything:
+```
+$ ansible-playbook -i hosts destroy.yml
+```
+Only OpenStack:
+```
+$ ansible-playbook -i hosts destroy.yml --tags rhosp
+```

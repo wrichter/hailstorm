@@ -11,7 +11,7 @@ disk:
     swap: 4096
     home: 2048
     root: 20000
-nic:
+nic: # nic0 needs to be on the provisioning network
   - ip: 192.168.101.32
     dev: eth0
     network: rhosp_provisioning
