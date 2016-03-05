@@ -2,7 +2,8 @@
 - name: copy ssh pubkey to layer1
   authorized_key: user=root key={{ ssh_pub_key_hailstorm }}
 - name: ensure KVM nested virtualization is enabled
-  lineinfile: dest=/etc/modprobe.d/kvm-intel.conf line="options kvm-intel nested=y" create=yes state=present
+  #lineinfile: dest=/etc/modprobe.d/kvm-intel.conf line="options kvm-intel nested=y" create=yes state=present
+  copy: src=../templates/kvm-intel.conf dest=/etc/modprobe.d/kvm-intel.conf mode=0644
   notify:
     - restart machine
     - waiting for server to come back

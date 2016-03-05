@@ -12,14 +12,14 @@ disk:
     home: 2048
     root: 20000
 nic:
-  - ip: 192.168.100.30
-    dev: eth0
-    network: default
-    default_route: true
   - ip: 192.168.101.30
-    dev: eth1
+    dev: eth0
     network: rhosp_provisioning
     default_route: false
+  - ip: 192.168.100.30
+    dev: eth1
+    network: default
+    default_route: true
   - ip: 192.168.103.30
     dev: eth2
     network: admin

@@ -5,22 +5,22 @@
 - name: delete kickstart files
   file: path={{ kickstart_path }}/{{ hostvars[item].name }}.cfg  state=absent
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
-  with_items: groups[group]
+  with_items: "{{ groups[group] }}"
 - name: destroy vms
   virt: command=destroy name={{ hostvars[item].name }}
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
-  with_items: groups[group]
+  with_items: "{{ groups[group] }}"
   ignore_errors: true
 - name: undefine vms
   virt: command=undefine name={{ hostvars[item].name }}
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
-  with_items: groups[group]
+  with_items: "{{ groups[group] }}"
   ignore_errors: true
 - name: remove vm volumes
   command: virsh vol-delete {{ hostvars[item].disk.path }} --pool {{ storage_default.name }}
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
-  with_items: groups[group]
+  with_items: "{{ groups[group] }}"
   ignore_errors: true
 #- name: remove ssh host key from local known_hosts
 #  local_action: known_hosts name={{ hostvars[item].ansible_host }} state=absent
-#  with_items: groups[group]
+#  with_items: "{{ groups[group] }}"
