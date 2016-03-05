@@ -2,7 +2,7 @@
 disk_img_path: /var/lib/libvirt/images
 
 storage_default:
-  name: 'virtimages'
+  name: 'default'
   path: '/var/lib/libvirt/images'
 
 network_default:
@@ -39,3 +39,5 @@ rhel_iso_img: rhel-server-7.2-x86_64-dvd.iso
 kickstart_path: /srv/kickstart
 
 ssh_pub_key_hailstorm: "{{ lookup('file', '../binary/hailstorm.pub') }}"
+
+ansible_ssh_common_args: "-i ./binary/hailstorm"

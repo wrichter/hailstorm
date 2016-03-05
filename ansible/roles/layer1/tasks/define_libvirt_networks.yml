@@ -7,15 +7,15 @@
 - name: delete networks who need to be reconfigured
   virt_net: uri=qemu:///system name=default command=destroy state=absent
   when: ansible_{{ item.bridge }}.ipv4.address is defined and ansible_{{ item.bridge }}.ipv4.address != item.gw_ip
-  with_items: networks
+  with_items: "{{ networks }}"
 - name: start firewalld to ensure the define networks command will not fail
   service: name=firewalld state=started
 - name: define networks
   virt_net: uri=qemu:///system name={{ item.name }} command=define state=present xml='{{ lookup("template", "libvirt_network.xml.j2") }}'
-  with_items: networks
+  with_items: "{{ networks }}"
 - name: start networks
   virt_net: uri=qemu:///system name={{ item.name }} state=active
-  with_items: networks
+  with_items: "{{ networks }}"
 - name: set autostart networks
   virt_net: uri=qemu:///system name={{ item.name }} autostart=yes
-  with_items: networks
+  with_items: "{{ networks }}"
