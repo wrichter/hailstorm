@@ -1,0 +1,8 @@
+mem: 4096
+vcpu: 4
+disk:
+  path: "{{ name }}.qcow2"
+  size: 60
+  format: qcow2
+skip_install: true
+#graphics: vnc,listen=0.0.0.0,password=redhat01

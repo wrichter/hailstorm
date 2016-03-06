@@ -10,13 +10,14 @@
 1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside):
   - $ ssh-keygen -t rsa -f binary/undercloud
   - $ ssh-keygen -t rsa -f binary/hailstorm
-1. Adapt the group_vars/layer1.yml settings
+1. Adapt the host_vars/layer1.yml settings
   - rhel_iso_img: to the name of the RHEL 7 binary DVD ISO image
-1. Adapt the group_vars/rhosp-director.yml settings:
+  - ansible_host: to the ip address or DNS name of your layer1 host (which is prepared with a minimal RHEL install).  
+  - If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see [ansible documentation](http://docs.ansible.com/ansible/intro_inventory.html))
+1. Adapt the host_vars/rhosp-director.yml settings:
   - deploy_ramdisk_image
   - discovery_ramdisk_image
   - overcloud_image
-1. Adapt the hosts file and change the ansible_host value of the layer1 node to point to the IP address of your layer1 (which is prepared with a minimal RHEL install). If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see [ansible documentation] (http://docs.ansible.com/ansible/intro_inventory.html))
 
 ## Running the playbook
 Run all commands from the ansible directory

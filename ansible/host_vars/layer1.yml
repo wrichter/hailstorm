@@ -1,9 +1,15 @@
----
-disk_img_path: /var/lib/libvirt/images
+# ip address or host name of layer1 system
+ansible_host: inf43.coe.muc.redhat.com
 
+# if this attribute is present, the binaries (except for the SSH keys)
+# will be copied from the layer1 host instead of the control host
+# you need to ensure they are there before running the playbook
+layer1_binary_dir: /home/wrichter/binary
+
+# if this is present, it overwrites the definition in group_vars/layer1.yml
 storage_default:
-  name: 'default'
-  path: '/var/lib/libvirt/images'
+  name: 'ocz'
+  path: /mnt/ocz/images
 
 network_default:
   name: 'default'

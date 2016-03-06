@@ -1,0 +1,74 @@
+#upload images to Glance
+- name: create image directory
+  file: state=directory path={{ image_path }}
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- name: count registered openstack images
+  shell: . ~/stackrc && openstack image list -f csv | wc -l
+  register: image_count
+
+# VARIANT 1 - copy images from control host
+- block:
+  - name: unpack deploy ramdisk image
+    unarchive: src=../binary/{{ deploy_ramdisk_image }} dest={{ image_path }} creates=deploy-ramdisk-ironic.initramfs
+    become: yes
+    become_user: "{{ rhosp_stack_user }}"
+  - name: unpack discovery ramdisk image
+    unarchive: src=../binary/{{ discovery_ramdisk_image }} dest={{ image_path }} creates=discovery-ramdisk.initramfs
+    become: yes
+    become_user: "{{ rhosp_stack_user }}"
+  - name: unpack overcloud image
+    unarchive: src=../binary/{{ overcloud_image }} dest={{ image_path }} creates=overcloud-full.initrd
+    become: yes
+    become_user: "{{ rhosp_stack_user }}"
+  when: (layer1_binary_dir is not defined) and (image_count.stdout | int < 6)
+
+# VARIANT 2 - copy images from layer1 host
+- block:
+  - name: read layer1 root ssh pub key
+    shell: cat /root/.ssh/id_rsa.pub
+    register: layer1_ssh_pub_key
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+    changed_when: false
+  - name: add layer1 root ssh pub key to rhosp-director
+    authorized_key: user=root key={{ layer1_ssh_pub_key.stdout }}
+  - name: copy deploy_ramdisk_image from layer1
+    synchronize: mode=push dest=/tmp/{{ deploy_ramdisk_image }} src=/home/wrichter/binary/{{ deploy_ramdisk_image }}
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+    #become: yes
+    #become_user: "{{ rhosp_stack_user }}"
+  - name: copy discovery_ramdisk_image from layer1
+    synchronize: mode=push src=/home/wrichter/binary/{{ discovery_ramdisk_image }} dest=/tmp/{{ discovery_ramdisk_image }}
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+    #become: yes
+    #become_user: "{{ rhosp_stack_user }}"
+  - name: copy overcloud_image from layer1
+    synchronize: mode=push src=/home/wrichter/binary/{{ overcloud_image }} dest=/tmp/{{ overcloud_image }}
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+    #become: yes
+    #become_user: "{{ rhosp_stack_user }}"
+  - name: unpack deploy ramdisk image
+    unarchive: src=/tmp/{{ deploy_ramdisk_image }} dest={{ image_path }} creates=deploy-ramdisk-ironic.initramfs copy=no
+    become: yes
+    become_user: "{{ rhosp_stack_user }}"
+  - name: unpack discovery ramdisk image
+    unarchive: src=/tmp/{{ discovery_ramdisk_image }} dest={{ image_path }} creates=discovery-ramdisk.initramfs copy=no
+    become: yes
+    become_user: "{{ rhosp_stack_user }}"
+  - name: unpack overcloud image
+    unarchive: src=/tmp/{{ overcloud_image }} dest={{ image_path }} creates=overcloud-full.initrd copy=no
+    become: yes
+    become_user: "{{ rhosp_stack_user }}"
+  - name: remove deploy_ramdisk_image from /tmp
+    file: path=/tmp/{{ deploy_ramdisk_image }} state=absent
+  - name: remove discovery_ramdisk_image from /tmp
+    file: path=/tmp/{{ discovery_ramdisk_image }} state=absent
+  - name: remove overcloud image from /tmp
+    file: path=/tmp/{{ overcloud_image }} state=absent
+  when: (layer1_binary_dir is defined) and (image_count.stdout | int < 6)
+
+- name: upload images to glance
+  shell: . ~/stackrc && openstack overcloud image upload --image-path "{{ image_path }}"
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: image_count.stdout | int < 6

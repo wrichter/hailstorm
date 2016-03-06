@@ -1,0 +1,7 @@
+---
+name: rhosp-compute3
+nic: # nic0 needs to be on the provisioning network
+  - network: rhosp_provisioning
+    mac: 00:00:00:BB:33:00
+  - network: default
+    mac: 00:00:00:BB:33:01

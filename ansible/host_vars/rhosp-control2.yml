@@ -1,0 +1,7 @@
+---
+name: rhosp-control2
+nic: # nic0 needs to be on the provisioning network
+  - network: rhosp_provisioning
+    mac: 00:00:00:AA:22:00
+  - network: default
+    mac: 00:00:00:AA:22:01

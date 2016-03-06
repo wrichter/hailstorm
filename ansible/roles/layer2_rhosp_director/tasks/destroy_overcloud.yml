@@ -1,0 +1,9 @@
+- shell: . ~/stackrc && heat stack-delete overcloud
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+- file: path=~/instackenv.json state=absent
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

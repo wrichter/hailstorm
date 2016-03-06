@@ -4,7 +4,7 @@
   remote_user: root
   roles:
     - role: layer2_rhel
-      tags: [ 'layer2','openshiftv3' ]
+      tags: [ 'layer2','openshiftv3', 'rhel' ]
       mode: destroy
 
 - hosts: satellite
@@ -12,30 +12,33 @@
   remote_user: root
   roles:
     - role: layer2_rhel
-      tags: [ 'layer2','satellite' ]
+      tags: [ 'layer2','satellite', 'rhel'  ]
       mode: destroy
 
 - hosts: rhosp-director
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_rhosp_director
+      tags: [ 'layer2', 'rhosp' ]
+      mode: destroy
     - role: layer2_rhel
-      tags: [ 'layer2','rhosp' ]
+      tags: [ 'layer2','rhosp', 'rhel'  ]
       mode: destroy
 
 - hosts: layer1
   remote_user: root
   roles:
     - role: layer1_vms
-      tags: [ 'openshiftv3', 'layer2' ]
+      tags: [ 'openshiftv3', 'layer2', 'vm' ]
       mode: destroy
       group: ose3-node
     - role: layer1_vms
-      tags: [ 'satellite', 'layer2' ]
+      tags: [ 'satellite', 'layer2', 'vm' ]
       mode: destroy
       group: satellite
     - role: layer1_vms
-      tags: [ 'rhosp', 'layer2' ]
+      tags: [ 'rhosp', 'layer2', 'vm' ]
       mode: destroy
       group: rhosp-all
     - role: layer1

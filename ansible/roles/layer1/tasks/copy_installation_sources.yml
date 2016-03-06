@@ -1,6 +1,12 @@
 # copy rhel kvm base image to host
 #- name: copy rhel kvm base image
-#  copy:  src=../binary/{{ rhel_kvm_img }} dest={{ disk_img_path }}/{{ rhel_kvm_img }} mode=0644
+#  copy:  src=../binary/{{ rhel_kvm_img }} dest={{ storage_default.path }}/{{ rhel_kvm_img }} mode=0644
+
 # copy rhel isoimage to host
 - name: copy rhel iso image
-  copy:  src=../binary/{{ rhel_iso_img }} dest={{ disk_img_path }}/{{ rhel_iso_img }} mode=0644
+  copy:  src=../binary/{{ rhel_iso_img }} dest={{ storage_default.path }}/{{ rhel_iso_img }} mode=0644
+  when: layer1_binary_dir is not defined
+- name: locally copy rhel iso image
+  synchronize: mode=pull src={{ layer1_binary_dir }}/{{ rhel_iso_img }} dest={{ storage_default.path }}/{{ rhel_iso_img }}
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  when: layer1_binary_dir is defined

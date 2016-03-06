@@ -1,0 +1,80 @@
+#import node configs
+- name: create instackenv.json
+  template: src=instackenv.json.j2 dest=~/instackenv.json mode=0644
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  register: instackenv_json
+- name: import baremetal devs to ironic
+  shell: . ~/stackrc && openstack baremetal import --json ~/instackenv.json
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: instackenv_json.changed
+- name: configure boot
+  shell: . ~/stackrc && openstack baremetal configure boot
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: instackenv_json.changed
+- name: delete ironic flavors
+  shell: . ~/stackrc && openstack flavor delete {{ item }}
+  ignore_errors: True
+  with_items:
+    - compute
+    - control
+    - baremetal
+  when: instackenv_json.changed
+- name: configure ironic flavor for baremetal (dummy)
+  shell: . ~/stackrc && openstack flavor create --id auto --ram 4096 --disk 58 --vcpus 4 baremetal
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: instackenv_json.changed
+- name: configure ironic flavors
+  shell: >
+    . ~/stackrc && openstack flavor create --id auto\
+         --ram {{ hostvars[groups['rhosp-' + item][0]].mem }}\
+         --disk {{ hostvars[groups['rhosp-' + item][0]].disk.size - 2 }}\
+         --vcpus {{ hostvars[groups['rhosp-' + item][0]].vcpu }}\
+         {{ item }}
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  with_items:
+    - compute
+    - control
+  when: instackenv_json.changed
+- name: adapt ironic flavors (and match flavor to node profile)
+  shell: >
+    . ~/stackrc && openstack flavor set\
+      --property "cpu_arch"="x86_64"\
+      --property "capabilities:boot_option"="local"\
+      --property "capabilities:profile"="{{ item }}"\
+      {{ item }}
+  with_items:
+    - compute
+    - control
+    - baremetal
+  when: instackenv_json.changed
+- name: discover nodes
+  shell: . ~/stackrc &&  openstack baremetal introspection bulk start
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: instackenv_json.changed
+- name: update control nodes with flavor
+  shell: >
+    . ~/stackrc && ironic node-update \
+    $(ironic port-show --address {{ hostvars[item].nic[0].mac }} |  awk '/node_uuid/{ print $4 }') \
+    add properties/capabilities='profile:control,boot_option:local'
+  with_items: "{{ groups['rhosp-control'] }}"
+  when: instackenv_json.changed
+- name: update compute nodes with flavor
+  shell: >
+    . ~/stackrc && ironic node-update \
+    $(ironic port-show --address {{ hostvars[item].nic[0].mac }} |  awk '/node_uuid/{ print $4 }') \
+    add properties/capabilities='profile:compute,boot_option:local'
+  with_items: "{{ groups['rhosp-compute'] }}"
+  when: instackenv_json.changed
+#- shell: . ~/stackrc && openstack overcloud deploy --templates --control-scale 1 --compute-scale 1 --neutron-tunnel-types vxlan --neutron-network-type vxlan
+#  become: yes
+#  become_user: "{{ rhosp_stack_user }}"
+
+- shell: . ~/stackrc && openstack overcloud deploy --templates --control-flavor control --compute-flavor compute --control-scale 3 --compute-scale 2 --neutron-tunnel-types vxlan --neutron-network-type vxlan --ntp-server {{ hostvars[groups['layer1'][0]].ansible_host }}
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

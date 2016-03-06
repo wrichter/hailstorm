@@ -1,0 +1,6 @@
+- name: install ntp
+  yum: name=ntp state=latest
+- name: open ntp port
+  firewalld: service=ntp permanent=true state=enabled
+- name: enable ntp service
+  service: name=ntpd state=started enabled=yes

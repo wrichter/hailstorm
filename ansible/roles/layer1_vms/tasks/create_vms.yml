@@ -50,7 +50,7 @@
 # ALTERNATIVE APPROACH FOR VMs NOT TO BE INSTALLED
 
 #- name: create VM disk image
-#  command: qemu-img create -f qcow2 {{ disk_img_path }}/{{ hostvars[item].disk.path }} {{ hostvars[item].disk.size }}G
+#  command: qemu-img create -f qcow2 {{ storage_default.path }}/{{ hostvars[item].disk.path }} {{ hostvars[item].disk.size }}G
 #  when: "{{ hostvars[item].name not in virt_vms.list_vms and hostvars[item].skip_install is defined and hostvars[item].skip_install == true }}"
 #  with_items: groups[group]
 #- name: create volume description
