@@ -30,10 +30,10 @@
 - name: configure ironic flavors
   shell: >
     . ~/stackrc && openstack flavor create --id auto\
-         --ram {{ hostvars[groups['rhosp-' + item][0]].mem }}\
-         --disk {{ hostvars[groups['rhosp-' + item][0]].disk.size - 2 }}\
-         --vcpus {{ hostvars[groups['rhosp-' + item][0]].vcpu }}\
-         {{ item }}
+    --ram {{ hostvars[groups['rhosp-' + item][0]].mem }}\
+    --disk {{ hostvars[groups['rhosp-' + item][0]].disk.size - 2 }}\
+    --vcpus {{ hostvars[groups['rhosp-' + item][0]].vcpu }}\
+    {{ item }}
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   with_items:
@@ -43,10 +43,10 @@
 - name: adapt ironic flavors (and match flavor to node profile)
   shell: >
     . ~/stackrc && openstack flavor set\
-      --property "cpu_arch"="x86_64"\
-      --property "capabilities:boot_option"="local"\
-      --property "capabilities:profile"="{{ item }}"\
-      {{ item }}
+    --property "cpu_arch"="x86_64"\
+    --property "capabilities:boot_option"="local"\
+    --property "capabilities:profile"="{{ item }}"\
+    {{ item }}
   with_items:
     - compute
     - control
@@ -74,18 +74,17 @@
 #- shell: . ~/stackrc && openstack overcloud deploy --templates --control-scale 1 --compute-scale 1 --neutron-tunnel-types vxlan --neutron-network-type vxlan
 #  become: yes
 #  become_user: "{{ rhosp_stack_user }}"
-
 - name: deploy overcloud
   shell: >
     . ~/stackrc && openstack overcloud deploy \
-       --templates \
-       --control-flavor control \
-       --compute-flavor compute \
-       --control-scale 3 \
-       --compute-scale 2 \
-       --neutron-tunnel-types vxlan \
-       --neutron-network-type vxlan \
-       --ntp-server {{ hostvars[groups['layer1'][0]].ansible_host }}
+    --templates \
+    --control-flavor control \
+    --compute-flavor compute \
+    --control-scale 3 \
+    --compute-scale 2 \
+    --neutron-tunnel-types vxlan \
+    --neutron-network-type vxlan \
+    --ntp-server {{ hostvars[groups['layer1'][0]].ansible_host }}
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   when: instackenv_json.changed
