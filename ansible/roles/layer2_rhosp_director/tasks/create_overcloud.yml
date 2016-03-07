@@ -75,6 +75,16 @@
 #  become: yes
 #  become_user: "{{ rhosp_stack_user }}"
 
-- shell: . ~/stackrc && openstack overcloud deploy --templates --control-flavor control --compute-flavor compute --control-scale 3 --compute-scale 2 --neutron-tunnel-types vxlan --neutron-network-type vxlan --ntp-server {{ hostvars[groups['layer1'][0]].ansible_host }}
+- name: deploy overcloud
+  shell: >
+    . ~/stackrc && openstack overcloud deploy \
+       --templates \
+       --control-flavor control \
+       --compute-flavor compute \
+       --control-scale 3 \
+       --compute-scale 2 \
+       --neutron-tunnel-types vxlan \
+       --neutron-network-type vxlan \
+       --ntp-server {{ hostvars[groups['layer1'][0]].ansible_host }}
   become: yes
   become_user: "{{ rhosp_stack_user }}"
