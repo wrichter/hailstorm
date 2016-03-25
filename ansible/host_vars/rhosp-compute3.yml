@@ -5,3 +5,7 @@ nic: # nic0 needs to be on the provisioning network
     mac: 00:00:00:BB:33:00
   - network: default
     mac: 00:00:00:BB:33:01
+  - network: storage
+    mac: 00:00:00:BB:33:02
+  - network: rhosp_internal
+    mac: 00:00:00:BB:33:03

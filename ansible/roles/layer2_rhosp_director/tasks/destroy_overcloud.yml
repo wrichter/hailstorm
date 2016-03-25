@@ -1,6 +1,7 @@
-- shell: . ~/stackrc && heat stack-delete overcloud
+^- shell: . ~/stackrc && heat stack-delete overcloud
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+  ignore_errors: true
 - shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
   become: yes
   become_user: "{{ rhosp_stack_user }}"

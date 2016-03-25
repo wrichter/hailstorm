@@ -1,0 +1,38 @@
+# Enable the creation of Neutron networks for isolated Overcloud
+# traffic and configure each role to assign ports (related
+# to that role) on these networks.
+resource_registry:
+  OS::TripleO::Network::External: /home/stack/my_templates/network/external.yaml
+  OS::TripleO::Network::InternalApi: /home/stack/my_templates/network/internal_api.yaml
+  OS::TripleO::Network::StorageMgmt: /home/stack/my_templates/network/storage_mgmt.yaml
+  OS::TripleO::Network::Storage: /home/stack/my_templates/network/storage.yaml
+  OS::TripleO::Network::Tenant: /home/stack/my_templates/network/tenant.yaml
+
+  # Port assignments for the VIPs
+  OS::TripleO::Network::Ports::ExternalVipPort: /home/stack/my_templates/network/ports/external.yaml
+  OS::TripleO::Network::Ports::InternalApiVipPort: /home/stack/my_templates/network/ports/internal_api.yaml
+  OS::TripleO::Network::Ports::StorageVipPort: /home/stack/my_templates/network/ports/storage.yaml
+  OS::TripleO::Network::Ports::StorageMgmtVipPort: /home/stack/my_templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::Network::Ports::TenantVipPort: /home/stack/my_templates/network/ports/tenant.yaml
+  OS::TripleO::Network::Ports::RedisVipPort: /home/stack/my_templates/network/ports/vip.yaml
+
+  # Port assignments for the controller role
+  OS::TripleO::Controller::Ports::ExternalPort: /home/stack/my_templates/network/ports/external.yaml
+  OS::TripleO::Controller::Ports::InternalApiPort: /home/stack/my_templates/network/ports/internal_api.yaml
+  OS::TripleO::Controller::Ports::StoragePort: /home/stack/my_templates/network/ports/storage.yaml
+  OS::TripleO::Controller::Ports::StorageMgmtPort: /home/stack/my_templates/network/ports/storage_mgmt.yaml
+  OS::TripleO::Controller::Ports::TenantPort: /home/stack/my_templates/network/ports/tenant.yaml
+
+  # Port assignments for the compute role
+  OS::TripleO::Compute::Ports::InternalApiPort: /home/stack/my_templates/network/ports/internal_api.yaml
+  OS::TripleO::Compute::Ports::StoragePort: /home/stack/my_templates/network/ports/storage.yaml
+  OS::TripleO::Compute::Ports::TenantPort: /home/stack/my_templates/network/ports/tenant.yaml
+
+  # Port assignments for the ceph storage role
+  OS::TripleO::CephStorage::Ports::StoragePort: /home/stack/my_templates/network/ports/storage.yaml
+  OS::TripleO::CephStorage::Ports::StorageMgmtPort: /home/stack/my_templates/network/ports/storage_mgmt.yaml
+
+  # NIC Configs for our roles
+  OS::TripleO::Compute::Net::SoftwareConfig: /home/stack/my_templates/nic-configs/compute.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/my_templates/nic-configs/controller.yaml
+  OS::TripleO::CephStorage::Net::SoftwareConfig: /home/stack/my_templates/nic-configs/ceph-storage.yaml

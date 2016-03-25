@@ -1,6 +1,6 @@
 ---
 name: rhosp-director
-mem: 4096
+mem: 8192
 vcpu: 2
 disk:
   path: rhosp-director.qcow2
