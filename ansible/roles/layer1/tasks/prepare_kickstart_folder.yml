@@ -2,7 +2,8 @@
 - name: create kickstart directory
   file: state=directory path={{ kickstart_path }}
 - name: create /etc/exports entry
-  lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{network_admin.gw_ip}}/24(ro)"
+  #lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{network_admin.gw_ip}}/24(ro)"
+  lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{ network_admin.host_prefix }}(ro)"
   notify:
     - export file systems
 - name: start rpcbind

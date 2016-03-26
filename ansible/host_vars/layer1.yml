@@ -15,36 +15,43 @@ network_default:
   name: 'default'
   bridge: 'virbr0'
   forward_mode: 'nat'
-  gw_ip: 192.168.100.1
-  netmask: 255.255.255.0
+  #gw_ip: 192.168.100.1
+  #netmask: 255.255.255.0
+  host_prefix: 192.168.100.1/24
   dhcp_start: 192.168.100.128
-  dhcp_end: 192.168.100.254
+  dhcp_end: 192.168.100.172
+  floating_start: 192.168.100.173
+  floating_end: 192.168.100.254
 
 network_rhosp_provisioning:
   name: 'rhosp_provisioning'
   bridge: 'virbr1'
-  gw_ip: 192.168.101.1
-  netmask: 255.255.255.0
+  #gw_ip: 192.168.101.1
+  #netmask: 255.255.255.0
+  host_prefix: 192.168.101.1/24
 
 network_storage:
   name: 'storage'
   bridge: 'virbr2'
-  gw_ip: 192.168.102.1
-  netmask: 255.255.255.0
+  #gw_ip: 192.168.102.1
+  #netmask: 255.255.255.0
+  host_prefix: 192.168.102.1/24
 
 network_admin:
   name: 'admin'
   bridge: 'virbr3'
-  gw_ip: 192.168.103.1
-  netmask: 255.255.255.0
-  dhcp_start: 192.168.103.128
+  #gw_ip: 192.168.103.1
+  #netmask: 255.255.255.0
+  host_prefix: 192.168.103.1/24
+  dhcp_start: 192.168.103.173
   dhcp_end: 192.168.103.254
 
 network_rhosp_internal:
   name: 'rhosp_internal'
   bridge: 'virbr4'
-  gw_ip: 192.168.104.1
-  netmask: 255.255.255.0
+  #gw_ip: 192.168.104.1
+  #netmask: 255.255.255.0
+  host_prefix: 192.168.104.1/24
 
 networks:
   - "{{ network_default }}"

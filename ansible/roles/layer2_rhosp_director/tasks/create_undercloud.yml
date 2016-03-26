@@ -48,6 +48,7 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 - name: configure DNS for provisioning network
-  shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ hostvars[groups['layer1'][0]].network_default.gw_ip }}
+  #shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ hostvars[groups['layer1'][0]].network_default.gw_ip }}
+  shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ hostvars[groups['layer1'][0]].network_default.host_prefix | ipaddr('address') }}
   become: yes
   become_user: "{{ rhosp_stack_user }}"

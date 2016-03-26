@@ -17,5 +17,6 @@ virt-install  --name {{ hostvars[item].name }}
               --noautoconsole
               --wait 10
               --location {{ storage_default.path }}/{{ rhel_iso_img }}
-              --extra-args='ks=nfs:{{ network_admin.gw_ip }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8'
+            {#  --extra-args='ks=nfs:{{ network_admin.gw_ip }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8' #}
+              --extra-args='ks=nfs:{{ network_admin.host_prefix | ipaddr('address') }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8'
             {% endif %}

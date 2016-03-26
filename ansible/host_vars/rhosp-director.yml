@@ -40,6 +40,7 @@ disable_services:
   - NetworkManager
 
 image_path: /home/stack/images
+tripleo_template_path: /home/stack/my_templates
 deploy_ramdisk_image: deploy-ramdisk-ironic-7.1.0-39.tar
 discovery_ramdisk_image: discovery-ramdisk-7.3.0-56.tar
 overcloud_image: overcloud-full-7.3.0-56.tar

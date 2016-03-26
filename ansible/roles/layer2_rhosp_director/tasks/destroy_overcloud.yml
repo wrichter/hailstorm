@@ -1,10 +1,10 @@
-^- shell: . ~/stackrc && heat stack-delete overcloud
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
-  ignore_errors: true
-- shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
-- file: path=~/instackenv.json state=absent
+- block:
+    - name: delete overcloud heat stack
+      shell: . ~/stackrc && heat stack-delete overcloud
+      ignore_errors: true
+    - name: delete ironic nodes
+      shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
+    - name: delete instackenv.json file
+      file: path=~/instackenv.json state=absent
   become: yes
   become_user: "{{ rhosp_stack_user }}"
