@@ -78,7 +78,7 @@
   #- shell: . ~/stackrc && openstack overcloud deploy --templates --control-scale 1 --compute-scale 1 --neutron-tunnel-types vxlan --neutron-network-type vxlan
   #  become: yes
   #  become_user: "{{ rhosp_stack_user }}"
-    - name: deploy overcloud
+    - name: deploy overcloud (even more coffee!)
       shell: >
         . ~/stackrc && openstack overcloud deploy
         --templates

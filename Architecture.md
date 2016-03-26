@@ -107,3 +107,11 @@ to the repository so a correct behavior can be validated. This includes testing 
   - To be discussed:
     - Level/Rigor of testing
     - Test Automation / Continuous Build
+
+## Network Setup
+On the layer1 host, there are five virtual networks configured via libvirt as separate virtual bridge devices:
+1. **Default**: This network is NATed externally. Any service which is visible in the demo scenario should be on this network, this includes all product GUIs, APIs and OpenStack Floating IPs.
+1. **Storage**: (currently not used) to separate storage traffic between hypervisors and storage backends
+1. **Admin**: Used exclusively to provide admin access to layer2 hosts, e.g. via Ansible
+1. **RH OSP Provisioning**: Used by the RH OSP Director to boot/configure OSP nodes via PXE
+1. **RH OSP Internal**: Hosts various VLANs to separate out additional OSP networks (storage management, tenant, internal API), see https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/7/html/Director_Installation_and_Usage/sect-Planning_Networks.html
