@@ -1,7 +1,4 @@
 - block:
-    - name: delete overcloud heat stack
-      shell: . ~/stackrc && heat stack-delete overcloud
-      ignore_errors: true
     - name: delete ironic nodes
       shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
     - name: delete instackenv.json file

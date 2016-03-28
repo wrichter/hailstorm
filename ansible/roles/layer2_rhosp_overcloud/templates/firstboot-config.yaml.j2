@@ -16,6 +16,10 @@ resources:
         #rhos-release -p Y1 7-director
         #rhos-release -p Z2 7
         echo "HELLO WORLD"
+        mkdir /root/.ssh
+        cat  << xxEOFxx >> /root/.ssh/authorized_keys
+        {{ ssh_pub_key_hailstorm }}
+        xxEOFxx
 
 outputs:
   OS::stack_id:

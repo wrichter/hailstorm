@@ -1,0 +1,42 @@
+#import node configs
+- block:
+    - name: Create my_templates directory
+      file: path=~/my_templates state=directory
+    - name: Create nic-configs directory
+      file: path=~/my_templates/nic-configs state=directory
+    - name: copy tripleO templates
+      shell: cp -rf /usr/share/openstack-tripleo-heat-templates/* ~/my_templates/
+    #- name: create custom install configuration
+    #  shell: >
+    #    cat ~/my_templates/environments/network-isolation.yaml |
+    #    sed '/Swift/Id' |
+    #    sed '/Block/Id' |
+    #    sed '$ a # NIC Configs for our roles\n  OS::TripleO::Compute::Net::SoftwareConfig: ../nic-configs/compute.yaml\n  OS::TripleO::Controller::Net::SoftwareConfig: ../nic-configs/controller.yaml\n  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-configs/ceph-storage.yaml'
+    #    > ~/my_templates/environments/network-custom.yaml
+    - name: create custom install configuration
+      template: src=custom-install.yaml.j2 dest=~/my_templates/environments/custom-install.yaml mode=0644
+    - name: create first boot configuration
+      template: src=firstboot-config.yaml.j2 dest=~/my_templates/firstboot-config.yaml mode=0644
+    - name: copy nic configs
+      template: src={{ item }}.j2 dest=~/my_templates/nic-configs/{{ item }} mode=0644
+      with_items:
+        - "compute.yaml"
+        - "controller.yaml"
+  #- shell: . ~/stackrc && openstack overcloud deploy --templates --control-scale 1 --compute-scale 1 --neutron-tunnel-types vxlan --neutron-network-type vxlan
+  #  become: yes
+  #  become_user: "{{ rhosp_stack_user }}"
+    - name: deploy overcloud (even more coffee!)
+      shell: >
+        . ~/stackrc && openstack overcloud deploy
+        --templates
+        --control-flavor control
+        --compute-flavor compute
+        --control-scale 3
+        --compute-scale 2
+        --neutron-tunnel-types vxlan
+        --neutron-network-type vxlan
+        --ntp-server {{ hostvars[groups['layer1'][0]].ansible_host }}
+        -e ~/my_templates/environments/custom-install.yaml
+    #    -e ~/my_templates/environments/storage-environment.yaml
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

@@ -1,4 +1,4 @@
-mem: 4096
+mem: 6144
 vcpu: 4
 disk:
   path: "{{ name }}.qcow2"

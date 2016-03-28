@@ -1,0 +1,1 @@
+ssh_pub_key_hailstorm: "{{ lookup('file', '../binary/hailstorm.pub') }}"

@@ -1,0 +1,7 @@
+- block:
+    - include: create_overcloud.yml
+  when: mode=="create"
+
+- block:
+    - include: destroy_overcloud.yml
+  when: mode=="destroy"

@@ -1,5 +1,7 @@
 # ip address or host name of layer1 system
 ansible_host: inf43.coe.muc.redhat.com
+ansible_ssh_common_args: "-i ./binary/hailstorm"
+
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
@@ -26,6 +28,7 @@ network_default:
 network_rhosp_provisioning:
   name: 'rhosp_provisioning'
   bridge: 'virbr1'
+  forward_mode: 'nat'
   #gw_ip: 192.168.101.1
   #netmask: 255.255.255.0
   host_prefix: 192.168.101.1/24
@@ -64,7 +67,3 @@ rhel_kvm_img: rhel-guest-image-7.2-20151102.0.x86_64.qcow2
 rhel_iso_img: rhel-server-7.2-x86_64-dvd.iso
 
 kickstart_path: /srv/kickstart
-
-ssh_pub_key_hailstorm: "{{ lookup('file', '../binary/hailstorm.pub') }}"
-
-ansible_ssh_common_args: "-i ./binary/hailstorm"

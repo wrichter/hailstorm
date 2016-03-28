@@ -7,11 +7,11 @@
       tags: ['undercloud']
     - include: import_images_to_undercloud_glance.yml
       tags: ['undercloud']
-    - include: create_overcloud.yml
+    - include: register_overcloud_nodes.yml
       tags: ['overcloud']
   when: mode=="create"
 
 - block:
-    - include: destroy_overcloud.yml
+    - include: unregister_overcloud_nodes.yml
       tags: ['overcloud']
   when: mode=="destroy"

@@ -1,3 +1,9 @@
+[all:children]
+layer1
+rhosp-all
+ose3-node
+satellite
+
 [layer1]
 layer1
 

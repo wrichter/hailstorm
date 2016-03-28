@@ -19,8 +19,11 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_rhosp_overcloud
+      tags: [ 'layer2', 'rhosp', 'overcloud' ]
+      mode: destroy
     - role: layer2_rhosp_director
-      tags: [ 'layer2', 'rhosp' ]
+      tags: [ 'layer2', 'rhosp', 'undercloud' ]
       mode: destroy
     - role: layer2_rhel
       tags: [ 'layer2','rhosp', 'rhel'  ]

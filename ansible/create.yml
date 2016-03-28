@@ -69,4 +69,5 @@
       tags: [ 'layer2','rhosp' ]
   roles:
     - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
-    - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp'], mode: create }
+    - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud'], mode: create }
+    - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }

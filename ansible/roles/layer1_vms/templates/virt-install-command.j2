@@ -8,7 +8,8 @@ virt-install  --name {{ hostvars[item].name }}
             {% endfor %}
               --hvm
               --virt-type kvm
-            {#  --cpu SandyBridge,+vmx #}
+            {#  --cpu SandyBridge,+vmx #}{# since everything will be running on a single host, it'll be safe to expose the host CPU config #}
+              --cpu host,+vmx
               --disk size={{ hostvars[item].disk.size }},path={{ storage_default.path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=virtio
               --graphics {% if hostvars[item].graphics is defined %}{{ hostvars[item].graphics }} {% else %}none{% endif %}
             {% if hostvars[item].skip_install is defined and hostvars[item].skip_install == true %}
