@@ -1,4 +1,9 @@
 #import node configs
+- name: count deployed servers
+  shell: . ~/stackrc && openstack server list -f csv | wc -l
+  register: server_count
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
 - block:
     - name: Create my_templates directory
       file: path=~/my_templates state=directory
@@ -40,3 +45,4 @@
     #    -e ~/my_templates/environments/storage-environment.yaml
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+  when: (server_count.stdout | int < 6) #TODO - adapt to number of servers in case storage deployment is performed via director

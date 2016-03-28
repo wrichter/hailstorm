@@ -1,0 +1,7 @@
+- name: create default network (in admin project)
+  shell: >
+    . ~/overcloudrc &&
+    neutron net-create default &&
+    neutron subnet-create --name default --gateway 172.20.1.1 default 172.20.0.0/16
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

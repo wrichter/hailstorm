@@ -1,5 +1,6 @@
 - block:
     - include: create_overcloud.yml
+    - include: configure_neutron.yml
   when: mode=="create"
 
 - block:
