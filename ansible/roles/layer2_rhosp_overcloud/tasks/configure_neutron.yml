@@ -5,3 +5,8 @@
     neutron subnet-create --name default --gateway 172.20.1.1 default 172.20.0.0/16
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+- name: create external network (in admin project)
+  shell: >
+    . ~/overcloudrc &&
+    neutron net-create nova --router:external --provider:network_type flat --provider:physical_network datacentre &&
+    neutron subnet-create --name nova --enable_dhcp=False --allocation-pool=start=192.168.100.200,end=192.168.100.254 --gateway=192.168.100.1 nova 192.168.100/24
