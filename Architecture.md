@@ -101,6 +101,7 @@ From bottom to top:
     - Data Export (e.g. satellite subscription data, openstack base images, ....)
     - Data Import
     - Reset to known state (demo reset)
+    - Validation (to ensure the demo will likely work at a known date in the future)
   - This will reduce the need for backup / restore: Instead of backup up/restoring a known good configuration, we can recreate it from scratch
 - Test (Driven/Augmented) Development: For all use cases, tests should be added
 to the repository so a correct behavior can be validated. This includes testing the scripts to set up / tear down components as well as testing demo use cases.
