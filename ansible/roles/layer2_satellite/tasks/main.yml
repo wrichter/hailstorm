@@ -1,7 +1,7 @@
 - block:
   # open firewall for related services:
   - include: sat6-firewalld.yml
-  #configuration of chrony (ntp client):
+  # configuration of chrony (ntp client):
   - include: chrony-config.yml
   # install packakges needed for Sat6:
   - include: sat6-packages.yml
@@ -26,5 +26,7 @@
   - include: RHEL-channel-sync.yml
   # Lifeccles erstellen:
   - include: Lifecycles.yml
+  # building content views
+  - include: content-views.yml
 
   when: mode=="create"
