@@ -1,0 +1,12 @@
+- block:
+  - name: enable channel for RHEL6 and RHEL7
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="7Server" --name "Red Hat Enterprise Linux 7 Server (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="7Server" --name "Red Hat Enterprise Linux 7 Server - Optional (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="7.1" --name "Red Hat Enterprise Linux 7 Server (Kickstart)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="6Server" --name "Red Hat Enterprise Linux 6 Server (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="6Server" --name "Red Hat Enterprise Linux 6 Server - Optional (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="6.7" --name "Red Hat Enterprise Linux 6 Server (Kickstart)"'
+
+- block:
+  - name: RHEL7 channel syncen
+  - command: 'for repoid in $(hammer repository list --organization "Default Organization" |grep "Red Hat Enterprise Linux 7" |awk '{print $1}'); do hammer repository synchronize --organization "Default Organization" --id $repoid --async; done'
