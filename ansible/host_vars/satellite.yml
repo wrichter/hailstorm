@@ -23,7 +23,7 @@ nic:
 hostname: satellite.example.com
 root_password: redhat01
 ansible_host: 192.168.103.20
-manifestfile: ../binary/manifest*.zip
+manifestfile: manifest.zip
 ntpserver: ntp.example.com
 
 # poolid: 8a85f9814f220b7c014f2211095208d2

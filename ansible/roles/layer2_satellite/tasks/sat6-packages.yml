@@ -1,3 +1,2 @@
 - name: ensure prerequisite packages are present
-  - command: 'rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release'
-  - yum: name=katello,chrony,katello-agent state=latest
+  yum: name=katello,chrony,katello-agent,vim,screen,iptraf-ng state=latest
