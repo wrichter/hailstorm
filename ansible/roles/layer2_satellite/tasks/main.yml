@@ -32,7 +32,7 @@
             mode=0600
   - command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
   # channel enablen and sync
-  - include: RHEL-channel-sync.yml
+  - include: RHEL-repo-sync.yml
   # Lifeccles erstellen:
   - include: Lifecycles.yml
   # building content views
