@@ -14,7 +14,8 @@
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
-      default: "wrichter"
+#      default: "wrichter"
+      default: "bhaubeck"
     - name: "rhsm_password"
       prompt: "what is your Red Hat Subscription Manager password?"
 

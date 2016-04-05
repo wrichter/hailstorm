@@ -1,0 +1,31 @@
+---
+
+- name: copy chrony configuration for RHEL7
+  template: src=chrony.j2
+     dest=/etc/chrony.conf
+     owner=root
+     group=root
+     mode=0644
+  register: chrony_conf
+ 
+- name: pkgchrony
+  yum:
+   pkg=chrony
+   state=present
+ 
+- name: Remove NTP if installed
+  yum:
+   name=ntp
+   state=absent
+ 
+- name: ensure chrony service is started and enabled
+  service:
+   name: chronyd
+   state: started
+   enabled: yes
+ 
+- name: ensure chrony is getting restarted if necessary
+  service:
+   name: chronyd
+   state: restarted
+  when: chrony_conf|changed

@@ -1,3 +1,27 @@
 - block:
-    - command: katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }}
+  # open firewall for related services:
+  - include: sat6-firewalld.yml
+  #configuration of chrony (ntp client):
+  - include: chrony-config.yml
+  # install packakges needed for Sat6:
+  - include: sat6-packages.yml
+  # install Sat6:
+  - command: 'katello-installer --foreman-admin-username admin --foreman-admin-password'
+  # create hammer-config-file
+  - name: hammer_cli_config
+    template: src=cli_config.yml.j2
+        dest=/root/.hammer/cli_config.yml
+        owner=root
+        group=root
+        mode=0600
+  - name: copy-import-manifest
+#    template:  src=../binary/manifest*.zip
+    copy:  src= {{ manifestfile }}
+            dest=/root/manifest.zip
+            owner=root
+            group=root
+            mode=0600
+  - command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
+
+
   when: mode=="create"

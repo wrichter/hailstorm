@@ -8,6 +8,7 @@
     - Deployment ramdisk
     - Discovery ramdisk
   - <a href="https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software">RHEL 7 binary DVD</a>
+1. Download the manifest for your Organization for the Satellite and copy the manifest-zip file to the local ansible/binary directory
 1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside):
   - $ ssh-keygen -t rsa -f binary/undercloud
   - $ ssh-keygen -t rsa -f binary/hailstorm
