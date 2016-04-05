@@ -1,5 +1,6 @@
 # Automated rollout via Ansible
 ## Prerequisites
+1. Install Ansible 2 on your local machine and run all the playbooks from there
 1. Clone this repository to your local machine
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
   - <a href="https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software" target="_blank">RHEL-OSP overcloud binaries</a>
