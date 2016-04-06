@@ -35,7 +35,11 @@
   - include: RHEL-repo-sync.yml
   # Lifeccles erstellen:
   - include: Lifecycles.yml
-  # building content views
+  # building content views, publish and promote them
   - include: content-views.yml
+  # creating a host collection
+  - include: host-collection.yml
+  # creating activation keys
+  - include: activation-keys.yml
 
   when: mode=="create"

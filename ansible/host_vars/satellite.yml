@@ -4,13 +4,13 @@ mem: 4096
 vcpu: 2
 disk:
   path: satellite.qcow2
-  size: 30
+  size: 50
   format: qcow2
   partition_table:
-    lvmpv: 29500
+    lvmpv: 49500
     swap: 4096
     home: 2048
-    root: 20000
+    root: 40000
 nic:
   - ip: 192.168.100.20
     dev: eth0

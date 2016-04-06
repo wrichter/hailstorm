@@ -1,7 +1,18 @@
-- block:
- # create content views
- - command: 'hammer content-view create --name="cv-os-rhel-7-server" --organization "Default Organization"'
- - command: 'for repoid in $(ha2mmer repository list --organization "Default Organization" |grep "Red Hat Enterprise Linux 7" |awk '{print $1}'); do hammer content-view add-repository --name="cv-os-rhel-7-server" --organization "Default Organization" --repository-id=${repoid}; done'
- - command: 'hammer content-view publish --name="cv-os-rhel-7-server" --organization=fite.cat.lab --async'
+- name: create content views
+  command: 'hammer content-view create --name="cv-os-rhel-7-server" --organization "Default Organization"'
 
-# - command: 'hammer content-view version promote --organization "Default Organization" --lifecycle-environment=3 --id=3 --async
+- name: list repo ID
+  shell: 'hammer repository list --organization "Default Organization" |grep "Red Hat Enterprise Linux 7" |cut -b 1-2 '
+  register: command_result
+
+- name: add repo to content view
+  shell: 'hammer content-view add-repository --name="cv-os-rhel-7-server" --organization "Default Organization" --repository-id={{ item }}'
+  with_items: "{{command_result.stdout_lines}}"
+
+- name: publish the content view
+  command: 'hammer content-view publish --name="cv-os-rhel-7-server" --organization "Default Organization" --async'
+
+- name: promote the content view to every stage
+  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment DEV --async'
+  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment TEST --async'
+  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment PROD --async'

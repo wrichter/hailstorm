@@ -1,0 +1,19 @@
+- block:
+# Create activation keys for our environments
+  - command: 'hammer activation-key create --name="act-rhel-7-server-dev" --organization="Default Organization" --content-view="cv-os-rhel-7-server" --lifecycle-environment=DEV'
+  - command: 'hammer activation-key create --name="act-rhel-7-server-test" --organization="Default Organization" --content-view="cv-os-rhel-7-server" --lifecycle-environment=TEST'
+  - command: 'hammer activation-key create --name="act-rhel-7-server-prod" --organization="Default Organization" --content-view="cv-os-rhel-7-server" --lifecycle-environment=PROD'
+
+- block:
+# associate the act-keys to the host collection
+  - command: 'hammer activation-key add-host-collection --name="act-rhel-7-server-dev" --host-collection="RHEL7" --organization="Default Organization"'
+  - command: 'hammer activation-key add-host-collection --name="act-rhel-7-server-test" --host-collection="RHEL7" --organization="Default Organization"'
+  - command: 'hammer activation-key add-host-collection --name="act-rhel-7-server-prod" --host-collection="RHEL7" --organization="Default Organization"'
+
+- block: 
+# add subscription to actitvation keys for auto-attach (sub-man)
+#  - command: 'hammer activation-key add-subscription --name="act-rhel-7-server-dev" --subscription  '
+  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-dev' --subscription-id $subID"
+  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-test' --subscription-id $subID"
+  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-prod' --subscription-id $subID"
+
