@@ -13,6 +13,6 @@
   command: 'hammer content-view publish --name="cv-os-rhel-7-server" --organization "Default Organization" --async'
 
 - name: promote the content view to every stage
-  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment DEV --async'
-  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment TEST --async'
-  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment PROD --async'
+  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment DEV'
+  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment TEST'
+  command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment PROD'
