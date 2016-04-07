@@ -32,6 +32,7 @@ repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
   - rhel-7-server-satellite-6.1-rpms
+packages: katello
 
 firewalld_rules:
  - DNStcp:

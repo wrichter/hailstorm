@@ -31,6 +31,13 @@
             group=root
             mode=0600
   - command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
+  # create config-file, forman needs because of our lack of DNS in this infrastructure demo  see: https://access.redhat.com/solutions/1542433
+  - name: foreman_proxy_settings
+    template: src=foreman_proxy_settings-yml.j2
+        dest=/etc/foreman-proxy/settings.yml
+        owner=root
+        group=root
+        mode=0644
   # channel enablen and sync
   - include: RHEL-repo-sync.yml
   # Lifeccles erstellen:

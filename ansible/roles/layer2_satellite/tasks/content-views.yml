@@ -10,9 +10,11 @@
   with_items: "{{command_result.stdout_lines}}"
 
 - name: publish the content view
-  command: 'hammer content-view publish --name="cv-os-rhel-7-server" --organization "Default Organization" --async'
+  command: 'hammer content-view publish --name="cv-os-rhel-7-server" --organization "Default Organization"'
 
-- name: promote the content view to every stage
+- name: promote the content view to DEV
   command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment DEV'
+- name: promote the content view to TEST
   command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment TEST'
+- name: promote the content view to PROD
   command: 'hammer content-view version promote --organization "Default Organization" --content-view "cv-os-rhel-7-server" --to-lifecycle-environment PROD'
