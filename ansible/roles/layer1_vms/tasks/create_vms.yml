@@ -26,7 +26,7 @@
   when: "{{ hostvars[item].skip_install is not defined or hostvars[item].skip_install != true }}"
   with_items: "{{ groups[group] }}"
 - name: wait for VMs finishing (re)booting
-  wait_for: host={{ hostvars[item].ansible_host }} port=22 delay=0 timeout=300
+  wait_for: host={{ hostvars[item].ansible_host }} port=22 delay=0 timeout=900
   when: "{{ hostvars[item].skip_install is not defined or hostvars[item].skip_install != true }}"
   with_items: "{{ groups[group] }}"
 

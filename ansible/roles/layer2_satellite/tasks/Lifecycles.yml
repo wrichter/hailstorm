@@ -1,0 +1,10 @@
+- block:
+  - command: hammer lifecycle-environment delete --organization="Default Organization" --name PROD 
+  - command: hammer lifecycle-environment delete --organization="Default Organization" --name TEST
+  - command: hammer lifecycle-environment delete --organization="Default Organization" --name DEV
+  ignore_errors: yes
+
+- block:
+  - command: hammer lifecycle-environment create --organization "Default Organization" --description 'Development' --name 'DEV' --label development --prior Library
+  - command: hammer lifecycle-environment create --organization "Default Organization" --description 'Testing' --name 'TEST' --label testing --prior 'DEV'
+  - command: hammer lifecycle-environment create --organization "Default Organization" --description 'Production' --name 'PROD' --label production --prior 'TEST'

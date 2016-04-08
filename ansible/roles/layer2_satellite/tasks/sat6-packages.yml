@@ -1,0 +1,2 @@
+- name: ensure prerequisite packages are present
+  yum: name=katello,chrony,katello-agent,vim,screen,iptraf-ng state=latest

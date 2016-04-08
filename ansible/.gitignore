@@ -1,3 +1,6 @@
 .DS_Store
 scratch
 *.retry
+*.kate-swp
+manifest*
+*TEST*

@@ -1,0 +1,19 @@
+- block:
+# enable channel for RHEL6 and RHEL7
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="7Server" --name "Red Hat Enterprise Linux 7 Server (RPMs)" '
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="7Server" --name "Red Hat Enterprise Linux 7 Server - Optional (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="7.2" --name "Red Hat Enterprise Linux 7 Server (Kickstart)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="6Server" --name "Red Hat Enterprise Linux 6 Server (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="6Server" --name "Red Hat Enterprise Linux 6 Server - Optional (RPMs)"'
+  - command: 'hammer repository-set enable --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --basearch="x86_64" --releasever="6.7" --name "Red Hat Enterprise Linux 6 Server (Kickstart)"'
+# ignore_errors to "yes" because hammer throws an error if we try to enable a repo, that is already enabled
+  ignore_errors: yes
+
+- name: list repo ID
+  shell: 'hammer repository list --organization "Default Organization" |grep "Red Hat Enterprise Linux 7" |cut -b 1-2 '
+  register: command_result
+
+- name: start async sync of repo
+  shell: 'hammer repository synchronize --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --id {{ item }} --async '
+  #shell: 'hammer repository synchronize --organization "Default Organization" --product "Red Hat Enterprise Linux Server" --id {{ item }} '
+  with_items: "{{command_result.stdout_lines}}"

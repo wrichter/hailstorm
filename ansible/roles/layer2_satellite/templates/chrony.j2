@@ -1,0 +1,31 @@
+
+### NTP-Server or -Pool
+pool  "{{ ntpserver }}" iburst
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# In first three updates step the system clock instead of slew
+# if the adjustment is larger than 10 seconds.
+makestep 10 3
+
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+
+# Specify file containing keys for NTP and command authentication.
+keyfile /etc/chrony.keys
+
+# Specify key number for command authentication.
+commandkey 1
+
+# Generate new command key on start if missing.
+generatecommandkey
+
+# Disable logging of client accesses.
+noclientlog
+
+# Send message to syslog when clock adjustment is larger than 0.5 seconds.
+logchange 0.5
+
+# Specify directory for log files.
+logdir /var/log/chrony
