@@ -1,16 +1,16 @@
 ---
 name: satellite
-mem: 4096
+mem: 8192
 vcpu: 2
 disk:
   path: satellite.qcow2
-  size: 50
+  size: 60
   format: qcow2
   partition_table:
-    lvmpv: 49500
+    lvmpv: 59500
     swap: 4096
     home: 2048
-    root: 40000
+    root: 50000
 nic:
   - ip: 192.168.100.20
     dev: eth0
@@ -32,7 +32,7 @@ repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
   - rhel-7-server-satellite-6.1-rpms
-packages: katello
+packages: katello,bind-utils
 
 firewalld_rules:
  - DNStcp:
