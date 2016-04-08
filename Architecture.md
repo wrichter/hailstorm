@@ -33,9 +33,9 @@ From bottom to top:
 2. RHEL (KVM Host):
   - Base Operating System, to be defined whether RHEL or RHEL-Atomic Host.
   - Configured to allow nested virtualization.
+  - Acts as NTP server for all layer2 hosts
   - KVM based virtualization allows to partition the hardware
-  - Multiple internal VLANs
-    - How? OpenSwitch virtual switches?
+  - Multiple internal VLANs realized as virbr devices
   - NAT enables a private IP space which can be connected into any LAN
     - To be discussed: How to enable DNS + Mail in NAT scenario
   - Runtime environment for scripts / playbooks / ... which
