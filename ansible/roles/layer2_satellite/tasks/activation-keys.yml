@@ -13,7 +13,7 @@
 - block: 
 # add subscription to actitvation keys for auto-attach (sub-man)
 #  - command: 'hammer activation-key add-subscription --name="act-rhel-7-server-dev" --subscription  '
-  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-dev' --subscription-id $subID"
-  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-test' --subscription-id $subID"
-  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-prod' --subscription-id $subID"
+  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-dev' --organization='Default Organization' --subscription-id $subID; done"
+  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-test' --organization='Default Organization' --subscription-id $subID; done"
+  - shell: "for subID in $(hammer --csv subscription list --organization='Default Organization' |grep -m 1 -w 'Employee SKU'  |awk -F, '{ print $8 }') ; do hammer activation-key add-subscription --name='act-rhel-7-server-prod' --organization='Default Organization' --subscription-id $subID; done"
 

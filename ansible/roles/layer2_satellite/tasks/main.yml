@@ -1,4 +1,6 @@
 - block:
+  # set short and full hostname in the /etc/hosts due our lack of DNS here
+  - shell: "echo $(ip a s eth0 |grep -w inet |awk '{print $2}' |awk -F / '{print $1}') $(hostname -f) $(hostname -s)   >> /etc/hosts"
   # open firewall for related services:
   - include: sat6-firewalld.yml
   # configuration of chrony (ntp client):
