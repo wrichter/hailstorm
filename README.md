@@ -11,4 +11,4 @@ Integrated Cloud Demo spanning multipe Red Hat Cloud technologies:
 
 See [Architecture.md](Architecture.md "Architecture Description") for details on the planned setup.
 
-See [ansible/Readme.md](ansible/Readme.md) for details on how to use and read the Ansible code.
+See [ansible/README.md](ansible/README.md) for details on how to use and read the Ansible code.
