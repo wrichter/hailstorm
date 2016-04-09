@@ -3,11 +3,11 @@
 1. Install Ansible 2 on your local machine and run all the playbooks from there
 1. Clone this repository to your local machine
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
-  - <a href="https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software" target="_blank">RHEL-OSP overcloud binaries</a>
+  - [RHEL-OSP overcloud binaries](https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software)
     - Overcloud image
     - Deployment ramdisk
     - Discovery ramdisk
-  - <a href="https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software">RHEL 7 binary DVD</a>
+  - [RHEL 7 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software)
 1. Download the manifest for your Organization for the Satellite and copy the manifest-zip file to the local ansible/binary directory and rename it to manifest.zip
 1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside):
   - $ ssh-keygen -t rsa -f binary/undercloud
@@ -45,3 +45,42 @@ Only OpenStack:
 ```
 $ ansible-playbook -i hosts destroy.yml --tags rhosp
 ```
+
+## Understanding the playbooks
+The playbooks (create.yml, destroy.yml - both in this directory) describe a sequence of "roles" to be applied to groups of machines. Each role in itself is a sequence of idempotent steps, i.e. they can be run more than one time without affecting the result.
+
+### Inventory
+
+The groups of machines referenced in the playbooks are defined in the [inventory](http://docs.ansible.com/ansible/intro_inventory.html) file "hosts" in this directory. These groups could for example be the virtual machines that make up OpenStack, RHEV, etc... Unless you are defining or changing a group of (virtual) machines, it is unlikely that you will need to change this file.
+
+If a group consists only of a single machine (e.g. layer1), it has the same name as the machine itself. This might be confusing at first because it becomes clear only by knowing Ansible conventions that something refers to a single host versus a group (Hint: it is usually a group).
+
+All playbooks assume that there is a single layer1 host in the layer1 group - they will fail / yield unexpected results if there are more than one layer1 host in the group.
+
+### Configuration variables
+
+For each (virtual) machine, a set of configuration properties is defined as follows: first, Ansible determines all groups a machine belongs to (based on the data in the inventory file). It then reads all corresponding properties files in the group_vars directory. Then, it reads the machine-specific configuration properties from the corresponding properties file in the host_vars directory, potentially overwriting a group property.
+
+This approach allows to define common configurations on a group level with the ability to specify machine-specific configuration on a host level. Being written in YML, the properties can be complex data structures, i.e. structs and lists. You can name the properties (almost) any way you like, but be cautious prepending them with ansible_ - [such properties](http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters) may be interpreted by the Ansible runtime itself. For example, ansible_host specifies the IP address that Ansible uses to connect to that specific machine via ssh.
+
+### Roles
+
+Roles are an Ansible concept which allows related tasks, templates, etc... to be grouped together, each in a separate subdirectory of roles. The entry point for each role is its tasks/main.yml file.
+
+Ansible does not have a native concept of different actions such as "create the environment" or "tear down the environment" or "ensure that everything is reset after a demo" - all it does is run the tasks in the playbook / roles. This is why the roles' tasks/main.yml file is typically written to expect a variable named "mode" to be set to a specific verb such as "create" or "destroy". It then uses this variable to decide which actions to run, which are usually included as separate yml files.
+
+The following roles exist:
+- **common**: not a role in its own sense, rather a place where tasks, handlers or templates which are used in multiple roles can be stored and referenced.
+- **layer1**: configures the layer1 host, network setup and services required by the layer2 VMs such as an export directory for kickstart files, NTP service, etc...
+- **layer1_vms**: creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name.
+- **layer2_rhel**: configures the base RHEL installed in the previous step - a great place to put common configuration actions:
+  - Subscribes/Unsubscribes the VM
+  - Attaches it to a pool
+  - Performs an upgrade to the latest package versions
+  - Installs additional packages
+  - Enables or disables services
+- **layer2_satellite**: configures Red Hat Satellite (runs katello installer, creates content views, activation keys, etc...)
+- **layer2_rhosp_director**: configures Red Hat OpenStack Director (undercloud) and prepares "baremetal" nodes for installation of the RHOSP overcloud (runs for about 45 mins)
+- **layer2_rhosp_overcloud**: deploys Red Hat OpenStack (overcloud) on the nodes prepared by director. This is still work in progress (runs for about 45 mins).
+
+All other roles are not yet usable.
