@@ -9,4 +9,6 @@ Integrated Cloud Demo spanning multipe Red Hat Cloud technologies:
 * (Optional) Red Hat Storage
 * (Optional) Red Hat Identity Management and/or KeyCloak
 
-See [Architecture.md](Architecture.md "Architecture Description") for details on the planned setup
+See [Architecture.md](Architecture.md "Architecture Description") for details on the planned setup.
+
+See [ansible/Readme.md](ansible/Readme.md) for details on how to use and read the Ansible code.
