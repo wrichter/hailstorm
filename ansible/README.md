@@ -25,7 +25,7 @@
   - poolid for the Satellite repository
 
 ## Running the playbook
-Run all commands from the ansible directory
+Run all commands on your laptop from the ansible directory. Since the server might reboot when the playbook executes, running the playbook on the server is discouraged.
 
 ### Setting up the environment
 Everything:
