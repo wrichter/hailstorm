@@ -4,6 +4,7 @@
     - include: define_libvirt_networks.yml
     - include: copy_installation_sources.yml
     - include: prepare_kickstart_folder.yml
+    - include: enable_nfs.yml
     - include: prepare_rhosp_settings.yml
     - include: configure_ntp.yml
   when: mode=='create'

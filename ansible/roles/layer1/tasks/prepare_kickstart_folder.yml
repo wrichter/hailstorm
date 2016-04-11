@@ -4,11 +4,7 @@
 - name: create /etc/exports entry
   #lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{network_admin.gw_ip}}/24(ro)"
   lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{ network_admin.host_prefix }}(ro)"
-  notify:
-    - export file systems
-- name: start rpcbind
-  service: name=rpcbind state=started enabled=yes
-- name: start nfs-server
-  service: name=nfs-server state=started enabled=yes
-- name: open firewall for nfs-server on internal zone
-  firewalld: port=2049/tcp permanent=true state=enabled zone=internal
+  register: etc_exports
+- name: export file systems
+  command: exportfs -a
+  when: etc_exports|changed

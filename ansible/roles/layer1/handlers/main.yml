@@ -1,5 +1,3 @@
-- name: export file systems
-  command: exportfs -a
 # TODO: replace with ../../common/handlers/reboot.yml
 - name: restart machine
   command: shutdown -r now "Ansible updates triggered"
