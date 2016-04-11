@@ -4,9 +4,18 @@
 
 # copy rhel isoimage to host
 - name: copy rhel iso image
-  copy:  src=../binary/{{ rhel_iso_img }} dest={{ storage_default.path }}/{{ rhel_iso_img }} mode=0644
+  copy:  src=../binary/{{ item }} dest={{ storage_default.path }}/{{ item }} mode=0644
+  with_items:
+    - "{{ hostvars[groups['rhel7'][0]].rhel_iso_img }}"
+    - "{{ hostvars[groups['rhel6'][0]].rhel_iso_img }}"
   when: layer1_binary_dir is not defined
-- name: locally copy rhel iso image
-  synchronize: mode=pull src={{ layer1_binary_dir }}/{{ rhel_iso_img }} dest={{ storage_default.path }}/{{ rhel_iso_img }}
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+
+#TODO WR: some issue seems to prevent delegate_to and with_items to work together - I always get the message that hostvars is not defined in that case
+- block:
+  - name: locally copy rhel6 iso image
+    synchronize: mode=pull src={{ layer1_binary_dir }}/{{ hostvars[groups['rhel6'][0]].rhel_iso_img }} dest={{ storage_default.path }}/{{ hostvars[groups['rhel6'][0]].rhel_iso_img }}
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  - name: locally copy rhel7 iso image
+    synchronize: mode=pull src={{ layer1_binary_dir }}/{{ hostvars[groups['rhel7'][0]].rhel_iso_img }} dest={{ storage_default.path }}/{{ hostvars[groups['rhel7'][0]].rhel_iso_img }}
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
   when: layer1_binary_dir is defined

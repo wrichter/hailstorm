@@ -7,10 +7,11 @@ satellite
 [layer1]
 layer1
 
-[layer2]
-ose3-master
+[layer2:children]
+ose3-node
 satellite
-rhosp-director
+rhosp-all
+rhev
 
 [ose3-node]
 ose3-master
@@ -45,3 +46,22 @@ rhosp-control3
 [ssh-kvm-powermanagement-emulation]
 rhosp-director
 layer1
+
+[rhev:children]
+rhevm
+rhevh
+
+[rhevm]
+rhevm
+
+[rhevh]
+rhevh1
+rhevh2
+
+[rhel7:children]
+rhosp-all
+satellite
+rhevm
+
+[rhel6:children]
+rhevh

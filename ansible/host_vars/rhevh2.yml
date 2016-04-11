@@ -1,0 +1,25 @@
+---
+name: rhevh2
+mem: 8192
+vcpu: 4
+disk:
+  path: rhevh2.qcow2
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 2048
+    home: 2048
+    root: 10000
+nic:
+  - ip: 192.168.100.12
+    dev: eth0
+    network: default
+    default_route: true
+  - ip: 192.168.103.12
+    dev: eth1
+    network: admin
+    default_route: false
+hostname: rhevh2.example.com
+root_password: redhat01
+ansible_host: 192.168.103.12

@@ -29,10 +29,6 @@
   remote_user: root
   roles:
     - role: layer1_vms
-      tags: [ 'layer2','openshiftv3','vm' ]
-      mode: create
-      group: ose3-node
-    - role: layer1_vms
       tags: [ 'layer2','satellite','vm' ]
       mode: create
       group: satellite
@@ -40,16 +36,30 @@
       tags: [ 'layer2','rhosp', 'vm' ]
       mode: create
       group: rhosp-all
+    - role: layer1_vms
+      tags: [ 'layer2','rhev','vm' ]
+      mode: create
+      group: rhevh
 
-- hosts: ose3-node
+- hosts: rhevm
   remote_user: root
   gather_facts: false
   pre_tasks:
     - setup:
-      tags: [ 'layer2','openshiftv3' ]
+      tags: [ 'layer2', 'rhev' ]
   roles:
-    - { role: layer2_rhel, tags: [ 'layer2','openshiftv3', 'rhel' ], mode: create }
-    - { role: layer2_openshiftv3_node, tags: [ 'layer2','openshiftv3' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2','rhevm', 'rhel' ], mode: create }
+  #  - { role: layer2_rhevm, tags: [ 'layer2','rhevm' ], mode: create }
+
+- hosts: rhevh
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'rhev' ]
+  roles:
+    - { role: layer2_rhel, tags: [ 'layer2','rhevh', 'rhel' ], mode: create }
+  #  - { role: layer2_rhevh, tags: [ 'layer2','rhevm' ], mode: create }
 
 - hosts: satellite
   remote_user: root
