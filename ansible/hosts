@@ -61,7 +61,7 @@ rhevh2
 [rhel7:children]
 rhosp-all
 satellite
-rhevm
+rhevh
 
 [rhel6:children]
-rhevh
+rhevm
