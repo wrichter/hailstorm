@@ -17,6 +17,7 @@
   notify:
     - reboot server
     - waiting for server to come back
+  when: not (packages is undefined or packages is none or pacakges | trim == '')
 - block:
   - name: enable services
     service: name={{ item }} enabled=yes state=started

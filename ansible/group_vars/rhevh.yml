@@ -1,0 +1,7 @@
+#poolid: 8a85f9843e3d687a013e3ddd46dd07f1
+
+repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-rhev-mgmt-agent-rpms
+
+packages:

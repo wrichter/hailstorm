@@ -39,11 +39,11 @@
       mode: create
       group: rhosp-all
     - role: layer1_vms
-      tags: [ 'layer2','rhev','vm' ]
+      tags: [ 'layer2','rhevh', 'rhev','vm' ]
       mode: create
       group: rhevh
     - role: layer1_vms
-      tags: [ 'layer2','rhevm','vm' ]
+      tags: [ 'layer2','rhevm', 'rhev','vm' ]
       mode: create
       group: rhevm
 
@@ -54,7 +54,7 @@
     - setup:
       tags: [ 'layer2', 'rhev' ]
   roles:
-    - { role: layer2_rhel, tags: [ 'layer2','rhevm', 'rhel' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2','rhev', 'rhevm', 'rhel' ], mode: create }
   #  - { role: layer2_rhevm, tags: [ 'layer2','rhevm' ], mode: create }
 
 - hosts: rhevh
@@ -64,7 +64,7 @@
     - setup:
       tags: [ 'layer2', 'rhev' ]
   roles:
-    - { role: layer2_rhel, tags: [ 'layer2','rhevh', 'rhel' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2','rhev', 'rhevh', 'rhel' ], mode: create }
   #  - { role: layer2_rhevh, tags: [ 'layer2','rhevm' ], mode: create }
 
 - hosts: satellite

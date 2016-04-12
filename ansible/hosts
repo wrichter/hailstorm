@@ -1,13 +1,18 @@
+# lists all other groups
 [all:children]
 layer1
+rhev
 rhosp-all
-ose3-node
 satellite
+ose3-node
 
+# the layer1 group should only contain a single server called layer1
+# whose IP address is specified in the ansible_host property in host_vars/layer1.yml
 [layer1]
 layer1
-rhev
 
+# everything on layer2 - this is important because group_vars/layer2.yml configures
+# the ssh proxy command used to communicate with all layer2 hosts
 [layer2:children]
 ose3-node
 satellite
@@ -23,46 +28,58 @@ ose3-master
 [satellite]
 satellite
 
+# A list of all OpenStack subgroups
 [rhosp-all:children]
 rhosp-director
 rhosp-undercloud
 
+# The single system where osp-director will be installed to
 [rhosp-director]
 rhosp-director
 
+# The groups that make up the osp undercloud (i.e. compute, control and potentially storage)
 [rhosp-undercloud:children]
 rhosp-compute
 rhosp-control
 
+# The group of all osp compute nodes
 [rhosp-compute]
 rhosp-compute1
 rhosp-compute2
 rhosp-compute3
 
+# The group of all osp control nodes
 [rhosp-control]
 rhosp-control1
 rhosp-control2
 rhosp-control3
 
+# a group required to store a common configuration for IPMI emulation between the layer1 host and the osp-director
 [ssh-kvm-powermanagement-emulation]
 rhosp-director
 layer1
 
+# the list of groups that make up RHEV
 [rhev:children]
 rhevm
 rhevh
 
+# the single node that is RHEV-Manager
 [rhevm]
 rhevm
 
+# the nodes that are RHEV-Hypervisor
 [rhevh]
 rhevh1
 rhevh2
 
+# All layer2 nodes that are installed with RHEL7
 [rhel7:children]
 rhosp-all
 satellite
 rhevh
+ose3-node
 
+# All layer2 nodes that are installed with RHEL6
 [rhel6:children]
 rhevm
