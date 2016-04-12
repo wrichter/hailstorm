@@ -11,6 +11,7 @@
         - openshiftv3
         - satellite
         - rhosp
+        - rhev
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
