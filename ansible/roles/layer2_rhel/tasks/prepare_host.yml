@@ -1,10 +1,9 @@
 - name: subscribe RHEL
   redhat_subscription: state=present username={{ rhsm_username }} password={{ rhsm_password }} autosubscribe=false
 - name: check subscriptions
-  shell: subscription-manager list --consumed | grep "Pool ID"
+  shell: subscription-manager list --consumed | grep -q "Pool ID" || true
   register: subscription_list
   changed_when: False
-  ignore_errors: True
 - name: attach to pool
   command: 'subscription-manager attach --pool={{ poolid }}'
   when: subscription_list.stdout is not defined or poolid != subscription_list.stdout | regex_replace('Pool ID:\\s+(\\S*).*', '\\1')

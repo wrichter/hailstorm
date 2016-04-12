@@ -16,6 +16,9 @@
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
   with_items: "{{ groups[group] }}"
   ignore_errors: true
+- name: refresh pool to allow unused images to be deleted
+  command: virsh pool-refresh {{ storage_default.name }}
+  changed_when: false
 - name: remove vm volumes
   command: virsh vol-delete {{ hostvars[item].disk.path }} --pool {{ storage_default.name }}
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
