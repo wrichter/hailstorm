@@ -72,7 +72,7 @@ Ansible does not have a native concept of different actions such as "create the 
 The following roles exist:
 - **common**: not a role in its own sense, rather a place where tasks, handlers or templates which are used in multiple roles can be stored and referenced.
 - **layer1**: configures the layer1 host, network setup and services required by the layer2 VMs such as an export directory for kickstart files, NTP service, etc...
-- **layer1_vms**: creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name.
+- **layer1_vms**: creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name. This also means that all the variables/facts defined for the individual members of the group - i.e. the host that is to be instantiated - is not avaiable in the default scope. Most of the tasks iterate over the group members, so the host name is avialable as *item*. This means that you can access the actual host variables / facts via *hostvars[item].nameofvariable*.
 - **layer2_rhel**: configures the base RHEL installed in the previous step - a great place to put common configuration actions:
   - Subscribes/Unsubscribes the VM
   - Attaches it to a pool
