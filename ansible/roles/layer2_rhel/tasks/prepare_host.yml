@@ -17,6 +17,7 @@
     - reboot server
     - waiting for server to come back
   when: not (packages is undefined or packages is none or packages | trim == '')
+# next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383
 - name: enable services
   service: name={{ item }} enabled=yes state=started
   with_items: "{{ enable_services }}"
