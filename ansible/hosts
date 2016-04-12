@@ -6,6 +6,7 @@ satellite
 
 [layer1]
 layer1
+rhev
 
 [layer2:children]
 ose3-node

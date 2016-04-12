@@ -12,9 +12,11 @@ reboot
 firstboot --enable
 ignoredisk --only-use=vda
 # Keyboard layouts
-keyboard --vckeymap=us --xlayouts='us'
+keyboard 'us'
 # System language
 lang en_US.UTF-8
+# SELinux
+selinux --{{ hostvars[item].selinux_mode }}
 
 # Network information
 #network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
@@ -27,35 +29,32 @@ network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }
 {% endfor %}
 {% endfor %}
 network  --hostname={{ hostvars[item].hostname }}
-repo --name="Server-HighAvailability" --baseurl=file:///run/install/repo/addons/HighAvailability
-repo --name="Server-ResilientStorage" --baseurl=file:///run/install/repo/addons/ResilientStorage
+## repo --name="Server-HighAvailability" --baseurl=file:///run/install/repo/addons/HighAvailability
+## repo --name="Server-ResilientStorage" --baseurl=file:///run/install/repo/addons/ResilientStorage
 # Root password
 #rootpw --iscrypted $6$IbQO5zowD8OhiKtl$3/.k3q.e5F9JuRqRXRkggL2AcOxPirviOoJeRTTIjinjUk4W1oOAnFQkeCjFoYrrgFcW3b6Eik13qcUR4JwUi/
 rootpw "{{ hostvars[item].root_password }}"
 # System services
 services --enabled="chronyd"
 # System timezone
-timezone Europe/Berlin --isUtc --ntpservers=0.rhel.pool.ntp.org,1.rhel.pool.ntp.org,2.rhel.pool.ntp.org,3.rhel.pool.ntp.org
+timezone Europe/Berlin --utc 
 # System bootloader configuration
-bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=vda
-# Partition clearing information
-clearpart --none --initlabel
+bootloader --append=" crashkernel=auto" --location=mbr 
+# Partition clearing informationi
+zerombr
+clearpart --all --initlabel
 # Disk partitioning information
-part /boot --fstype="xfs" --ondisk=vda --size=500
+part /boot --fstype="{{ hostvars[item].fstype }}" --ondisk=vda --size=500
 part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ hostvars[item].disk.partition_table.lvmpv }}
 volgroup rhel --pesize=4096 pv.123
 logvol swap  --fstype="swap" --size={{ hostvars[item].disk.partition_table.swap }} --name=swap --vgname=rhel
-logvol /home  --fstype="xfs" --size={{ hostvars[item].disk.partition_table.home }} --name=home --vgname=rhel
-logvol /  --fstype="xfs" --size={{ hostvars[item].disk.partition_table.root }} --name=root --vgname=rhel
+logvol /home  --fstype="{{ hostvars[item].fstype }}" --size={{ hostvars[item].disk.partition_table.home }} --name=home --vgname=rhel
+logvol /  --fstype="{{ hostvars[item].fstype }}" --size={{ hostvars[item].disk.partition_table.root }} --name=root --vgname=rhel
 
 %packages
 @core
-chrony
+## chrony
 kexec-tools
-
-%end
-
-%addon com_redhat_kdump --enable --reserve-mb='auto'
 
 %end
 
@@ -64,4 +63,8 @@ mkdir /root/.ssh
 cat  << xxEOFxx >> /root/.ssh/authorized_keys
 {{ ssh_pub_key_hailstorm }}
 xxEOFxx
+# RHEL6 bug workaround #1
+sed -i 's/dhcp/static/' /etc/sysconfig/network-scripts/ifcfg-eth1
+# RHEL6 bug workaround #2
+# yum localinstall -y  http://192.168.103.20/pub/selinux-policy-3.7.19-279.el6_7.8.noarch.rpm http://192.168.103.20/pub/selinux-policy-targeted-3.7.19-279.el6_7.8.noarch.rpm
 %end
