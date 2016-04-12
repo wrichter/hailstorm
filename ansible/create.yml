@@ -12,6 +12,7 @@
         - satellite
         - rhosp
         - rhev
+        - rhevm
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
@@ -41,6 +42,10 @@
       tags: [ 'layer2','rhev','vm' ]
       mode: create
       group: rhevh
+    - role: layer1_vms
+      tags: [ 'layer2','rhevm','vm' ]
+      mode: create
+      group: rhevm
 
 - hosts: rhevm
   remote_user: root
