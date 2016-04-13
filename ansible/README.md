@@ -72,7 +72,7 @@ Ansible does not have a native concept of different actions such as "create the 
 The following roles exist:
 - **common**: not a role in its own sense, rather a place where tasks, handlers or templates which are used in multiple roles can be stored and referenced.
 - **layer1**: configures the layer1 host, network setup and services required by the layer2 VMs such as an export directory for kickstart files, NTP service, etc...
-- **layer1_vms**: creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name.
+- **layer1_vms**: creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name. This also means that all the variables/facts defined for the individual members of the group - i.e. the host that is to be instantiated - is not avaiable in the default scope. Most of the tasks iterate over the group members, so the host name is avialable as *item*. This means that you can access the actual host variables / facts via *hostvars[item].nameofvariable*.
 - **layer2_rhel**: configures the base RHEL installed in the previous step - a great place to put common configuration actions:
   - Subscribes/Unsubscribes the VM
   - Attaches it to a pool
@@ -84,3 +84,31 @@ The following roles exist:
 - **layer2_rhosp_overcloud**: deploys Red Hat OpenStack (overcloud) on the nodes prepared by director. This is still work in progress (runs for about 45 mins).
 
 All other roles are not yet usable.
+
+### Network Connectivity
+
+In order to access the virtual machines created on layer2, a tunneling mechanism is used. Ansible connects to the layer1 host and from there tunnels to the virtual machines via a dedicated admin network. See group_vars/layer2.yml to see what this tunneling mechanism actually looks like.
+
+#### Accessing layer2 hosts via browser
+
+- Log into the layer1 host using the following command to establish a SOCKS proxy on localhost port 1080
+  ```
+  $ ssh -i binary/hailstorm -D 1080 root@<NAME_OF_IP_OF_THE_LAYER1_HOST>
+  ```
+- Configure your browser to use a SOCKS proxy on localhost port 1080
+
+#### Accessing layer2 host consoles via VNC
+To debug installation processes, a connection to the VM console might be required. This can be achieved roughly by the follwoing approach:
+- ensure that the VMs host variables contain the following property
+  ```
+  graphics: vnc,listen=0.0.0.0,password=redhat01
+  ```
+- log into your layer1 host and use the following command to determine which port the VNC console actually runs on (you can probably also specify a fixed port number; check the virt-install documentation)
+  ```
+  # virsh dumpxml <vm_name>
+  ```
+- log into the layer1 host again to port-forward a local port to the console (the second port number needs to be changed to the port number from the XML dump).
+  ```
+  $ ssh -i binary/hailstorm -L 5901:localhost:5901 root@<NAME_OF_IP_OF_THE_LAYER1_HOST>
+  ```
+- connect your VNC viewer to localhost:5901

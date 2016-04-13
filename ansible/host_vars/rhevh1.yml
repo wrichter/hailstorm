@@ -25,10 +25,3 @@ root_password: redhat01
 graphics: vnc,listen=0.0.0.0,password=redhat01
 
 ansible_host: 192.168.103.11
-
-poolid: 8a85f9843e3d687a013e3ddd46dd07f1
-
-repos:
-  - rhel-7-server-rpms
-  - rhel-7-server-rhev-mgmt-agent-rpms
-

@@ -1,10 +1,9 @@
 - name: subscribe RHEL
   redhat_subscription: state=present username={{ rhsm_username }} password={{ rhsm_password }} autosubscribe=false
 - name: check subscriptions
-  shell: subscription-manager list --consumed | grep "Pool ID"
+  shell: subscription-manager list --consumed | grep "Pool ID" || true
   register: subscription_list
   changed_when: False
-  ignore_errors: True
 - name: attach to pool
   command: 'subscription-manager attach --pool={{ poolid }}'
   when: subscription_list.stdout is not defined or poolid != subscription_list.stdout | regex_replace('Pool ID:\\s+(\\S*).*', '\\1')
@@ -17,14 +16,14 @@
   notify:
     - reboot server
     - waiting for server to come back
-- block:
-  - name: enable services
-    service: name={{ item }} enabled=yes state=started
-    with_items: "{{ enable_services }}"
-  when: enable_services is defined
-- block:
-  - name: disable services
-    service: name={{item}} enabled=no state=stopped
-    with_items: "{{ disable_services }}"
-  when: disable_services is defined
+  when: not (packages is undefined or packages is none or packages | trim == '')
+# next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383
+- name: enable services
+  service: name={{ item }} enabled=yes state=started
+  with_items: "{{ enable_services }}"
+  when: not (enable_services is undefined or enable_services is none or enable_services | trim == '')
+- name: disable services
+  service: name={{item}} enabled=no state=stopped
+  with_items: "{{ disable_services }}"
+  when: not (disable_services is undefined or disable_services is none or disable_services | trim == '')
 - meta: flush_handlers
