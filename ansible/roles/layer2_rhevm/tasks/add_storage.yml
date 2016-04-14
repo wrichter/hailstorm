@@ -1,0 +1,11 @@
+- name: Verify scripts dir
+  file: path=/root/bin state=directory
+
+- name: copy the api script over
+  template: src=files/add-storage.py dest=/root/bin/add-storage.py mode="0755"
+
+- name: Add and attach the storage domain
+  command: /root/bin/add-storage.py
+
+#- name: Adding second HV
+#  command: /root/bin/new-hv.py rhevh2.example.com 192.168.103.12 255.255.255.0 192.168.103.1

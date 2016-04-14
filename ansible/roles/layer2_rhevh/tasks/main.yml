@@ -1,0 +1,8 @@
+  - firewalld: zone=public port=2223/tcp  permanent=true immediate=true state=enabled
+  - firewalld: zone=public port=5900-6923/tcp   permanent=true immediate=true state=enabled
+  - firewalld: zone=public port=161/udp  permanent=true immediate=true state=enabled
+  - firewalld: zone=public port=5989/tcp   permanent=true immediate=true state=enabled
+  - firewalld: zone=public port=16514/tcp   permanent=true immediate=true state=enabled
+  - firewalld: zone=public port=49152-49216/tcp   permanent=true immediate=true state=enabled
+  - firewalld: zone=public port=54321/tcp   permanent=true immediate=true state=enabled
+# if there is time I will put this in a loop

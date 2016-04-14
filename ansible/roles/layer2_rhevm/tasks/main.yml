@@ -1,0 +1,10 @@
+- block:
+    - include: configure_rhevm.yml
+    - include: add_hypervisors.yml
+  when: mode=="create"
+
+#- block:
+#   - name: unsubscribe VM
+#     redhat_subscription: state=absent
+#     ignore_errors: yes
+# when: mode=="destroy"
