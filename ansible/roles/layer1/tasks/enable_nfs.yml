@@ -5,4 +5,4 @@
 - name: open firewall for nfs-server on internal zone
   firewalld: port=2049/tcp permanent=true state=enabled zone=internal
 - name: open firewall for rpc-bind on internal zone
-  firewalld: service=rpc-bind permanent=true state=enabled zone=internal
+  firewalld: service=rpc-bind permanent=true immediate=true state=enabled zone=internal

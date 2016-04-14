@@ -1,9 +1,12 @@
 #!/usr/bin/python
 #
-# TODO - checks to see if it already exists
 #
 
 import sys
+import time
+import os
+import socket
+import urllib2
 from ovirtsdk.api import API
 from ovirtsdk.xml import params
 
@@ -20,6 +23,15 @@ STORAGE_NAME =  'SD2-NFS'
 EXPORT_NAME =   'SD2-EXPORT'
 CA =            './rhevm-ca.crt'
 
+#lets just check that the certificates are in place
+while not os.path.isfile(CA):
+    print "Missing certificate, attempting to get from the server"
+    CERT = urllib2.urlopen("https://rhevm.example.com/ca.crt")
+    output = open(CA,'wb')
+    output.write(CERT.read())
+    output.close()
+
+
 api = API(url=URL, username=USERNAME, password=PASSWORD, ca_file=CA)
 
 try:
@@ -31,20 +43,10 @@ try:
     sd_params = params.StorageDomain(name=STORAGE_NAME, data_center=dc, host=h, type_="data", storage_format="v3", storage=s)
 
     try:
-        sd = api.storagedomains.add(sd_params)
-        print "Storage Domain '%s' added " % (sd.get_name())
+        for sd in api.storagedomains.list():
+            print sd.name
     except Exception as ex:
-        print "Adding data storage domain to data center failed: %s." % ex
-        sys.exit(1)
-
-    sd_data = api.storagedomains.get(name=STORAGE_NAME)
-
-    try:
-        dc_sd = dc.storagedomains.add(sd_data)
-        print "Attached data storage domain '%s' to data center '%s' (Status: %s)." % (dc_sd.get_name(), dc.get_name, dc_sd.get_status().get_state())
-        #print "attached"
-    except Exception as ex:
-        print "Attaching data storage domain to data center failed: %s." % ex
+        print "Problem listing storage domains %s." % ex
         sys.exit(2)
 
 

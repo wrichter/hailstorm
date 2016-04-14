@@ -12,3 +12,5 @@
 
 - name: configure rhev via answerfile
   command: engine-setup --config-append=/root/answers  creates=/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf
+
+- pause: minutes=2
