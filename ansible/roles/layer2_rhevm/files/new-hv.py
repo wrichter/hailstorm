@@ -78,7 +78,6 @@ PASSWORD=""
 
 if total  == 5:
   # All details are spcified as parameters on the command line
-  print 'Script mode: Three parameters detected - not implememnted yet'
   print
 
   HOST_NAME = sys.argv[1]
@@ -102,13 +101,12 @@ if total  == 5:
   ROOT_PASSWORD = 'redhat01'
 
   summary()
-#  sys.exit()
 
 else:
   # Wrong number of parameters - dispaly usage
   print "%s params found" % total
   usage()
-  sys.exit()
+  sys.exit(1)
 
 #################################################
 
@@ -131,15 +129,6 @@ except Exception as err:
 # -----------------------------------
 
 try:
-## This is where we could add fencing later
-#    pm = params.PowerManagement()
-#    pm.set_type('ipmilan')
-#    pm.set_enabled(True)
-#    pm.set_address(PM_ADDRESS)
-#    pm.set_username('fencinguser')
-#    pm.set_password('8Y#6smB+z63q')
-#    pm.set_kdump_detection(True)
-
     if api.hosts.add(params.Host(name=HOST_NAME,
                      address=HOST_ADDRESS,
                      cluster=api.clusters.get(CLUSTER_NAME),
@@ -150,20 +139,9 @@ try:
             time.sleep(1)
         print "* Host is up"
 
-
-## You can use this to put the host right innto main mode if you prefer
-##
-#    if api.hosts.get(HOST_NAME).deactivate():
-#        print '* Setting Host to maintenance'
-#        #print '* Waiting for host to reach maintenance status'
-#        while api.hosts.get(HOST_NAME).status.state != 'maintenance':
-#            time.sleep(1)
-#        print '* Host is in maintenance mode'
-
-
 except Exception as e:
     print 'Failed to install Host:\n%s' % str(e)
-
+    sys.exit(1)
 
 sys.exit(0)
 # exiting here
