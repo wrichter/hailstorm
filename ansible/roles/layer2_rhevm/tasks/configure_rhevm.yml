@@ -1,0 +1,16 @@
+- name: set static hostname in /etc/hosts
+  lineinfile: dest=/etc/hosts line="{{ nic[0].ip }} {{ hostname }}"
+
+- name: adding rhevh1 to the /etc/hosts
+  lineinfile: dest=/etc/hosts line="192.168.103.11 rhevh1.example.com"
+
+- name: adding rhevh2 to the /etc/hosts
+  lineinfile: dest=/etc/hosts line="192.168.103.12 rhevh2.example.com"
+
+- name: copy the answerfile over
+  template: src=templates/answers.j2 dest=/root/answers
+
+- name: configure rhev via answerfile
+  command: engine-setup --config-append=/root/answers  creates=/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf
+
+- pause: minutes=2

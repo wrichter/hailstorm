@@ -1,0 +1,10 @@
+- block:
+    - include: configure_rhevm.yml
+    - include: add_hypervisors.yml
+    - include: add_storage.yml
+  when: mode=="create"
+
+#- block:
+#   - name: Empty NFS share - using a delegate line
+#   TODO
+# when: mode=="destroy"
