@@ -1,7 +1,7 @@
 - block:
     - include: configure_rhevm.yml
-    - include: add_hypervisors.yml
-    - include: add_storage.yml
+#    - include: add_hypervisors.yml
+#    - include: add_storage2.yml
   when: mode=="create"
 
 #- block:

@@ -5,7 +5,7 @@
   template: src=files/check-storage.py dest=/root/bin/check-storage.py mode="0755"
 
 - name: copy the add-storage script over
-  template: src=files/add-storage.py dest=/root/bin/add-storage.py mode="0755"
+  template: src=add-storage.py.j2 dest=/root/bin/add-storage.py mode="0755"
 
 - name: List storage domains
   shell: /root/bin/check-storage.py

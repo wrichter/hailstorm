@@ -1,0 +1,8 @@
+
+- block:
+    - include: create_vms.yml
+  when: mode == "create"
+
+- block:
+    - include: destroy_vms.yml
+  when: mode == "destroy"

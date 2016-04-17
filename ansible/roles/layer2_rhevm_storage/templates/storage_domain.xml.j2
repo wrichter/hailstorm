@@ -1,0 +1,1 @@
+<storage_domain><name>data1</name><type>data</type><storage><type>nfs</type><address>{{ hostvars[groups['layer1'][0]].network_admin.host_prefix | ipaddr('address') }}</address><path>{{ storage_domain_folder }}</path></storage><host><name>{{ rhevh_up.stdout }}</name></host></storage_domain>

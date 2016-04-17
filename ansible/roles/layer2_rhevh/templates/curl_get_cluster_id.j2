@@ -1,0 +1,1 @@
+curl -u "admin@internal:{{ hostvars['rhevm'].root_password }}" -H "Content-type: application/xml" -k -s  "https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters"  | xmllint --xpath "/clusters/cluster/@id" - | awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'

@@ -1,0 +1,9 @@
+# prepare  exports
+- name: create storage domain directory
+  file: state=directory path={{ storage_domain_folder }} mode=0755 owner=36 group=36
+- name: create /etc/exports entry
+  lineinfile: dest=/etc/exports line="{{ storage_domain_folder }} {{ network_admin.host_prefix }}(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36)"
+  register: etc_exports
+- name: export file systems
+  command: exportfs -a
+  when: etc_exports|changed

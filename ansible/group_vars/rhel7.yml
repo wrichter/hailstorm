@@ -3,4 +3,5 @@ os_type: linux
 os_variant: rhel7
 fstype: xfs
 selinux_mode: enforcing
-poolid: 8a85f9814f220b7c014f221083430791 
+ntp_client: chrony
+poolid: 8a85f9814f220b7c014f221083430791
