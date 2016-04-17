@@ -1,18 +1,13 @@
 ---
-- hosts: rhevh
+- hosts: rhev
   gather_facts: false
   remote_user: root
   roles:
     - role: layer2_rhel
       tags: [ 'layer2','rhev', 'rhel' ]
       mode: destroy
-
-- hosts: rhevm
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layer2_rhel
-      tags: [ 'layer2','rhev', 'rhel' ]
+    - role: layer2_vms
+      tags: [ 'layer2','rhev', 'vms' ]
       mode: destroy
 
 - hosts: satellite
@@ -21,6 +16,9 @@
   roles:
     - role: layer2_rhel
       tags: [ 'layer2','satellite', 'rhel'  ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','satellite', 'vms' ]
       mode: destroy
 
 - hosts: rhosp-director
@@ -36,24 +34,28 @@
     - role: layer2_rhel
       tags: [ 'layer2','rhosp', 'rhel'  ]
       mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','rhosp', 'vms' ]
+      mode: destroy
 
 - hosts: layer1
   remote_user: root
   roles:
-    - role: layer1_vms
-      tags: [ 'rhev', 'layer2', 'vm' ]
-      mode: destroy
-      group: rhev
+    # - role: layer1_vms
+    #   tags: [ 'rhev', 'layer2', 'vm' ]
+    #   mode: destroy
+    #   group: rhev
     - role: layer1_rhev
       tags: [ 'rhev' ]
       mode: destroy
-    - role: layer1_vms
-      tags: [ 'satellite', 'layer2', 'vm' ]
-      mode: destroy
-      group: satellite
-    - role: layer1_vms
-      tags: [ 'rhosp', 'layer2', 'vm' ]
-      mode: destroy
+    # - role: layer1_vms
+    #   tags: [ 'satellite', 'layer2', 'vm' ]
+    #   mode: destroy
+    #   group: satellite
+    # - role: layer1_vms
+    #   tags: [ 'rhosp', 'layer2', 'vm' ]
+    #   mode: destroy
+    #   group: rhosp-all
     - role: layer1_rhosp
       tags: [ 'rhosp' ]
       mode: destroy
