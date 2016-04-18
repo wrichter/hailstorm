@@ -5,3 +5,6 @@ rhev_storage_domains:
   - name: iso1
     type: iso
     path: /mnt/ocz/rhev-iso1
+  - name: export1
+    type: export
+    path: /mnt/ocz/rhev-export1

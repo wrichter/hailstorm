@@ -47,7 +47,6 @@
   changed_when: false
   register: dc_storage_domain
 
-
 #- debug: var=dc_storage_domain
 
 - name: attach storage domain to data center
