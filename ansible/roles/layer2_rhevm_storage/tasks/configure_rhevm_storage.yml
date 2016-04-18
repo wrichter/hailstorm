@@ -4,11 +4,11 @@
          "https://{{ nic[0].ip }}/api/storagedomains" | \
          xmllint --xpath "/storage_domains/storage_domain[name='{{ item.name }}']" - || true
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-  changed_when: false
   with_items: "{{ rhev_storage_domains }}"
   register: storage_domain
+  changed_when: false
 
-- debug: var=storage_domain
+#- debug: var=storage_domain
 
 - name: find rhevh host which is up
   shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
@@ -36,18 +36,19 @@
   failed_when: dc_storage_domain_link.stdout == ''
   changed_when: false
 
-- debug: var=dc_storage_domain_link
+#- debug: var=dc_storage_domain_link
 
 - name: check if storage domain is already attached to data_center
   shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
          "https://{{ nic[0].ip }}{{ dc_storage_domain_link.stdout }}" | \
          xmllint --xpath "//storage_domain[name='{{ item.item.name }}']" - || true
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-  register: dc_storage_domain
-  changed_when: false
   with_items: "{{ storage_domain.results }}"
+  changed_when: false
+  register: dc_storage_domain
 
-- debug: var=dc_storage_domain
+
+#- debug: var=dc_storage_domain
 
 - name: attach storage domain to data center
   shell: curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
@@ -57,4 +58,4 @@
   with_items: "{{ dc_storage_domain.results }}"
   register: res
 
-- debug: var=res
+#- debug: var=res
