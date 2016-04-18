@@ -1,1 +1,7 @@
-storage_domain_folder: /mnt/ocz/rhev-sd1
+rhev_storage_domains:
+  - name: data1
+    type: data
+    path: /mnt/ocz/rhev-sd1
+  - name: iso1
+    type: iso
+    path: /mnt/ocz/rhev-iso1
