@@ -1,0 +1,37 @@
+- name: check if template is already imported
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}/api/templates" | \
+         xmllint --xpath "//template[name='RedHat_CFME-5.5.3.4']" - || true
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  changed_when: false
+  register: template
+
+- block:
+    - name: get export domain UUID
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ nic[0].ip }}/api/storagedomains" | \
+             xmllint --xpath "/storage_domains/storage_domain[name='export1']/@id" - | \
+             awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
+      delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+      register: export_domain_uuid
+      failed_when: export_domain_uuid.stdout == ''
+      changed_when: false
+
+    - unarchive: copy=no src=/home/wrichter/binary/cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova dest="/mnt/ocz/rhev-export1/{{ export_domain_uuid.stdout }}"  owner=36 group=36
+      delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+
+    - name: get template import link
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ nic[0].ip }}/api/storagedomains/{{ export_domain_uuid.stdout }}/templates" | \
+             xmllint --xpath "//template[name='RedHat_CFME-5.5.3.4']/actions/link[@rel='import']/@href" - | \
+             awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+      delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+      register: template_import_link
+      failed_when: template_import_link.stdout == ''
+      changed_when: false
+
+    - name: import template
+      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "{{ lookup('template', 'import_template.xml.j2') }}" \
+             "https://{{ nic[0].ip }}{{ template_import_link.stdout }}"
+  when: template.stdout == ''

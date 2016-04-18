@@ -1,0 +1,3 @@
+- block:
+    - include: import_cfme_template.yml
+  when: mode == 'create'

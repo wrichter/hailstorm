@@ -12,6 +12,7 @@
         - satellite
         - rhosp
         - rhev
+        - cf
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
@@ -111,3 +112,11 @@
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud'], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 #    - { role: layer2_rhosp_gather_node_uuids, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
+
+
+#### CLOUDFORMS ####
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
