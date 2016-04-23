@@ -3,6 +3,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','rhev', 'rhel' ]
+      mode: start
     - role: layer2_rhel
       tags: [ 'layer2','rhev', 'rhel' ]
       mode: destroy
@@ -14,6 +17,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','satellite', 'rhel' ]
+      mode: start
     - role: layer2_rhel
       tags: [ 'layer2','satellite', 'rhel'  ]
       mode: destroy
@@ -25,6 +31,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','rhosp', 'rhel' ]
+      mode: start
     - role: layer2_rhosp_overcloud
       tags: [ 'layer2', 'rhosp', 'overcloud' ]
       mode: destroy
@@ -34,6 +43,11 @@
     - role: layer2_rhel
       tags: [ 'layer2','rhosp', 'rhel'  ]
       mode: destroy
+
+- hosts: rhosp-all
+  gather_facts: false
+  remote_user: root
+  roles:
     - role: layer2_vms
       tags: [ 'layer2','rhosp', 'vms' ]
       mode: destroy

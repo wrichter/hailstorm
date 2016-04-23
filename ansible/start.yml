@@ -1,0 +1,27 @@
+---
+
+
+#### RHEV ####
+
+- hosts: rhev
+  strategy: free
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'rhev', 'vm' ], mode: start }
+
+#### SATELLITE ####
+
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: start }
+
+#### OPENSTACK ####
+
+- hosts: rhosp-director
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'rhosp', 'vm' ], mode: start }

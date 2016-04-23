@@ -1,0 +1,8 @@
+mem: "{{ layer2_rhosp_compute_mem }}"
+vcpu: "{{ layer2_rhosp_compute_cpu }}"
+disk:
+  path: "{{ name }}.qcow2"
+  size: 60
+  format: qcow2
+skip_install: true
+#graphics: vnc,listen=0.0.0.0,password=redhat01

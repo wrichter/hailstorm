@@ -1,0 +1,32 @@
+rhel6_iso_image: rhel-server-6.7-x86_64-dvd.iso
+rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+rhosp_images:
+  - deploy-ramdisk-ironic-7.3.1-39.tar
+  - discovery-ramdisk-7.3.1-59.tar
+  - overcloud-full-7.3.1-59.tar
+
+rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
+rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
+satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
+
+rhosp_repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-optional-rpms
+  - rhel-7-server-extras-rpms
+  - rhel-7-server-openstack-7.0-rpms
+  - rhel-7-server-openstack-7.0-director-rpms
+
+satellite_repos:
+  - rhel-7-server-rpms
+  - rhel-server-rhscl-7-rpms
+  - rhel-7-server-satellite-6.1-rpms
+
+rhevm_repos:
+  - rhel-6-server-rpms
+  - rhel-6-server-supplementary-rpms
+  - rhel-6-server-rhevm-3.6-rpms
+  - jb-eap-6-for-rhel-6-server-rpms
+
+rhevh_repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-rhev-mgmt-agent-rpms

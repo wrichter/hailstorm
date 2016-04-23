@@ -1,10 +1,10 @@
 rhev_storage_domains:
   - name: data1
     type: data
-    path: /mnt/ocz/rhev-sd1
+    path: "{{ layer1_rhev_data_domain_path }}"
   - name: iso1
     type: iso
-    path: /mnt/ocz/rhev-iso1
+    path: "{{ layer1_rhev_iso_domain_path }}"
   - name: export1
     type: export
-    path: /mnt/ocz/rhev-export1
+    path: "{{ layer1_rhev_export_domain_path }}"

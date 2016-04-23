@@ -1,0 +1,11 @@
+- block:
+    - name: get list of vms
+      virt: command=list_vms
+      register: virt_vms
+    - name: ensure that VM is running
+      virt: name="{{ name }}" state=running uri=qemu:///system
+      when: "{{ name in virt_vms.list_vms }}"
+    - name: wait for VM to finish (re)booting
+      wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
+      when: "{{ name in virt_vms.list_vms }}"
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"

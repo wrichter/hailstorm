@@ -19,11 +19,11 @@
       #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
       ignore_errors: true
     - name: refresh pool to allow unused images to be deleted
-      command: virsh pool-refresh {{ hostvars[groups['layer1'][0]].storage_default.name }}
+      command: virsh pool-refresh {{ hostvars[groups['layer1'][0]].layer1_qcow_storage.name }}
       changed_when: false
       #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
     - name: remove vm volumes
-      command: virsh vol-delete {{ disk.path }} --pool {{ hostvars[groups['layer1'][0]].storage_default.name }}
+      command: virsh vol-delete {{ disk.path }} --pool {{ hostvars[groups['layer1'][0]].layer1_qcow_storage.name }}
       when: "{{ name in virt_vms.list_vms }}"
       #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
       ignore_errors: true

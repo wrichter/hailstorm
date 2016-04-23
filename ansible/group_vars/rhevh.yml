@@ -1,6 +1,16 @@
-repos:
-  - rhel-7-server-rpms
-  - rhel-7-server-rhev-mgmt-agent-rpms
+mem: "{{ layer2_rhev_hypervisor_mem }}"
+vcpu: "{{ layer2_rhev_hypervisor_cpu }}"
+disk:
+  path: "{{ name }}.qcow2"
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 2048
+    home: 2048
+    root: 10000
+
+repos: "{{ rhevh_repos }}"
 
 packages:
 ntp_client: ntpd

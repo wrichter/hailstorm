@@ -1,17 +1,9 @@
 - block:
     - include: prepare_host.yml
-      tags: ['undercloud']
     - include: create_stack_user.yml
-      tags: ['undercloud']
     - include: create_undercloud.yml
-      tags: ['undercloud']
     - include: import_images_to_undercloud_glance.yml
-      tags: ['undercloud']
-    - include: register_overcloud_nodes.yml
-      tags: ['overcloud']
   when: mode=="create"
 
-- block:
-    - include: unregister_overcloud_nodes.yml
-      tags: ['overcloud']
-  when: mode=="destroy"
+# - block:
+#   when: mode=="destroy"

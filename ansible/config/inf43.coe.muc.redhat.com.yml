@@ -1,0 +1,27 @@
+layer1_ansible_host: inf43.coe.muc.redhat.com
+
+# if this attribute is present, the binaries (except for the SSH keys)
+# will be copied from the layer1 host instead of the control host
+# you need to ensure they are there before running the playbook
+layer1_binary_dir: /home/wrichter/binary
+
+layer1_qcow_storage:
+  name: 'ocz'
+  path: /mnt/ocz/images
+
+layer1_rhev_data_domain_path: /mnt/ocz/rhev-sd1
+layer1_rhev_iso_domain_path: /mnt/ocz/rhev-iso1
+layer1_rhev_export_domain_path: /mnt/ocz/rhev-export1
+
+layer1_kickstart_folder: /srv/kickstart
+
+layer2_rhev_hypervisor_mem: 8192
+layer2_rhev_hypervisor_cpu: 4
+
+layer2_rhosp_director_mem: 8192
+layer2_rhosp_director_cpu: 2
+layer2_rhosp_compute_mem: 8192
+layer2_rhosp_compute_cpu: 4
+
+layer2_satellite_mem: 8192
+layer2_satellite_cpu: 4

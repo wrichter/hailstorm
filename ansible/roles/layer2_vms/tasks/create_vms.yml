@@ -51,7 +51,7 @@
 # ALTERNATIVE APPROACH FOR VMs NOT TO BE INSTALLED
 
 #- name: create VM disk image
-#  command: qemu-img create -f qcow2 {{ storage_default.path }}/{{ disk.path }} {{ disk.size }}G
+#  command: qemu-img create -f qcow2 {{ layer1_qcow_storage.path }}/{{ disk.path }} {{ disk.size }}G
 #  when: "{{ name not in virt_vms.list_vms and skip_install is defined and skip_install == true }}"
 #  with_items: groups[group]
 #- name: create volume description
@@ -59,7 +59,7 @@
 #  when: "{{ name not in virt_vms.list_vms and skip_install is defined and skip_install == true }}"
 #  with_items: groups[group]
 #- name: create volume
-#  command: virsh vol-create {{ storage_default.name }} /tmp/{{ disk.path }}.xml --prealloc-metadata
+#  command: virsh vol-create {{ layer1_qcow_storage.name }} /tmp/{{ disk.path }}.xml --prealloc-metadata
 #  when: "{{ name not in virt_vms.list_vms and skip_install is defined and skip_install == true }}"
 #  with_items: groups[group]
 #- name: create VM
@@ -72,6 +72,6 @@
   when: "{{ name not in virt_vms.list_vms and skip_install is defined and skip_install == true }}"
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
 - name: create VM without installation
-  virt: command=define name={{ hostvars[item.item].name }} uri=qemu:///system xml={{ item.stdout }}
-  when: item.stdout is defined
+  virt: command=define name={{ name }} uri=qemu:///system xml={{ domain_xml.stdout }}
+  when: domain_xml.stdout is defined
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"

@@ -1,7 +1,7 @@
 ---
 name: rhosp-director
-mem: 8192
-vcpu: 2
+mem: "{{ layer2_rhosp_director_mem }}"
+vcpu: "{{ layer2_rhosp_director_cpu }}"
 disk:
   path: rhosp-director.qcow2
   size: 30
@@ -28,22 +28,14 @@ hostname: rhosp-director.example.com
 root_password: redhat01
 ansible_host: 192.168.103.30
 
-#poolid: 8a85f9814f220b7c014f221083430791
-repos:
-  - rhel-7-server-rpms
-  - rhel-7-server-optional-rpms
-  - rhel-7-server-extras-rpms
-  - rhel-7-server-openstack-7.0-rpms
-  - rhel-7-server-openstack-7.0-director-rpms
+repos: "{{ rhosp_repos }}"
+
 packages: python-rdomanager-oscplugin
 disable_services:
   - NetworkManager
 
 image_path: /home/stack/images
 tripleo_template_path: /home/stack/my_templates
-deploy_ramdisk_image: deploy-ramdisk-ironic-7.3.1-39.tar
-discovery_ramdisk_image: discovery-ramdisk-7.3.1-59.tar
-overcloud_image: overcloud-full-7.3.1-59.tar
 
 ironic_rpc_timeout: 600
 nova_rpc_timeout: 600

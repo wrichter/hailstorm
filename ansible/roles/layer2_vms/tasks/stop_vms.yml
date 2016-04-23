@@ -1,0 +1,8 @@
+- block:
+    - name: get list of vms
+      virt: command=list_vms
+      register: virt_vms
+    - name: ensure that VM is stopped
+      virt: name="{{ name }}" state=shutdown uri=qemu:///system
+      when: "{{ name in virt_vms.list_vms }}"
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"

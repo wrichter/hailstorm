@@ -1,7 +1,7 @@
-rhel_iso_img: rhel-server-6.7-x86_64-dvd.iso
+rhel_iso_img: "{{ rhel6_iso_image }}"
 os_type: linux
 os_variant: rhel6
 fstype: ext4
 selinux_mode: permissive
 ntp_client: ntpd
-poolid: 8a85f9814f220b7c014f221083430791
+poolid: "{{ rhel6_subscription_poolid }}"
