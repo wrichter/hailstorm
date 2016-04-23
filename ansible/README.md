@@ -9,20 +9,13 @@
     - Discovery ramdisk
   - [RHEL 7 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software)
 1. Download the manifest for your Organization for the Satellite and copy the manifest-zip file to the local ansible/binary directory and rename it to manifest.zip
-1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside):
+1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside). If you create new keys, ensure they are also added to the layer1's host root user as authorized key:
   - $ ssh-keygen -t rsa -f binary/undercloud
   - $ ssh-keygen -t rsa -f binary/hailstorm
-1. Adapt the host_vars/layer1.yml settings
-  - rhel_iso_img: to the name of the RHEL 7 binary DVD ISO image
+1. If necessary, copy & adapt the hardware-driven configuration from the sample config/inf43.coe.muc.redhat.com.yml, especially
   - ansible_host: to the ip address or DNS name of your layer1 host (which is prepared with a minimal RHEL install).  
   - If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see [ansible documentation](http://docs.ansible.com/ansible/intro_inventory.html))
-1. Adapt the host_vars/rhosp-director.yml settings:
-  - deploy_ramdisk_image
-  - discovery_ramdisk_image
-  - overcloud_image
-1. Adapt the host_vars/satellite.yml settings
-  - ntpserver
-  - poolid for the Satellite repository
+1. If necessary, copy & adapt the software-driven configuration from the sample config/hailstorm_config.yml
 
 ## Running the playbook
 Run all commands on your laptop from the ansible directory. Since the server might reboot when the playbook executes, running the playbook on the server is discouraged.
@@ -30,20 +23,20 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 ### Setting up the environment
 Everything:
 ```
-$ ansible-playbook -i hosts create.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml
 ```
 Only layer1 and OpenStack (see create.yml source code for available tags):
 ```
-$ ansible-playbook -i hosts create.yml --tags layer1,rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml --tags layer1,rhosp
 ```
 ### Tearing down the environment
 Everything:
 ```
-$ ansible-playbook -i hosts destroy.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml
 ```
 Only OpenStack:
 ```
-$ ansible-playbook -i hosts destroy.yml --tags rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml --tags rhosp
 ```
 
 ## Understanding the playbooks
