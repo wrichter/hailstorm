@@ -9,7 +9,9 @@
     - name: configure boot
       shell: . ~/stackrc && openstack baremetal configure boot
     - name: delete ironic flavors
-      shell: . ~/stackrc && openstack flavor delete {{ item }}
+      #https://bugzilla.redhat.com/show_bug.cgi?id=1317312
+      #shell: . ~/stackrc && openstack flavor delete {{ item }}
+      shell: . ~/stackrc && nova flavor-delete {{ item }}
       ignore_errors: True
       with_items:
         - compute
