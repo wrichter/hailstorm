@@ -1,7 +1,7 @@
 - name: check if template is already imported
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ nic[0].ip }}/api/templates" | \
-         xmllint --xpath "//template[name='RedHat_CFME-5.5.3.4']" - || true
+         xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]" - || true
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
   changed_when: false
   register: template
@@ -17,13 +17,19 @@
       failed_when: export_domain_uuid.stdout == ''
       changed_when: false
 
-    - unarchive: copy=no src=/home/wrichter/binary/cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova dest="/mnt/ocz/rhev-export1/{{ export_domain_uuid.stdout }}"  owner=36 group=36
+    - name: unpack the virtual appliance directly into the RHEV export domain (from layer1 binary dir)
+      unarchive: copy=no src={{ hostvars[groups['layer1'][0]].layer1_binary_dir }}/{{ cloudforms_ova_appliance }} dest="{{ layer1_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
       delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+      when: (hostvars[groups['layer1'][0]].layer1_binary_dir is defined)
+    - name: unpack the virtual appliance directly into the RHEV export domain (from ansible playbook host)
+      unarchive: copy=no src=../binary/{{ cloudforms_ova_appliance }} dest="{{ layer1_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
+      delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+      when: (hostvars[groups['layer1'][0]].layer1_binary_dir is not defined)
 
     - name: get template import link
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              "https://{{ nic[0].ip }}/api/storagedomains/{{ export_domain_uuid.stdout }}/templates" | \
-             xmllint --xpath "//template[name='RedHat_CFME-5.5.3.4']/actions/link[@rel='import']/@href" - | \
+             xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/actions/link[@rel='import']/@href" - | \
              awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
       delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
       register: template_import_link
