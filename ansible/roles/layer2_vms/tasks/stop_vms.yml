@@ -1,8 +1,17 @@
 - block:
-    - name: get list of vms
-      virt: command=list_vms
+    - name: find running VM
+      shell: virsh list --name | grep "{{ name }}"
       register: virt_vms
-    - name: ensure that VM is stopped
+    - name: shut down VM (gracefully)
       virt: name="{{ name }}" state=shutdown uri=qemu:///system
-      when: "{{ name in virt_vms.list_vms }}"
+      when: virt_vms.stdout == "{{ name }}"
+    - name: wait for VM to stop
+      shell: virsh list --name | grep "{{ name }}"
+      register: virt_vms
+      until: virt_vms.stdout == ""
+      changed_when: false
+      retries: 30
+      delay: 10
+    - name: force VM shutdown
+      virsh: command=destroy name="{{ name }}"
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"

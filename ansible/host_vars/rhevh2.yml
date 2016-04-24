@@ -11,6 +11,8 @@ nic:
     network: admin
     default_route: false
 ksdevice: eth1
-hostname: rhevh2.example.com
-root_password: redhat01
+#hostname: rhevh2.example.com
+#hostname is now set in group_vars/all.yml
+#root_password is now set in config/hailstorm_config.yml
+#root_password: redhat01
 ansible_host: 192.168.103.12

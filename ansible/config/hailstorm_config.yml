@@ -1,3 +1,8 @@
+# BASIC CONFIG
+hailstorm_dns_domain: example.com
+root_password: redhat01
+
+# BINARY FILES
 rhel6_iso_image: rhel-server-6.7-x86_64-dvd.iso
 rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 # rhosp_images:
@@ -7,11 +12,14 @@ rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 rhosp_images:
   - ironic-python-agent-8.0-20160415.1.tar
   - overcloud-full-8.0-20160415.1.tar
+satellite_manifestfile: manifest.zip
 
+# RED HAT SUBSCRIPTION POOLS
 rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
 rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
 satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
 
+# REPOSITORIES
 # rhosp_repos:
 #   - rhel-7-server-rpms
 #   - rhel-7-server-optional-rpms
@@ -24,18 +32,15 @@ rhosp_repos:
   - rhel-7-server-extras-rpms
   - rhel-7-server-openstack-8-rpms
   - rhel-7-server-openstack-8-director-rpms
-
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
   - rhel-7-server-satellite-6.1-rpms
-
 rhevm_repos:
   - rhel-6-server-rpms
   - rhel-6-server-supplementary-rpms
   - rhel-6-server-rhevm-3.6-rpms
   - jb-eap-6-for-rhel-6-server-rpms
-
 rhevh_repos:
   - rhel-7-server-rpms
   - rhel-7-server-rhev-mgmt-agent-rpms

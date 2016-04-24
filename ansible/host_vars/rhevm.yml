@@ -20,8 +20,10 @@ nic:
     dev: eth1
     network: admin
     default_route: false
-hostname: rhevm.example.com
-root_password: redhat01
+#hostname: rhevm.example.com
+#hostname is now set in group_vars/all.yml
+#root_password is now set in config/hailstorm_config.yml
+#root_password: redhat01
 ansible_host: 192.168.103.10
 
 #poolid: 8a85f9843e3d687a013e3ddd46dd07f1

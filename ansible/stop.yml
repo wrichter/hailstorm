@@ -20,7 +20,7 @@
 
 #### OPENSTACK ####
 
-- hosts: rhosp-director
+- hosts: rhosp-all
   remote_user: root
   gather_facts: false
   roles:

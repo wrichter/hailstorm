@@ -6,7 +6,8 @@
     # install packages needed for Sat6:
     - include: sat6-packages.yml
     # install Sat6:
-    - command: 'katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} '
+    - name: run katello-installer
+      command: 'katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} '
     # create hammer-config-file
     - name: create dir /root/.hammer
       file: path=/root/.hammer
@@ -21,7 +22,7 @@
           group=root
           mode=0600
     - name: copy-import-manifest
-      copy:  src=binary/{{ manifestfile }}
+      copy:  src=binary/{{ satellite_manifestfile }}
               dest=/root
               owner=root
               group=root
