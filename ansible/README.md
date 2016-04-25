@@ -9,20 +9,13 @@
     - Discovery ramdisk
   - [RHEL 7 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software)
 1. Download the manifest for your Organization for the Satellite and copy the manifest-zip file to the local ansible/binary directory and rename it to manifest.zip
-1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside):
+1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside). If you create new keys, ensure they are also added to the layer1's host root user as authorized key:
   - $ ssh-keygen -t rsa -f binary/undercloud
   - $ ssh-keygen -t rsa -f binary/hailstorm
-1. Adapt the host_vars/layer1.yml settings
-  - rhel_iso_img: to the name of the RHEL 7 binary DVD ISO image
+1. If necessary, copy & adapt the hardware-driven configuration from the sample config/inf43.coe.muc.redhat.com.yml, especially
   - ansible_host: to the ip address or DNS name of your layer1 host (which is prepared with a minimal RHEL install).  
   - If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see [ansible documentation](http://docs.ansible.com/ansible/intro_inventory.html))
-1. Adapt the host_vars/rhosp-director.yml settings:
-  - deploy_ramdisk_image
-  - discovery_ramdisk_image
-  - overcloud_image
-1. Adapt the host_vars/satellite.yml settings
-  - ntpserver
-  - poolid for the Satellite repository
+1. If necessary, copy & adapt the software-driven configuration from the sample config/hailstorm_config.yml
 
 ## Running the playbook
 Run all commands on your laptop from the ansible directory. Since the server might reboot when the playbook executes, running the playbook on the server is discouraged.
@@ -30,20 +23,20 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 ### Setting up the environment
 Everything:
 ```
-$ ansible-playbook -i hosts create.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml
 ```
 Only layer1 and OpenStack (see create.yml source code for available tags):
 ```
-$ ansible-playbook -i hosts create.yml --tags layer1,rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml --tags layer1,rhosp
 ```
 ### Tearing down the environment
 Everything:
 ```
-$ ansible-playbook -i hosts destroy.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml
 ```
 Only OpenStack:
 ```
-$ ansible-playbook -i hosts destroy.yml --tags rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml --tags rhosp
 ```
 
 ## Understanding the playbooks
@@ -70,18 +63,34 @@ Roles are an Ansible concept which allows related tasks, templates, etc... to be
 Ansible does not have a native concept of different actions such as "create the environment" or "tear down the environment" or "ensure that everything is reset after a demo" - all it does is run the tasks in the playbook / roles. This is why the roles' tasks/main.yml file is typically written to expect a variable named "mode" to be set to a specific verb such as "create" or "destroy". It then uses this variable to decide which actions to run, which are usually included as separate yml files.
 
 The following roles exist:
+
+#### Generic
 - **common**: not a role in its own sense, rather a place where tasks, handlers or templates which are used in multiple roles can be stored and referenced.
 - **layer1**: configures the layer1 host, network setup and services required by the layer2 VMs such as an export directory for kickstart files, NTP service, etc...
-- **layer1_vms**: creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name. This also means that all the variables/facts defined for the individual members of the group - i.e. the host that is to be instantiated - is not avaiable in the default scope. Most of the tasks iterate over the group members, so the host name is avialable as *item*. This means that you can access the actual host variables / facts via *hostvars[item].nameofvariable*.
+- **layer1_vms**: DEPRECATED - replaced by layer2_vms. Creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since the role is applied to the layer1 host, the name of the group is passed via variable name. This also means that all the variables/facts defined for the individual members of the group - i.e. the host that is to be instantiated - is not avaiable in the default scope. Most of the tasks iterate over the group members, so the host name is avialable as *item*. This means that you can access the actual host variables / facts via *hostvars[item].nameofvariable*.
+- **layer2_vms**: Creates the virtual machines for an inventory group and installs a base RHEL via kickstart. Since it is applied to the ansible group itself, multiple VMs can be installed in parallel.
 - **layer2_rhel**: configures the base RHEL installed in the previous step - a great place to put common configuration actions:
   - Subscribes/Unsubscribes the VM
   - Attaches it to a pool
   - Performs an upgrade to the latest package versions
   - Installs additional packages
   - Enables or disables services
-- **layer2_satellite**: configures Red Hat Satellite (runs katello installer, creates content views, activation keys, etc...)
-- **layer2_rhosp_director**: configures Red Hat OpenStack Director (undercloud) and prepares "baremetal" nodes for installation of the RHOSP overcloud (runs for about 45 mins)
+
+#### Satellite  
+- **layer2_satellite**: installs & configures Red Hat Satellite (runs katello installer, creates content views, activation keys, etc...)
+
+
+#### OpenStack
+- **layer1_rhosp**: configures the layer1 host to allow IPMI emulation
+- **layer2_rhosp_director**: installs & configures Red Hat OpenStack Director (undercloud) and prepares "baremetal" nodes for installation of the RHOSP overcloud (runs for about 45 mins)
 - **layer2_rhosp_overcloud**: deploys Red Hat OpenStack (overcloud) on the nodes prepared by director. This is still work in progress (runs for about 45 mins).
+
+
+#### RHEV
+- **layer1_rhev**: configures the layer1 host to provide an NFS share as storage domain
+- **layer2_rhevm_engine**: installs & configures RHEV-Manager
+- **layer2_rhevh**: registers the RHEL Hypervisor nodes in RHEV-Manager. Currently, the nodes typically fail on the first attempt and need to be reinstalled via the RHEV-Manager Web UI. Subsequent invocations of the playbook should --skip-tags layer1,vms,rhel,rhevh to ensure that the RHEVM installation tasks are not undone by previous ansible steps.
+- **layer2_rhevm_storage**: configures the storage domain in RHEV-Manager via a RHEL-H host
 
 All other roles are not yet usable.
 

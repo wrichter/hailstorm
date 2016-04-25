@@ -1,0 +1,6 @@
+- block:
+    - include: prepare_rhosp_settings.yml
+  when: mode=="create"
+
+#- block:
+#  when: mode=="destroy"

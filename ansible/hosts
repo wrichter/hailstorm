@@ -55,7 +55,7 @@ rhosp-control2
 rhosp-control3
 
 # a group required to store a common configuration for IPMI emulation between the layer1 host and the osp-director
-[ssh-kvm-powermanagement-emulation]
+[layer1-rhosp]
 rhosp-director
 layer1
 
@@ -72,6 +72,11 @@ rhevm
 [rhevh]
 rhevh1
 rhevh2
+
+# all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
+[layer1-rhev:children]
+rhev
+layer1
 
 # All layer2 nodes that are installed with RHEL7
 [rhel7:children]

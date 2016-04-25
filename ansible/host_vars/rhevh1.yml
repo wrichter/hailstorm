@@ -1,16 +1,6 @@
 ---
 name: rhevh1
-mem: 8192
-vcpu: 4
-disk:
-  path: rhevh1.qcow2
-  size: 30
-  format: qcow2
-  partition_table:
-    lvmpv: 29500
-    swap: 2048
-    home: 2048
-    root: 10000
+
 nic:
   - ip: 192.168.100.11
     dev: eth0
@@ -20,8 +10,11 @@ nic:
     dev: eth1
     network: admin
     default_route: false
-hostname: rhevh1.example.com
-root_password: redhat01
-graphics: vnc,listen=0.0.0.0,password=redhat01
+ksdevice: eth1
+#hostname is now set in group_vars/all.yml
+#hostname: rhevh1.example.com
+#root_password is now set in config/hailstorm_config.yml
+#root_password: redhat01
+#graphics: vnc,listen=0.0.0.0,password=redhat01
 
 ansible_host: 192.168.103.11

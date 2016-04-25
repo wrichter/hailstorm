@@ -5,3 +5,7 @@
       file: path=~/instackenv.json state=absent
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+- name: delete discoverd db
+  file: path=/var/lib/ironic-discoverd/discoverd.sqlite state=absent
+- name: restart openstack ironic-discoverd
+  service: name=openstack-ironic-discoverd state=restarted

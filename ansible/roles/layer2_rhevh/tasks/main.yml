@@ -1,8 +1,52 @@
-  - firewalld: zone=public port=2223/tcp  permanent=true immediate=true state=enabled
-  - firewalld: zone=public port=5900-6923/tcp   permanent=true immediate=true state=enabled
-  - firewalld: zone=public port=161/udp  permanent=true immediate=true state=enabled
-  - firewalld: zone=public port=5989/tcp   permanent=true immediate=true state=enabled
-  - firewalld: zone=public port=16514/tcp   permanent=true immediate=true state=enabled
-  - firewalld: zone=public port=49152-49216/tcp   permanent=true immediate=true state=enabled
-  - firewalld: zone=public port=54321/tcp   permanent=true immediate=true state=enabled
-# if there is time I will put this in a loop
+- block:
+    # - firewalld: zone=public "{{ item }}" permanent=true immediate=true state=enabled
+    #   with_items:
+    #     - port=2223/tcp
+    #     - port=5900-6923/tcp
+    #     - port=161/udp
+    #     - port=5989/tcp
+    #     - port=16514/tcp
+    #     - port=49152-49216/tcp
+    #     - port=54321/tcp
+    # - name: get host status1
+    #   uri: body_format=json url="https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" user="admin" password="{{ hostvars['rhevm'].root_password }}"
+    #   register: host_state1
+    # - debug: var=host_state1
+    - name: get host status
+      #shell: "{{ lookup('template','curl_get_host_status.j2') }}"
+      shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts" | \
+             xmllint --xpath "/hosts/host[status/state/text() = 'up'][1]/name/text()" - || true
+      register: host_state
+      changed_when: false
+    - block:
+        - name: get cluster id
+          #shell: "{{ lookup('template','curl_get_cluster_id.j2') }}"
+          shell:  curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+                  "https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" | \
+                  xmllint --xpath "/clusters/cluster/@id" - | \
+                  awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
+          changed_when: false
+          register: cluster_id
+        - name: register host
+          #shell:  "{{ lookup('template','curl_post_host.j2') }}"
+          shell:  curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
+                  -d "{{ lookup('template', 'host.xml.j2') }}" \
+                  "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts"
+      when: host_state.stdout == ''
+    - name: wait for host to leave state "Installing"
+      shell: "{{ lookup('template','curl_get_host_status.j2') }}"
+      register: host_state
+      until: host_state.stdout != "installing"
+      failed_when: host_state.stdout == ''
+      changed_when: false
+      retries: 30
+      delay: 10
+    # TODO
+    # if host state.stdout == "install_failed" -->
+    # get host install link
+    # post host install command
+    # curl -u "admin@internal:redhat01" -XPOST -d "<action><root_password>redhat01</root_password></action>" -H "Content-Type: application/xml"  -k -s https://192.168.100.10/api/hosts/1f1191a3-2afc-4dba-97ca-cc851e5ece39/install
+    # wait once more
+
+  when: mode=="create"

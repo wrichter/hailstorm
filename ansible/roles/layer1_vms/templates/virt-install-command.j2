@@ -10,14 +10,14 @@ virt-install  --name {{ hostvars[item].name }}
               --virt-type kvm
             {#  --cpu SandyBridge,+vmx #}{# since everything will be running on a single host, it'll be safe to expose the host CPU config #}
               --cpu host,+vmx
-              --disk size={{ hostvars[item].disk.size }},path={{ storage_default.path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=virtio
+              --disk size={{ hostvars[item].disk.size }},path={{ layer1_qcow_storage.path }}/{{ hostvars[item].disk.path }},format={{ hostvars[item].disk.format }},bus=virtio
               --graphics {% if hostvars[item].graphics is defined %}{{ hostvars[item].graphics }} {% else %}none{% endif %}
             {% if hostvars[item].skip_install is defined and hostvars[item].skip_install == true %}
               --print-xml
             {% else %}
               --noautoconsole
               --wait 10
-              --location {{ storage_default.path }}/{{ hostvars[item].rhel_iso_img }}
+              --location {{ layer1_qcow_storage.path }}/{{ hostvars[item].rhel_iso_img }}
             {#  --extra-args='ks=nfs:{{ network_admin.gw_ip }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ip=dhcp console=tty0 console=ttyS0,115200n8' #}
               --extra-args='ks=nfs:{{ network_admin.host_prefix | ipaddr('address') }}:{{ kickstart_path }}/{{ hostvars[item].name }}.cfg ksdevice=eth1 ip=dhcp console=tty0 console=ttyS0,115200n8'
             {% endif %}

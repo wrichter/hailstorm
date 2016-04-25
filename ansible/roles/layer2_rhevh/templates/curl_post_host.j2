@@ -1,0 +1,1 @@
+curl -u "admin@internal:{{ hostvars['rhevm'].root_password }}" -H "Content-type: application/xml" -k -s -XPOST -d "<host><name>{{ hostname }}</name><address>{{ nic[1].ip }}</address><root_password>{{ root_password }}</root_password><cluster id='{{ cluster_id.stdout }}'/></host>" "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts"

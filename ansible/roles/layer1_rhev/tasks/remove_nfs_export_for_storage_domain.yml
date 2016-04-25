@@ -1,0 +1,11 @@
+# remoove  exports
+- name: remove /etc/exports entry
+  lineinfile: dest=/etc/exports state=absent regexp="{{ item.path }}.*"
+  register: etc_exports
+  with_items: "{{ rhev_storage_domains }}"
+- name: reexport file systems
+  command: exportfs -r
+  when: etc_exports|changed
+- name: remove storage domain contents
+  file: state=absent path={{ item.path }}
+  with_items: "{{ rhev_storage_domains }}"

@@ -1,0 +1,60 @@
+# many invocations are delegated to layer1 host since rhel6 xmllint doesn't know about xpath
+- name: check if storage domain already exists
+  shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}/api/storagedomains" | \
+         xmllint --xpath "/storage_domains/storage_domain[name='{{ item.name }}']" - || true
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  with_items: "{{ rhev_storage_domains }}"
+  register: storage_domain
+  changed_when: false
+
+#- debug: var=storage_domain
+
+- name: find rhevh host which is up
+  shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}/api/hosts" | \
+         xmllint --xpath "/hosts/host[status/state/text() = 'up'][1]/name/text()" - || true
+  register: rhevh_up
+  failed_when: rhevh_up.stdout == ''
+  changed_when: false
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+
+- name: add NFS storage domain
+  shell: curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
+         -d "{{ lookup('template', 'storage_domain.xml.j2') }}" \
+         "https://{{ nic[0].ip }}/api/storagedomains"
+  when: item.stdout == ''
+  with_items: "{{ storage_domain.results }}"
+
+- name: get data center storage domain link
+  shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}/api/datacenters" | \
+         xmllint --xpath "//data_center[name='Default']/link[@rel='storagedomains']/@href" - | \
+         awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  register: dc_storage_domain_link
+  failed_when: dc_storage_domain_link.stdout == ''
+  changed_when: false
+
+#- debug: var=dc_storage_domain_link
+
+- name: check if storage domain is already attached to data_center
+  shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}{{ dc_storage_domain_link.stdout }}" | \
+         xmllint --xpath "//storage_domain[name='{{ item.item.name }}']" - || true
+  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  with_items: "{{ storage_domain.results }}"
+  changed_when: false
+  register: dc_storage_domain
+
+#- debug: var=dc_storage_domain
+
+- name: attach storage domain to data center
+  shell: curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
+         -d "<storage_domain><name>{{ item.item.item.name }}</name></storage_domain>" \
+         "https://{{ nic[0].ip }}{{ dc_storage_domain_link.stdout }}"
+  when: item.stdout == ''
+  with_items: "{{ dc_storage_domain.results }}"
+  register: res
+
+#- debug: var=res

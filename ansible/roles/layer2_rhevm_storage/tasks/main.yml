@@ -1,0 +1,7 @@
+- block:
+    - include: configure_rhevm_storage.yml
+  when: mode=="create"
+
+#- block:
+#
+# when: mode=="destroy"

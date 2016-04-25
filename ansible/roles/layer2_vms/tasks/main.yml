@@ -1,0 +1,16 @@
+
+- block:
+    - include: create_vms.yml
+  when: mode == "create"
+
+- block:
+    - include: start_vms.yml
+  when: mode == "start"
+
+- block:
+    - include: stop_vms.yml
+  when: mode == "stop"
+
+- block:
+    - include: destroy_vms.yml
+  when: mode == "destroy"

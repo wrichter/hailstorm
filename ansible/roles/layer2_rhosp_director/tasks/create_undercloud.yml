@@ -44,6 +44,7 @@
 #configure DNS for provisioning Network
 - name: determine network UUID
   shell: . ~/stackrc && neutron subnet-list -f csv -F id --quote none | grep -v id
+  changed_when: false
   register: neutron_uuid
   become: yes
   become_user: "{{ rhosp_stack_user }}"

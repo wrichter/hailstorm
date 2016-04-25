@@ -1,6 +1,7 @@
-rhel_iso_img: rhel-server-7.2-x86_64-dvd.iso
+rhel_iso_img: "{{ rhel7_iso_image }}"
 os_type: linux
 os_variant: rhel7
 fstype: xfs
 selinux_mode: enforcing
-poolid: 8a85f9843e3d687a013e3ddd46dd07f1 
+ntp_client: chrony
+poolid: "{{ rhel7_subscription_poolid }}"

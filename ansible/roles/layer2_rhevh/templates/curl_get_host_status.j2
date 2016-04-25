@@ -1,0 +1,4 @@
+ curl -u "admin@internal:{{ hostvars['rhevm'].root_password }}" \
+      -H "Content-type: application/xml" \
+      -k -s  "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts" | \
+xmllint --xpath "/hosts/host[name='{{ hostname }}']/status/state/text()" - || true

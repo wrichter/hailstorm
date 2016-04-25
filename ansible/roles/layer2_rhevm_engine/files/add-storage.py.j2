@@ -27,7 +27,7 @@ try:
     dc = api.datacenters.get(name="Default")
     h = api.hosts.get(name=HOST_NAME)
 
-    s = params.Storage(address="192.168.103.1", path="/srv/rhev-sd1", type_="nfs")
+    s = params.Storage(address="192.168.103.1", path="{{ storage_domain_folder }}", type_="nfs")
     sd_params = params.StorageDomain(name=STORAGE_NAME, data_center=dc, host=h, type_="data", storage_format="v3", storage=s)
 
     try:
@@ -52,4 +52,3 @@ try:
 
 except Exception as ex:
     print "Unexpected error: %s" % ex
-

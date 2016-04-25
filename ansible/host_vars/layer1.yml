@@ -1,24 +1,12 @@
 # ip address or host name of layer1 system
-ansible_host: inf43.coe.muc.redhat.com
+#ansible_host: inf43.coe.muc.redhat.com
+ansible_host: "{{ layer1_ansible_host }}"
 ansible_ssh_common_args: "-i ./binary/hailstorm"
-
-
-# if this attribute is present, the binaries (except for the SSH keys)
-# will be copied from the layer1 host instead of the control host
-# you need to ensure they are there before running the playbook
-layer1_binary_dir: /home/wrichter/binary
-
-# if this is present, it overwrites the definition in group_vars/layer1.yml
-storage_default:
-  name: 'ocz'
-  path: /mnt/ocz/images
 
 network_default:
   name: 'default'
   bridge: 'virbr0'
   forward_mode: 'nat'
-  #gw_ip: 192.168.100.1
-  #netmask: 255.255.255.0
   host_prefix: 192.168.100.1/24
   dhcp_start: 192.168.100.128
   dhcp_end: 192.168.100.172
@@ -29,22 +17,16 @@ network_rhosp_provisioning:
   name: 'rhosp_provisioning'
   bridge: 'virbr1'
   forward_mode: 'nat'
-  #gw_ip: 192.168.101.1
-  #netmask: 255.255.255.0
   host_prefix: 192.168.101.1/24
 
 network_storage:
   name: 'storage'
   bridge: 'virbr2'
-  #gw_ip: 192.168.102.1
-  #netmask: 255.255.255.0
   host_prefix: 192.168.102.1/24
 
 network_admin:
   name: 'admin'
   bridge: 'virbr3'
-  #gw_ip: 192.168.103.1
-  #netmask: 255.255.255.0
   host_prefix: 192.168.103.1/24
   dhcp_start: 192.168.103.173
   dhcp_end: 192.168.103.254
@@ -52,8 +34,6 @@ network_admin:
 network_rhosp_internal:
   name: 'rhosp_internal'
   bridge: 'virbr4'
-  #gw_ip: 192.168.104.1
-  #netmask: 255.255.255.0
   host_prefix: 192.168.104.1/24
 
 networks:
@@ -63,7 +43,5 @@ networks:
   - "{{ network_admin }}"
   - "{{ network_rhosp_internal }}"
 
-#rhel_kvm_img: rhel-guest-image-7.2-20151102.0.x86_64.qcow2
-#rhel_iso_img: rhel-server-7.2-x86_64-dvd.iso
-
-kickstart_path: /srv/kickstart
+#kickstart_path: /srv/kickstart
+kickstart_path: "{{ layer1_kickstart_folder }}"

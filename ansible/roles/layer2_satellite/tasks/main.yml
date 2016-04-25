@@ -1,44 +1,41 @@
 - block:
-  # set short and full hostname in the /etc/hosts due our lack of DNS here
-  - shell: "echo $(ip a s eth0 |grep -w inet |awk '{print $2}' |awk -F / '{print $1}') $(hostname -f) $(hostname -s)   >> /etc/hosts"
-  # open firewall for related services:
-  - include: sat6-firewalld.yml
-  # configuration of chrony (ntp client):
-  - include: chrony-config.yml
-  # install packakges needed for Sat6:
-  - include: sat6-packages.yml
-  # install Sat6:
-  - block:
-    - command: 'katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} '
-  # create hammer-config-file
-  - name: create dir /root/.hammer
-    file: path=/root/.hammer
-      state=directory
-      owner=root
-      group=root
-      mode=0755
-  - name: hammer_cli_config
-    template: src=cli_config.yml.j2
-        dest=/root/.hammer/cli_config.yml
+    # set short and full hostname in the /etc/hosts due our lack of DNS here
+    - shell: "echo $(ip a s eth0 |grep -w inet |awk '{print $2}' |awk -F / '{print $1}') $(hostname -f) $(hostname -s)   >> /etc/hosts"
+    # open firewall for related services:
+    - include: sat6-firewalld.yml
+    # install packages needed for Sat6:
+    - include: sat6-packages.yml
+    # install Sat6:
+    - name: run katello-installer
+      command: 'katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} '
+    # create hammer-config-file
+    - name: create dir /root/.hammer
+      file: path=/root/.hammer
+        state=directory
         owner=root
         group=root
-        mode=0600
-  - name: copy-import-manifest
-    copy:  src=binary/{{ manifestfile }}
-            dest=/root
-            owner=root
-            group=root
-            mode=0600
-  - command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
-  # channel enablen and sync
-  - include: RHEL-repo-sync.yml
-  # Lifeccles erstellen:
-  - include: Lifecycles.yml
-  # building content views, publish and promote them
-  - include: content-views.yml
-  # creating a host collection
-  - include: host-collection.yml
-  # creating activation keys
-  - include: activation-keys.yml
-
+        mode=0755
+    - name: hammer_cli_config
+      template: src=cli_config.yml.j2
+          dest=/root/.hammer/cli_config.yml
+          owner=root
+          group=root
+          mode=0600
+    - name: copy-import-manifest
+      copy:  src=binary/{{ satellite_manifestfile }}
+              dest=/root
+              owner=root
+              group=root
+              mode=0600
+    - command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
+    # channel enablen and sync
+    - include: RHEL-repo-sync.yml
+    # Lifeccles erstellen:
+    - include: Lifecycles.yml
+    # building content views, publish and promote them
+    - include: content-views.yml
+    # creating a host collection
+    - include: host-collection.yml
+    # creating activation keys
+    - include: activation-keys.yml
   when: mode=="create"

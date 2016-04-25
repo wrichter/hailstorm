@@ -1,5 +1,7 @@
 - block:
     - include: prepare_host.yml
+    - include: chrony_config.yml
+      when: ntp_client == 'chrony'
   when: mode=="create"
 
 - block:

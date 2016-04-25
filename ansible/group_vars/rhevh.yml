@@ -1,7 +1,16 @@
-#poolid: 8a85f9843e3d687a013e3ddd46dd07f1
+mem: "{{ layer2_rhev_hypervisor_mem }}"
+vcpu: "{{ layer2_rhev_hypervisor_cpu }}"
+disk:
+  path: "{{ name }}.qcow2"
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 2048
+    home: 2048
+    root: 10000
 
-repos:
-  - rhel-7-server-rpms
-  - rhel-7-server-rhev-mgmt-agent-rpms
+repos: "{{ rhevh_repos }}"
 
 packages:
+ntp_client: ntpd

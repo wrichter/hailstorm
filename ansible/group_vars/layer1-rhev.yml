@@ -1,0 +1,10 @@
+rhev_storage_domains:
+  - name: data1
+    type: data
+    path: "{{ layer1_rhev_data_domain_path }}"
+  - name: iso1
+    type: iso
+    path: "{{ layer1_rhev_iso_domain_path }}"
+  - name: export1
+    type: export
+    path: "{{ layer1_rhev_export_domain_path }}"

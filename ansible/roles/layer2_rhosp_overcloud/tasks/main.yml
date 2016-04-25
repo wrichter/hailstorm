@@ -1,8 +1,10 @@
 - block:
+    - include: register_overcloud_nodes.yml
     - include: create_overcloud.yml
     - include: configure_neutron.yml
   when: mode=="create"
 
 - block:
     - include: destroy_overcloud.yml
+    - include: unregister_overcloud_nodes.yml
   when: mode=="destroy"
