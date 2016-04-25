@@ -1,5 +1,5 @@
-mem: 6144
-vcpu: 4
+mem: "{{ layer2_rhosp_control_mem }}"
+vcpu: "{{ layer2_rhosp_control_cpu }}"
 disk:
   path: "{{ name }}.qcow2"
   size: 60

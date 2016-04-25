@@ -20,6 +20,8 @@ layer2_rhev_hypervisor_cpu: 4
 
 layer2_rhosp_director_mem: 8192
 layer2_rhosp_director_cpu: 2
+layer2_rhosp_control_mem: 6144
+layer2_rhosp_control_cpu: 4
 layer2_rhosp_compute_mem: 8192
 layer2_rhosp_compute_cpu: 4
 

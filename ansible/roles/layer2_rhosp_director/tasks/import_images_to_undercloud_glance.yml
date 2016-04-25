@@ -31,6 +31,10 @@
 
 # VARIANT 2 - copy images from layer1 host
 - block:
+  #TODO not very nice - we change the layer1 host (create ssh key) in a layer2 role
+  - name: ensure that root has an ssh key set
+    user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
   - name: read layer1 root ssh pub key
     shell: cat /root/.ssh/id_rsa.pub
     register: layer1_ssh_pub_key

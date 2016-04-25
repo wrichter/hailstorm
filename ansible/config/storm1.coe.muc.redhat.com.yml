@@ -9,7 +9,7 @@ layer1_qcow_storage:
   name: 'sata'
   path: /var/hailstorm/images
 
-layer1_rhev_data_domain_path: /var/hailstorm/rhev-sd1
+layer1_rhev_data_domain_path: /var/hailstorm/rhev-data1
 layer1_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
 layer1_rhev_export_domain_path: /var/hailstorm/rhev-export1
 
@@ -20,6 +20,8 @@ layer2_rhev_hypervisor_cpu: 8
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4
+layer2_rhosp_control_mem: 8192
+layer2_rhosp_control_cpu: 4
 layer2_rhosp_compute_mem: 32768
 layer2_rhosp_compute_cpu: 8
 
