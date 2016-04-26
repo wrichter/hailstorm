@@ -20,6 +20,7 @@ nic:
     dev: eth1
     network: admin
     default_route: false
+ksdevice: eth1
 #hostname: rhevm.example.com
 #hostname is now set in group_vars/all.yml
 #root_password is now set in config/hailstorm_config.yml
