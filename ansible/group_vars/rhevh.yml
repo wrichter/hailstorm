@@ -14,3 +14,6 @@ repos: "{{ rhevh_repos }}"
 
 packages: iptables-services
 ntp_client: ntpd
+
+disable_services:
+  - firewalld
