@@ -35,10 +35,15 @@
       command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
     # enable repos and start syncs
     - include: sync-rhel-content.yml
+      tags: ['sync']
     - include: sync-satellite-content.yml
+      tags: ['sync']
     - include: sync-ose-content.yml
+      tags: ['sync']
     - include: sync-osp.content.yml
+      tags: ['sync']
     - include: sync-rhev-content.yml
+      tags: ['sync']
     # create lifecycle environments
     - include: Lifecycles.yml
     # building content views, publish and promote them

@@ -8,4 +8,4 @@
     - name: wait for VM to finish (re)booting
       wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
       when: "{{ name in virt_vms.list_vms }}"
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"

@@ -8,15 +8,15 @@
   virt_net: uri=qemu:///system name=default command=destroy state=absent
   #when: ansible_{{ item.bridge }}.ipv4.address is defined and ansible_{{ item.bridge }}.ipv4.address != item.gw_ip
   when: ansible_{{ item.bridge }}.ipv4.address is defined and ansible_{{ item.bridge }}.ipv4.address != item.host_prefix | ipaddr('address')
-  with_items: "{{ networks }}"
+  with_items: "{{ infrastructure_networks }}"
 - name: start firewalld to ensure the define networks command will not fail
   service: name=firewalld state=started
 - name: define networks
   virt_net: uri=qemu:///system name={{ item.name }} command=define state=present xml='{{ lookup("template", "libvirt_network.xml.j2") }}'
-  with_items: "{{ networks }}"
+  with_items: "{{ infrastructure_networks }}"
 - name: start networks
   virt_net: uri=qemu:///system name={{ item.name }} state=active
-  with_items: "{{ networks }}"
+  with_items: "{{ infrastructure_networks }}"
 - name: set autostart networks
   virt_net: uri=qemu:///system name={{ item.name }} autostart=yes
-  with_items: "{{ networks }}"
+  with_items: "{{ infrastructure_networks }}"

@@ -3,6 +3,10 @@ hailstorm_dns_domain: example.com
 root_password: redhat01
 
 # BINARY FILES
+hailstorm_ssh_pub_key_file: hailstorm.pub
+hailstorm_ssh_priv_key_file: hailstorm
+#undercloud_ssh_pub_key_file: undercloud.pub
+#undercloud_ssh_priv_key_file: undercloud
 rhel6_iso_image: rhel-server-6.7-x86_64-dvd.iso
 rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 # rhosp_images:

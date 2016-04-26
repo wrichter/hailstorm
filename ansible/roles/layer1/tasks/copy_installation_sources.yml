@@ -6,16 +6,24 @@
 - name: copy rhel iso image
   copy:  src=../binary/{{ item }} dest={{ layer1_qcow_storage.path }}/{{ item }} mode=0644
   with_items:
-    - "{{ hostvars[groups['rhel7'][0]].rhel_iso_img }}"
-    - "{{ hostvars[groups['rhel6'][0]].rhel_iso_img }}"
+    - "{{ rhel7_iso_img }}"
+    - "{{ rhel6_iso_img }}"
   when: layer1_binary_dir is not defined
 
 #TODO WR: some issue seems to prevent delegate_to and with_items to work together - I always get the message that hostvars is not defined in that case
-- block:
-  - name: locally copy rhel6 iso image
-    synchronize: mode=pull src={{ layer1_binary_dir }}/{{ hostvars[groups['rhel6'][0]].rhel_iso_img }} dest={{ layer1_qcow_storage.path }}/{{ hostvars[groups['rhel6'][0]].rhel_iso_img }}
-    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-  - name: locally copy rhel7 iso image
-    synchronize: mode=pull src={{ layer1_binary_dir }}/{{ hostvars[groups['rhel7'][0]].rhel_iso_img }} dest={{ layer1_qcow_storage.path }}/{{ hostvars[groups['rhel7'][0]].rhel_iso_img }}
-    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+# - block:
+#   - name: locally copy rhel6 iso image
+#     synchronize: mode=pull src={{ layer1_binary_dir }}/{{ rhel6_iso_img }} dest={{ layer1_qcow_storage.path }}/{{ rhel6_iso_img }}
+#     delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+#   - name: locally copy rhel7 iso image
+#     synchronize: mode=pull src={{ layer1_binary_dir }}/{{ rhel7_iso_img }} dest={{ layer1_qcow_storage.path }}/{{ rhel7_iso_img }}
+#     delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+#   when: layer1_binary_dir is defined
+
+- name: locally copy rhel iso image
+  synchronize: mode=pull src={{ layer1_binary_dir }}/{{ item }} dest={{ layer1_qcow_storage.path }}/{{ item }}
+  delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+  with_items:
+    - "{{ rhel6_iso_img }}"
+    - "{{ rhel7_iso_img }}"
   when: layer1_binary_dir is defined

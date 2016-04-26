@@ -2,7 +2,7 @@
   virt: command=list_vms
   register: virt_vms
 - name: create kickstart files
-  template: src=kickstart.cfg.j2 dest={{ kickstart_path }}/{{ hostvars[item].name }}.cfg  mode=0644
+  template: src=kickstart.cfg.j2 dest={{ nfs_kickstart_folder }}/{{ hostvars[item].name }}.cfg  mode=0644
   when: "{{ hostvars[item].name not in virt_vms.list_vms and (hostvars[item].skip_install is not defined or hostvars[item].skip_install != true) }}"
   with_items: "{{ groups[group] }}"
 - name: create vms

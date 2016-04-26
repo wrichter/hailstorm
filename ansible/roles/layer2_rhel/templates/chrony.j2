@@ -1,6 +1,6 @@
 
 ### NTP-Server or -Pool
-pool  "{{ hostvars[groups['layer1'][0]].ansible_host }}" iburst
+pool  "{{ infrastructure_address_ntp_server }}" iburst
 
 # Record the rate at which the system clock gains/losses time.
 driftfile /var/lib/chrony/drift

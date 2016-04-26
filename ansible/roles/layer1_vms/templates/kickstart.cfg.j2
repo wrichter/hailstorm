@@ -20,7 +20,7 @@ selinux --{{ hostvars[item].selinux_mode }}
 
 # Network information
 #network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
-{% for network in networks %}
+{% for network in infrastructure_networks %}
 {% for nic in hostvars[item].nic %}
 {% if network.name == nic.network %}
 {# network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ network.netmask }} {% if nic.default_route %} --gateway={{ network.gw_ip }} --nameserver={{ network.gw_ip }} {% endif %} --activate #}

@@ -1,1 +1,1 @@
-ansible_ssh_common_args: "-i ./binary/hailstorm -o ProxyCommand='ssh -i ./binary/hailstorm -W %h:%p -q root@{{ hostvars[groups['layer1'][0]].ansible_host }}' -o StrictHostKeyChecking=no"
+ansible_ssh_common_args: "-i ./binary/{{ hailstorm_ssh_priv_key_file }} -o ProxyCommand='ssh -i ./binary/{{ hailstorm_ssh_priv_key_file }} -W %h:%p -q root@{{ infrastructure_address_ssh_jump_host }}' -o StrictHostKeyChecking=no"

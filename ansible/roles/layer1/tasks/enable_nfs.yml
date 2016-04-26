@@ -15,6 +15,6 @@
 - name: ensure admin network is in firewall internal zone
   command: firewall-cmd --zone=internal --change-interface={{ item.bridge }}
   with_items:
-    - "{{ network_admin }}"
+    - "{{ infrastructure_network_admin }}"
 - name: trigger firewall reload
   command: firewall-cmd --reload
