@@ -1,6 +1,7 @@
 - block:
     - name: delete ironic nodes
       shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
+      ignore_errors: true
     - name: delete instackenv.json file
       file: path=~/instackenv.json state=absent
   become: yes

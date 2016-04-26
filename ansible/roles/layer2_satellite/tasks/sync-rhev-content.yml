@@ -13,4 +13,4 @@
   command: 'hammer product synchronize --async --organization "Default Organization" --name "Red Hat Enterprise Virtualization"'
 
 - name: start sync task for JBoss EAP 6 repo
-  command: 'hammer product synchronize --async --organization "Default Organization" --name "JBoss Enterprise Application Platform"''
+  command: 'hammer product synchronize --async --organization "Default Organization" --name "JBoss Enterprise Application Platform"'

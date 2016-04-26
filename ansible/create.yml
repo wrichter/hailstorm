@@ -7,12 +7,7 @@
         rhsm_username: "{{ rhsm_username }}"
         rhsm_password: "{{ rhsm_password }}"
       tags:
-        - layer1
-        - openshiftv3
-        - satellite
-        - rhosp
-        - rhev
-        - cf
+        - always
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
@@ -49,7 +44,6 @@
 #### RHEV ####
 
 - hosts: rhev
-  strategy: free
   remote_user: root
   gather_facts: false
   # pre_tasks:
@@ -80,6 +74,9 @@
 - hosts: rhevm
   remote_user: root
   gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'rhev' ]
   roles:
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
 

@@ -24,20 +24,21 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 ### Setting up the environment
 Everything:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" create.yml
 ```
 Only layer1 and OpenStack (see create.yml source code for available tags):
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml --tags layer1,rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" create.yml --tags layer1,rhosp
 ```
 ### Tearing down the environment
 Everything:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" destroy.yml
 ```
 Only OpenStack:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml --tags rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
+-e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" destroy.yml --tags rhosp
 ```
 
 ## Understanding the playbooks
