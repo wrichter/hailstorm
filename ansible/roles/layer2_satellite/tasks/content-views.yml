@@ -2,12 +2,12 @@
   command: 'hammer content-view create --name="cv-os-rhel-7-server" --organization "Default Organization"'
 
 - name: list repo ID
-  shell: 'hammer repository list --organization "Default Organization" |grep "Red Hat Enterprise Linux 7" |cut -b 1-2 '
-  register: command_result
+  shell: 'hammer --csv repository list --organization "Default Organization" | egrep "Red Hat Enterprise Linux 7|RHEL 7" | cut -d , -f 1'
+  register: repo_ids
 
 - name: add repo to content view
-  shell: 'hammer content-view add-repository --name="cv-os-rhel-7-server" --organization "Default Organization" --repository-id={{ item }}'
-  with_items: "{{command_result.stdout_lines}}"
+  shell: 'hammer content-view add-repository --name "cv-os-rhel-7-server" --organization "Default Organization" --repository-id {{ item }}'
+  with_items: "{{ repo_ids.stdout_lines }}"
 
 - name: publish the content view
   command: 'hammer content-view publish --name="cv-os-rhel-7-server" --organization "Default Organization"'

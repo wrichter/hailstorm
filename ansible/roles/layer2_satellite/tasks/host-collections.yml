@@ -1,0 +1,3 @@
+- name: create RHEL7 host collection
+  command: hammer host-collection create --name='RHEL7' --organization="Default Organization"
+  ignore_errors: yes
