@@ -1,13 +1,17 @@
 - block:
-    # - firewalld: zone=public "{{ item }}" permanent=true immediate=true state=enabled
-    #   with_items:
-    #     - port=2223/tcp
-    #     - port=5900-6923/tcp
-    #     - port=161/udp
-    #     - port=5989/tcp
-    #     - port=16514/tcp
-    #     - port=49152-49216/tcp
-    #     - port=54321/tcp
+    - name: set static hostnames in /etc/hosts
+      lineinfile: dest=/etc/hosts line={{ item }}
+      with_items:
+        - "{{ nic[0].ip }} {{ hostname }}"
+#    - firewalld: zone=public "{{ item }}" permanent=true immediate=true state=enabled
+#      with_items:
+#        - port=2223/tcp
+#        - port=5900-6923/tcp
+#        - port=161/udp
+#        - port=5989/tcp
+#        - port=16514/tcp
+#        - port=49152-49216/tcp
+#        - port=54321/tcp
     # - name: get host status1
     #   uri: body_format=json url="https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" user="admin" password="{{ hostvars['rhevm'].root_password }}"
     #   register: host_state1
@@ -41,7 +45,8 @@
       failed_when: host_state.stdout == ''
       changed_when: false
       retries: 30
-      delay: 10
+      delay: 20
+    - debug: var=host_state.stdout
     # TODO
     # if host state.stdout == "install_failed" -->
     # get host install link

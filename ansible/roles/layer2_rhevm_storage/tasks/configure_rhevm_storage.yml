@@ -8,7 +8,7 @@
   register: storage_domain
   changed_when: false
 
-#- debug: var=storage_domain
+- debug: var=storage_domain
 
 - name: find rhevh host which is up
   shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \

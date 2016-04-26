@@ -12,5 +12,5 @@ disk:
 
 repos: "{{ rhevh_repos }}"
 
-packages:
+packages: iptables-services
 ntp_client: ntpd

@@ -12,6 +12,6 @@
       changed_when: false
       retries: 30
       delay: 10
-    - name: force VM shutdown
-      virsh: command=destroy name="{{ name }}"
+    #- name: force VM shutdown
+    #  virsh: command=destroy name="{{ name }}"
   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
