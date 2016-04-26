@@ -16,19 +16,19 @@ nfs_rhev_export_domain_path: /var/hailstorm/rhev-export1
 layer2_rhev_hypervisor_mem: 32768
 layer2_rhev_hypervisor_cpu: 8
 
-# layer2_rhosp_director_mem: 16384
-# layer2_rhosp_director_cpu: 4
-# layer2_rhosp_control_mem: 8192
-# layer2_rhosp_control_cpu: 4
-# layer2_rhosp_compute_mem: 32768
-# layer2_rhosp_compute_cpu: 8
-
-layer2_rhosp_director_mem: 8192
-layer2_rhosp_director_cpu: 2
-layer2_rhosp_control_mem: 6144
+layer2_rhosp_director_mem: 16384
+layer2_rhosp_director_cpu: 4
+layer2_rhosp_control_mem: 8192
 layer2_rhosp_control_cpu: 4
-layer2_rhosp_compute_mem: 8192
-layer2_rhosp_compute_cpu: 4
+layer2_rhosp_compute_mem: 32768
+layer2_rhosp_compute_cpu: 8
+
+# layer2_rhosp_director_mem: 8192
+# layer2_rhosp_director_cpu: 2
+# layer2_rhosp_control_mem: 6144
+# layer2_rhosp_control_cpu: 4
+# layer2_rhosp_compute_mem: 8192
+# layer2_rhosp_compute_cpu: 4
 
 layer2_satellite_mem: 16384
 layer2_satellite_cpu: 4

@@ -41,6 +41,22 @@
     #   mode: create
     #   group: rhev
 
+
+#### SATELLITE ####
+
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  #pre_tasks:
+  #  - setup:
+  #    tags: [ 'layer2','satellite' ]
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
+    - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
+
+
+
 #### RHEV ####
 
 - hosts: rhev
@@ -81,18 +97,12 @@
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
 
 
-#### SATELLITE ####
-
-- hosts: satellite
+#### CLOUDFORMS ####
+- hosts: rhevm
   remote_user: root
   gather_facts: false
-  #pre_tasks:
-  #  - setup:
-  #    tags: [ 'layer2','satellite' ]
   roles:
-    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
-    - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
+    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
 
 
 #### OPENSTACK ####
@@ -111,11 +121,3 @@
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 #    - { role: layer2_rhosp_gather_node_uuids, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
-
-
-#### CLOUDFORMS ####
-- hosts: rhevm
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }

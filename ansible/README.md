@@ -123,3 +123,14 @@ To debug installation processes, a connection to the VM console might be require
   $ ssh -i binary/hailstorm -L 5901:localhost:5901 root@<NAME_OF_IP_OF_THE_LAYER1_HOST>
   ```
 - connect your VNC viewer to localhost:5901
+
+## Coding Guidelines
+All configuration should be
+- Scripted via Ansible, all steps have names which explain what is going on
+- Structured similarly to the existing Ansible project layout
+- Idempotent: Repeatedly executable and always yieling the same result
+- Flow control is in Ansible, i.e. try to avoid invoking scripts which in turn do many steps (which are then opaque to ansible)
+- Skipping unnecessary steps (eg. discovering an action already took place instead of running it again if it takes a while)
+- Driven by the inventory configuration & variables, i.e. when the inventory changes (a third hypervisor is added, or a hypervisor is removed), the script should not break but just do the right thing.
+- not use the layer1 host directly as a delegate (e.g. via 'delegate_to: "{{ layer1_ansible_host }}"') but using the role names as described in config/infrastructure_config.yml
+- Wrapped into a pull request which we can integrate back into the main project
