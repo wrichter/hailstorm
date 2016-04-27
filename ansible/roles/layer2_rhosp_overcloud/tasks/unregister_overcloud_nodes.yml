@@ -1,11 +1,13 @@
 - block:
     - name: delete ironic nodes
       shell: . ~/stackrc && for i in $(ironic node-list | grep -v UUID | awk ' { print $2 } '); do ironic node-delete $i; done
+      ignore_errors: true
     - name: delete instackenv.json file
       file: path=~/instackenv.json state=absent
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-- name: delete discoverd db
+- name: delete OSP7 discoverd db
   file: path=/var/lib/ironic-discoverd/discoverd.sqlite state=absent
 - name: restart openstack ironic-discoverd
   service: name=openstack-ironic-discoverd state=restarted
+  ignore_errors: true

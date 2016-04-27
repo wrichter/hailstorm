@@ -4,24 +4,31 @@ layer1_ansible_host: storm1.coe.muc.redhat.com
 # will be copied from the layer1 host instead of the control host
 # you need to ensure they are there before running the playbook
 layer1_binary_dir: /var/hailstorm/binary
-
 layer1_qcow_storage:
   name: 'sata'
   path: /var/hailstorm/images
 
-layer1_rhev_data_domain_path: /var/hailstorm/rhev-sd1
-layer1_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
-layer1_rhev_export_domain_path: /var/hailstorm/rhev-export1
-
-layer1_kickstart_folder: /var/hailstorm/kickstart
+nfs_kickstart_folder: /var/hailstorm/kickstart
+nfs_rhev_data_domain_path: /var/hailstorm/rhev-data1
+nfs_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
+nfs_rhev_export_domain_path: /var/hailstorm/rhev-export1
 
 layer2_rhev_hypervisor_mem: 32768
 layer2_rhev_hypervisor_cpu: 8
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4
+layer2_rhosp_control_mem: 8192
+layer2_rhosp_control_cpu: 4
 layer2_rhosp_compute_mem: 32768
 layer2_rhosp_compute_cpu: 8
+
+# layer2_rhosp_director_mem: 8192
+# layer2_rhosp_director_cpu: 2
+# layer2_rhosp_control_mem: 6144
+# layer2_rhosp_control_cpu: 4
+# layer2_rhosp_compute_mem: 8192
+# layer2_rhosp_compute_cpu: 4
 
 layer2_satellite_mem: 16384
 layer2_satellite_cpu: 4

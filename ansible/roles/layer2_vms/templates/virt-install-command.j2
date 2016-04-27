@@ -10,13 +10,13 @@ virt-install  --name {{ name }}
               --virt-type kvm
             {#  --cpu SandyBridge,+vmx #}{# since everything will be running on a single host, it'll be safe to expose the host CPU config #}
               --cpu host,+vmx
-              --disk size={{ disk.size }},path={{ hostvars[groups['layer1'][0]].layer1_qcow_storage.path }}/{{ disk.path }},format={{ disk.format }},bus=virtio
+              --disk size={{ disk.size }},path={{ layer1_qcow_storage.path }}/{{ disk.path }},format={{ disk.format }},bus=virtio
               --graphics {% if graphics is defined %}{{ graphics }} {% else %}none{% endif %}
             {% if skip_install is defined and skip_install == true %}
               --print-xml
             {% else %}
               --noautoconsole
               --wait 10
-              --location {{ hostvars[groups['layer1'][0]].layer1_qcow_storage.path }}/{{ rhel_iso_img }}
-              --extra-args='ks=nfs:{{ hostvars[groups['layer1'][0]].network_admin.host_prefix | ipaddr('address') }}:{{ hostvars[groups['layer1'][0]].kickstart_path }}/{{ name }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
+              --location {{ layer1_qcow_storage.path }}/{{ rhel_iso_img }}
+              --extra-args='ks=nfs:{{ infrastructure_network_admin.host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ name }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
             {% endif %}

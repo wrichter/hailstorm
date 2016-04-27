@@ -1,33 +1,26 @@
 ---
+- name: get list of vms
+  virt: command=list_vms
+  register: virt_vms
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+- name: delete kickstart files
+  file: path={{ nfs_kickstart_folder }}/{{ name }}.cfg  state=absent
+  when: "{{ name in virt_vms.list_vms }}"
+  delegate_to: "{{ infrastructure_delegate_nfs_server }}"
 - block:
-    - name: get list of vms
-      virt: command=list_vms
-      register: virt_vms
-      #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-    - name: delete kickstart files
-      file: path={{ hostvars[groups['layer1'][0]].kickstart_path }}/{{ name }}.cfg  state=absent
-      when: "{{ name in virt_vms.list_vms }}"
-      #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
     - name: destroy vms
       virt: command=destroy name={{ name }}
       when: "{{ name in virt_vms.list_vms }}"
-      #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
       ignore_errors: true
     - name: undefine vms
       virt: command=undefine name={{ name }}
       when: "{{ name in virt_vms.list_vms }}"
-      #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
       ignore_errors: true
     - name: refresh pool to allow unused images to be deleted
-      command: virsh pool-refresh {{ hostvars[groups['layer1'][0]].layer1_qcow_storage.name }}
+      command: virsh pool-refresh {{ layer1_qcow_storage.name }}
       changed_when: false
-      #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
     - name: remove vm volumes
-      command: virsh vol-delete {{ disk.path }} --pool {{ hostvars[groups['layer1'][0]].layer1_qcow_storage.name }}
+      command: virsh vol-delete {{ disk.path }} --pool {{ layer1_qcow_storage.name }}
       when: "{{ name in virt_vms.list_vms }}"
-      #delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
       ignore_errors: true
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-#- name: remove ssh host key from local known_hosts
-#  local_action: known_hosts name={{ ansible_host }} state=absent
-#  with_items: "{{ groups[group] }}"
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"

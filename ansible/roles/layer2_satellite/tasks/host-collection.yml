@@ -1,2 +1,0 @@
-# create a host collection
-- command: hammer host-collection create --name='RHEL7' --organization="Default Organization"

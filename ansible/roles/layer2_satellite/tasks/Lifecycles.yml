@@ -1,10 +1,34 @@
-- block:
-  - command: hammer lifecycle-environment delete --organization="Default Organization" --name PROD 
-  - command: hammer lifecycle-environment delete --organization="Default Organization" --name TEST
-  - command: hammer lifecycle-environment delete --organization="Default Organization" --name DEV
-  ignore_errors: yes
+# - block:
+#   - command: hammer lifecycle-environment delete --organization="Default Organization" --name PROD
+#   - command: hammer lifecycle-environment delete --organization="Default Organization" --name TEST
+#   - command: hammer lifecycle-environment delete --organization="Default Organization" --name DEV
+#   ignore_errors: yes
 
-- block:
-  - command: hammer lifecycle-environment create --organization "Default Organization" --description 'Development' --name 'DEV' --label development --prior Library
-  - command: hammer lifecycle-environment create --organization "Default Organization" --description 'Testing' --name 'TEST' --label testing --prior 'DEV'
-  - command: hammer lifecycle-environment create --organization "Default Organization" --description 'Production' --name 'PROD' --label production --prior 'TEST'
+- name: determine current lifecycle environments
+  shell: hammer lifecycle-environment list --organization "Default Organization" --library false | awk '{ print $3 }'
+  register: current_lifecycle
+  changed_when: false
+
+- name: create lifecycle environments
+  command: hammer lifecycle-environment create --organization "Default Organization" --description "{{ item.description}}" --name "{{ item.name }}" --label "{{ item.label }}" --prior "{{ item.prior }}"
+  when: "'{{ item.name }}' not in current_lifecycle.stdout_lines"
+  with_items:
+    - name: 'DEV'
+      prior: 'Library'
+      description: 'Development'
+      label: 'development'
+    - name: 'TEST'
+      prior: 'DEV'
+      description: 'Testing'
+      label: 'testing'
+    - name: 'PROD'
+      prior: 'TEST'
+      description: 'Production'
+      label: 'production'
+
+# - name: create TEST
+#   command: hammer lifecycle-environment create --organization "Default Organization" --description 'Testing' --name 'TEST' --label testing --prior 'DEV'
+#   when: 'TEST' not in current_lifecycle.stdout
+# - name: create PROD
+#   command: hammer lifecycle-environment create --organization "Default Organization" --description 'Production' --name 'PROD' --label production --prior 'TEST'
+#   when: 'PROD' not in current_lifecycle.stdout

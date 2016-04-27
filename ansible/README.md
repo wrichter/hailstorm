@@ -1,6 +1,6 @@
 # Automated rollout via Ansible
 ## Prerequisites
-1. Install Ansible 2 on your local machine and run all the playbooks from there
+1. Install Ansible 2.0 on your local machine and run all the playbooks from there. Avoid Ansible 2.1 since we experienced some random problems running the playbooks with 2.1.
 1. Clone this repository to your local machine
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
   - [RHEL-OSP overcloud binaries](https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software)
@@ -24,20 +24,21 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 ### Setting up the environment
 Everything:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" create.yml
 ```
 Only layer1 and OpenStack (see create.yml source code for available tags):
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" create.yml --tags layer1,rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" create.yml --tags layer1,rhosp
 ```
 ### Tearing down the environment
 Everything:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" destroy.yml
 ```
 Only OpenStack:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" -e "@config/hailstorm_config.yml" destroy.yml --tags rhosp
+$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
+-e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" destroy.yml --tags rhosp
 ```
 
 ## Understanding the playbooks
@@ -122,3 +123,14 @@ To debug installation processes, a connection to the VM console might be require
   $ ssh -i binary/hailstorm -L 5901:localhost:5901 root@<NAME_OF_IP_OF_THE_LAYER1_HOST>
   ```
 - connect your VNC viewer to localhost:5901
+
+## Coding Guidelines
+All configuration should be
+- Scripted via Ansible, all steps have names which explain what is going on
+- Structured similarly to the existing Ansible project layout
+- Idempotent: Repeatedly executable and always yieling the same result
+- Flow control is in Ansible, i.e. try to avoid invoking scripts which in turn do many steps (which are then opaque to ansible)
+- Skipping unnecessary steps (eg. discovering an action already took place instead of running it again if it takes a while)
+- Driven by the inventory configuration & variables, i.e. when the inventory changes (a third hypervisor is added, or a hypervisor is removed), the script should not break but just do the right thing.
+- not use the layer1 host directly as a delegate (e.g. via 'delegate_to: "{{ layer1_ansible_host }}"') but using the role names as described in config/infrastructure_config.yml
+- Wrapped into a pull request which we can integrate back into the main project

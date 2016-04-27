@@ -10,64 +10,30 @@
 
 # VARIANT 1 - copy images from control host
 - block:
-  # - name: unpack deploy ramdisk image
-  #   unarchive: src=../binary/{{ deploy_ramdisk_image }} dest={{ image_path }} creates=deploy-ramdisk-ironic.initramfs
-  #   become: yes
-  #   become_user: "{{ rhosp_stack_user }}"
-  # - name: unpack discovery ramdisk image
-  #   unarchive: src=../binary/{{ discovery_ramdisk_image }} dest={{ image_path }} creates=discovery-ramdisk.initramfs
-  #   become: yes
-  #   become_user: "{{ rhosp_stack_user }}"
-  # - name: unpack overcloud image
-  #   unarchive: src=../binary/{{ overcloud_image }} dest={{ image_path }} creates=overcloud-full.initrd
-  #   become: yes
-  #   become_user: "{{ rhosp_stack_user }}"
   - name: unpack rhosp images
     unarchive: src=../binary/{{ image }} dest={{ image_path }}
     become: yes
     become_user: "{{ rhosp_stack_user }}"
     with_items: "{{ rhosp_images }}"
-  when: (hostvars[groups['layer1'][0]].layer1_binary_dir is not defined) and (image_count.stdout | int < 2)
+  when: (layer1_binary_dir is not defined) and (image_count.stdout | int < 2)
 
 # VARIANT 2 - copy images from layer1 host
 - block:
+  #TODO not very nice - we change the layer1 host (create ssh key) in a layer2 role
+  - name: ensure that root has an ssh key set
+    user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+    delegate_to: "{{ infrastructure_delegate_local_content_host }}"
   - name: read layer1 root ssh pub key
     shell: cat /root/.ssh/id_rsa.pub
     register: layer1_ssh_pub_key
-    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+    delegate_to: "{{ infrastructure_delegate_local_content_host }}"
     changed_when: false
   - name: add layer1 root ssh pub key to rhosp-director
     authorized_key: user=root key={{ layer1_ssh_pub_key.stdout }}
-  # - name: copy deploy_ramdisk_image from layer1
-  #   synchronize: mode=push src={{ hostvars[groups['layer1'][0]].layer1_binary_dir }}/{{ deploy_ramdisk_image }} dest=/tmp/{{ deploy_ramdisk_image }}
-  #   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-  # - name: copy discovery_ramdisk_image from layer1
-  #   synchronize: mode=push src={{ hostvars[groups['layer1'][0]].layer1_binary_dir }}/{{ discovery_ramdisk_image }} dest=/tmp/{{ discovery_ramdisk_image }}
-  #   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-  # - name: copy overcloud_image from layer1
-  #   synchronize: mode=push src={{ hostvars[groups['layer1'][0]].layer1_binary_dir }}/{{ overcloud_image }} dest=/tmp/{{ overcloud_image }}
-  #   delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
-  # - name: unpack deploy ramdisk image
-  #   unarchive: src=/tmp/{{ deploy_ramdisk_image }} dest={{ image_path }} creates=deploy-ramdisk-ironic.initramfs copy=no
-  #   become: yes
-  #   become_user: "{{ rhosp_stack_user }}"
-  # - name: unpack discovery ramdisk image
-  #   unarchive: src=/tmp/{{ discovery_ramdisk_image }} dest={{ image_path }} creates=discovery-ramdisk.initramfs copy=no
-  #   become: yes
-  #   become_user: "{{ rhosp_stack_user }}"
-  # - name: unpack overcloud image
-  #   unarchive: src=/tmp/{{ overcloud_image }} dest={{ image_path }} creates=overcloud-full.initrd copy=no
-  #   become: yes
-  #   become_user: "{{ rhosp_stack_user }}"
-  # - name: remove deploy_ramdisk_image from /tmp
-  #   file: path=/tmp/{{ deploy_ramdisk_image }} state=absent
-  # - name: remove discovery_ramdisk_image from /tmp
-  #   file: path=/tmp/{{ discovery_ramdisk_image }} state=absent
-  # - name: remove overcloud image from /tmp
-  #   file: path=/tmp/{{ overcloud_image }} state=absent
+
   - name: copy rhosp images from layer1
-    synchronize: mode=push src={{ hostvars[groups['layer1'][0]].layer1_binary_dir }}/{{ item }} dest=/tmp/{{ item }}
-    delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+    synchronize: mode=push src={{ layer1_binary_dir }}/{{ item }} dest=/tmp/{{ item }}
+    delegate_to: "{{ infrastructure_delegate_local_content_host }}"
     with_items: "{{ rhosp_images }}"
 
   - name: unpack rhosp image
@@ -79,7 +45,7 @@
   - name: remove rhosp images from /tmp
     file: path=/tmp/{{ item }} state=absent
     with_items: "{{ rhosp_images }}"
-  when: (hostvars[groups['layer1'][0]].layer1_binary_dir is defined) and (image_count.stdout | int < 2)
+  when: (layer1_binary_dir is defined) and (image_count.stdout | int < 2)
 
 - name: upload images to glance
   shell: . ~/stackrc && openstack overcloud image upload --image-path "{{ image_path }}"

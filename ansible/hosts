@@ -18,6 +18,8 @@ ose3-node
 satellite
 rhosp-all
 rhev
+test-rhel6
+test-rhel7
 
 [ose3-node]
 ose3-master
@@ -78,13 +80,27 @@ rhevh2
 rhev
 layer1
 
+# some test nodes to test subscription with satellite 
+[test-rhel]
+test-rhel6
+test-rhel7
+
+[test-rhel6]
+test-rhel6
+
+[test-rhel7]
+test-rhel7
+
+
 # All layer2 nodes that are installed with RHEL7
 [rhel7:children]
 rhosp-all
 satellite
 rhevh
 ose3-node
+test-rhel7
 
 # All layer2 nodes that are installed with RHEL6
 [rhel6:children]
 rhevm
+test-rhel6

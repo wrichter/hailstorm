@@ -14,4 +14,4 @@
       delay: 10
     #- name: force VM shutdown
     #  virsh: command=destroy name="{{ name }}"
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"

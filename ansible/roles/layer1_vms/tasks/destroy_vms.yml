@@ -3,7 +3,7 @@
   virt: command=list_vms
   register: virt_vms
 - name: delete kickstart files
-  file: path={{ kickstart_path }}/{{ hostvars[item].name }}.cfg  state=absent
+  file: path={{ nfs_kickstart_folder }}/{{ hostvars[item].name }}.cfg  state=absent
   when: "{{ hostvars[item].name in virt_vms.list_vms }}"
   with_items: "{{ groups[group] }}"
 - name: destroy vms

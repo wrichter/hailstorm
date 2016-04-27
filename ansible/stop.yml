@@ -4,7 +4,7 @@
 #### RHEV ####
 
 - hosts: rhev
-  strategy: free
+  
   remote_user: root
   gather_facts: false
   roles:

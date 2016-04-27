@@ -1,13 +1,16 @@
 - block:
     # set short and full hostname in the /etc/hosts due our lack of DNS here
-    - shell: "echo $(ip a s eth0 |grep -w inet |awk '{print $2}' |awk -F / '{print $1}') $(hostname -f) $(hostname -s)   >> /etc/hosts"
+    - name: add entry to /etc/hosts
+      shell: "echo $(ip a s eth0 |grep -w inet |awk '{print $2}' |awk -F / '{print $1}') $(hostname -f) $(hostname -s)   >> /etc/hosts"
     # open firewall for related services:
     - include: sat6-firewalld.yml
     # install packages needed for Sat6:
     - include: sat6-packages.yml
     # install Sat6:
+
     - name: run katello-installer
-      command: 'katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} '
+      shell: katello-installer --foreman-admin-username admin --foreman-admin-password "{{ root_password }}" && touch /.katello-is-installed creates=/.katello-is-installed
+
     # create hammer-config-file
     - name: create dir /root/.hammer
       file: path=/root/.hammer
@@ -27,15 +30,26 @@
               owner=root
               group=root
               mode=0600
-    - command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
-    # channel enablen and sync
-    - include: RHEL-repo-sync.yml
-    # Lifeccles erstellen:
+
+    - name: upload manifest
+      command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
+    # enable repos and start syncs
+    - include: sync-rhel-content.yml
+      tags: ['sync']
+    - include: sync-satellite-content.yml
+      tags: ['sync']
+    - include: sync-ose-content.yml
+      tags: ['sync']
+    - include: sync-osp-content.yml
+      tags: ['sync']
+    - include: sync-rhev-content.yml
+      tags: ['sync']
+    # create lifecycle environments
     - include: Lifecycles.yml
     # building content views, publish and promote them
     - include: content-views.yml
     # creating a host collection
-    - include: host-collection.yml
+    - include: host-collections.yml
     # creating activation keys
     - include: activation-keys.yml
   when: mode=="create"
