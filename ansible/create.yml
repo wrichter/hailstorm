@@ -62,6 +62,15 @@
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
     - { role: layer2_rhel_register_with_satellite, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
 
+#### IPA ####
+
+- hosts: ipa
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
+    - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
 
 #### RHEV ####
 
