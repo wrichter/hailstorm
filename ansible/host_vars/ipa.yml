@@ -26,6 +26,89 @@ nic:
 #root_password: redhat01
 ansible_host: 192.168.103.23
 
+ntp_client: ntp
+
 poolid: 8a85f9843e3d687a013e3ddd471a083e 
 repos: "{{ ipa_repos }}"
-packages: ipa-server,ipa-server-dns
+packages: ipa-server,ipa-server-dns,rng-tools
+
+ipa_admin_password: "redhat01"
+
+firewalld_rules:
+ - DNStcp:
+   port: 53
+   protocol: udp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - DNSudp:
+   port: 53
+   protocol: udp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - HTTPtcp:
+   port: 80
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - LDAPtcp:
+   port: 389
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - HTTPStcp:
+   port: 443
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - LDAPStcp:
+   port: 636
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - KRB1tcp:
+   port: 88
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - KRB2tcp:
+   port: 464
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - KRB1udp:
+   port: 88
+   protocol: udp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - KRB2udp:
+   port: 464
+   protocol: udp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - NTPudp:
+   port: 123
+   protocol: udp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true

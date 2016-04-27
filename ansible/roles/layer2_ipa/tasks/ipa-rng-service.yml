@@ -1,0 +1,5 @@
+---
+
+- name: starting rngd service
+  service: name=rngd state=started enabled=yes
+
