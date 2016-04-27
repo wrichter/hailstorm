@@ -49,3 +49,5 @@ rhevm_repos:
 rhevh_repos:
   - rhel-7-server-rpms
   - rhel-7-server-rhev-mgmt-agent-rpms
+ipa_repos:
+  - rhel-7-server-rpms

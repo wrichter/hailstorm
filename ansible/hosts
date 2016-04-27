@@ -20,6 +20,7 @@ rhosp-all
 rhev
 test-rhel6
 test-rhel7
+ipa
 
 [ose3-node]
 ose3-master

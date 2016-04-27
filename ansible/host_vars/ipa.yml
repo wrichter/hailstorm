@@ -25,3 +25,7 @@ nic:
 #root_password is now set in config/hailstorm_config.yml
 #root_password: redhat01
 ansible_host: 192.168.103.23
+
+poolid: 8a85f9843e3d687a013e3ddd471a083e 
+repos: "{{ ipa_repos }}"
+packages: ipa-server,ipa-server-dns
