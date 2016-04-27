@@ -3,12 +3,12 @@
   shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
          "https://{{ nic[0].ip }}/api/storagedomains" | \
          xmllint --xpath "/storage_domains/storage_domain[name='{{ item.name }}']" - || true
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   with_items: "{{ rhev_storage_domains }}"
   register: storage_domain
   changed_when: false
 
-#- debug: var=storage_domain
+- debug: var=storage_domain
 
 - name: find rhevh host which is up
   shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
@@ -17,7 +17,7 @@
   register: rhevh_up
   failed_when: rhevh_up.stdout == ''
   changed_when: false
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 
 - name: add NFS storage domain
   shell: curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
@@ -31,7 +31,7 @@
          "https://{{ nic[0].ip }}/api/datacenters" | \
          xmllint --xpath "//data_center[name='Default']/link[@rel='storagedomains']/@href" - | \
          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   register: dc_storage_domain_link
   failed_when: dc_storage_domain_link.stdout == ''
   changed_when: false
@@ -42,7 +42,7 @@
   shell: curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
          "https://{{ nic[0].ip }}{{ dc_storage_domain_link.stdout }}" | \
          xmllint --xpath "//storage_domain[name='{{ item.item.name }}']" - || true
-  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   with_items: "{{ storage_domain.results }}"
   changed_when: false
   register: dc_storage_domain

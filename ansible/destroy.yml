@@ -13,20 +13,6 @@
       tags: [ 'layer2','rhev', 'vms' ]
       mode: destroy
 
-- hosts: satellite
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layer2_vms
-      tags: [ 'layer2','satellite', 'rhel' ]
-      mode: start
-    - role: layer2_rhel
-      tags: [ 'layer2','satellite', 'rhel'  ]
-      mode: destroy
-    - role: layer2_vms
-      tags: [ 'layer2','satellite', 'vms' ]
-      mode: destroy
-
 - hosts: rhosp-director
   gather_facts: false
   remote_user: root
@@ -50,6 +36,32 @@
   roles:
     - role: layer2_vms
       tags: [ 'layer2','rhosp', 'vms' ]
+      mode: destroy
+
+- hosts: test-rhel
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_rhel_register_with_satellite
+      tags: [ 'layer2','satellite', 'rhel', 'test-rhel'  ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','satellite', 'vms', 'test-rhel' ]
+      mode: destroy
+
+
+- hosts: satellite
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','satellite', 'rhel' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer2','satellite', 'rhel'  ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','satellite', 'vms' ]
       mode: destroy
 
 - hosts: layer1

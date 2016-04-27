@@ -1,9 +1,8 @@
 # prepare kickstart exports
 - name: create kickstart directory
-  file: state=directory path={{ kickstart_path }}
+  file: state=directory path={{ nfs_kickstart_folder }}
 - name: create /etc/exports entry
-  #lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{network_admin.gw_ip}}/24(ro)"
-  lineinfile: dest=/etc/exports line="{{ kickstart_path }} {{ network_admin.host_prefix }}(ro)"
+  lineinfile: dest=/etc/exports line="{{ nfs_kickstart_folder }} {{ infrastructure_network_admin.host_prefix }}(ro)"
   register: etc_exports
 - name: export file systems
   command: exportfs -a

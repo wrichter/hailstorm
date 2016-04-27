@@ -8,8 +8,8 @@
     - include: sat6-packages.yml
     # install Sat6:
 
-    #- name: run katello-installer
-    #  command: 'katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} '
+    - name: run katello-installer
+      shell: katello-installer --foreman-admin-username admin --foreman-admin-password "{{ root_password }}" && touch /.katello-is-installed creates=/.katello-is-installed
 
     # create hammer-config-file
     - name: create dir /root/.hammer
@@ -35,16 +35,21 @@
       command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
     # enable repos and start syncs
     - include: sync-rhel-content.yml
+      tags: ['sync']
     - include: sync-satellite-content.yml
+      tags: ['sync']
     - include: sync-ose-content.yml
-    - include: sync-osp.content.yml
+      tags: ['sync']
+    - include: sync-osp-content.yml
+      tags: ['sync']
     - include: sync-rhev-content.yml
+      tags: ['sync']
     # create lifecycle environments
     - include: Lifecycles.yml
     # building content views, publish and promote them
     - include: content-views.yml
     # creating a host collection
-    - include: host-collection.yml
+    - include: host-collections.yml
     # creating activation keys
     - include: activation-keys.yml
   when: mode=="create"

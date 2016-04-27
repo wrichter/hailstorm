@@ -18,7 +18,7 @@
 ## cant seem to get this to work
 #- name: verify firewall has nfs3 open
 #  firewalld: zone=internal service=rpc-bind permanent=true immediate=true state=enabled
-#  delegate_to: "{{ hostvars[groups['layer1'][0]].ansible_host }}"
+#  delegate_to: "{{ infrastructure_delegate_nfs_server }}"
 
 #- name: Add and attach the storage domain
 #  command: /root/bin/add-storage.py
