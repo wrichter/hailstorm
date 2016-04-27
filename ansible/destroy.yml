@@ -38,6 +38,22 @@
       tags: [ 'layer2','rhosp', 'vms' ]
       mode: destroy
 
+- hosts: ipa
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_ipa
+      tags: [ 'layer2', 'ipa' ]
+      mode: destroy 
+    - role: layer2_rhel
+      tags: [ 'layer2','ipa', 'rhel' ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','ipa', 'vms' ]
+      mode: destroy
+
+
+
 - hosts: test-rhel
   gather_facts: false
   remote_user: root

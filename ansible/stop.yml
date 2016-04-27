@@ -4,11 +4,18 @@
 #### RHEV ####
 
 - hosts: rhev
-  
   remote_user: root
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'rhev', 'vm' ], mode: stop }
+
+#### IPA ####
+
+- hosts: ipa
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm' ], mode: stop }
 
 #### SATELLITE ####
 

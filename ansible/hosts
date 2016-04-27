@@ -80,7 +80,7 @@ rhevh2
 rhev
 layer1
 
-# some test nodes to test subscription with satellite 
+# some test nodes to test subscription with satellite
 [test-rhel]
 test-rhel6
 test-rhel7
@@ -91,6 +91,9 @@ test-rhel6
 [test-rhel7]
 test-rhel7
 
+# the IPA server
+[ipa]
+ipa
 
 # All layer2 nodes that are installed with RHEL7
 [rhel7:children]
@@ -99,6 +102,7 @@ satellite
 rhevh
 ose3-node
 test-rhel7
+ipa
 
 # All layer2 nodes that are installed with RHEL6
 [rhel6:children]
