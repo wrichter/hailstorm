@@ -47,26 +47,29 @@
       retries: 30
       delay: 20
       ignore_errors: true
-    - name: check if host needs re-installing
-      shell: "{{ lookup('template','curl_get_host_status.j2') }}"
-      register: host_state
-      changed_when: false
-    - debug: var=host_state.stdout
-    - block:
-        - name: get cluster id
-          #shell: "{{ lookup('template','curl_get_cluster_id.j2') }}"
-          shell:  curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
-                  "https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" | \
-                  xmllint --xpath "/clusters/cluster/@id" - | \
-                  awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
-          changed_when: false
-          register: cluster_id
-        - name: register host
-          #shell:  "{{ lookup('template','curl_post_host.j2') }}"
-          shell:  curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
-                  -d "{{ lookup('template', 'host.xml.j2') }}" \
-                  "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts"
-      when: host_state.stdout == 'install_failed'
+    ## Commenting this block out as its no longer needed now that firewalld is disabled on the hosts
+    ## (iptables is configured by rhev during the install anyway)
+    #- name: check if host needs re-installing
+    #  shell: "{{ lookup('template','curl_get_host_status.j2') }}"
+    #  register: host_state
+    #  changed_when: false
+    #- debug: var=host_state.stdout
+    #- block:
+    #    - name: get cluster id
+    #      #shell: "{{ lookup('template','curl_get_cluster_id.j2') }}"
+    #      shell:  curl -XGET {{ lookup('template','curl_xml_params.j2') | trim }} \
+    #              "https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" | \
+    #              xmllint --xpath "/clusters/cluster/@id" - | \
+    #              awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
+    #      changed_when: false
+    #      register: cluster_id
+    #   - name: register host
+    #      #shell:  "{{ lookup('template','curl_post_host.j2') }}"
+    #      shell:  curl -XPOST {{ lookup('template','curl_xml_params.j2') | trim }} \
+    #              -d "{{ lookup('template', 'host.xml.j2') }}" \
+    #              "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts"
+    #  when: host_state.stdout == 'install_failed'
+
     # TODO
     # if host state.stdout == "install_failed" -->
     # get host install link
