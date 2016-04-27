@@ -55,6 +55,12 @@
     - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
     - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
 
+- hosts: test-rhel
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
+    - { role: layer2_rhel_register_with_satellite, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
 
 
 #### RHEV ####
