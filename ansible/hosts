@@ -20,6 +20,7 @@ rhosp-all
 rhev
 test-rhel6
 test-rhel7
+infrastructure
 
 [ose3-node]
 ose3-master
@@ -95,6 +96,10 @@ test-rhel7
 [ipa]
 ipa
 
+# the Infrastructure server (DNS, SMTP/IMAP)
+[infrastructure]
+infrastructure
+
 # All layer2 nodes that are installed with RHEL7
 [rhel7:children]
 rhosp-all
@@ -103,6 +108,7 @@ rhevh
 ose3-node
 test-rhel7
 ipa
+infrastructure
 
 # All layer2 nodes that are installed with RHEL6
 [rhel6:children]

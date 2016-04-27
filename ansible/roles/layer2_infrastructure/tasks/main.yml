@@ -1,0 +1,7 @@
+- block:
+    - debug: msg="placeholder for create infrastructure"
+  when: mode=="create"
+
+- block:
+    - debug: msg="placeholder for destroy infrastructure"
+  when: mode=="destroy"

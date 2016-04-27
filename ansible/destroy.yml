@@ -44,12 +44,27 @@
   roles:
     - role: layer2_ipa
       tags: [ 'layer2', 'ipa' ]
-      mode: destroy 
+      mode: destroy
     - role: layer2_rhel
       tags: [ 'layer2','ipa', 'rhel' ]
       mode: destroy
     - role: layer2_vms
       tags: [ 'layer2','ipa', 'vms' ]
+      mode: destroy
+
+
+- hosts: infrastructure
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_infrastructure
+      tags: [ 'layer2', 'infrastructure' ]
+      mode: destroy
+    - role: layer2_rhel
+      tags: [ 'layer2','infrastructure', 'rhel' ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','infrastructure', 'vms' ]
       mode: destroy
 
 

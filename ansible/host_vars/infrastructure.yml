@@ -1,0 +1,32 @@
+---
+name: infrastructure
+mem: 2048
+vcpu: 2
+disk:
+  path: infrastructure.qcow2
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 2048
+    home: 2048
+    root: 10000
+nic:
+  - ip: 192.168.100.24
+    dev: eth0
+    network: default
+    default_route: true
+  - ip: 192.168.103.24
+    dev: eth1
+    network: admin
+    default_route: false
+#hostname is now set in group_vars/all.yml
+#hostname: infrastructure.example.com
+#root_password is now set in config/hailstorm_config.yml
+#root_password: redhat01
+ansible_host: 192.168.103.24
+repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-optional-rpms
+  - rhel-7-server-extras-rpms
+packages:
