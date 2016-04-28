@@ -1,7 +1,11 @@
 # Automated rollout via Ansible
 ## Prerequisites
-1. Install Ansible 2.0 on your local machine and run all the playbooks from there. Avoid Ansible 2.1 since we experienced some random problems running the playbooks with 2.1.
-1. Clone this repository to your local machine
+1. Install Ansible 2.0 on your local machine and run all the playbooks from there. Avoid Ansible 2.1 since we experienced some random problems running the playbooks with 2.1. Example:
+ - $ git clone 'https://github.com/ansible/ansible' /tmp/gitansible/
+ - $ cd /tmp/gitansible/ ; git checkout stable-2.0.0.1
+ - $ make ; make install 
+1. Clone this repository to your local machine, example:
+ - $ mkdir -p ~/projects/hailstorm ; cd ~/projects/hailstorm ; git clone 'https://github.com/wrichter/hailstorm' git
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
   - [RHEL-OSP overcloud binaries](https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software)
     - Overcloud image
