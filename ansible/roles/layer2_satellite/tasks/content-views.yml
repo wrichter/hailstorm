@@ -24,7 +24,7 @@
 
 - name: promote latest version of CV-OS-RHEL7-SERVER to all lifecycle environments
   command: hammer content-view version promote --id '{{ cv_id.stdout.split(' ')[0] }}' --organization "Default Organization" --to-lifecycle-environment '{{ item }}'
-  when: "{{ item }} not in cv_id.stdout"
+  when: "item not in cv_id.stdout"
   with_items:
     - 'DEV'
     - 'TEST'
