@@ -1,0 +1,20 @@
+---
+## the reason we need this is that the ipa-server-install will pause do to 
+## lack of entropy. 
+## the default config needs changing on *some* hardware, so we just change it anyway
+## see https://www.certdepot.net/rhel7-get-started-random-number-generator
+
+- name: install custom rngd unit file
+  copy: src=files/rngd.service dest=/etc/systemd/system/ owner=root mode=644
+  notify:
+    - reload systemd
+    - restart rngd
+
+- name: starting rngd service
+  service: name=rngd state=started enabled=yes
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart rngd
+  service: name=rngd state=restarted

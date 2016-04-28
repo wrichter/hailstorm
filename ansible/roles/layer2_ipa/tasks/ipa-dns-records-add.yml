@@ -1,0 +1,26 @@
+# Save a load of time here by re-using another Red Hatters work
+# https://github.com/tiran/pki-vagans/tree/master/ansible
+- name: add satellite dns record
+  ipa:
+    args="dnsrecord-add example.com satellite --a-rec 192.168.100.20"
+    password="{{ ipa_admin_password }}"
+    ignore_no_modifications=true
+
+- name: add rhevm dns record
+  ipa:
+    args="dnsrecord-add example.com rhevm --a-rec 192.168.100.10"
+    password="{{ ipa_admin_password }}"
+    ignore_no_modifications=true
+
+- name: add rhevh1 dns record
+  ipa:
+    args="dnsrecord-add example.com rhevh2 --a-rec 192.168.100.12"
+    password="{{ ipa_admin_password }}"
+    ignore_no_modifications=true
+
+- name: add rhev2 dns record
+  ipa:
+    args="dnsrecord-add example.com rhevh1 --a-rec 192.168.100.11"
+    password="{{ ipa_admin_password }}"
+    ignore_no_modifications=true
+

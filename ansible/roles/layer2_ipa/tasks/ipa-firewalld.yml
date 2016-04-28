@@ -1,0 +1,5 @@
+---
+
+- name: updating firewall rules
+  firewalld: port={{item.port}}/{{item.protocol}} immediate={{item.immediate}} permanent={{item.permanent}} state={{item.state }} zone={{item.zone}}
+  with_items:  "{{ firewalld_rules }}"

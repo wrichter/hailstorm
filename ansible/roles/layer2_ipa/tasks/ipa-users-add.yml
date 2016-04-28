@@ -1,0 +1,6 @@
+---
+
+- name: add users to IPA
+  ipa: args="user-add abradshaw --first=adrian --last=bradshaw"
+    password="{{ ipa_admin_password }}"
+    ignore_no_modifications=true

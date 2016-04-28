@@ -1,0 +1,5 @@
+---
+
+- name: initial configuration of the IPA servers
+  command: ipa-server-install -r EXAMPLE.COM -p redhat01 -a redhat01 -U --setup-dns --forwarder="192.168.100.1" --no-dnssec-validation  creates=/etc/dirsrv/slapd-EXAMPLE-COM/dse.ldif
+

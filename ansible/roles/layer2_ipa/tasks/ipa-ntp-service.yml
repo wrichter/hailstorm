@@ -1,0 +1,5 @@
+---
+
+- name: checking ntp
+  # TODo Add config to use layer1 host
+  service: name=ntpd state=started enabled=yes

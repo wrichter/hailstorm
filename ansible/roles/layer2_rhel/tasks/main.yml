@@ -2,6 +2,8 @@
     - include: prepare_host.yml
     - include: chrony_config.yml
       when: ntp_client == 'chrony'
+    - include: ntp_config.yml
+      when: ntp_client == 'ntp'
   when: mode=="create"
 
 - block:
