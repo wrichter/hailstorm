@@ -1,0 +1,31 @@
+---
+
+- name: copy ntp configuration
+  template: src=ntp.j2
+     dest=/etc/ntp.conf
+     owner=root
+     group=root
+     mode=0644
+  register: ntp_conf
+
+- name: ntp
+  yum:
+   pkg=ntp
+   state=present
+
+- name: Remove NTP if installed
+  yum:
+   name=chrony
+   state=absent
+
+- name: ensure ntp service is started and enabled
+  service:
+   name: ntpd
+   state: started
+   enabled: yes
+
+- name: ensure ntpd is getting restarted if necessary
+  service:
+   name: ntpd
+   state: restarted
+  when: ntp_conf|changed
