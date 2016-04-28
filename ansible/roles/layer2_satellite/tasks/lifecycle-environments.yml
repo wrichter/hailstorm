@@ -1,9 +1,3 @@
-# - block:
-#   - command: hammer lifecycle-environment delete --organization="Default Organization" --name PROD
-#   - command: hammer lifecycle-environment delete --organization="Default Organization" --name TEST
-#   - command: hammer lifecycle-environment delete --organization="Default Organization" --name DEV
-#   ignore_errors: yes
-
 - name: determine current lifecycle environments
   shell: hammer lifecycle-environment list --organization "Default Organization" --library false | awk '{ print $3 }'
   register: current_lifecycle
@@ -25,10 +19,3 @@
       prior: 'TEST'
       description: 'Production'
       label: 'production'
-
-# - name: create TEST
-#   command: hammer lifecycle-environment create --organization "Default Organization" --description 'Testing' --name 'TEST' --label testing --prior 'DEV'
-#   when: 'TEST' not in current_lifecycle.stdout
-# - name: create PROD
-#   command: hammer lifecycle-environment create --organization "Default Organization" --description 'Production' --name 'PROD' --label production --prior 'TEST'
-#   when: 'PROD' not in current_lifecycle.stdout
