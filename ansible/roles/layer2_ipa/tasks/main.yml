@@ -4,4 +4,5 @@
     - include: ipa-ntp-service.yml
     - include: ipa-configure.yml
     - include: ipa-dns-records-add.yml
+    - include: ipa-users-add.yml 
   when: mode=="create"

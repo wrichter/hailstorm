@@ -112,3 +112,9 @@ firewalld_rules:
    zone: public
    permanent: true
    immediate: true
+
+ipa_users:
+ - abradshaw:
+   login: abradshaw
+   first: Adrian
+   last:  Bradshaw
