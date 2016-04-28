@@ -4,6 +4,8 @@
  - $ git clone 'https://github.com/ansible/ansible' /tmp/gitansible/
  - $ cd /tmp/gitansible/ ; git checkout stable-2.0.0.1
  - $ make ; make install 
+ - OR
+ - $ yum localinstall http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.0.1.0-2.el7.noarch.rpm
 1. Clone this repository to your local machine, example:
  - $ mkdir -p ~/projects/hailstorm ; cd ~/projects/hailstorm ; git clone 'https://github.com/wrichter/hailstorm' git
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
