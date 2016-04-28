@@ -9,7 +9,7 @@
     # install Sat6:
 
     - name: run katello-installer
-      shell: katello-installer --foreman-admin-username admin --foreman-admin-password "{{ root_password }}" && touch /.katello-is-installed creates=/.katello-is-installed
+      shell: katello-installer --foreman-admin-username admin --foreman-admin-password "{{ root_password }}" --katello-proxy-url http://proxy.coe.muc.redhat.com --katello-proxy-port 3128 && touch /.katello-is-installed creates=/.katello-is-installed
 
     # create hammer-config-file
     - name: create dir /root/.hammer
@@ -20,16 +20,16 @@
         mode=0755
     - name: hammer_cli_config
       template: src=cli_config.yml.j2
-          dest=/root/.hammer/cli_config.yml
-          owner=root
-          group=root
-          mode=0600
+        dest=/root/.hammer/cli_config.yml
+        owner=root
+        group=root
+        mode=0600
     - name: copy-import-manifest
       copy:  src=binary/{{ satellite_manifestfile }}
-              dest=/root
-              owner=root
-              group=root
-              mode=0600
+        dest=/root
+        owner=root
+        group=root
+        mode=0600
 
     - name: upload manifest
       command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
@@ -44,8 +44,11 @@
       tags: ['sync']
     - include: sync-rhev-content.yml
       tags: ['sync']
+    # wait for syncs to complete
+    - include: wait-for-sync-tasks.yml
+      tags: ['sync']
     # create lifecycle environments
-    - include: Lifecycles.yml
+    - include: lifecycle-environments.yml
     # building content views, publish and promote them
     - include: content-views.yml
     # creating a host collection
