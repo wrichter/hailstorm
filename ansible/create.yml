@@ -60,7 +60,8 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
-    - { role: layer2_rhel_register_with_satellite, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
+    - { role: layer2_rhel_register_with_satellite, tags: [ 'layer2', 'satellite', 'reg', 'test-rhel' ], mode: create }
+    - { role: layer2_rhel_configure_resolv_conf, tags: [ 'layer2', 'satellite', 'res', 'test-rhel' ], mode: create, nameserver: 192.168.100.23 }
 
 #### IPA ####
 
