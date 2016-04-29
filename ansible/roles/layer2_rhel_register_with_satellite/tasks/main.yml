@@ -1,1 +1,20 @@
-- debug: msg="placeholder for the actual registration with satellite"
+- name: unregister previous registration
+  redhat_subscription: state=absent
+
+# yum module can't do localinstall...
+- name: install katello-ca-consumer rpm
+  command: yum -y localinstall http://192.168.103.20/pub/katello-ca-consumer-latest.noarch.rpm
+
+- name: add entry in /etc/hosts
+  shell: 'echo "192.168.103.20 satellite.example.com satellite" >> /etc/hosts'
+
+- name: register to satellite
+  redhat_subscription:
+    state: present
+    org_id: 'Default_Organization'
+    activationkey: "{{ activation_key }}"
+
+- name: install katello-agent
+  yum:
+    name: katello-agent
+    state: present
