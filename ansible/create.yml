@@ -122,6 +122,15 @@
   roles:
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
 
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'rhevm-ldap' ]
+  roles:
+    - { role: layer2_rhevm_ldap, tags: [ 'rhevm-ldap' ], mode: create }
+
 
 #### CLOUDFORMS ####
 - hosts: rhevm

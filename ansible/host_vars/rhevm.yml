@@ -30,4 +30,4 @@ ansible_host: 192.168.103.10
 #poolid: 8a85f9843e3d687a013e3ddd46dd07f1
 
 repos: "{{ rhevm_repos }}"
-packages: rhevm
+packages: rhevm,ovirt-engine-extension-aaa-ldap-setup

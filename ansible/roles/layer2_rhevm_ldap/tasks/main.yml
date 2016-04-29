@@ -1,0 +1,8 @@
+- block:
+    - include: configure_rhevm_ldap.yml
+  when: mode=="create"
+
+- block:
+    - include: unconfigure_rhevm_ldap.yml
+  when: mode=="destroy"
+
