@@ -8,4 +8,5 @@
   command: hammer host-collection create --organization "Default Organization" --name {{ item }}
   when: "item not in host_collections.stdout"
   with_items:
+    - 'RHEL6'
     - 'RHEL7'

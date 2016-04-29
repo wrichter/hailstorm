@@ -50,9 +50,13 @@
     # create lifecycle environments
     - include: lifecycle-environments.yml
     # building content views, publish and promote them
-    - include: content-views.yml
+    - include: cv-os-rhel6-server.yml
+    - include: cv-os-rhel7-server.yml
     # creating a host collection
     - include: host-collections.yml
     # creating activation keys
-    - include: activation-keys.yml
+    - include: ak-cv-os-rhel6-server.yml
+    - include: ak-cv-os-rhel7-server.yml
+    # create compute resources
+    - include: compute_resources.yml
   when: mode=="create"
