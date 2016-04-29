@@ -1,0 +1,6 @@
+- block:
+    - include: configure_rhevm_ldap.yml
+#    - include: add_hypervisors.yml
+#    - include: add_storage2.yml
+  when: mode=="create"
+

@@ -1,0 +1,50 @@
+- stat: path=/etc/ovirt-engine/aaa/IPA.jks
+  register: ldap_keystore
+ 
+- block:
+# main process
+ 
+ 
+# set resolv.conf to point to IPA
+ 
+ 
+# copy the ca.crt from IPA (using delegate)
+    - name: copy certificate of IPA
+      command: cat /etc/ipa/ca.crt
+      delegate_to: ipa
+      register: certificate
+
+    - name: create the cert on the RHEV server
+      copy: content="{{ certificate.stdout }}" dest=/tmp/ca.crt
+ 
+    # run the keytool line to generate the store
+    - name: generate keystore file from cert
+      command: keytool -importcert -noprompt -trustcacerts -alias ca -file /tmp/ca.crt -keystore /etc/ovirt-engine/aaa/IPA.jks -storepass changeit  creates=/etc/ovirt-engine/aaa/IPA.jks
+ 
+    # copy the other 3 files over
+    - name: copy IPA.properties
+      copy: src=files/IPA.properties dest=/etc/ovirt-engine/aaa/IPA.properties owner=ovirt group=ovirt mode=600
+ 
+    - name: copy IPA-authz.properties
+      copy: src=files/IPA-authz.properties dest=/etc/ovirt-engine/extensions.d/IPA-authz.properties
+ 
+    - name: copy IPA-authn.properties
+      copy: src=files/IPA-authn.properties dest=/etc/ovirt-engine/extensions.d/IPA-authn.properties
+ 
+    # restart ovirt-engine
+    - name: restarting rhev services
+      service: name=ovirt-engine state=restarted
+
+    # TODO - add an LDAP group to the RHEV superuser role
+    #        then, when users are created on the IPA server, those that are in 
+    #        the group will automatically be rhev admins
+
+  when: ldap_keystore.stat.exists == False
+
+- block:
+    - file: path=/etc/ovirt-engine/aaa/IPA.jks ensure=absent
+    - file: path=/etc/ovirt-engine/aaa/IPA.properties ensure=absent
+    - file: path=/etc/ovirt-engine/extensions.d/IPA-authz.properties ensure=absent
+    - file: path=/etc/ovirt-engine/extensions.d/IPA-authn.properties ensure=absent
+    - service: name=ovirt-engine state=restarted
+  when: mode=="destroy"

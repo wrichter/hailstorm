@@ -80,6 +80,13 @@
       tags: [ 'layer2','satellite', 'vms', 'test-rhel' ]
       mode: destroy
 
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_rhevm_ldap
+      tags: [ 'rhevm-ldap' ]
+      mode: destroy
 
 - hosts: satellite
   gather_facts: false
