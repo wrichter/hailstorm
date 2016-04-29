@@ -1,10 +1,11 @@
 # lists all other groups
-[all:children]
-layer1
-rhev
-rhosp-all
-satellite
-ose3-node
+# don't need it.... all is a magic pattern
+#[all:children]
+#layer1
+#rhev
+#rhosp-all
+#satellite
+#ose3-node
 
 # the layer1 group should only contain a single server called layer1
 # whose IP address is specified in the ansible_host property in host_vars/layer1.yml
@@ -21,6 +22,7 @@ rhev
 test-rhel6
 test-rhel7
 ipa
+infrastructure
 
 [ose3-node]
 ose3-master
@@ -96,6 +98,10 @@ test-rhel7
 [ipa]
 ipa
 
+# the Infrastructure server (DNS, SMTP/IMAP)
+[infrastructure]
+infrastructure
+
 # All layer2 nodes that are installed with RHEL7
 [rhel7:children]
 rhosp-all
@@ -104,6 +110,7 @@ rhevh
 ose3-node
 test-rhel7
 ipa
+infrastructure
 
 # All layer2 nodes that are installed with RHEL6
 [rhel6:children]
