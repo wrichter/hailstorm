@@ -1,13 +1,13 @@
 # Automated rollout via Ansible
 ## Prerequisites
-1. Install Ansible 2.0 on your local machine and run all the playbooks from there. Avoid Ansible 2.1 since we experienced some random problems running the playbooks with 2.1. Example:
- - $ git clone 'https://github.com/ansible/ansible' /tmp/gitansible/
- - $ cd /tmp/gitansible/ ; git checkout stable-2.0.0.1
- - $ make ; make install 
- - OR
- - $ yum localinstall http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.0.1.0-2.el7.noarch.rpm
+1. Install Ansible 2.0 on your local machine and run all the playbooks from there. Avoid Ansible 2.1 since we experienced some random problems running the playbooks with 2.1. Example for RHEL7:
+ - # yum localinstall 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
+ - # yum localinstall http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.0.1.0-2.el7.noarch.rpm
 1. Clone this repository to your local machine, example:
  - $ mkdir -p ~/projects/hailstorm ; cd ~/projects/hailstorm ; git clone 'https://github.com/wrichter/hailstorm' git
+1. Change the subscription pool ID, example:
+ - # subscription-manager list --available
+ - $ vim config/hailstorm_config.yml
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
   - [RHEL-OSP overcloud binaries](https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software)
     - Overcloud image
@@ -16,6 +16,7 @@
   - [RHEL 7 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software)
   - [RHEL 6 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---6/6.7/x86_64/product-software)
 1. Download the manifest for your Organization for the Satellite and copy the manifest-zip file to the local ansible/binary directory and rename it to manifest.zip
+ - [ What is the workflow for generating a Satellite 5 Certificate or Satellite 6 manifest](https://access.redhat.com/articles/477863)
 1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside). If you create new keys, ensure they are also added to the layer1's host root user as authorized key:
   - $ ssh-keygen -t rsa -f binary/undercloud
   - $ ssh-keygen -t rsa -f binary/hailstorm
@@ -23,6 +24,7 @@
   - ansible_host: to the ip address or DNS name of your layer1 host (which is prepared with a minimal RHEL install).  
   - If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see [ansible documentation](http://docs.ansible.com/ansible/intro_inventory.html))
 1. If necessary, copy & adapt the software-driven configuration from the sample config/hailstorm_config.yml
+1. If you encounter any issues please report it and edit this page if you think it can improve the process. 
 
 ## Running the playbook
 Run all commands on your laptop from the ansible directory. Since the server might reboot when the playbook executes, running the playbook on the server is discouraged.
