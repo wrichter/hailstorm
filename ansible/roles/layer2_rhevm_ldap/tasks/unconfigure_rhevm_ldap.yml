@@ -1,0 +1,5 @@
+- file: path=/etc/ovirt-engine/aaa/IPA.jks state=absent
+- file: path=/etc/ovirt-engine/aaa/IPA.properties state=absent
+- file: path=/etc/ovirt-engine/extensions.d/IPA-authz.properties state=absent
+- file: path=/etc/ovirt-engine/extensions.d/IPA-authn.properties state=absent
+- service: name=ovirt-engine state=restarted

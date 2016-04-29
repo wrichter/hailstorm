@@ -40,11 +40,3 @@
     #        the group will automatically be rhev admins
 
   when: ldap_keystore.stat.exists == False
-
-- block:
-    - file: path=/etc/ovirt-engine/aaa/IPA.jks ensure=absent
-    - file: path=/etc/ovirt-engine/aaa/IPA.properties ensure=absent
-    - file: path=/etc/ovirt-engine/extensions.d/IPA-authz.properties ensure=absent
-    - file: path=/etc/ovirt-engine/extensions.d/IPA-authn.properties ensure=absent
-    - service: name=ovirt-engine state=restarted
-  when: mode=="destroy"
