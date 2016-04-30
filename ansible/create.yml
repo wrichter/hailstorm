@@ -18,6 +18,10 @@
 
 - hosts: layer1
   remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer1','rhosp', 'rhev' ]
   roles:
     - role: layer1
       tags: [ 'layer1' ]

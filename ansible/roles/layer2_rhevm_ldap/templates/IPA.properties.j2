@@ -1,0 +1,13 @@
+include = <ipa.properties>
+
+vars.server = {{ hostvars['ipa'].hostname }}
+vars.user = uid=admin,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
+vars.password = {{ hostvars['ipa'].ipa_admin_password }}
+
+pool.default.auth.simple.bindDN = ${global:vars.user}
+pool.default.auth.simple.password = ${global:vars.password}
+pool.default.serverset.type = single
+pool.default.serverset.single.server = ${global:vars.server}
+pool.default.ssl.startTLS = true
+pool.default.ssl.truststore.file = ${local:_basedir}/IPA.jks
+pool.default.ssl.truststore.password = changeit

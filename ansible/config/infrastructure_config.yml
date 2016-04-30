@@ -8,7 +8,7 @@ infrastructure_delegate_local_content_host: "layer1"
 #the following hosts are not used for delegation, but used directly
 infrastructure_address_ssh_jump_host: "{{ layer1_ansible_host }}"
 infrastructure_address_ntp_server: "{{ layer1_ansible_host }}"
-infrastructure_address_default_dns: "{{ layer1_ansible_host }}"
+infrastructure_address_default_dns: "{{ infrastructure_network_default.host_prefix | ipaddr('address') }}"
 
 
 infrastructure_network_default:

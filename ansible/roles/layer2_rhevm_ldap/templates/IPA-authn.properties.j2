@@ -1,0 +1,8 @@
+ovirt.engine.extension.name = IPA-authn
+ovirt.engine.extension.bindings.method = jbossmodule
+ovirt.engine.extension.binding.jbossmodule.module = org.ovirt.engine-extensions.aaa.ldap
+ovirt.engine.extension.binding.jbossmodule.class = org.ovirt.engineextensions.aaa.ldap.AuthnExtension
+ovirt.engine.extension.provides = org.ovirt.engine.api.extensions.aaa.Authn
+ovirt.engine.aaa.authn.profile.name = {{ hailstorm_dns_domain }}
+ovirt.engine.aaa.authn.authz.plugin = IPA-authz
+config.profile.file.1 = ../aaa/IPA.properties

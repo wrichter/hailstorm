@@ -1,0 +1,8 @@
+[ovirt-shell]
+username = admin@internal
+url = https://{{ hostvars['rhevm'].hostname }}/api
+insecure = True
+no_paging = False
+filter = False
+timeout = -1
+password = {{ root_password }}
