@@ -28,11 +28,11 @@ ansible_host: 192.168.103.23
 
 ntp_client: ntp
 
-poolid: 8a85f9843e3d687a013e3ddd471a083e 
+#poolid: 8a85f9843e3d687a013e3ddd471a083e
 repos: "{{ ipa_repos }}"
 packages: ipa-server,ipa-server-dns,rng-tools
 
-ipa_admin_password: "redhat01"
+ipa_admin_password: "{{ root_password }}"
 
 firewalld_rules:
  - DNStcp:
@@ -112,9 +112,3 @@ firewalld_rules:
    zone: public
    permanent: true
    immediate: true
-
-ipa_users:
- - abradshaw:
-   login: abradshaw
-   first: Adrian
-   last:  Bradshaw

@@ -60,8 +60,8 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
-    - { role: layer2_rhel_register_with_satellite, tags: [ 'layer2', 'satellite', 'reg', 'test-rhel' ], mode: create }
     - { role: layer2_rhel_configure_resolv_conf, tags: [ 'layer2', 'satellite', 'res', 'test-rhel' ], mode: create, nameserver: 192.168.100.23 }
+    - { role: layer2_rhel_register_with_satellite, tags: [ 'layer2', 'satellite', 'reg', 'test-rhel' ], mode: create }
 
 #### IPA ####
 
@@ -94,6 +94,7 @@
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'rhev', 'vm' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'rhev', 'rhel' ], mode: create }
+    - { role: layer2_rhel_configure_resolv_conf, tags: [ 'layer2', 'rhev' ], mode: create, nameserver: 192.168.100.23 }
 
 - hosts: rhevm
   remote_user: root
@@ -118,17 +119,9 @@
   gather_facts: false
   pre_tasks:
     - setup:
-      tags: [ 'layer2', 'rhev' ]
+      tags: [ 'layer2', 'rhev','rhevm-ldap' ]
   roles:
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
-
-- hosts: rhevm
-  remote_user: root
-  gather_facts: false
-  pre_tasks:
-    - setup:
-      tags: [ 'rhevm-ldap' ]
-  roles:
     - { role: layer2_rhevm_ldap, tags: [ 'rhevm-ldap' ], mode: create }
 
 
@@ -138,7 +131,6 @@
   gather_facts: false
   roles:
     - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
-
 
 #### OPENSTACK ####
 

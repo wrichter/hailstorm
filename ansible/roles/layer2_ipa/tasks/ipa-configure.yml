@@ -1,5 +1,4 @@
 ---
 
 - name: initial configuration of the IPA servers
-  command: ipa-server-install -r EXAMPLE.COM -p redhat01 -a redhat01 -U --setup-dns --forwarder="192.168.100.1" --no-dnssec-validation  creates=/etc/dirsrv/slapd-EXAMPLE-COM/dse.ldif
-
+  command: ipa-server-install -r "{{ hailstorm_dns_domain|upper }}" -p "{{ ipa_admin_password }}" -a "{{ ipa_admin_password }}" -U --setup-dns --forwarder="{{ infrastructure_address_default_dns }}" --no-dnssec-validation  creates=/etc/dirsrv/slapd-{{ hailstorm_dns_domain|upper|regex_replace('\.','-') }}/dse.ldif

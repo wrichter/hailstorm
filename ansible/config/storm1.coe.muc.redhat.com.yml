@@ -32,3 +32,10 @@ layer2_rhosp_compute_cpu: 8
 
 layer2_satellite_mem: 16384
 layer2_satellite_cpu: 4
+
+dnat_rules:
+  - device: em1
+    fromaddress: 10.32.107.10
+    fromport: 443
+    toaddress: "{{ hostvars['satellite'].nic[0].ip }}"
+    toport: 443
