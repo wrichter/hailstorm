@@ -103,6 +103,7 @@
       mode: destroy
 
 - hosts: layer1
+  gather_facts: false
   remote_user: root
   roles:
     # - role: layer1_vms

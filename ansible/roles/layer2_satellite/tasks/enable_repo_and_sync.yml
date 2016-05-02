@@ -1,0 +1,16 @@
+- name: find enabled products
+  shell: hammer product list --enabled true --organization "{{ organization }}" | tail -n+3 | awk 'BEGIN { FS = "|" } ; { gsub(/^[ \t]+/, "", $2); gsub(/[ \t]+$/, "", $2); print $2 }'
+  register: prods
+
+# "ignore_errors: yes" because hammer throws an error if we try to enable a repo, that is already enabled
+- name: enable RHEL repos
+  command: 'hammer repository-set enable --organization "{{ organization }}" --product "{{ item.0.product }}" --basearch="{{ item.0.basearch }}" --name "{{ item.1.name }}"{% if item.1.releasever is defined %} --releasever "{{ item.1.releasever }}"{% endif %}'
+  when: item.0.product not in prods.stdout_lines
+  with_subelements:
+    - "{{ product_config }}"
+    - repos
+  ignore_errors: yes
+
+- name: start sync tasks for RHEL repos
+  command: 'hammer product synchronize --async --organization "{{ organization }}" --name "{{ item.product }}"'
+  with_items: "{{ product_config }}"

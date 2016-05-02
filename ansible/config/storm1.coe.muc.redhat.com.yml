@@ -33,6 +33,12 @@ layer2_rhosp_compute_cpu: 8
 layer2_satellite_mem: 16384
 layer2_satellite_cpu: 4
 
+# if a property http_proxy is defined, satellite will be configured to sync via http_proxy
+http_proxy:
+  name: proxy.coe.muc.redhat.com
+  port: 3128
+  protocol: https
+
 dnat_rules:
   - device: em1
     fromaddress: 10.32.107.10

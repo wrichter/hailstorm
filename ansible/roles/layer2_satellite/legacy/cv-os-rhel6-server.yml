@@ -5,7 +5,7 @@
 
 - name: get current lifecycle environments
   shell: hammer lifecycle-environment list --organization "Default Organization" --library false | awk '{ print $3 }' | tail -n+4
-  register: lifecycle_environments
+  register: current_lifecycle_environments
   changed_when: false
 
 - name: create CV-OS-RHEL6-SERVER
@@ -31,4 +31,4 @@
 - name: promote latest version of CV-OS-RHEL6-SERVER to all lifecycle environments
   command: hammer content-view version promote --id '{{ cv_id.stdout.split(' ')[0] }}' --organization "Default Organization" --to-lifecycle-environment '{{ item }}'
   when: "item not in cv_id.stdout"
-  with_items: "{{ lifecycle_environments.stdout_lines }}"
+  with_items: "{{ current_lifecycle_environments.stdout_lines }}"

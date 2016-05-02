@@ -1,62 +1,11 @@
 - block:
-    # set short and full hostname in the /etc/hosts due our lack of DNS here
-    - name: add entry to /etc/hosts
-      shell: "echo $(ip a s eth0 |grep -w inet |awk '{print $2}' |awk -F / '{print $1}') $(hostname -f) $(hostname -s)   >> /etc/hosts"
-    # open firewall for related services:
-    - include: sat6-firewalld.yml
-    # install packages needed for Sat6:
-    - include: sat6-packages.yml
-    # install Sat6:
-
-    - name: run katello-installer
-      shell: katello-installer --foreman-admin-username admin --foreman-admin-password "{{ root_password }}" --katello-proxy-url http://proxy.coe.muc.redhat.com --katello-proxy-port 3128 && touch /.katello-is-installed creates=/.katello-is-installed
-
-    # create hammer-config-file
-    - name: create dir /root/.hammer
-      file: path=/root/.hammer
-        state=directory
-        owner=root
-        group=root
-        mode=0755
-    - name: hammer_cli_config
-      template: src=cli_config.yml.j2
-        dest=/root/.hammer/cli_config.yml
-        owner=root
-        group=root
-        mode=0600
-    - name: copy-import-manifest
-      copy:  src=binary/{{ satellite_manifestfile }}
-        dest=/root
-        owner=root
-        group=root
-        mode=0600
-
-    - name: upload manifest
-      command: 'hammer subscription upload --organization "Default Organization" --file /root/manifest.zip'
-    # enable repos and start syncs
-    - include: sync-rhel-content.yml
+    - include: install-satellite6.yml
+    - include: import_manifest.yml
+    - include: enable_repo_and_sync.yml
       tags: ['sync']
-    - include: sync-satellite-content.yml
-      tags: ['sync']
-    - include: sync-ose-content.yml
-      tags: ['sync']
-    - include: sync-osp-content.yml
-      tags: ['sync']
-    - include: sync-rhev-content.yml
-      tags: ['sync']
-    # wait for syncs to complete
     - include: wait-for-sync-tasks.yml
-      tags: ['sync']
-    # create lifecycle environments
     - include: lifecycle-environments.yml
-    # building content views, publish and promote them
-    - include: cv-os-rhel6-server.yml
-    - include: cv-os-rhel7-server.yml
-    # creating a host collection
+    - include: content_views.yml
     - include: host-collections.yml
-    # creating activation keys
-    - include: ak-cv-os-rhel6-server.yml
-    - include: ak-cv-os-rhel7-server.yml
-    # create compute resources
-    - include: compute_resources.yml
+    - include: activation_keys.yml
   when: mode=="create"

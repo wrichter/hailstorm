@@ -1,0 +1,24 @@
+# set short and full hostname in the /etc/hosts due our lack of DNS here
+- name: add entry to /etc/hosts
+  lineinfile: dest=/etc/hosts line="{{ nic[0].ip}} {{ hostname }}  {{ name }} "
+
+- name: run katello-installer
+  shell: katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} {% if http_proxy is defined %}--katello-proxy-url {{ http_proxy.protocol }}://{{ http_proxy.name }} --katello-proxy-port {{ http_proxy.port }}{% endif %} && touch /.katello-is-installed  creates=/.katello-is-installed
+  register: katello_installed
+
+# create hammer-config-file
+- name: create dir /root/.hammer
+  file: path=/root/.hammer
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+  when: katello_installed|changed
+
+- name: hammer_cli_config
+  template: src=cli_config.yml.j2
+    dest=/root/.hammer/cli_config.yml
+    owner=root
+    group=root
+    mode=0600
+  when: katello_installed|changed

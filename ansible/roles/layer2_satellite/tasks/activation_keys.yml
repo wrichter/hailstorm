@@ -1,0 +1,39 @@
+- name: get current activation keys
+  shell: hammer activation-key list --organization "{{ organization }}" | awk '{ print $3 }'
+  register: current_activation_keys
+  changed_when: false
+
+- name: get current lifecycle environments
+  shell: hammer lifecycle-environment list --organization "{{ organization }}" --library false | awk '{ print $3 }' | tail -n+4
+  register: current_lifecycle_environments
+  changed_when: false
+
+- name: get subscription id
+  shell: hammer subscription list --organization "{{ organization }}" | grep "Employee SKU" | awk '{print $16}'
+  register: sub_id
+  changed_when: false
+
+- name: create activation keys for content_view
+  command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1.content_view }}" --lifecycle-environment {{ item.0 }} --name "AK-{{ item.1.content_view }}-{{ item.0 }}"
+  with_nested:
+    - "{{ current_lifecycle_environments.stdout_lines }}"
+    - "{{ content_config }}"
+  when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
+- name: associate activation keys to host collection
+  command: hammer activation-key add-host-collection --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --host-collection "{{ item.1.host_collection }}"
+  with_nested:
+    - "{{ current_lifecycle_environments.stdout_lines }}"
+    - "{{ content_config }}"
+  when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
+- name: associate subscription to all activation keys
+  command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --subscription-id {{ sub_id.stdout }}
+  with_nested:
+    - "{{ current_lifecycle_environments.stdout_lines }}"
+    - "{{ content_config }}"
+  when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
+- name: override what content that is enabled
+  command: hammer activation-key content-override --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --content-label "{{ item.1.override }}" --value 1
+  with_nested:
+    - "{{ current_lifecycle_environments.stdout_lines }}"
+    - "{{ content_config }}"
+  when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"

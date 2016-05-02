@@ -1,0 +1,4 @@
+- block:
+      # create compute resources
+    - include: compute_resources.yml
+  when: mode=="create"

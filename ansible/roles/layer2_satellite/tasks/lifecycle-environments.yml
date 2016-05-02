@@ -1,21 +1,9 @@
 - name: determine current lifecycle environments
-  shell: hammer lifecycle-environment list --organization "Default Organization" --library false | awk '{ print $3 }'
+  shell: hammer lifecycle-environment list --organization "{{ organization }}" --library false | awk '{ print $3 }'
   register: current_lifecycle
   changed_when: false
 
 - name: create lifecycle environments
-  command: hammer lifecycle-environment create --organization "Default Organization" --description "{{ item.description}}" --name "{{ item.name }}" --label "{{ item.label }}" --prior "{{ item.prior }}"
+  command: hammer lifecycle-environment create --organization "{{ organization }}" --description "{{ item.description}}" --name "{{ item.name }}" --label "{{ item.label }}" --prior "{{ item.prior }}"
   when: "'{{ item.name }}' not in current_lifecycle.stdout_lines"
-  with_items:
-    - name: 'DEV'
-      prior: 'Library'
-      description: 'Development'
-      label: 'development'
-    - name: 'TEST'
-      prior: 'DEV'
-      description: 'Testing'
-      label: 'testing'
-    - name: 'PROD'
-      prior: 'TEST'
-      description: 'Production'
-      label: 'production'
+  with_items: "{{ lifecycle_environments }}"

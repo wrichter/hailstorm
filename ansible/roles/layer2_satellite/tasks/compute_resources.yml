@@ -1,8 +1,0 @@
-- name: get all compute resources
-  shell: hammer compute-resource list --organization "Default Organization" | awk '{ print $3}'
-  register: compute_resources
-  changed_when: false
-
-- name: create RHEV compute resource
-  command: hammer compute-resource create --organizations "Default Organization" --name rhevm.example.com --provider Ovirt --url https://rhevm.example.com/api --user admin@internal --password {{ root_password }}
-  when: "'rhevm.example.com' not in compute_resources.stdout"

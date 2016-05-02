@@ -1,0 +1,11 @@
+- name: copy-import-manifest
+  copy:  src=binary/{{ satellite_manifestfile }}
+    dest=/root
+    owner=root
+    group=root
+    mode=0600
+  register: manifest
+
+- name: upload manifest
+  command: 'hammer subscription upload --organization "{{ organization }}" --file /root/{{ satellite_manifestfile }}'
+  when: manifest|changed

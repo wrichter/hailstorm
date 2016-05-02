@@ -11,8 +11,10 @@
 # runs for maximum 120 * 60 seconds = 2 hours
 - name: wait for all sync tasks to complete
   shell: curl -X GET -s -k -u admin:{{ root_password }} "https://{{ ansible_host }}/foreman_tasks/api/tasks?utf8=✓&search=label+%3D+Actions%3A%3AKatello%3A%3ARepository%3A%3ASync+and+state+%3D+running"
+#  until: "'\"total\":0' in sync_tasks.stdout"
+#  uri: url=https://{{ ansible_host }}/foreman_tasks/api/tasks?utf8=✓&search=label+%3D+Actions%3A%3AKatello%3A%3ARepository%3A%3ASync+and+state+%3D+running return_content=yes user=admin password={{ root_password }}
   register: sync_tasks
-  until: "'\"total\":0' in sync_tasks.stdout"
   changed_when: false
+  until: ( sync_tasks.stdout | from_json ).total == 0
   retries: 120
   delay: 60
