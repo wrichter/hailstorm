@@ -27,5 +27,3 @@ ksdevice: eth1
 #root_password: redhat01
 ansible_host: 192.168.103.21
 activation_key: AK-CV-OS-RHEL6-SERVER-TEST
-pool_regex: '^Red Hat Enterprise Server$'
-#packages: libselinux-python

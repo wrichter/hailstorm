@@ -1,6 +1,3 @@
----
-# This is a separate role since firewalld does not apply to RHEL6
-
 - name: updating firewall rules
   firewalld: port={{item.port}}/{{item.protocol}} permanent={{item.permanent}} state={{item.state }} zone={{item.zone}}
   with_items:  "{% if firewalld_rules is defined %}{{ firewalld_rules }}{% endif %}"

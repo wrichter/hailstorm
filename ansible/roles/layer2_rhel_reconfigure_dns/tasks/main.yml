@@ -19,7 +19,7 @@
       shell: grep -e "^DNS1=" -e "^DNS2=" "{{ item.path }}" || true
       changed_when: false
       register: dns_lines
-      with_items: "{{ ifcfgscripts.files }}"
+      with_items: "{% if ifcfgscripts.files is defined %}{{ ifcfgscripts.files }}{% endif %}"
       when: not ifcfgscripts|skipped
 
     - name: if DNS1 exists but no DNS2, ensure that DNS1 points to nameserver and DNS2 points to the previous DNS1 record (DNS1 line)

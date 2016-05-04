@@ -1,6 +1,7 @@
 - block:
     - include: subscribe_system.yml
     - include: prepare_host.yml
+    - include: configure_firewalld_rules.yml
     - include: chrony_config.yml
       when: ntp_client == 'chrony'
     - include: ntp_config.yml
