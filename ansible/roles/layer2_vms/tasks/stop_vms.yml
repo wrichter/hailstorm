@@ -2,16 +2,23 @@
     - name: find running VM
       shell: virsh list --name | grep "{{ name }}"
       register: virt_vms
+      failed_when: false
+      changed_when: false
+    - name: save running state as fact
+      set_fact:
+        vm_was_running: "{{ virt_vms.stdout == name }}"
     - name: shut down VM (gracefully)
       virt: name="{{ name }}" state=shutdown uri=qemu:///system
       when: virt_vms.stdout == "{{ name }}"
     - name: wait for VM to stop
       shell: virsh list --name | grep "{{ name }}"
+      when: virt_vms.stdout == "{{ name }}"
       register: virt_vms
       until: virt_vms.stdout == ""
       changed_when: false
       retries: 30
       delay: 10
+      failed_when: false
     #- name: force VM shutdown
     #  virsh: command=destroy name="{{ name }}"
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"

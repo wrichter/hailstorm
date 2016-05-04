@@ -1,0 +1,12 @@
+---
+- hosts: layer2
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_vms
+      mode: stop
+    - role: layer2_vms
+      mode: snapshot
+    - role: layer2_vms
+      mode: start
+      recreate_running_state: true

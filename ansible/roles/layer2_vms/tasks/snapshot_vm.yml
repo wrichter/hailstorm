@@ -1,0 +1,10 @@
+- block:
+    - name: find VM
+      shell: virsh list --name --all | grep "{{ name }}"
+      register: virt_vms
+      failed_when: false
+      changed_when: false
+    - name: create internal snapshot
+      command: virsh snapshot-create-as "{{ name }}" "{{ snapshot_name | default('') }}" --atomic
+      when: virt_vms.stdout == name
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"

@@ -14,3 +14,11 @@
 - block:
     - include: destroy_vms.yml
   when: mode == "destroy"
+
+- block:
+    - include: snapshot_vm.yml
+  when: mode == "snapshot"
+
+- block:
+    - include: revert_vm_to_snapshot.yml
+  when: mode == "revert"
