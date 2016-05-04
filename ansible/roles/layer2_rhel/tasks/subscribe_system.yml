@@ -1,0 +1,68 @@
+# can be invoked with an activation key or with rhsm_username and rhsm_password
+# The intent is as follows:
+#   - most systems are subscribed against satellite
+#   - only satellite itself needs to register agianst RHN to initiate the process
+#   - once satellite is brought up, it unsubscribes from RHN and subscribes against itself
+#   - subscriptions are not removed and recreated in the life cylce of a VM,
+#     rather they are subscribed at the beginning of their life cycle and
+#     unsubscribed at the end of it (i.e. unsubscribe might be messy and leave the system in an inconsistent state)
+
+- name: check if system is targeting RHN or Satellite
+  shell: awk '/^hostname =/{print $3}' /etc/rhsm/rhsm.conf
+  register: rhsm_target
+  changed_when: false
+
+- name: check if system is registered (either RHN or Satellite)
+  shell: subscription-manager status | awk '/^Overall Status/{ print $3 }'
+  register: subscription_status
+  changed_when: false
+
+# check if activation key is present (= demo builder wants to register against satellite)
+
+# Activation Key is present,
+#    system is registered
+#       system is targetting RHN
+#          unsubscribe from RHN
+#          install katello-ca-consumer-latest
+#          register system
+#       system  is targetting satellite
+#          do nothing
+#    System is unregistered
+#       install katello-ca-consumer-latest
+#       register system
+# Activation Key is not present
+#    system is registered
+#        do nothing
+#    system is not registered
+#        register (against RHN)
+
+
+- name: unsubscribe (from RHN)
+  redhat_subscription: state=absent
+  when: activation_key is defined and subscription_status.stdout == 'Current' and rhsm_target.stdout != hostvars['satellite'].hostname
+
+- block:
+    - name: add satellite entry to /etc/hosts
+      lineinfile: dest=/etc/hosts line="{{ hostvars['satellite'].nic[0].ip }} {{ hostvars['satellite'].hostname }}  {{ hostvars['satellite'].name }} "
+    # yum module can't do localinstall...
+    - name: install katello-ca-consumer-latest
+      command: yum -y localinstall http://{{ hostvars['satellite'].nic[0].ip }}/pub/katello-ca-consumer-latest.noarch.rpm  creates=/etc/rhsm/rhsm.conf.kat-backup
+    - name: register system using activation key against satellite
+      redhat_subscription:
+        state: present
+        org_id: "{{ hostvars['satellite'].organization_id }}"
+        activationkey: "{{ activation_key }}"
+        pool: "{{ pool_regex }}"
+    - name: install katello-agent
+      yum:
+        name: katello-agent
+        state: present
+  when: activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or subscription_status.stdout != 'Current')
+
+- name: register system using username/pw against RHN
+  redhat_subscription:
+    state: present
+    username: "{{ rhsm_username }}"
+    password: "{{ rhsm_password }}"
+    pool: "{{ pool_regex }}"
+  when: activation_key is not defined and subscription_status.stdout != 'Current'

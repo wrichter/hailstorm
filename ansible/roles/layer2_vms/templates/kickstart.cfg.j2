@@ -54,6 +54,8 @@ logvol /  --fstype="{{ fstype }}" --size={{ disk.partition_table.root }} --name=
 @core
 ## chrony
 kexec-tools
+# need libselinux-python for ansible to work on selinux enabled RHEL6
+libselinux-python
 
 %end
 

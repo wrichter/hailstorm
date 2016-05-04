@@ -1,0 +1,17 @@
+# this is just to capture the steps that were originally planned.
+# Currently they are not invoked; a plain unsubscribe is sufficinet
+
+- name: remove katello-agent
+  yum: name=katello-agent state=absent
+  failed_when: false
+  ignore_errors: true
+
+- name: unregister previous registration
+  redhat_subscription: state=absent
+  failed_when: false
+  ignore_errors: true
+
+- name: remove katello-ca-consumer package
+  yum: name=katello-ca-consumer-latest state=absent
+  failed_when: false
+  ignore_errors: true

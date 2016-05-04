@@ -73,7 +73,10 @@
   gather_facts: false
   remote_user: root
   roles:
-    - role: layer2_rhel_register_with_satellite
+    - role: layer2_rhel_reconfigure_dns
+      tags: [ 'layer2','satellite', 'rhel', 'test-rhel'  ]
+      mode: destroy
+    - role: layer2_rhel
       tags: [ 'layer2','satellite', 'rhel', 'test-rhel'  ]
       mode: destroy
     - role: layer2_vms
@@ -92,6 +95,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','satellite', 'rhel' ]
+      mode: start
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start

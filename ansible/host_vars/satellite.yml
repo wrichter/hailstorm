@@ -97,6 +97,7 @@ firewalld_rules:
 
 
 organization: "Default Organization"
+organization_id: "Default_Organization"
 
 product_config:
   - product: "Red Hat Enterprise Linux Server"
