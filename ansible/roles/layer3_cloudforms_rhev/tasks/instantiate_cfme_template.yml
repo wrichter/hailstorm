@@ -63,7 +63,5 @@
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d "{{ lookup('template','disk.xml.j2') }}" \
             "https://{{ nic[0].ip }}{{ vm_disk_url.stdout }}"
-      register: res
-    - debug: var=res
 
   when: cloudforms_vm.stdout==''

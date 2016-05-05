@@ -1,4 +1,22 @@
 - block:
     - include: import_cfme_template.yml
     - include: instantiate_cfme_template.yml
+    - name: start Cloudforms VM
+      ovirt:
+        user: admin@internal
+        url: "https://{{ hostvars['rhevm'].ansible_host }}"
+        instance_name: Cloudforms
+        password: "{{ root_password }}"
+        state: started
+    #TODO - configure CF IP Address
   when: mode == 'create'
+
+- block:
+    - name: remove Cloudforms VM
+      ovirt:
+        user: admin@internal
+        url: "https://{{ hostvars['rhevm'].ansible_host }}"
+        instance_name: Cloudforms
+        password: "{{ root_password }}"
+        state: absent
+  when: mode == 'destroy'
