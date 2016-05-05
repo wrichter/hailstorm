@@ -42,6 +42,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','ipa', 'rhel' ]
+      mode: start
     - role: layer2_ipa
       tags: [ 'layer2', 'ipa' ]
       mode: destroy

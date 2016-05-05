@@ -26,3 +26,4 @@ nic:
 #root_password: redhat01
 ansible_host: 192.168.103.22
 activation_key: AK-CV-OS-RHEL7-SERVER-TEST
+pool_regex: "{{ rhel_subscription_pool_regex }}"

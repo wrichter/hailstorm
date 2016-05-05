@@ -30,3 +30,5 @@ repos:
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
 packages:
+activation_key: AK-CV-OS-RHEL7-SERVER-PROD
+pool_regex: "{{ rhel_subscription_pool_regex }}"

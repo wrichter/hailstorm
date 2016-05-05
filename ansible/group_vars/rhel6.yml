@@ -5,4 +5,3 @@ fstype: ext4
 selinux_mode: permissive
 ntp_client: ntpd
 #poolid: "{{ rhel6_subscription_poolid }}"
-pool_regex: '^Red Hat Enterprise Server$'

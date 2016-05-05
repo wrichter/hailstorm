@@ -11,6 +11,7 @@ disk:
     root: 10000
 
 repos: "{{ rhevh_repos }}"
+pool_regex: "{{ rhev_subscription_pool_regex }}"
 
 packages: iptables-services
 ntp_client: ntpd

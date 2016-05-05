@@ -12,6 +12,15 @@
       virt: command=destroy name={{ name }}
       when: "{{ name in virt_vms.list_vms }}"
       ignore_errors: true
+
+    - name: list VM snapshots
+      shell: virsh snapshot-list {{ name }} | awk 'NR>2 { print $1 }'
+      register: snapshots
+      changed_when: false
+    - name: delete VM snapshots
+      command: virsh snapshot-delete "{{ name }}" "{{ item }}"
+      with_items: "{{ snapshots.stdout_lines }}"
+    
     - name: undefine vms
       virt: command=undefine name={{ name }}
       when: "{{ name in virt_vms.list_vms }}"

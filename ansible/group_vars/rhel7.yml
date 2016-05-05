@@ -5,4 +5,3 @@ fstype: xfs
 selinux_mode: enforcing
 ntp_client: chrony
 #poolid: "{{ rhel7_subscription_poolid }}"
-pool_regex: '^Red Hat Enterprise Server$'

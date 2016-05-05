@@ -25,6 +25,8 @@ nic:
 #root_password is now set in config/hailstorm_config.yml
 #root_password: redhat01
 ansible_host: 192.168.103.23
+pool_regex: "{{ rhel_subscription_pool_regex }}"
+#activation_key: AK-CV-OS-RHEL7-SERVER-TEST
 
 ntp_client: ntp
 

@@ -23,6 +23,12 @@ cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
+satellite_subscription_pool_regex: "^Red Hat Satellite Employee Subscription$"
+rhel_subscription_pool_regex: "^Employee SKU$"
+rhev_subscription_pool_regex: "^Employee SKU$"
+rhosp_subscription_pool_regex: "^Employee SKU$"
+ose_subscription_pool_regex: "^Employee SKU$"
+
 
 # REPOSITORIES
 # rhosp_repos:

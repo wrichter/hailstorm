@@ -25,7 +25,7 @@ nic:
 #root_password is now set in config/hailstorm_config.yml
 #root_password: redhat01
 ansible_host: 192.168.103.20
-pool_regex: "^Red Hat Satellite$"
+pool_regex: "{{ satellite_subscription_pool_regex }}"
 #poolid: "{{ satellite_subscription_poolid }}"
 repos: "{{ satellite_repos }}"
 

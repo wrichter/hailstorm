@@ -30,6 +30,7 @@ nic:
 #root_password: redhat01
 ansible_host: 192.168.103.30
 
+pool_regex: "{{ rhosp_subscription_pool_regex }}"
 repos: "{{ rhosp_repos }}"
 
 packages: python-rdomanager-oscplugin
