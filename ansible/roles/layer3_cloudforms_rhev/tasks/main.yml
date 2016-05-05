@@ -1,3 +1,4 @@
 - block:
     - include: import_cfme_template.yml
+    - include: instantiate_cfme_template.yml
   when: mode == 'create'

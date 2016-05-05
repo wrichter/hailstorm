@@ -1,0 +1,69 @@
+- name: find VMs
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}/api/vms" | \
+         xmllint --xpath "//vm[name='Cloudforms']" - || true
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  register: cloudforms_vm
+  changed_when: false
+
+- block:
+    - name: get CFME template name
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ nic[0].ip }}/api/templates" | \
+             xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/name/text()" - || true
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+      changed_when: false
+      register: template
+      failed_when: template.stdout == ''
+
+    # - name: get storage domain UUID
+    #   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+    #          "https://{{ nic[0].ip }}/api/storagedomains" | \
+    #          xmllint --xpath "/storage_domains/storage_domain[name='data1']/@id" - | \
+    #          awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
+    #   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+    #   register: data_domain_uuid
+    #   failed_when: data_domain_uuid.stdout == ''
+    #   changed_when: false
+
+    - name: instantiate CFME VM
+      # ovirt:
+      #   user: admin@internal
+      #   url: https://rhevm.example.com
+      #   instance_name: cloudforms
+      #   password: "{{ root_password }}"
+      #   image: "{{ template.stdout }}"
+      #   resource_type: template
+      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "{{ lookup('template','vm.xml.j2') }}" \
+            "https://{{ nic[0].ip }}/api/vms"
+
+    - name: wait for VM to unlock
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ nic[0].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='Cloudforms']/status/state/text()" - || true
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+      changed_when: false
+      register: vm_status
+      until: vm_status.stdout == 'down'
+      retries: 30
+      delay: 10
+
+    - name: find CFME VM disk url
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ nic[0].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='Cloudforms']/link[@rel='disks']/@href" - | \
+             awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+      register: vm_disk_url
+      failed_when: vm_disk_url.stdout == ''
+      changed_when: false
+
+    - name: create disk & attach it to VM
+      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "{{ lookup('template','disk.xml.j2') }}" \
+            "https://{{ nic[0].ip }}{{ vm_disk_url.stdout }}"
+      register: res
+    - debug: var=res
+
+  when: cloudforms_vm.stdout==''
