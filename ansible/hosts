@@ -1,12 +1,3 @@
-# lists all other groups
-# don't need it.... all is a magic pattern
-#[all:children]
-#layer1
-#rhev
-#rhosp-all
-#satellite
-#ose3-node
-
 # the layer1 group should only contain a single server called layer1
 # whose IP address is specified in the ansible_host property in host_vars/layer1.yml
 [layer1]
@@ -15,7 +6,7 @@ layer1
 # everything on layer2 - this is important because group_vars/layer2.yml configures
 # the ssh proxy command used to communicate with all layer2 hosts
 [layer2:children]
-ose3-node
+ose3
 satellite
 rhosp-all
 rhev
@@ -24,10 +15,7 @@ test-rhel7
 ipa
 infrastructure
 
-[ose3-node]
-ose3-master
-
-[ose3-installer]
+[ose3]
 ose3-master
 
 [satellite]
@@ -107,7 +95,7 @@ infrastructure
 rhosp-all
 satellite
 rhevh
-ose3-node
+ose3
 test-rhel7
 ipa
 infrastructure
@@ -116,3 +104,6 @@ infrastructure
 [rhel6:children]
 rhevm
 test-rhel6
+
+[cloudforms]
+cloudforms
