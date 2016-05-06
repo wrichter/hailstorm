@@ -1,6 +1,16 @@
 - name: install ntp
   yum: name=ntp state=latest
+
+- name: copy ntp configuration
+  template: src=ntp.j2
+     dest=/etc/ntp.conf
+     owner=root
+     group=root
+     mode=0644
+
 - name: open ntp port
-  firewalld: service=ntp permanent=true state=enabled
+  firewalld: service=ntp permanent=true state=enabled zone=internal
 - name: enable ntp service
-  service: name=ntpd state=started enabled=yes
+  service: name=ntpd enabled=yes
+- name: start ntp service
+  service: name=ntpd state=restarted
