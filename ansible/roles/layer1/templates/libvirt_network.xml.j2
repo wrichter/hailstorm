@@ -12,6 +12,11 @@
   {% if item.dhcp_start is defined and item.dhcp_end is defined %}
     <dhcp>
       <range start="{{item.dhcp_start}}" end="{{item.dhcp_end}}" />
+      {% for host in groups.all %}{% if host != 'localhost' and hostvars[host].nic is defined %}
+      {% for nic in hostvars[host].nic %}{% if nic.network == item.name and nic.mac is defined and nic.ip is defined %}
+      <host mac="{{ nic.mac }}" name="{{ hostvars[host].hostname }}" ip="{{ nic.ip }}" />
+      {% endif %}{% endfor %}
+      {% endif %}{% endfor %}
     </dhcp>
   {% endif %}
 
