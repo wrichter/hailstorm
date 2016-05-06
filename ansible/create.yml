@@ -147,6 +147,15 @@
     - { role: layer2_rhevm_ldap, tags: [ 'rhevm-ldap' ], mode: create }
 
 
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'satellite-rhev' ]
+  roles:
+    - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev' ], mode: create }
+
 #### CLOUDFORMS ####
 
 - hosts: rhevm

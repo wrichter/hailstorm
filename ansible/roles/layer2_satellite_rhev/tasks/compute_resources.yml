@@ -4,5 +4,5 @@
   changed_when: false
 
 - name: create RHEV compute resource
-  command: hammer compute-resource create --organizations "{{ organization }}" --name rhevm.example.com --provider Ovirt --url https://rhevm.example.com/api --user admin@internal --password {{ root_password }}
+  command: hammer compute-resource create --organizations "{{ organization }}" --name {{ hostvars['rhevm'].hostname }} --provider Ovirt --url https://{{ hostvars['rhevm'].hostname }}/api --user admin@internal --password {{ root_password }}
   when: "'rhevm.example.com' not in compute_resources.stdout"
