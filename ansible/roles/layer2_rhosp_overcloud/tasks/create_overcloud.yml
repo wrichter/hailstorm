@@ -43,6 +43,7 @@
         --ntp-server {{ infrastructure_address_ntp_server }}
         -e ~/my_templates/environments/custom-install.yaml
     #    -e ~/my_templates/environments/storage-environment.yaml
+      tags: ['deploy-overcloud']
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   when: (server_count.stdout | int < 6) #TODO - adapt to number of servers in case storage deployment is performed via director

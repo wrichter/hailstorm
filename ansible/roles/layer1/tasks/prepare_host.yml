@@ -1,7 +1,13 @@
 # prepare host
 - name: ensure that root has an ssh key set
   user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
-# TODO - name: set own ssh key as authorized key
+- name: get root pubkey
+  command: cat .ssh/id_rsa.pub
+  register: root_pub_key
+  failed_when: root_pub_key.stdout == ''
+  changed_when: false
+- name: set root ssh key as authorized key
+  authorized_key: user=root key={{ root_pub_key.stdout }}
 - name: copy ssh pubkey to layer1
   authorized_key: user=root key={{ ssh_pub_key_hailstorm }}
 - name: ensure KVM nested virtualization is enabled

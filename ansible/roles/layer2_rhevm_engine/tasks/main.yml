@@ -2,6 +2,7 @@
     - include: configure_rhevm.yml
 #    - include: add_hypervisors.yml
 #    - include: add_storage2.yml
+    - include: configure_networks.yml
   when: mode=="create"
 
 #- block:

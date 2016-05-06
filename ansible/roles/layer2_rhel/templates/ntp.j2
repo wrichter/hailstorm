@@ -10,7 +10,7 @@ restrict default nomodify notrap nopeer noquery
 # Permit all access over the loopback interface.  This could
 # be tightened as well, but to do so would effect some of
 # the administrative functions.
-restrict 127.0.0.1 
+restrict 127.0.0.1
 restrict ::1
 
 # Hosts on local network are less restricted.
@@ -19,7 +19,7 @@ restrict ::1
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
 
-server "{{ infrastructure_address_ntp_server }}" iburst
+server {{ infrastructure_address_ntp_server }} iburst
 
 
 #broadcast 192.168.1.255 autokey	# broadcast server
@@ -35,7 +35,7 @@ server "{{ infrastructure_address_ntp_server }}" iburst
 includefile /etc/ntp/crypto/pw
 
 # Key file containing the keys and key identifiers used when operating
-# with symmetric key cryptography. 
+# with symmetric key cryptography.
 keys /etc/ntp/keys
 
 # Specify the key identifiers which are trusted.
@@ -59,4 +59,3 @@ disable monitor
 ### Added by IPA Installer ###
 server 127.127.1.0 iburst
 fudge 127.127.1.0 stratum 10
-

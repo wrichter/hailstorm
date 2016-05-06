@@ -55,7 +55,7 @@
       shell: grep -e "^DNS1=" -e "^DNS2=" "{{ item.path }}" || true
       changed_when: false
       register: dns_lines
-      with_items: "{{ ifcfgscripts.files }}"
+      with_items: "{% if ifcfgscripts.files is defined %}{{ ifcfgscripts.files }}{% endif %}"
     - name: if DNS1 exists and DNS2, ensure that DNS1 points to  DNS2, remove DNS2 (DNS1 line)
       lineinfile: state=present regexp="^DNS1=" line="DNS1={{ item.stdout | regex_replace('.*(DNS2=)(.*)$.*', '\\2') }}" dest="{{ item.item.path }}"
       when: item.stdout_lines|length == 2

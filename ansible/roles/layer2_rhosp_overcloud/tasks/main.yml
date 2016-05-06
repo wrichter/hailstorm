@@ -1,7 +1,10 @@
 - block:
     - include: register_overcloud_nodes.yml
+      tags: ['register']
     - include: create_overcloud.yml
+      tags: ['overcloud']
     - include: configure_neutron.yml
+      tags: ['overcloud']
   when: mode=="create"
 
 - block:

@@ -62,6 +62,20 @@
     - name: create disk & attach it to VM
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d "{{ lookup('template','disk.xml.j2') }}" \
-            "https://{{ nic[0].ip }}{{ vm_disk_url.stdout }}"
+             "https://{{ nic[0].ip }}{{ vm_disk_url.stdout }}"
 
+    - name: find CFME VM nic url
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ nic[0].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='Cloudforms']/link[@rel='nics']/@href" - | \
+             awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+      register: vm_nic_url
+      failed_when: vm_nic_url.stdout == ''
+      changed_when: false
+
+    - name: create nic on default network & attach it to VM
+      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "<nic><interface>virtio</interface><network><name>default</name></network></nic>" \
+            "https://{{ nic[0].ip }}{{ vm_nic_url.stdout }}"
   when: cloudforms_vm.stdout==''

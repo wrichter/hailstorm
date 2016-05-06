@@ -13,6 +13,15 @@
       tags: [ 'layer2','rhev', 'vms' ]
       mode: destroy
 
+- hosts: rhevm
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer3_cloudforms_rhev
+      tags: [ 'layer3', 'cf' ]
+      mode: destroy
+
+
 - hosts: rhosp-director
   gather_facts: false
   remote_user: root

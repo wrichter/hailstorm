@@ -8,7 +8,6 @@
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: started
-    #TODO - configure CF IP Address
   when: mode == 'create'
 
 - block:
