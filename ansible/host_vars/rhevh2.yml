@@ -10,6 +10,10 @@ nic:
     dev: eth1
     network: admin
     default_route: false
+  - ip: 192.168.102.12
+    dev: eth2
+    network: storage
+    default_route: false
 ksdevice: eth1
 #hostname: rhevh2.example.com
 #hostname is now set in group_vars/all.yml

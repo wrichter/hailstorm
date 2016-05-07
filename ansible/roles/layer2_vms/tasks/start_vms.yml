@@ -5,7 +5,8 @@
     - name: ensure that VM is running
       virt: name="{{ name }}" state=running uri=qemu:///system
       when: name in virt_vms.list_vms and (recreate_running_state is not defined or recreate_running_state|bool == false or vm_was_running|bool == true)
-    - name: wait for VM to finish (re)booting
-      wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
-      when: name in virt_vms.list_vms and (recreate_running_state is not defined or recreate_running_state|bool == false or vm_was_running|bool == true)
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+- name: wait for VM to finish (re)booting
+  wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
+  when: name in virt_vms.list_vms and (recreate_running_state is not defined or recreate_running_state|bool == false or vm_was_running|bool == true)
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"

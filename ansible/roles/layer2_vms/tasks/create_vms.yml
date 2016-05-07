@@ -25,11 +25,11 @@
 - name: ensure that VMs are running
   virt: name="{{ name }}" state=running uri=qemu:///system
   when: "{{ skip_install is not defined or skip_install != true }}"
-  delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
 - name: wait for VMs finishing (re)booting
   wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
   when: "{{ skip_install is not defined or skip_install != true }}"
-  delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
 
 #- name: determine VM ssh host key
 #  command: ssh-keyscan -t rsa {{ ansible_host }}

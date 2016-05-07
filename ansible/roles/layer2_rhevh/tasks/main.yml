@@ -1,6 +1,6 @@
 - block:
     - include: register_host.yml
-    - include: configure_networks.yml
+    - include: configure_nics.yml
 
 
 

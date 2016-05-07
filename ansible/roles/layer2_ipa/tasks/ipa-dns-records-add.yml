@@ -40,6 +40,7 @@
 - name: find existing dns records
   shell: echo "{{ ipa_admin_password }}" | kinit admin &&  ipa dnsrecord-find "{{ hailstorm_dns_domain }}" | grep "Record name:" | cut -c 16-
   register: dns_records
+  changed_when: false
 
 - name: add dns records
   shell: "echo {% if hostvars[item].nic is defined %}{% for _nic in hostvars[item].nic %}{% if _nic.network == 'default' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].name }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"

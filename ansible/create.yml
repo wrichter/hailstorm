@@ -143,7 +143,7 @@
     - setup:
       tags: [ 'layer2', 'rhev','rhevm-ldap' ]
   roles:
-    - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
+    - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm','rhevm-storage' ], mode: create }
     - { role: layer2_rhevm_ldap, tags: [ 'rhevm-ldap' ], mode: create }
 
 
@@ -177,6 +177,22 @@
     - { role: layer2_vms, tags: [ 'layer2', 'ose3', 'vm' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'ose3', 'rhel' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].nic[0].ip }}" }
+    - { role: layerX_openshift_all, tags: [ 'layer2', 'ose3', 'ose3-installprep' ], mode: create }
+
+- hosts: ose3-node
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layerX_openshift_node, tags: [ 'layer2', 'ose3', 'ose3-node' ], mode: create }
+
+- hosts: ose3-installer
+  remote_user: root
+  gather_facts: false
+  # pre_tasks:
+  #   - setup:
+  #     tags: [ 'layer2', 'rhev' ]
+  roles:
+    - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install' ], mode: create }
 
 
 

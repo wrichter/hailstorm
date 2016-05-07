@@ -12,35 +12,31 @@
 #        - port=49152-49216/tcp
 #        - port=54321/tcp
 # - name: get host status1
-#   uri: body_format=json url="https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" user="admin" password="{{ hostvars['rhevm'].root_password }}"
+#   uri: body_format=json url="https://{{ hostvars['rhevm'].nic[1].ip }}/api/clusters" user="admin" password="{{ hostvars['rhevm'].root_password }}"
 #   register: host_state1
 # - debug: var=host_state1
 - name: get host status
-  #shell: "{{ lookup('template','curl_get_host_status.j2') }}"
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim  | trim }} \
-         "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts" | \
-         xmllint --xpath "/hosts/host[status/state/text() = 'up'][1]/name/text()" - || true
-  register: host_state
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts" | \
+         xmllint --xpath "/hosts/host[name='{{ hostname }}']" - || true
+  register: host_state1
   changed_when: false
 - block:
     - name: get cluster id
-      #shell: "{{ lookup('template','curl_get_cluster_id.j2') }}"
-      shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim  | trim }} \
-              "https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" | \
+      shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+              "https://{{ hostvars['rhevm'].nic[1].ip }}/api/clusters" | \
               xmllint --xpath "/clusters/cluster/@id" - | \
               awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
       changed_when: false
       register: cluster_id
     - name: register host
-      #shell:  "{{ lookup('template','curl_post_host.j2') }}"
-      shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim  | trim }} \
+      shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
               -d "{{ lookup('template', 'host.xml.j2') }}" \
-              "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts"
-  when: host_state.stdout == ''
+              "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts"
+  when: host_state1.stdout == ''
 - name: wait for host to leave state "Installing"
-  #shell: "{{ lookup('template','curl_get_host_status.j2') }}"
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim  | trim }} \
-         "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts" | \
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts" | \
          xmllint --xpath "/hosts/host[name='{{ hostname }}']/status/state/text()" - || true
   register: host_state
   until: host_state.stdout != "installing"
@@ -59,15 +55,15 @@
 #- block:
 #    - name: get cluster id
 #      #shell: "{{ lookup('template','curl_get_cluster_id.j2') }}"
-#      shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim  | trim }} \
-#              "https://{{ hostvars['rhevm'].nic[0].ip }}/api/clusters" | \
+#      shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              "https://{{ hostvars['rhevm'].nic[1].ip }}/api/clusters" | \
 #              xmllint --xpath "/clusters/cluster/@id" - | \
 #              awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
 #      changed_when: false
 #      register: cluster_id
 #   - name: register host
 #      #shell:  "{{ lookup('template','curl_post_host.j2') }}"
-#      shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim  | trim }} \
+#      shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              -d "{{ lookup('template', 'host.xml.j2') }}" \
-#              "https://{{ hostvars['rhevm'].nic[0].ip }}/api/hosts"
+#              "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts"
 #  when: host_state.stdout == 'install_failed'

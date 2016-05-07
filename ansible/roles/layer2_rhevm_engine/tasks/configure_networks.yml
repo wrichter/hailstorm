@@ -30,11 +30,31 @@
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   register: existing_networks
   changed_when: false
-#- debug: var=existing_networks
+
 - name: create network
   shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         -d "<network><name>{{ item }}</name></network>"
+         -d "<network><name>{{ item }}</name><usages><usage>vm</usage></usages></network>"
          "https://{{ nic[0].ip }}{{ networks_url.stdout }}"
+  when: existing_networks.stdout.find(item) == -1
+  with_items:
+    - storage
+    - admin
+    - default
+
+- name: get default cluster networks link
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ nic[0].ip }}/api/clusters" | \
+         xmllint --xpath "//cluster[name='Default']/link[@rel='networks']/@href" - | \
+         awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  register: cluster_networks_url
+  failed_when: cluster_networks_url.stdout == ''
+  changed_when: false
+
+- name: assign network to cluster
+  shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         -d "<network><name>{{ item }}</name></network>"
+         "https://{{ nic[0].ip }}{{ cluster_networks_url.stdout }}"
   when: existing_networks.stdout.find(item) == -1
   with_items:
     - storage

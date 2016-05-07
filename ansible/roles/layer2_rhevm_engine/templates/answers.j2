@@ -33,7 +33,7 @@ OVESETUP_PKI/organization=str:example.com
 OVESETUP_PKI/renew=none:None
 OVESETUP_CONFIG/isoDomainName=none:None
 OVESETUP_CONFIG/engineHeapMax=str:1024M
-OVESETUP_CONFIG/adminPassword=str:redhat01
+OVESETUP_CONFIG/adminPassword=str:{{ root_password }}
 OVESETUP_CONFIG/isoDomainACL=none:None
 OVESETUP_CONFIG/isoDomainMountPoint=none:None
 OVESETUP_CONFIG/engineDbBackupDir=str:/var/lib/ovirt-engine/backups
@@ -48,4 +48,3 @@ OVESETUP_RHEVM_DIALOG/confirmUpgrade=bool:True
 OVESETUP_VMCONSOLE_PROXY_CONFIG/vmconsoleProxyConfig=bool:True
 OVESETUP_ENGINE_CONFIG/fqdn=str:rhevm.example.com
 OVESETUP_CONFIG/websocketProxyConfig=bool:True
-

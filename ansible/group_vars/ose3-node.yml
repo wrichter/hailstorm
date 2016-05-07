@@ -1,6 +1,0 @@
-repos:
-  - rhel-7-server-rpms
-  - rhel-7-server-extras-rpms
-  - rhel-7-server-ose-3.1-rpms
-packages: wget,git,net-tools,bind-utils,iptables-services,bridge-utils,bash-completion,atomic-openshift-utils,docker
-pool_regex: "{{ ose_subscription_pool_regex }}"
