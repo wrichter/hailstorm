@@ -15,8 +15,23 @@ test-rhel7
 ipa
 infrastructure
 
-[ose3]
+[ose3:children]
+ose3-node
+ose3-lb
+
+[ose3-lb]
+
+[ose3-installer]
 ose3-master
+
+[ose3-master]
+ose3-master
+
+[ose3-node]
+ose3-master
+ose3-node1
+ose3-node2
+ose3-infranode1
 
 [satellite]
 satellite

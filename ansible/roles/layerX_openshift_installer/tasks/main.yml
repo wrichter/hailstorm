@@ -1,0 +1,4 @@
+- block:
+    - include: prereqs.yml
+    - include: install.yml
+  when: mode=="create"

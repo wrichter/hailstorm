@@ -1,0 +1,32 @@
+# Create an OSEv3 group that contains the masters and nodes groups
+[OSEv3:children]
+masters
+nodes
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+# SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+
+# If ansible_ssh_user is not root, ansible_sudo must be set to true
+#ansible_sudo=true
+
+deployment_type=openshift-enterprise
+osm_default_subdomain=apps.{{ hailstorm_dns_domain }}
+
+
+# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider' }]
+
+# host group for masters
+[masters]
+{% for master in groups["ose3-master"] %}
+{{ hostvars[master].hostname }}
+{% endfor %}
+
+# host group for nodes, includes region info
+[nodes]
+{% for node in groups["ose3-node"] %}
+{{ hostvars[node].hostname }} openshift_node_labels="{{ hostvars[node].openshift_node_labels }}"
+{% endfor %}

@@ -1,9 +1,9 @@
 ---
-name: ose3-master
+name: ose3-node2
 mem: 2048
 vcpu: 2
 disk:
-  path: ose3-master.qcow2
+  path: ose3-node2.qcow2
   size: 30
   format: qcow2
   partition_table:
@@ -12,18 +12,18 @@ disk:
     home: 2048
     root: 10000
 nic:
-  - ip: 192.168.100.15
-    mac: 00:00:00:CC:00:15
+  - ip: 192.168.100.17
+    mac: 00:00:00:CC:00:17
     dev: eth0
     network: default
     default_route: true
-  - ip: 192.168.102.15
-    mac: 00:00:00:CC:02:15
+  - ip: 192.168.102.17
+    mac: 00:00:00:CC:02:17
     dev: eth1
     network: storage
     default_route: false
-  - ip: 192.168.103.15
-    mac: 00:00:00:CC:03:15
+  - ip: 192.168.103.17
+    mac: 00:00:00:CC:03:17
     dev: eth2
     network: admin
     default_route: false
@@ -31,6 +31,6 @@ nic:
 #hostname: ose3-master.example.com
 #root_password is now set in config/hailstorm_config.yml
 #root_password: redhat01
-ansible_host: 192.168.103.15
+ansible_host: 192.168.103.17
 
-openshift_node_labels: "{'region': 'infra', 'zone': 'default'}"
+openshift_node_labels: "{'region': 'primary', 'zone': 'west'}"

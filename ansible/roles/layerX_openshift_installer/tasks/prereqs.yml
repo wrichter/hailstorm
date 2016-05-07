@@ -1,0 +1,12 @@
+
+- name: find host ssh key
+  command: ssh-keyscan -t ecdsa "{{ hostvars[item].hostname }}"
+  register: ssh_key
+  with_items: "{{ groups['ose3'] }}"
+  failed_when: ssh_key.stdout == ''
+  changed_when: false
+- name: add ssh key to known_hosts
+  lineinfile: dest=.ssh/known_hosts line={{ item.1 }} create=yes
+  with_subelements:
+    - "{{ ssh_key.results }}"
+    - stdout_lines

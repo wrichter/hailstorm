@@ -1,0 +1,9 @@
+- block:
+    - name: change docker options
+      lineinfile: dest=/etc/sysconfig/docker line="OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'" state=present regexp="^OPTIONS=.*$"
+    #TODO: change docker storage config if necessary
+    - name: configure docker storage
+      shell: docker-storage-setup && touch /.docker-storage-is-setup  creates=/.docker-storage-is-setup
+    - name: ensure docker is running
+      service: name=docker state=started enabled=yes
+  when: mode=="create"
