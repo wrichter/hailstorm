@@ -14,9 +14,11 @@ test-rhel6
 test-rhel7
 ipa
 infrastructure
-cloudforms
-# to let it participate in the calculation of ansible_host and vm_nics
 
+# to let it participate in the calculation of ansible_host and vm_nics
+[accessible_via_admin_network:children]
+layer2
+cloudforms
 
 [ose3:children]
 ose3-node

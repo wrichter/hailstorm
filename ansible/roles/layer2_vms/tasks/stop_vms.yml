@@ -6,7 +6,7 @@
       changed_when: false
     - name: save running state as fact
       set_fact:
-        vm_was_running: "{{ virt_vms.stdout == name }}"
+        vm_was_running: "{{ virt_vms.stdout == inventory_hostname_short }}"
     - name: shut down VM (gracefully)
       virt: name="{{ inventory_hostname_short }}" state=shutdown uri=qemu:///system
       when: virt_vms.stdout == inventory_hostname_short

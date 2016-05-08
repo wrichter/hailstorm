@@ -62,6 +62,8 @@
                  "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_disk_url.stdout }}"
 
       when: cloudforms_vm.stdout==''
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+
 
     - name: find CFME VM nic url
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
@@ -72,37 +74,52 @@
       failed_when: vm_nic_url.stdout == ''
       changed_when: false
 
-    - name: get nic attachment status
+    - name: get nic mac addresses
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}" | \
-            xmllint --xpath "boolean(//nic[name='{{ item.dev }}'])" -
-      register: vm_nic_status
+            xmllint --xpath "//nic[name='{{ item.dev }}']/mac/@address" - | \
+            awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+      register: vm_nic_mac
       changed_when: false
       with_items: "{{ vm_nics }}"
 
-    - debug: var=vm_nic_status
+    - debug: var=vm_nic_mac
 
-    - name: get networks ids
+    # - name: get networks ids
+    #   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+    #          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/networks" | \
+    #          xmllint --xpath "//network[name='{{ item.item.netname }}']/@id" - | \
+    #          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+    #   register: network_ids
+    #   failed_when: network_ids.stdout == ''
+    #   changed_when: false
+    #   with_items: "{{ vm_nic_mac.results }}"
+
+    - name: get nic links
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/networks" | \
-             xmllint --xpath "//network[name='{{ item.item.netname }}']/@id" - | \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}" | \
+             xmllint --xpath "//nic[name='{{ item.item.dev }}']/@href" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-      register: network_ids
-      failed_when: network_ids.stdout == ''
+      register: vm_individual_nic_url
       changed_when: false
-      with_items: "{{ vm_nic_status.results }}"
-
-    #- debug: var=network_ids
-    - debug: msg="<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address=\"{{ item.item.item.mac }}\" /><network id=\"{{ item.stdout }}\" /></nic>"      
-      when: not (item.item.stdout|bool)
-      with_items: "{{ network_ids.results }}"
-
+      with_items: "{{ vm_nic_mac.results }}"
 
     #curl -H "Content-type: application/xml" -u admin@internal:redhat01 -k -XPOST -d'<nic><name>eth1</name><interface>virtio</interface><network name="admin" /></nic>'  https://192.168.101.12/api/vms/afc4e9c4-ff2b-4b6f-b9d7-86c58712e8af/nics
-    - name: create nics  & attach it to VM
+    - name: create missing nics  & attach it to VM
+      # shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+      #        -d "<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network id="{{ item.stdout }}" /></nic>" \
+      #       "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}"
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d "<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network id="{{ item.stdout }}" /></nic>" \
+             -d "<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname }}</name></network></nic>" \
             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}"
-      when: not (item.item.stdout|bool)
-      with_items: "{{ network_ids.results }}"
+      when: item.stdout == ''
+      with_items: "{{ vm_individual_nic_url.results }}"
+
+    - name: reconfigure improperly configured nics
+      shell: curl -XPUT {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network id="{{ item.stdout }}" /></nic>" \
+            "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
+      when: item.item.stdout != item.item.item.mac
+      with_items: "{{ vm_individual_nic_url.results }}"
+
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
