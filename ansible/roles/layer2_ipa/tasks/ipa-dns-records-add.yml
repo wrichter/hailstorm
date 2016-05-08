@@ -4,7 +4,7 @@
   changed_when: false
 
 - name: add dns records
-  shell: "echo {% if hostvars[item].nic_calculated is defined %}{% for _nic in hostvars[item].nic_calculated %}{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].inventory_hostname_short }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"
+  shell: "echo {% if hostvars[item].vm_nics is defined %}{% for _nic in hostvars[item].vm_nics %}{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].inventory_hostname_short }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"
   when: item != 'localhost' and hostvars[item].inventory_hostname_short is defined and hostvars[item].inventory_hostname_short not in dns_records.stdout_lines
   with_items: "{{ groups.all }}"
   ignore_errors: true

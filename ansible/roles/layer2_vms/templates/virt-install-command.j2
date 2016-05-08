@@ -3,8 +3,8 @@ virt-install  --name {{ inventory_hostname_short }}
               --vcpus {{ vcpu }}
               --os-type {{ os_type }}
               --os-variant {{ os_variant }}
-            {% for nic_attachment in nic_attachments %}
-              --network network={{ nic_attachment.netname }},mac={{ nic_attachment.mac_prefix }}{{ "%02X" % hailstorm_number[inventory_hostname_short] }},model=virtio
+            {% for nic in vm_nics %}
+              --network network={{ nic.netname }},mac={{ nic.mac }},model=virtio
             {% endfor %}
               --hvm
               --virt-type kvm

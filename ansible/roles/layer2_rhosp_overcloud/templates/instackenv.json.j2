@@ -12,7 +12,7 @@
       "pm_password": "{{ ssh_priv_key_undercloud.replace('\n','\\n') }}",
       "pm_type": "pxe_ssh",
       "mac": [
-        "{{ hostvars[node].nic_calculated[0].mac }}"
+        "{{ hostvars[node].vm_nics[0].mac }}"
       ],
       "cpu": " {{ hostvars[node].vcpu }}",
       "memory": "{{ hostvars[node].mem }}",

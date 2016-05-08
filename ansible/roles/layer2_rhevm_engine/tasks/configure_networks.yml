@@ -1,6 +1,6 @@
 - name: get default datacenter networks link
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ nic_calculated[0].ip }}/api/datacenters" | \
+         "https://{{ vm_nics[0].ip }}/api/datacenters" | \
          xmllint --xpath "//data_center[name='Default']/link[@rel='networks']/@href" - | \
          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -10,7 +10,7 @@
 
 - name: find ovirtmgmt network
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ nic_calculated[0].ip }}{{ networks_url.stdout }}" | \
+         "https://{{ vm_nics[0].ip }}{{ networks_url.stdout }}" | \
          xmllint --xpath "//network[name='ovirtmgmt']/@href" - | \
          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -19,13 +19,13 @@
 - name: rename ovirtmgmt network
   shell: curl -XPUT {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
          -d "<network><name>admin</name></network>"
-         "https://{{ nic_calculated[0].ip }}{{ ovirtmgmt_url.stdout }}"
+         "https://{{ vm_nics[0].ip }}{{ ovirtmgmt_url.stdout }}"
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   when: ovirtmgmt_url.stdout != ''
 
 - name: query existing networks
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ nic_calculated[0].ip }}{{ networks_url.stdout }}" | \
+         "https://{{ vm_nics[0].ip }}{{ networks_url.stdout }}" | \
          xmllint --xpath "//network/name/text()" -
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   register: existing_networks
@@ -34,13 +34,13 @@
 - name: create network
   shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
          -d "<network><name>{{ item.netname }}</name><usages><usage>vm</usage></usages></network>"
-         "https://{{ nic_calculated[0].ip }}{{ networks_url.stdout }}"
+         "https://{{ vm_nics[0].ip }}{{ networks_url.stdout }}"
   when: existing_networks.stdout.find(item.netname) == -1
-  with_items: "{{ nic_attachments }}"
+  with_items: "{{ vm_nics }}"
 
 - name: get default cluster networks link
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ nic_calculated[0].ip }}/api/clusters" | \
+         "https://{{ vm_nics[0].ip }}/api/clusters" | \
          xmllint --xpath "//cluster[name='Default']/link[@rel='networks']/@href" - | \
          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -51,6 +51,6 @@
 - name: assign network to cluster
   shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
          -d "<network><name>{{ item.netname }}</name></network>"
-         "https://{{ nic_calculated[0].ip }}{{ cluster_networks_url.stdout }}"
+         "https://{{ vm_nics[0].ip }}{{ cluster_networks_url.stdout }}"
   when: existing_networks.stdout.find(item.netname) == -1
-  with_items: "{{ nic_attachments }}"
+  with_items: "{{ vm_nics }}"

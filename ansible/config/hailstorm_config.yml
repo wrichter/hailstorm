@@ -56,7 +56,11 @@ rhevh_repos:
   - rhel-7-server-rhev-mgmt-agent-rpms
 ipa_repos:
   - rhel-7-server-rpms
-
+ose3_repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-extras-rpms
+  - rhel-7-server-ose-3.1-rpms
+ose3_additional_packages: docker-1.8.2
 
 ipa_user:
   - username: consumer

@@ -12,9 +12,7 @@ disk:
     home: 2048
     root: 10000
 
-repos:
-  - rhel-7-server-rpms
-  - rhel-7-server-extras-rpms
-  - rhel-7-server-ose-3.1-rpms
-packages: wget,git,net-tools,bind-utils,iptables-services,bridge-utils,bash-completion,atomic-openshift-utils,docker-1.8.2
+repos: "{{ ose3_repos }}"
+
+packages: "wget,git,net-tools,bind-utils,iptables-services,bridge-utils,bash-completion,atomic-openshift-utils,{{ ose3_additional_packages }}"
 pool_regex: "{{ ose_subscription_pool_regex }}"

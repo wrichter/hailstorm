@@ -15,7 +15,7 @@ test-rhel7
 ipa
 infrastructure
 cloudforms
-# to let it participate in the calculation of ansible_host and nic_calculated
+# to let it participate in the calculation of ansible_host and vm_nics
 
 
 [ose3:children]
@@ -100,11 +100,11 @@ test-rhel7 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
 # the IPA server
 [ipa]
-ipa
+ipa activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
-infrastructure
+infrastructure activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # All layer2 nodes that are installed with RHEL7
 [rhel7:children]

@@ -1,6 +1,6 @@
 - name: check if template is already imported
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/templates" | \
+         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/templates" | \
          xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]" - || true
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   changed_when: false
@@ -9,7 +9,7 @@
 - block:
     - name: get export domain UUID
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/storagedomains" | \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/storagedomains" | \
              xmllint --xpath "/storage_domains/storage_domain[name='export1']/@id" - | \
              awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -28,7 +28,7 @@
 
     - name: get template import link
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/storagedomains/{{ export_domain_uuid.stdout }}/templates" | \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/storagedomains/{{ export_domain_uuid.stdout }}/templates" | \
              xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/actions/link[@rel='import']/@href" - | \
              awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -39,6 +39,6 @@
     - name: import template
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d "{{ lookup('template', 'import_template.xml.j2') }}" \
-             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ template_import_link.stdout }}"
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ template_import_link.stdout }}"
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   when: template.stdout == ''

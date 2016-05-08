@@ -20,8 +20,8 @@ selinux --{{ selinux_mode }}
 
 # Network information
 #network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
-{% for nic_attachment in nic_attachments %}
-network  --bootproto=static --device=eth{{ loop.index0 }} --ipv6=auto --ip={{ nic_calculated[loop.index0].ip }} --netmask={{ nic_attachment.host_prefix | ipaddr('netmask') }} {% if default_route_via.netname == nic_attachment.netname %} --gateway={{ nic_attachment.host_prefix | ipaddr('address') }}{% endif %} {% if name_service_via.netname == nic_attachment.netname %} --nameserver={{ nic_attachment.host_prefix | ipaddr('address') }} {% endif %} --activate
+{% for nic in vm_nics %}
+network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ nic.netmask}} {% if default_route_via.netname == nic.netname %} --gateway={{ nic.default_gw }}{% endif %} {% if name_service_via.netname == nic.netname %} --nameserver={{ nic.default_gw }} {% endif %} --activate
 {% endfor %}
 
 network  --hostname={{ hostname }}
