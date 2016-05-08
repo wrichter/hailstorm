@@ -1,7 +1,7 @@
 mem: "{{ layer2_rhev_hypervisor_mem }}"
 vcpu: "{{ layer2_rhev_hypervisor_cpu }}"
 disk:
-  path: "{{ name }}.qcow2"
+  path: "{{ inventory_hostname_short }}.qcow2"
   size: 30
   format: qcow2
   partition_table:

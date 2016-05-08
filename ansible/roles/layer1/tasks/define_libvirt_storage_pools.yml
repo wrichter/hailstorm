@@ -2,14 +2,14 @@
 - name: ensure image directory is present
   file: state=directory path={{ layer1_qcow_storage.path }}
 - name: define storage pool
-  virt_pool: uri=qemu:///system name={{ item.name }} command=define xml='{{ lookup("template", "libvirt_pool.xml.j2") }}'
+  virt_pool: uri=qemu:///system name={{ item.poolname }} command=define xml='{{ lookup("template", "libvirt_pool.xml.j2") }}'
   with_items:
     - "{{ layer1_qcow_storage }}"
 - name: start storage
-  virt_pool: uri=qemu:///system name={{ item.name }} state=active
+  virt_pool: uri=qemu:///system name={{ item.poolname }} state=active
   with_items:
     - "{{ layer1_qcow_storage }}"
 - name: autostart storage pool
-  virt_pool: uri=qemu:///system name={{ item.name }} autostart=yes
+  virt_pool: uri=qemu:///system name={{ item.poolname }} autostart=yes
   with_items:
     - "{{ layer1_qcow_storage }}"

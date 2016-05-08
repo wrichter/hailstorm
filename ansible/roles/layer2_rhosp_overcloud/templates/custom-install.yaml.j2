@@ -62,7 +62,7 @@ parameter_defaults:
   StorageMgmtNetworkVlanID: 401
 
 {% for network in infrastructure_networks %}
-{% if network.name == nic[1].network %}
+{% if network.netname == infrastructure_network_services.netname %}
   # External Networking Access - Public API Access
 {# ExternalNetCidr: 192.168.122.0/24 #}
   ExternalNetCidr: {{ network.host_prefix | ipaddr('network') }}/{{ network.host_prefix | ipaddr('prefix') }}
@@ -82,6 +82,6 @@ parameter_defaults:
   # Gateway router for the provisioning network (or Undercloud IP)
   ControlPlaneDefaultRoute: {{ infrastructure_network_rhosp_provisioning.host_prefix | ipaddr('address') }}
   # Generally the IP of the Undercloud
-  EC2MetadataIp: {{ nic[0].ip }}
+  EC2MetadataIp: {{ nic_calculated[0].ip }}
   # Define the DNS servers (maximum 2) for the overcloud nodes
-  DnsServers: ['{{ infrastructure_network_default.host_prefix | ipaddr('address') }}']
+  DnsServers: ['{{ infrastructure_network_services.host_prefix | ipaddr('address') }}']

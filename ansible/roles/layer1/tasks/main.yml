@@ -1,10 +1,20 @@
 - block:
     - include: prepare_host.yml
+      tags: ['layer1','layer1-host']
     - include: define_libvirt_storage_pools.yml
+      tags: ['layer1','layer1-libvirt-storage']
     - include: define_libvirt_networks.yml
+      tags: ['layer1','layer1-libvirt-networks']
     - include: copy_installation_sources.yml
-      tags: ['sources']
+      tags: ['layer1','layer1-sources']
     - include: prepare_kickstart_folder.yml
+      tags: ['layer1','layer1-kickstart-folder']
     - include: enable_nfs.yml
+      tags: ['layer1','layer1-nfs']
     - include: configure_ntp.yml
+      tags: ['layer1','layer1-ntp']
   when: mode=='create'
+
+- block:
+    - include: destroy_libvirt_networks.yml
+  when: mode=='destroy'

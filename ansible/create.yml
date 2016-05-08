@@ -8,6 +8,13 @@
         rhsm_password: "{{ rhsm_password }}"
       tags:
         - always
+    - debug: var=nic_calculated
+      tags:
+        - always
+    # - debug: msg={{ nic_calculated }}
+    #   tags:
+    #     - always
+
   vars_prompt:
     - name: "rhsm_username"
       prompt: "what is your Red Hat Subscription Manager username?"
@@ -87,13 +94,13 @@
   #  - setup:
   #    tags: [ 'layer2','satellite' ]
   roles:
-   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].nic[0].ip }}" }
+   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].nic_calculated[0].ip }}" }
 
 - hosts: test-rhel
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].nic[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].nic_calculated[0].ip }}" }
 
 #### Infrastructure (DNS, SMTP/IMAP) ####
 
@@ -110,13 +117,10 @@
 - hosts: rhev
   remote_user: root
   gather_facts: false
-  # pre_tasks:
-  #   - setup:
-  #     tags: [ 'layer2', 'rhev' ]
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'rhev', 'vm' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'rhev', 'rhel' ], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].nic[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].nic_calculated[0].ip }}" }
 
 - hosts: rhevm
   remote_user: root
@@ -158,7 +162,7 @@
 
 #### CLOUDFORMS ####
 
-- hosts: rhevm
+- hosts: cloudforms
   remote_user: root
   gather_facts: false
   roles:
@@ -176,7 +180,7 @@
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'ose3', 'vm' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'ose3', 'rhel' ], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].nic[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].nic_calculated[0].ip }}" }
     - { role: layerX_openshift_all, tags: [ 'layer2', 'ose3', 'ose3-installprep' ], mode: create }
 
 - hosts: ose3-node
@@ -209,7 +213,7 @@
   gather_facts: false
   roles:
     - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].nic[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].nic_calculated[0].ip }}" }
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 #    - { role: layer2_rhosp_gather_node_uuids, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }

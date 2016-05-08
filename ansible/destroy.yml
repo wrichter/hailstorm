@@ -1,4 +1,5 @@
 ---
+
 - hosts: ose3
   gather_facts: false
   remote_user: root
@@ -101,13 +102,13 @@
   remote_user: root
   roles:
     - role: layer2_vms
-      tags: [ 'layer2','satellite', "test-rhel", 'rhel' ]
+      tags: [ 'layer2',  "test-rhel", 'rhel' ]
       mode: start
     - role: layer2_rhel
-      tags: [ 'layer2','satellite', 'rhel', 'test-rhel'  ]
+      tags: [ 'layer2', 'rhel', 'test-rhel'  ]
       mode: destroy
     - role: layer2_vms
-      tags: [ 'layer2','satellite', 'vms', 'test-rhel' ]
+      tags: [ 'layer2', 'vms', 'test-rhel' ]
       mode: destroy
 
 - hosts: rhevm

@@ -29,7 +29,6 @@ rhev_subscription_pool_regex: "^Employee SKU$"
 rhosp_subscription_pool_regex: "^Employee SKU$"
 ose_subscription_pool_regex: "^Employee SKU$"
 
-
 # REPOSITORIES
 # rhosp_repos:
 #   - rhel-7-server-rpms
@@ -60,10 +59,36 @@ ipa_repos:
 
 
 ipa_user:
-  - name: consumer
+  - username: consumer
     password: "{{ root_password }}"
     first: Consumer
     last: User
-  - name: rhev-bind-user
+  - username: rhev-bind-user
     first: rhev
     last: binduser
+
+
+# the following numbers are the base to generate IP and MAC addresses from
+hailstorm_number:
+  layer1:     1
+  satellite:  10
+  ipa:        11
+  rhevm:      12
+  rhevh1:     13
+  rhevh2:     14
+  cloudforms: 17
+  test-rhel6: 18
+  test-rhel7: 19
+  ose3-master: 20
+  ose3-infranode1: 21
+  ose3-infranode2: 22
+  ose3-node1: 23
+  ose3-node2: 24
+  infrastructure: 29
+  rhosp-director: 30
+  rhosp-compute1: 31
+  rhosp-compute2: 32
+  rhosp-compute3: 33
+  rhosp-control1: 34
+  rhosp-control2: 35
+  rhosp-control3: 36

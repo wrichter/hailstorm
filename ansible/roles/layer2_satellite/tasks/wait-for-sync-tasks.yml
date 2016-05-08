@@ -16,5 +16,5 @@
   register: sync_tasks
   changed_when: false
   until: ( sync_tasks.stdout | from_json ).total == 0
-  retries: 120
+  retries: 720
   delay: 60

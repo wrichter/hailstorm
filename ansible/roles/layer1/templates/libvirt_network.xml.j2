@@ -1,5 +1,5 @@
 <network>
-  <name>{{item.name}}</name>
+  <name>{{item.netname}}</name>
   <bridge name="{{item.bridge}}" />
 
   {% if item.forward_mode is defined %}
@@ -12,9 +12,9 @@
   {% if item.dhcp_start is defined and item.dhcp_end is defined %}
     <dhcp>
       <range start="{{item.dhcp_start}}" end="{{item.dhcp_end}}" />
-      {% for host in groups.all %}{% if host != 'localhost' and hostvars[host].nic is defined %}
-      {% for nic in hostvars[host].nic %}{% if nic.network == item.name and nic.mac is defined and nic.ip is defined %}
-      <host mac="{{ nic.mac }}" name="{{ hostvars[host].hostname }}" ip="{{ nic.ip }}" />
+      {% for host in groups.all %}{% if host != 'localhost' and hostvars[host].nic_attachments is defined and hostvars[host].nic_calculated is defined %}
+      {% for nic_attachment in hostvars[host].nic_attachments %}{% if nic_attachment.netname is defined and nic_attachment.netname == item.netname  %}
+       <host mac="{{ hostvars[host].nic_calculated[loop.index0].mac }}" name="{{ hostvars[host].hostname }}" ip="{{ hostvars[host].nic_calculated[loop.index0].ip  }}" />
       {% endif %}{% endfor %}
       {% endif %}{% endfor %}
     </dhcp>

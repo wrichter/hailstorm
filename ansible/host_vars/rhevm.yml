@@ -1,9 +1,8 @@
 ---
-name: rhevm
 mem: 4096
 vcpu: 2
 disk:
-  path: rhevm.qcow2
+  path: "{{ inventory_hostname_short }}.qcow2"
   size: 30
   format: qcow2
   partition_table:
@@ -11,21 +10,6 @@ disk:
     swap: 2048
     home: 2048
     root: 10000
-nic:
-  - ip: 192.168.100.10
-    dev: eth0
-    network: default
-    default_route: true
-  - ip: 192.168.103.10
-    dev: eth1
-    network: admin
-    default_route: false
-ksdevice: eth1
-#hostname: rhevm.example.com
-#hostname is now set in group_vars/all.yml
-#root_password is now set in config/hailstorm_config.yml
-#root_password: redhat01
-ansible_host: 192.168.103.10
 
 pool_regex: "{{ rhev_subscription_pool_regex }}"
 

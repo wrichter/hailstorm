@@ -1,9 +1,9 @@
 - name: set static hostnames in /etc/hosts
   lineinfile: dest=/etc/hosts line={{ item }}
   with_items:
-    - "{{ nic[0].ip }} {{ hostname }}"
-    - "192.168.103.11 rhevh1.example.com"
-    - "192.168.103.12 rhevh2.example.com"
+    - "{{ nic_calculated[0].ip }} {{ hostname }}"
+    - "{{ hostvars['rhevh1'].nic_calculated[1].ip }} {{ hostvars['rhevh1'].hostname }}"
+    - "{{ hostvars['rhevh2'].nic_calculated[1].ip }} {{ hostvars['rhevh2'].hostname }}"
 
 - name: copy the answerfile over
   template: src=templates/answers.j2 dest=/root/answers

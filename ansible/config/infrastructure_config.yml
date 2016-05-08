@@ -8,45 +8,61 @@ infrastructure_delegate_local_content_host: "layer1"
 #the following hosts are not used for delegation, but used directly
 infrastructure_address_ssh_jump_host: "{{ layer1_ansible_host }}"
 infrastructure_address_ntp_server: "{{ infrastructure_network_admin.host_prefix | ipaddr('address') }}"
-infrastructure_address_default_dns: "{{ infrastructure_network_default.host_prefix | ipaddr('address') }}"
+infrastructure_address_default_dns: "{{ infrastructure_network_services.host_prefix | ipaddr('address') }}"
 
-
-infrastructure_network_default:
-  name: 'default'
-  bridge: 'virbr0'
-  forward_mode: 'nat'
-  host_prefix: 192.168.100.1/24
-  dhcp_start: 192.168.100.128
-  dhcp_end: 192.168.100.172
-  floating_start: 192.168.100.173
-  floating_end: 192.168.100.254
-
-infrastructure_network_rhosp_provisioning:
-  name: 'rhosp_provisioning'
+infrastructure_network_services:
+  netname: 'services'
   bridge: 'virbr1'
   forward_mode: 'nat'
   host_prefix: 192.168.101.1/24
+  dhcp_start: 192.168.101.128
+  dhcp_end: 192.168.101.172
+  floating_start: 192.168.101.173
+  floating_end: 192.168.101.254
+  mac_prefix: "02:00:00:00:01:"
 
-infrastructure_network_storage:
-  name: 'storage'
+infrastructure_network_guests:
+  netname: 'guests'
   bridge: 'virbr2'
+  forward_mode: 'nat'
   host_prefix: 192.168.102.1/24
+  dhcp_start: 192.168.102.2
+  dhcp_end: 192.168.102.128
+  floating_start: 192.168.102.129
+  floating_end: 192.168.102.254
+  mac_prefix: "02:00:00:00:02:"
 
 infrastructure_network_admin:
-  name: 'admin'
+  netname: 'admin'
   bridge: 'virbr3'
   host_prefix: 192.168.103.1/24
-  dhcp_start: 192.168.103.173
+  dhcp_start: 192.168.103.172
   dhcp_end: 192.168.103.254
+  mac_prefix: "02:00:00:00:03:"
 
-infrastructure_network_rhosp_internal:
-  name: 'rhosp_internal'
+infrastructure_network_storage:
+  netname: 'storage'
   bridge: 'virbr4'
   host_prefix: 192.168.104.1/24
+  mac_prefix: "02:00:00:00:04:"
+
+infrastructure_network_rhosp_provisioning:
+  netname: 'rhosp_provisioning'
+  bridge: 'virbr5'
+  forward_mode: 'nat'
+  host_prefix: 192.168.105.1/24
+  mac_prefix: "02:00:00:00:05:"
+
+infrastructure_network_rhosp_internal:
+  netname: 'rhosp_internal'
+  bridge: 'virbr6'
+  host_prefix: 192.168.106.1/24
+  mac_prefix: "02:00:00:00:06:"
 
 infrastructure_networks:
-  - "{{ infrastructure_network_default }}"
-  - "{{ infrastructure_network_rhosp_provisioning }}"
-  - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_guests }}"
   - "{{ infrastructure_network_admin }}"
+  - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_rhosp_provisioning }}"
   - "{{ infrastructure_network_rhosp_internal }}"

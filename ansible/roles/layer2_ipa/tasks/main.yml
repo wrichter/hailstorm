@@ -1,6 +1,6 @@
 - block:
-    - include: ipa-firewalld.yml
-      tags: ['ipa-install']
+    # - include: ipa-firewalld.yml
+    #   tags: ['ipa-install']
     - include: ipa-rng-service.yml
       tags: ['ipa-install']
     - include: ipa-ntp-service.yml

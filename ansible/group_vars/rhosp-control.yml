@@ -1,8 +1,17 @@
 mem: "{{ layer2_rhosp_control_mem }}"
 vcpu: "{{ layer2_rhosp_control_cpu }}"
 disk:
-  path: "{{ name }}.qcow2"
+  path: "{{ inventory_hostname_short }}.qcow2"
   size: 60
   format: qcow2
 skip_install: true
 #graphics: vnc,listen=0.0.0.0,password=redhat01
+
+# nic0 needs to be on the provisioning network
+nic_attachments:
+  - "{{ infrastructure_network_rhosp_provisioning }}"
+  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_rhosp_internal }}"
+default_route_via: "{{ infrastructure_network_services }}"
+name_service_via: "{{ infrastructure_network_services }}"

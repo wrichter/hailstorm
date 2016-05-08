@@ -1,49 +1,10 @@
-# Save a load of time here by re-using another Red Hatters work
-# https://github.com/tiran/pki-vagans/tree/master/ansible
-# - name: add dns records
-#   shell: echo "{{ ipa_admin_password }}" | kinit admin && ipa dnsrecord-add "{{ hailstorm_dns_domain }}" "{{ item.name }}" --a-rec "{{ item.ip }}"
-#   when: item.name not in dns_records.stdout_lines
-#   with_items:
-#     - name: satellite
-#       ip: 192.168.100.20
-#     - name: rhevm
-#       ip: 192.168.100.10
-#     - name: rhevh1
-#       ip: 192.168.100.11
-#     - name: rhevh2
-#       ip: 192.168.100.12
-#
-# - name: add satelite dns records
-#   ipa:
-#     args="dnsrecord-add example.com satellite --a-rec 192.168.100.20"
-#     password="{{ ipa_admin_password }}"
-#     ignore_no_modifications=true
-#
-# - name: add rhevm dns record
-#   ipa:
-#     args="dnsrecord-add example.com rhevm --a-rec 192.168.100.10"
-#     password="{{ ipa_admin_password }}"
-#     ignore_no_modifications=true
-#
-# - name: add rhevh1 dns record
-#   ipa:
-#     args="dnsrecord-add example.com rhevh2 --a-rec 192.168.100.12"
-#     password="{{ ipa_admin_password }}"
-#     ignore_no_modifications=true
-#
-# - name: add rhev2 dns record
-#   ipa:
-#     args="dnsrecord-add example.com rhevh1 --a-rec 192.168.100.11"
-#     password="{{ ipa_admin_password }}"
-#     ignore_no_modifications=true
-
 - name: find existing dns records
   shell: echo "{{ ipa_admin_password }}" | kinit admin &&  ipa dnsrecord-find "{{ hailstorm_dns_domain }}" | grep "Record name:" | cut -c 16-
   register: dns_records
   changed_when: false
 
 - name: add dns records
-  shell: "echo {% if hostvars[item].nic is defined %}{% for _nic in hostvars[item].nic %}{% if _nic.network == 'default' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].name }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"
-  when: item != 'localhost' and hostvars[item].name is defined and hostvars[item].name not in dns_records.stdout_lines
+  shell: "echo {% if hostvars[item].nic_calculated is defined %}{% for _nic in hostvars[item].nic_calculated %}{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].inventory_hostname_short }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"
+  when: item != 'localhost' and hostvars[item].inventory_hostname_short is defined and hostvars[item].inventory_hostname_short not in dns_records.stdout_lines
   with_items: "{{ groups.all }}"
   ignore_errors: true

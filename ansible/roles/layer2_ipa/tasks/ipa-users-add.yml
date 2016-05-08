@@ -15,16 +15,16 @@
   register: users
 
 - name: add users to IPA
-  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa user-add {{ item.name }} --first="{{ item.first }}" --last="{{ item.last }}"'
-  when: item.name not in users.stdout_lines
+  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa user-add {{ item.username }} --first="{{ item.first }}" --last="{{ item.last }}"'
+  when: item.username not in users.stdout_lines
   with_items: "{{ ipa_user }}"
 
 - name: set initial password for users
-  shell: "echo -e '{{ ipa_admin_password }}\ndummy4711\ndummy4711' | (kinit admin && ipa user-mod {{ item.name }} --password)"
-  when: item.name not in users.stdout_lines
+  shell: "echo -e '{{ ipa_admin_password }}\ndummy4711\ndummy4711' | (kinit admin && ipa user-mod {{ item.username }} --password)"
+  when: item.username not in users.stdout_lines
   with_items: "{{ ipa_user }}"
 
 - name: login as user and change password
-  shell: "echo -e 'dummy4711\n{{ item.password }}\n{{ item.password }}' | kinit {{ item.name }}"
-  when: item.name not in users.stdout_lines and item.password is defined
+  shell: "echo -e 'dummy4711\n{{ item.password }}\n{{ item.password }}' | kinit {{ item.username }}"
+  when: item.username not in users.stdout_lines and item.password is defined
   with_items: "{{ ipa_user }}"

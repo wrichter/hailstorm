@@ -1,4 +1,3 @@
-
 - block:
     - include: create_vms.yml
   when: mode == "create"

@@ -3,12 +3,12 @@
 
 # yum module can't do localinstall...
 - name: install katello-ca-consumer rpm
-  command: yum -y localinstall http://{{ hostvars['satellite'].nic[0].ip }}/pub/katello-ca-consumer-latest.noarch.rpm
+  command: yum -y localinstall http://{{ hostvars['satellite'].nic_calculated[0].ip }}/pub/katello-ca-consumer-latest.noarch.rpm
 
 # - name: add entry in /etc/hosts
 #   shell: 'echo "192.168.103.20 satellite.example.com satellite" >> /etc/hosts'
 - name: add entry to /etc/hosts
-  lineinfile: dest=/etc/hosts line="{{ hostvars['satellite'].nic[0].ip }} {{ hostvars['satellite'].hostname }}  {{ hostvars['satellite'].name }} "
+  lineinfile: dest=/etc/hosts line="{{ hostvars['satellite'].nic_calculated[0].ip }} {{ hostvars['satellite'].hostname }} satellite"
 
 - name: register to satellite
   redhat_subscription:

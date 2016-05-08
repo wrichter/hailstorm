@@ -1,6 +1,0 @@
-- name: configure docker to allow OSE registry
-  replace: dest=/etc/sysconfig/docker regexp='^OPTIONS=.*$' replace="OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'" backup=yes
-- name: setup docker storage
-  command: docker-storage-setup
-- name: ensure docker service is enabled & running
-  service: name=docker enabled=yes state=started

@@ -1,10 +1,10 @@
 rhev_storage_domains:
-  - name: data1
+  - domainname: data1
     type: data
     path: "{{ nfs_rhev_data_domain_path }}"
-  - name: iso1
+  - domainname: iso1
     type: iso
     path: "{{ nfs_rhev_iso_domain_path }}"
-  - name: export1
+  - domainname: export1
     type: export
     path: "{{ nfs_rhev_export_domain_path }}"

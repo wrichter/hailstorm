@@ -1,6 +1,6 @@
 - name: find VMs
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].nic[1].ip }}/api/vms" | \
+         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/vms" | \
          xmllint --xpath "//vm[name='Cloudforms']" - || true
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   register: cloudforms_vm
@@ -9,7 +9,7 @@
 - block:
     - name: get CFME template name
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/templates" | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/templates" | \
              xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/name/text()" - || true
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
       changed_when: false
@@ -18,7 +18,7 @@
 
     # - name: get storage domain UUID
     #   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-    #          "https://{{ hostvars['rhevm'].nic[1].ip }}/api/storagedomains" | \
+    #          "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/storagedomains" | \
     #          xmllint --xpath "/storage_domains/storage_domain[name='data1']/@id" - | \
     #          awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
     #   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -36,11 +36,11 @@
       #   resource_type: template
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d "{{ lookup('template','vm.xml.j2') }}" \
-            "https://{{ hostvars['rhevm'].nic[1].ip }}/api/vms"
+            "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/vms"
 
     - name: wait for VM to unlock
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/vms" | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/vms" | \
              xmllint --xpath "//vm[name='Cloudforms']/status/state/text()" - || true
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
       changed_when: false
@@ -51,7 +51,7 @@
 
     - name: find CFME VM disk url
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/vms" | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/vms" | \
              xmllint --xpath "//vm[name='Cloudforms']/link[@rel='disks']/@href" - | \
              awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -62,20 +62,57 @@
     - name: create disk & attach it to VM
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d "{{ lookup('template','disk.xml.j2') }}" \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}{{ vm_disk_url.stdout }}"
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ vm_disk_url.stdout }}"
 
-    - name: find CFME VM nic url
-      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/vms" | \
-             xmllint --xpath "//vm[name='Cloudforms']/link[@rel='nics']/@href" - | \
-             awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
-      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
-      register: vm_nic_url
-      failed_when: vm_nic_url.stdout == ''
-      changed_when: false
 
-    - name: create eth1 nic on default network & attach it to VM
-      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d "<nic><name>eth1</name><interface>virtio</interface><network name="default" /></nic>" \
-            "https://{{ hostvars['rhevm'].nic[1].ip }}{{ vm_nic_url.stdout }}"
+
   when: cloudforms_vm.stdout==''
+
+- name: find CFME VM nic url
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/vms" | \
+         xmllint --xpath "//vm[name='Cloudforms']/link[@rel='nics']/@href" - | \
+         awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  register: vm_nic_url
+  failed_when: vm_nic_url.stdout == ''
+  changed_when: false
+
+# - name: get attached nics
+#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ vm_nic_url.stdout }}" | \
+#         xmllint --xpath "//nic/name/text()" -
+#   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+#   register: vm_nics
+#   changed_when: false
+
+- name: get default datacenter networks link
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/datacenters" | \
+         xmllint --xpath "//data_center[name='Default']/link[@rel='networks']/@href" - | \
+         awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  register: networks_url
+  failed_when: networks_url.stdout == ''
+  changed_when: false
+
+- name: query existing networks
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ networks_url.stdout }}" | \
+         xmllint --xpath "//network[name='{{ item.netname }}']/@id" - | \
+         awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  register: network_ids
+  failed_when: network_ids.stdout==''
+  changed_when: false
+  with_items: "{{ nic_calculated }}"
+
+#curl -H "Content-type: application/xml" -u admin@internal:redhat01 -k -XPOST -d'<nic><name>eth1</name><interface>virtio</interface><network name="admin" /></nic>'  https://192.168.101.12/api/vms/afc4e9c4-ff2b-4b6f-b9d7-86c58712e8af/nics
+- name: create nic on default network & attach it to VM
+  shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         -d "<nic><name>{{ item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.dev.mac }}" /><network id="{{ item.stdout }}" /></nic>" \
+        "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ vm_nic_url.stdout }}"
+  #with_items: "{{ hostvars['cloudforms'].nic_calculated }}"
+  #when: vm_nics.stdout.find(item.dev) == -1
+  with_items: "{{ network_ids.results }}"
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"

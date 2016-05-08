@@ -1,6 +1,6 @@
 - block:
     - name: find running VM
-      shell: virsh list --name | grep "{{ name }}"
+      shell: virsh list --name | grep "{{ inventory_hostname_short }}"
       register: virt_vms
       failed_when: false
       changed_when: false
@@ -8,11 +8,11 @@
       set_fact:
         vm_was_running: "{{ virt_vms.stdout == name }}"
     - name: shut down VM (gracefully)
-      virt: name="{{ name }}" state=shutdown uri=qemu:///system
-      when: virt_vms.stdout == "{{ name }}"
+      virt: name="{{ inventory_hostname_short }}" state=shutdown uri=qemu:///system
+      when: virt_vms.stdout == inventory_hostname_short
     - name: wait for VM to stop
-      shell: virsh list --name | grep "{{ name }}"
-      when: virt_vms.stdout == "{{ name }}"
+      shell: virsh list --name | grep "{{ inventory_hostname_short }}"
+      when: virt_vms.stdout == inventory_hostname_short
       register: virt_vms
       until: virt_vms.stdout == ""
       changed_when: false
@@ -20,5 +20,5 @@
       delay: 10
       failed_when: false
     #- name: force VM shutdown
-    #  virsh: command=destroy name="{{ name }}"
+    #  virsh: command=destroy name="{{ inventory_hostname_short }}"
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"

@@ -2,7 +2,7 @@
   shell: >
     . ~/stackrc && echo {{ item }} &&
     openstack baremetal show -f value -c uuid -c instance_uuid
-    $(ironic port-show --address {{ hostvars[item].nic[0].mac }} | awk '/node_uuid/{ print $4 }')
+    $(ironic port-show --address {{ hostvars[item].nic_calculated[0].mac }} | awk '/node_uuid/{ print $4 }')
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   with_items: "{{ groups['rhosp-undercloud'] }}"

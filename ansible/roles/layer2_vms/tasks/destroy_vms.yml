@@ -4,32 +4,32 @@
   register: virt_vms
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"
 - name: delete kickstart files
-  file: path={{ nfs_kickstart_folder }}/{{ name }}.cfg  state=absent
-  when: "{{ name in virt_vms.list_vms }}"
+  file: path={{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg  state=absent
+  when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
   delegate_to: "{{ infrastructure_delegate_nfs_server }}"
 - block:
     - name: destroy vms
-      virt: command=destroy name={{ name }}
-      when: "{{ name in virt_vms.list_vms }}"
+      virt: command=destroy name={{ inventory_hostname_short }}
+      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
       ignore_errors: true
 
     - name: list VM snapshots
-      shell: virsh snapshot-list {{ name }} | awk 'NR>2 { print $1 }'
+      shell: virsh snapshot-list {{ inventory_hostname_short }} | awk 'NR>2 { print $1 }'
       register: snapshots
       changed_when: false
     - name: delete VM snapshots
-      command: virsh snapshot-delete "{{ name }}" "{{ item }}"
+      command: virsh snapshot-delete "{{ inventory_hostname_short }}" "{{ item }}"
       with_items: "{{ snapshots.stdout_lines }}"
-    
+
     - name: undefine vms
-      virt: command=undefine name={{ name }}
-      when: "{{ name in virt_vms.list_vms }}"
+      virt: command=undefine name={{ inventory_hostname_short }}
+      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
       ignore_errors: true
     - name: refresh pool to allow unused images to be deleted
-      command: virsh pool-refresh {{ layer1_qcow_storage.name }}
+      command: virsh pool-refresh {{ layer1_qcow_storage.poolname }}
       changed_when: false
     - name: remove vm volumes
-      command: virsh vol-delete {{ disk.path }} --pool {{ layer1_qcow_storage.name }}
-      when: "{{ name in virt_vms.list_vms }}"
+      command: virsh vol-delete {{ disk.path }} --pool {{ layer1_qcow_storage.poolname }}
+      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
       ignore_errors: true
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"

@@ -8,18 +8,18 @@ layer1
 [layer2:children]
 ose3
 satellite
-rhosp-all
 rhev
+rhosp-all
 test-rhel6
 test-rhel7
 ipa
 infrastructure
+cloudforms
+# to let it participate in the calculation of ansible_host and nic_calculated
+
 
 [ose3:children]
 ose3-node
-ose3-lb
-
-[ose3-lb]
 
 [ose3-installer]
 ose3-master
@@ -28,13 +28,33 @@ ose3-master
 ose3-master
 
 [ose3-node]
-ose3-master
-ose3-node1
-ose3-node2
-ose3-infranode1
+ose3-master     openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ose3-infranode1 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ose3-node1      openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ose3-node2      openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
 
 [satellite]
 satellite
+
+
+# the list of groups that make up RHEV
+[rhev:children]
+rhevm
+rhevh
+
+# the single node that is RHEV-Manager
+[rhevm]
+rhevm
+
+# the nodes that are RHEV-Hypervisor
+[rhevh]
+rhevh1
+rhevh2
+
+# all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
+[layer1-rhev:children]
+rhev
+layer1
 
 # A list of all OpenStack subgroups
 [rhosp-all:children]
@@ -67,35 +87,16 @@ rhosp-control3
 rhosp-director
 layer1
 
-# the list of groups that make up RHEV
-[rhev:children]
-rhevm
-rhevh
-
-# the single node that is RHEV-Manager
-[rhevm]
-rhevm
-
-# the nodes that are RHEV-Hypervisor
-[rhevh]
-rhevh1
-rhevh2
-
-# all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
-[layer1-rhev:children]
-rhev
-layer1
-
 # some test nodes to test subscription with satellite
-[test-rhel]
+[test-rhel:children]
 test-rhel6
 test-rhel7
 
 [test-rhel6]
-test-rhel6
+test-rhel6 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
 
 [test-rhel7]
-test-rhel7
+test-rhel7 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
 # the IPA server
 [ipa]
@@ -121,4 +122,13 @@ rhevm
 test-rhel6
 
 [cloudforms]
+cloudforms
+
+# A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
+[niclayout-standard:children]
+satellite
+test-rhel
+infrastructure
+ipa
+ose3
 cloudforms

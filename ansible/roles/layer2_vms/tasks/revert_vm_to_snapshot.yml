@@ -1,10 +1,10 @@
 - block:
     - name: check if VM has a snapshot
-      shell: virsh snapshot-list {{ name }} | awk 'NR>2 { print $1 }'
+      shell: virsh snapshot-list {{ inventory_hostname_short }} | awk 'NR>2 { print $1 }'
       register: snapshots
       changed_when: false
     - name: revert to internal snapshot
-      command: virsh snapshot-revert "{{ name }}" "{{ snapshot_name | default('--current') }}"
+      command: virsh snapshot-revert "{{ inventory_hostname_short }}" "{{ snapshot_name | default('--current') }}"
       when: (snapshot_name is not defined and snapshots.stdout_lines|length > 0) or snapshot_name in snapshots.stdout_lines
       # when there is a snapshot and no name was given OR when the name was found
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"

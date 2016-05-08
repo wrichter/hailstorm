@@ -1,10 +1,10 @@
-virt-install  --name {{ name }}
+virt-install  --name {{ inventory_hostname_short }}
               --ram {{ mem }}
               --vcpus {{ vcpu }}
               --os-type {{ os_type }}
               --os-variant {{ os_variant }}
-            {% for _nic in nic %}
-              --network network={{ _nic.network }}{% if _nic.mac is defined %},mac={{ _nic.mac }}{% endif %},model=virtio
+            {% for nic_attachment in nic_attachments %}
+              --network network={{ nic_attachment.netname }},mac={{ nic_attachment.mac_prefix }}{{ "%02X" % hailstorm_number[inventory_hostname_short] }},model=virtio
             {% endfor %}
               --hvm
               --virt-type kvm
@@ -18,5 +18,5 @@ virt-install  --name {{ name }}
               --noautoconsole
               --wait 10
               --location {{ layer1_qcow_storage.path }}/{{ rhel_iso_img }}
-              --extra-args='ks=nfs:{{ infrastructure_network_admin.host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ name }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
+              --extra-args='ks=nfs:{{ infrastructure_network_admin.host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
             {% endif %}

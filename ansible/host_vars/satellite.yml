@@ -1,9 +1,8 @@
 ---
-name: satellite
 mem: "{{ layer2_satellite_mem }}"
 vcpu: "{{ layer2_satellite_cpu }}"
 disk:
-  path: satellite.qcow2
+  path: "{{ inventory_hostname_short }}.qcow2"
   size: 200
   format: qcow2
   partition_table:
@@ -11,20 +10,7 @@ disk:
     swap: 4096
     home: 2048
     root: 190000
-nic:
-  - ip: 192.168.100.20
-    dev: eth0
-    network: default
-    default_route: true
-  - ip: 192.168.103.20
-    dev: eth1
-    network: admin
-    default_route: false
-#hostname is now set in group_vars/all.yml
-#hostname: satellite.example.com
-#root_password is now set in config/hailstorm_config.yml
-#root_password: redhat01
-ansible_host: 192.168.103.20
+
 pool_regex: "{{ satellite_subscription_pool_regex }}"
 #poolid: "{{ satellite_subscription_poolid }}"
 repos: "{{ satellite_repos }}"

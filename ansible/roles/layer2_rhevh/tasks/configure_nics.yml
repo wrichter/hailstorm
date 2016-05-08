@@ -1,7 +1,7 @@
 
 - name: get host nics link
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts" | \
+         "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/hosts" | \
          xmllint --xpath "//host[name='{{ hostname }}']/link[@rel='nics']/@href" - | \
          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
   changed_when: false
@@ -11,7 +11,7 @@
 #curl -u admin@internal:redhat01 -k https://192.168.103.10/api/hosts/a79a3bfe-2a62-4531-9120-9e957543bd13/nics | xmllint --xpath "//host_nic[not(network)]" -
 - name: find out which nics have not yet been assigned
   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-        "https://{{ hostvars['rhevm'].nic[1].ip }}{{ host_nics_url.stdout }}" | \
+        "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ host_nics_url.stdout }}" | \
         xmllint --xpath "//host_nic[not(network)]/name/text()" - || true
   register: unassigned_nic
   changed_when: false
@@ -21,23 +21,23 @@
 - block:
     - name: get network ids
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/networks" | \
-             xmllint --xpath "//networks/network[name='{{ item.network }}']/@id" - | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/networks" | \
+             xmllint --xpath "//networks/network[name='{{ item.netname }}']/@id" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
       changed_when: false
       register: network_ids
       when: unassigned_nic.stdout.find(item.dev) != -1
       with_items:
-        - "{{nic[2]}}"
-        - "{{nic[1]}}"
-        - "{{nic[0]}}"
-        - "{{nic[0]}}"
-      failed_when: false
+        - "{{nic_calculated[3]}}"
+        - "{{nic_calculated[2]}}"
+        - "{{nic_calculated[1]}}"
+        - "{{nic_calculated[0]}}"
+        - "{{nic_calculated[0]}}"
       # for some odd reason the first attempt for the default NW fails...hence doing it twice and ignoring the error
 
     - name: get networkattachment links
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}{{ host_nics_url.stdout }}" | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ host_nics_url.stdout }}" | \
              xmllint --xpath "//host_nics/host_nic[name='{{ item.item.dev }}']/link[@rel='networkattachments']/@href" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
       changed_when: false
@@ -48,7 +48,7 @@
 
     - name: get deactivate host link
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts" | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/hosts" | \
              xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='deactivate']/@href" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
       changed_when: false
@@ -57,20 +57,19 @@
     - name: set host into maintenance mode (deactivate host)
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d '<action />'
-             "https://{{ hostvars['rhevm'].nic[1].ip }}{{ deactivate_url.stdout }}"
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ deactivate_url.stdout }}"
 
     - name: attach nics to networks
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d '{{ lookup('template','nic_network_attachment.xml.j2') }}'
-             "https://{{ hostvars['rhevm'].nic[1].ip }}{{ item.stdout }}"
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ item.stdout }}"
       with_items: "{{ networkattachment_url.results }}"
       when:  not item|skipped
-#unassigned_nic.stdout.find(item.item.item.dev) !=-1
-
+      failed_when: false
 
     - name: get activate host link
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].nic[1].ip }}/api/hosts" | \
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}/api/hosts" | \
              xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='activate']/@href" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
       changed_when: false
@@ -79,31 +78,5 @@
     - name: set host into active mode (activate host)
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d '<action />'
-             "https://{{ hostvars['rhevm'].nic[1].ip }}{{ activate_url.stdout }}"
+             "https://{{ hostvars['rhevm'].nic_calculated[1].ip }}{{ activate_url.stdout }}"
   when: unassigned_nic.stdout != ''
-
-# - include: assign_nic.yml
-#   with_items: "{{ nic }}"
-#   when: unassigned_nic.stdout.find(item.dev) != -1
-
-# - name: get list of nic ids
-#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-#          "https://{{ nic[0].ip }}{{ host_nics_url.stdout }}" | \
-#          xmllint --xpath "//host_nics/host_nic/[name='{{ item.dev }}']/@id" - \
-#          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-#   register: nic_id
-#   changed_when: false
-#   failed_when: nic_id.stdout == ''
-#   with_items: "{{ nic }}"
-#
-# - debug: var=nic_id
-#
-# - name: get list of network ids
-
-# - name: attach nics to networks
-#   shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-#          -d '<network_attachment><network><name>{{ item.network }}</name></network><host_nic><name>{{ item.dev }}</name></host_nic></network_attachment>'
-#          "https://{{ hostvars['rhevm'].nic[1].ip }}{{ host_nics_url.stdout }}"
-#   with_items: "{{ nic }}"
-#   register: res
-# - debug: var=res

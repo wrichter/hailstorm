@@ -1,0 +1,9 @@
+---
+nic_attachments:
+  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_admin }}"
+  - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_guests }}"
+default_route_via: "{{ infrastructure_network_services }}"
+name_service_via: "{{ infrastructure_network_services }}"
+ksdevice: eth1
