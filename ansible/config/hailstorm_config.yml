@@ -82,6 +82,43 @@ ipa_user:
     first: ose
     last: binduser
     password: "{{ root_password }}"
+  - username: glance
+    first: OpenStack
+    last: Glance
+    password: "{{ root_password }}"
+  - username: cinder
+    first: OpenStack
+    last: Glance
+    password: "{{ root_password }}"
+  - username: heat
+    first: OpenStack
+    last: Heat
+    password: "{{ root_password }}"
+  - username: neutron
+    first: OpenStack
+    last: Neutron
+    password: "{{ root_password }}"
+  - username: nova
+    first: OpenStack
+    last: Nova
+    password: "{{ root_password }}"
+  - username: swift
+    first: OpenStack
+    last: Swift
+    password: "{{ root_password }}"
+
+ipa_group:
+  - groupname: service-accounts
+    members:
+      - rhev-bind-user
+      - ose-bind-user
+      - glance
+      - cinder
+      - heat
+      - neutron
+      - nova
+      - swift
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=0
 
 
 # the following numbers are the base to generate IP and MAC addresses from

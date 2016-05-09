@@ -1,0 +1,40 @@
+---
+
+# - name: add binduser to IPA for rhev
+#   ipa: args="user-add rhev-bind-user --first=rhev --last=binduser"
+#     password="{{ ipa_admin_password }}"
+#     ignore_no_modifications=true
+#
+# - name: add abradshaw to IPA
+#   ipa: args="user-add abradshaw --first=adrian --last=bradshaw"
+#     password="{{ ipa_admin_password }}"
+#     ignore_no_modifications=true
+
+- name: find existing groups
+  shell: "echo {{ ipa_admin_password }} | kinit admin && ipa group-find | awk '/Group name: /{ print $3 }'"
+  register: current_ipa_groups
+  changed_when: false
+
+- name: add groups to IPA
+  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa group-add --nonposix {{ item.groupname }}'
+  when: item.groupname not in current_ipa_groups.stdout_lines
+  with_items: "{{ ipa_group }}"
+  register: current_ipa_groups_2
+
+- name: find group members
+  shell: echo {{ ipa_admin_password }} | kinit admin 1>/dev/null &&  ipa user-find --in-groups {{ item.groupname }} | awk '/User login/ { print $3 }'
+  register: group_members
+  with_items: "{{ ipa_group }}"
+  changed_when: false
+
+- name: set group password policy
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa pwpolicy-add {{ item.item.groupname }} {{ item.item.pwpolicy }}
+  when: item|changed
+  with_items: "{{ current_ipa_groups_2.results }}"
+
+- name: add missing group members
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa group-add-member {{ item.0.item.groupname }} --user={{ item.1 }}
+  when: item.1 not in item.0.stdout_lines
+  with_subelements:
+    - "{{ group_members.results }}"
+    - item.members

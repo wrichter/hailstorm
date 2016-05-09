@@ -8,5 +8,9 @@
     - include: ipa-configure.yml
       tags: ['ipa-install']
     - include: ipa-dns-records-add.yml
+      tags: ['ipa-dns']
     - include: ipa-users-add.yml
+      tags: ['ipa-users']
+    - include: ipa-groups-add.yml
+      tags: ['ipa-groups']
   when: mode=="create"
