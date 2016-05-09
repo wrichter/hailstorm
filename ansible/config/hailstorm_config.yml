@@ -67,9 +67,21 @@ ipa_user:
     password: "{{ root_password }}"
     first: Consumer
     last: User
+  - username: approver
+    password: "{{ root_password }}"
+    first: Approver
+    last: User
+  - username: developer
+    password: "{{ root_password }}"
+    first: Developer
+    last: User
   - username: rhev-bind-user
     first: rhev
     last: binduser
+  - username: ose-bind-user
+    first: ose
+    last: binduser
+    password: "{{ root_password }}"
 
 
 # the following numbers are the base to generate IP and MAC addresses from
