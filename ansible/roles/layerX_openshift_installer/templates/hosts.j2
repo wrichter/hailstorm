@@ -17,12 +17,17 @@ osm_default_subdomain=apps.{{ hailstorm_dns_domain }}
 
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
-openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider' }]
-#openshift_master_identity_providers=[{'name': 'my_ldap_provider', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=consumer,cn=users,cn=compat,dc=example,dc=com', 'bindPassword': '{{ root_password }}', 'ca': '', 'insecure': 'false', 'url': 'ldap://ipa.example.com:389/cn=compat,dc=example,dc=com?uid'}]
+{% if ipa_available|success and certificate|success %}
+#openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=consumer,cn=users,cn=compat,dc=example,dc=com', 'bindPassword': '{{ root_password }}', 'ca': '', 'insecure': 'false', 'url': 'ldap://ipa.example.com:389/cn=compat,dc=example,dc=com?uid'}]
+openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=consumer,cn=users,cn=compat,dc=example,dc=com', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.example.com:389/cn=compat,dc=example,dc=com?uid?sub?(&(objectClass=posixAccount))'}]
 # Configuring the ldap ca certificate
-#openshift_master_ldap_ca=<ca text>
+#openshift_master_ldap_ca='{#{ certificate.stdout }#}'
 # or
-#openshift_master_ldap_ca_file=<path to local ca file to use>
+openshift_master_ldap_ca_file=/etc/origin/master/ipa-ca.crt
+{% else %}
+openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider' }]
+{% endif %}
+
 
 
 

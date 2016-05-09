@@ -1,3 +1,16 @@
+- name: check IPA is available
+  wait_for: host={{ inventory_hostname }} port=22 timeout=1
+  register: ipa_available
+
+- name: copy certificate of IPA
+  command: cat /etc/ipa/ca.crt
+  delegate_to: ipa
+  register: certificate
+  when: ipa_available|success
+
+- name: create the cert on the OSE installer
+  copy: content="{{ certificate.stdout }}" dest=/etc/origin/master/ipa-ca.crt
+  when: ipa_available|success
 
 - name: create /etc/ansible/hosts
   template: src=hosts.j2 dest=/etc/ansible/hosts
