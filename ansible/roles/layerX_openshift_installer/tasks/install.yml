@@ -8,6 +8,9 @@
   register: certificate
   when: ipa_available|success
 
+- name: ensure that /etc/origin/master directory exists
+  file: dest=/etc/origin/master state=directory
+
 - name: create the cert on the OSE installer
   copy: content="{{ certificate.stdout }}" dest=/etc/origin/master/ipa-ca.crt
   when: ipa_available|success
