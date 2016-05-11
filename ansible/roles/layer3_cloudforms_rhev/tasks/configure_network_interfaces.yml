@@ -1,0 +1,7 @@
+- name: create /etc/sysconfig/network-scripts/ifcfg-ethXX files
+  template: src=ifcfg.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ item }} mode=0644
+  with_items:
+    - eth1
+    - eth2
+- name: restart network
+  service: name=network state=restarted 

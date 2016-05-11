@@ -8,9 +8,26 @@
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: started
+      delegate_to: rhevm
+    - name: wait for CFME VM to become avialable
+      wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=22 timeout=600
+      delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+    - include: configure_network_interfaces.yml
+      vars:
+        ansible_host: "{{ hostvars['cloudforms'].vm_nics[0].ip }}"
+        ansible_ssh_pass: startvm
+        ansible_user: root
   when: mode == 'create'
 
 - block:
+    - name: stop Cloudforms VM
+      ovirt:
+        user: admin@internal
+        url: "https://{{ hostvars['rhevm'].ansible_host }}"
+        instance_name: Cloudforms
+        password: "{{ root_password }}"
+        state: shutdown
+      delegate_to: rhevm
     - name: remove Cloudforms VM
       ovirt:
         user: admin@internal
@@ -18,4 +35,5 @@
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: absent
+      delegate_to: rhevm
   when: mode == 'destroy'

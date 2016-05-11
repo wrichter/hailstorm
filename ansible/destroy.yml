@@ -29,7 +29,7 @@
       tags: [ 'layer2','rhev', 'vms' ]
       mode: destroy
 
-- hosts: rhevm
+- hosts: cloudforms
   gather_facts: false
   remote_user: root
   roles:
