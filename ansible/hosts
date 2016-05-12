@@ -126,6 +126,7 @@ test-rhel6
 [cloudforms]
 cloudforms
 
+
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]
 satellite
