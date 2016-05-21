@@ -58,6 +58,7 @@
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d '<action />'
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ deactivate_url.stdout }}"
+      failed_when: false
 
     - name: attach nics to networks
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
