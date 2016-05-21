@@ -21,6 +21,7 @@
 - name: run installer playbook
   shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
   when: ansible_hosts|changed
+  tags: ['playbook']
 - name: deploy registry
   command: oadm registry --config=/etc/origin/master/admin.kubeconfig \
            --credentials=/etc/origin/master/openshift-registry.kubeconfig \

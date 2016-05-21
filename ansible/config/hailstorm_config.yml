@@ -7,7 +7,7 @@ hailstorm_ssh_pub_key_file: hailstorm.pub
 hailstorm_ssh_priv_key_file: hailstorm
 #undercloud_ssh_pub_key_file: undercloud.pub
 #undercloud_ssh_priv_key_file: undercloud
-rhel6_iso_image: rhel-server-6.7-x86_64-dvd.iso
+rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
 rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 # rhosp_images:
 #   - deploy-ramdisk-ironic-7.3.1-39.tar
@@ -59,8 +59,11 @@ ipa_repos:
 ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-ose-3.1-rpms
-ose3_additional_packages: docker-1.8.2
+  - rhel-7-server-ose-3.2-rpms
+ose3_additional_packages: docker-1.9.1
+#   - rhel-7-server-ose-3.1-rpms
+# ose3_additional_packages: docker-1.8.2
+tdagent_rpm: https://packages.treasuredata.com/2/redhat/7/x86_64/td-agent-2.2.0-0.x86_64.rpm
 
 ipa_user:
   - username: consumer
@@ -145,3 +148,4 @@ hailstorm_number:
   rhosp-control1: 34
   rhosp-control2: 35
   rhosp-control3: 36
+  efk:            40
