@@ -1,0 +1,16 @@
+# In v1 configuration, type and id are @ prefix parameters.
+# @type and @id are recommended. type and id are still available for backward compatibility
+
+<source>
+  @type forward
+  port 4000
+  bind 0.0.0.0
+</source>
+
+<match **>
+  @type elasticsearch
+  host localhost
+  port 9200
+  logstash_format true
+  flush_interval 5
+</match>

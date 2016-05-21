@@ -95,12 +95,16 @@
   #    tags: [ 'layer2','satellite' ]
   roles:
    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create }
+
 
 - hosts: test-rhel
   remote_user: root
   gather_facts: false
   roles:
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+
 
 #### Infrastructure (DNS, SMTP/IMAP) ####
 
@@ -158,7 +162,7 @@
     - setup:
       tags: [ 'layer2', 'satellite-rhev' ]
   roles:
-    - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev' ], mode: create }
+    - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev', 'satellite', 'rhev' ], mode: create }
 
 #### CLOUDFORMS ####
 
@@ -213,7 +217,16 @@
   gather_facts: false
   roles:
     - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 #    - { role: layer2_rhosp_gather_node_uuids, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
+
+- hosts: efk
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'efk', 'vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'efk', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create }

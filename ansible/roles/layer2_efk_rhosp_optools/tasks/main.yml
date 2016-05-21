@@ -1,0 +1,23 @@
+- block:
+  # taken from: https://access.redhat.com/documentation/en/red-hat-openstack-platform/8/red-hat-openstack-platform-operational-tools/chapter-2-installing-the-centralized-logging-suite
+    - name: configure elasticsearch
+      lineinfile: dest=/etc/elasticsearch/elasticsearch.yml line={{ item }}
+      with_items:
+        - 'http.cors.enabled: true'
+        - 'http.cors.allow-origin: "/.*/"'
+    - name: restart elasticsearch
+      service: name=elasticsearch state=restarted
+
+    - name: configure fluentd
+      template: src=fluent.conf.j2 dest=/etc/fluentd/fluent.conf
+    - name: restart fluentd
+      service: name=fluentd state=restarted
+
+    - name: configure kibana
+      template: src=kibana3.conf.j2 dest=/etc/httpd/conf.d/kibana3.conf
+    - name: allow kibana to connect to elasticsearch
+      command: setsebool -P httpd_can_network_connect 1
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+  when: mode=='create'

@@ -14,6 +14,7 @@ test-rhel6
 test-rhel7
 ipa
 infrastructure
+efk
 
 # to let it participate in the calculation of ansible_host and vm_nics
 [accessible_via_admin_network:children]
@@ -117,6 +118,7 @@ ose3
 test-rhel7
 ipa
 infrastructure
+efk
 
 # All layer2 nodes that are installed with RHEL6
 [rhel6:children]
@@ -126,6 +128,8 @@ test-rhel6
 [cloudforms]
 cloudforms
 
+[efk]
+efk
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]
@@ -135,3 +139,4 @@ infrastructure
 ipa
 ose3
 cloudforms
+efk

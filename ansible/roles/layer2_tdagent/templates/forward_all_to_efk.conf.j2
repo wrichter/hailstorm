@@ -1,0 +1,16 @@
+<filter **>
+  @type record_transformer
+  <record>
+    hostname ${hostname}
+  </record>
+</filter>
+
+<match **>
+  @type forward
+  heartbeat_type tcp
+  <server>
+    name {{ hostvars['efk'].vm_nics[0].ip }}
+    host {{ hostvars['efk'].vm_nics[0].ip }}
+    port 4000
+  </server>
+</match>

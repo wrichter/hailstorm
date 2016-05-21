@@ -1,0 +1,16 @@
+- block:
+    - name: install tdagent
+      command: yum -y localinstall {{ tdagent_rpm }} creates=/etc/td-agent/td-agent.conf
+    - name: create tdagent config.d directory
+      file: state=directory dest=/etc/td-agent/config.d owner=td-agent group=td-agent
+    - name: add config.d directory to td-agent.conf
+      lineinfile: line="@include config.d/*.conf" dest=/etc/td-agent/td-agent.conf
+
+    - name: add tdagent configs
+      template: src={{item}}.conf.j2 dest=/etc/td-agent/config.d/{{ item }}.conf
+      with_items: "{% if tdagent_configs is defined %}{{ tdagent_configs }}{% endif %}"
+      when: not (tdagent_configs is undefined or tdagent_configs is none or tdagent_configs | length == 0)
+
+    - name: enable & (re)start tdagent
+      service: name=td-agent state=restarted enabled=yes
+  when: mode=='create'
