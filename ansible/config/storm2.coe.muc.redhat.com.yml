@@ -1,4 +1,4 @@
-layer1_ansible_host: storm1.coe.muc.redhat.com
+layer1_ansible_host: storm2.coe.muc.redhat.com
 
 disable_registration_against_satellite: true
 
@@ -43,7 +43,7 @@ dnat_rules:
   layer1_dev: em2
   firewall_zone: external
   rules:
-    - from_host_prefix: 10.32.105.10/24
+    - from_host_prefix: 10.32.105.20/24
       to_ip: 192.168.101.10
       ports:
         - from: 22
