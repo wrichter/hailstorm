@@ -47,12 +47,12 @@ rhevh
 
 # the single node that is RHEV-Manager
 [rhevm]
-rhevm
+rhevm activation_key="AK-CV-RHEV-MANAGER-PROD"
 
 # the nodes that are RHEV-Hypervisor
 [rhevh]
-rhevh1
-rhevh2
+rhevh1 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh2 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
 
 # all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
 [layer1-rhev:children]
@@ -66,7 +66,7 @@ rhosp-undercloud
 
 # The single system where osp-director will be installed to
 [rhosp-director]
-rhosp-director
+rhosp-director activation_key="AK-CV-RHOSP8-PROD"
 
 # The groups that make up the osp undercloud (i.e. compute, control and potentially storage)
 [rhosp-undercloud:children]
@@ -75,15 +75,15 @@ rhosp-control
 
 # The group of all osp compute nodes
 [rhosp-compute]
-rhosp-compute1
-rhosp-compute2
-rhosp-compute3
+rhosp-compute1 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute2 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute3 activation_key="AK-CV-RHOSP8-PROD"
 
 # The group of all osp control nodes
 [rhosp-control]
-rhosp-control1
-rhosp-control2
-rhosp-control3
+rhosp-control1 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control2 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control3 activation_key="AK-CV-RHOSP8-PROD"
 
 # a group required to store a common configuration for IPMI emulation between the layer1 host and the osp-director
 [layer1-rhosp]
@@ -129,7 +129,7 @@ test-rhel6
 cloudforms
 
 [efk]
-efk
+efk activation_key="AK-CV-RHOSP8-PROD"
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]

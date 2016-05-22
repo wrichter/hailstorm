@@ -40,7 +40,7 @@
 
 - name: unsubscribe (from RHN)
   redhat_subscription: state=absent
-  when: not disable_registration_against_satellite and activation_key is defined and subscription_status.stdout == 'Current' and rhsm_target.stdout != hostvars['satellite'].hostname
+  when: (not disable_registration_against_satellite) and activation_key is defined and subscription_status.stdout == 'Current' and rhsm_target.stdout != hostvars['satellite'].hostname
 
 - block:
     - name: add satellite entry to /etc/hosts

@@ -1,5 +1,20 @@
 ---
 
+- hosts: efk
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','efk', 'rhel' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer2','efk', 'rhel' ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','efk', 'vms' ]
+      mode: destroy
+
+
 - hosts: ose3
   gather_facts: false
   remote_user: root
