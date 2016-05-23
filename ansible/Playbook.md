@@ -51,7 +51,7 @@ For most VMs, the NIC attachments is similar: eth0 is attached to the "services"
 
 ### How to add a new VM (on layer 2)
 
-Think of a name and add it to a (newly defined, if necessary) group in the inventory file. Assign it a unique hailstorm_number BELOW the currently chosen numbers for RHOSP (since the RHOSP deployment roles assume all IP addresses above the one used for director to be freely available). In the inventory file, add the name to the following groups:
+Think of a name and add it to a (newly defined, if necessary) group in the inventory file. Ansible playbooks always operate on groups of machines, so a single VM might require a group of just that VM. Assign it a unique hailstorm_number BELOW the currently chosen numbers for RHOSP (since the RHOSP deployment roles assume all IP addresses above the one used for director to be freely available). In the inventory file, add the name to the following groups:
 - to the RHEL6 or RHEL7 groups, depending on which OS you want installed
 - to the "niclayout-standard" group, if you do not want to specify the NIC layout yourself
 - to the "layer2" group (which will in turn make it a member of "accessible_via_admin_network")

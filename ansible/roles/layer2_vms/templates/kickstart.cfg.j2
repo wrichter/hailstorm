@@ -33,7 +33,7 @@ rootpw "{{ root_password }}"
 # System services
 services --enabled="chronyd"
 # System timezone
-timezone Europe/Berlin --utc
+timezone {{ timezone }} --utc
 # System bootloader configuration
 bootloader --append=" crashkernel=auto" --location=mbr
 # Partition clearing informationi

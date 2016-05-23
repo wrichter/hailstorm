@@ -65,6 +65,10 @@ ose3_additional_packages: docker-1.9.1
 # ose3_additional_packages: docker-1.8.2
 tdagent_rpm: https://packages.treasuredata.com/2/redhat/7/x86_64/td-agent-2.2.0-0.x86_64.rpm
 
+
+timezone: Europe/Berlin
+
+
 ipa_user:
   - username: consumer
     password: "{{ root_password }}"
