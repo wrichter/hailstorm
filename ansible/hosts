@@ -1,10 +1,138 @@
+#### LAYER 1 CONFIGURATION
+
 # the layer1 group should only contain a single server called layer1
-# whose IP address is specified in the ansible_host property in host_vars/layer1.yml
 [layer1]
+layer1          hailstorm_number=1
+
+#### VM CONFIGURATION (LAYER 2 AND LAYER 3)
+
+[satellite]
+satellite       hailstorm_number=10
+
+# the IPA server
+[ipa]
+ipa             hailstorm_number=11 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+
+# the single node that is RHEV-Manager
+[rhevm]
+rhevm           hailstorm_number=12 activation_key="AK-CV-RHEV-MANAGER-PROD"
+
+# the nodes that are RHEV-Hypervisor
+[rhevh]
+rhevh1          hailstorm_number=13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh2          hailstorm_number=14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+
+# the CloudForms management engine
+[cloudforms]
+cloudforms      hailstorm_number=17
+
+[test-rhel6]
+test-rhel6      hailstorm_number=18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
+
+[test-rhel7]
+test-rhel7      hailstorm_number=19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
+
+[ose3-node]
+ose3-master     hailstorm_number=20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ose3-infranode1 hailstorm_number=21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ose3-node1      hailstorm_number=23 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
+ose3-node2      hailstorm_number=24 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+
+# the Infrastructure server (DNS, SMTP/IMAP)
+[infrastructure]
+infrastructure  hailstorm_number=29 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+
+
+# The single system where osp-director will be installed to
+[rhosp-director]
+rhosp-director  hailstorm_number=30 activation_key="AK-CV-RHOSP8-PROD"
+
+# The group of all osp compute nodes
+[rhosp-compute]
+rhosp-compute1  hailstorm_number=31 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute2  hailstorm_number=32 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute3  hailstorm_number=33 activation_key="AK-CV-RHOSP8-PROD"
+
+# The group of all osp control nodes
+[rhosp-control]
+rhosp-control1  hailstorm_number=34 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control2  hailstorm_number=35 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control3  hailstorm_number=36 activation_key="AK-CV-RHOSP8-PROD"
+
+# Elasticsearch, FluentD, Kibana
+[efk]
+efk             hailstorm_number=40 activation_key="AK-CV-RHOSP8-PROD"
+
+
+
+
+
+#### ADDITIONAL GROUPS
+
+# some test nodes to test subscription with satellite
+[test-rhel:children]
+test-rhel6
+test-rhel7
+
+# the list of groups that make up RHEV
+[rhev:children]
+rhevm
+rhevh
+
+# all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
+[layer1-rhev:children]
+rhev
 layer1
 
-# everything on layer2 - this is important because group_vars/layer2.yml configures
-# the ssh proxy command used to communicate with all layer2 hosts
+# A list of all OpenStack subgroups
+[rhosp-all:children]
+rhosp-director
+rhosp-undercloud
+
+# The groups that make up the osp undercloud (i.e. compute, control and potentially storage)
+[rhosp-undercloud:children]
+rhosp-compute
+rhosp-control
+
+# a group required to store a common configuration for IPMI emulation between the layer1 host and the osp-director
+[layer1-rhosp]
+rhosp-director
+layer1
+
+# all openshift nodes
+[ose3:children]
+ose3-node
+ose3-lb
+
+# openshift load balancer
+[ose3-lb]
+
+# the node where the ansible playbook will run
+[ose3-installer]
+ose3-master
+
+# all openshift master nodes
+[ose3-master]
+ose3-master
+
+
+# All layer2 node groups that are installed with RHEL7
+[rhel7:children]
+rhosp-all
+satellite
+rhevh
+ose3
+test-rhel7
+ipa
+infrastructure
+efk
+
+# All layer2 node groups that are installed with RHEL6
+[rhel6:children]
+rhevm
+test-rhel6
+
+# everything on layer2
 [layer2:children]
 ose3
 satellite
@@ -17,119 +145,10 @@ infrastructure
 efk
 
 # to let it participate in the calculation of ansible_host and vm_nics
+# and the ssh proxy command used to communicate with all layer2/3 hosts
 [accessible_via_admin_network:children]
 layer2
 cloudforms
-
-[ose3:children]
-ose3-node
-
-[ose3-installer]
-ose3-master
-
-[ose3-master]
-ose3-master
-
-[ose3-node]
-ose3-master     openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ose3-infranode1 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ose3-node1      openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ose3-node2      openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
-
-[satellite]
-satellite
-
-
-# the list of groups that make up RHEV
-[rhev:children]
-rhevm
-rhevh
-
-# the single node that is RHEV-Manager
-[rhevm]
-rhevm activation_key="AK-CV-RHEV-MANAGER-PROD"
-
-# the nodes that are RHEV-Hypervisor
-[rhevh]
-rhevh1 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
-rhevh2 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
-
-# all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
-[layer1-rhev:children]
-rhev
-layer1
-
-# A list of all OpenStack subgroups
-[rhosp-all:children]
-rhosp-director
-rhosp-undercloud
-
-# The single system where osp-director will be installed to
-[rhosp-director]
-rhosp-director activation_key="AK-CV-RHOSP8-PROD"
-
-# The groups that make up the osp undercloud (i.e. compute, control and potentially storage)
-[rhosp-undercloud:children]
-rhosp-compute
-rhosp-control
-
-# The group of all osp compute nodes
-[rhosp-compute]
-rhosp-compute1 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-compute2 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-compute3 activation_key="AK-CV-RHOSP8-PROD"
-
-# The group of all osp control nodes
-[rhosp-control]
-rhosp-control1 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-control2 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-control3 activation_key="AK-CV-RHOSP8-PROD"
-
-# a group required to store a common configuration for IPMI emulation between the layer1 host and the osp-director
-[layer1-rhosp]
-rhosp-director
-layer1
-
-# some test nodes to test subscription with satellite
-[test-rhel:children]
-test-rhel6
-test-rhel7
-
-[test-rhel6]
-test-rhel6 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
-
-[test-rhel7]
-test-rhel7 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
-
-# the IPA server
-[ipa]
-ipa activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
-
-# the Infrastructure server (DNS, SMTP/IMAP)
-[infrastructure]
-infrastructure activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
-
-# All layer2 nodes that are installed with RHEL7
-[rhel7:children]
-rhosp-all
-satellite
-rhevh
-ose3
-test-rhel7
-ipa
-infrastructure
-efk
-
-# All layer2 nodes that are installed with RHEL6
-[rhel6:children]
-rhevm
-test-rhel6
-
-[cloudforms]
-cloudforms
-
-[efk]
-efk activation_key="AK-CV-RHOSP8-PROD"
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]

@@ -1,0 +1,4 @@
+- block:
+    # TODO change password from "smartvm" to root_password
+    - shell: appliance_console_cli --host={{ hostname }} --region=919 --internal --password="smartvm" --key --force-key --dbdisk=/dev/vdb -v
+  when: mode=="create"
