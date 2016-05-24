@@ -8,23 +8,23 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 ### Setting up the environment
 Everything:
 ```
-$ LC_LANG=C ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
+$ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml" \
 -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" create.yml
 ```
 Only layer1 and OpenStack (see create.yml source code for available tags):
 ```
-$ LC_LANG=C ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
+$ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml" \
 -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" create.yml --tags layer1,rhosp
 ```
 ### Tearing down the environment
 Everything:
 ```
-$ LC_LANG=C ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
+$ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml" \
 -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" destroy.yml
 ```
 Only OpenStack:
 ```
-$ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
+$ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml" \
 -e "@config/hailstorm_config.yml" -e "@config/infrastructure_config.yml" destroy.yml --tags rhosp
 ```
 
@@ -49,7 +49,7 @@ $ ansible-playbook -i hosts -e "@config/inf43.coe.muc.redhat.com.yml" \
 1. Change into the ansible directory, and copy or create the necessary ssh key pairs in the binary directory (the first one is used for the communication between the RHOSP-director and the layer1 host, the second to connect to the layer1 host from the outside). If you create new keys, ensure they are also added to the layer1's host root user as authorized key:
   - $ ssh-keygen -t rsa -f binary/undercloud
   - $ ssh-keygen -t rsa -f binary/hailstorm
-1. If necessary, copy & adapt the hardware-driven configuration from the sample config/inf43.coe.muc.redhat.com.yml, especially
+1. If necessary, copy & adapt the hardware-driven configuration from the sample config/storm2.coe.muc.redhat.com.yml, especially
   - ansible_host: to the ip address or DNS name of your layer1 host (which is prepared with a minimal RHEL install).  
   - If no ssh keys are available, set the ansible_ssh_pass parameter to the hosts root password (see [ansible documentation](http://docs.ansible.com/ansible/intro_inventory.html))
 1. If necessary, copy & adapt the software-driven configuration from the sample config/hailstorm_config.yml
