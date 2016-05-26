@@ -1,5 +1,5 @@
 - name: create catch-all user account
-  user: name={{ catch_all_user }}
+  user: name={{ catch_all_user }} password={{ root_password|password_hash('sha512') }}
 
 - name: configure catch-all user
   lineinfile: line="@{{ hailstorm_dns_domain }} {{ catch_all_user }}" dest=/etc/postfix/virtual
