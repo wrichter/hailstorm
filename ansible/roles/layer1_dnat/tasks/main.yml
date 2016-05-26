@@ -1,0 +1,7 @@
+- block:
+    - include: configure_dnat.yml
+  when: mode=="create" and dnat_rules is defined
+
+- block:
+    - include: remove_dnat.yml
+  when: mode=="destroy" and dnat_rules is defined

@@ -13,8 +13,45 @@ disk:
 
 repos:
   - rhel-7-server-rpms
-  - rhel-7-server-optional-rpms
-  - rhel-7-server-extras-rpms
-packages:
+packages: bind,dovecot,postfix
 activation_key: AK-CV-OS-RHEL7-SERVER-PROD
 pool_regex: "{{ rhel_subscription_pool_regex }}"
+
+catch_all_user: catchall
+
+firewalld_rules:
+ - DNStcp:
+   port: 53
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - DNSudp:
+   port: 53
+   protocol: udp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - SMTP:
+   port: 25
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - IMAP:
+   port: 143
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true
+ - IMAPSSL:
+   port: 993
+   protocol: tcp
+   state: enabled
+   zone: public
+   permanent: true
+   immediate: true

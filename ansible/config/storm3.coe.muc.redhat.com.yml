@@ -40,18 +40,38 @@ http_proxy:
   protocol: https
 
 dnat_rules:
-  layer1_dev: em2
-  firewall_zone: external
+  layer1_dev: em1
   rules:
-    - from_host_prefix: 10.32.105.30/24
-      to_ip: 192.168.101.10
+    - to_machine: satellite
+      from_host_prefix: 10.32.105.30/32
       ports:
-        - from: 22
-          to: 22
+#        - from_port: 22
+#          to_port: 22
+#          proto: tcp
+        - from_port: 80
+          to_port: 80
           proto: tcp
-        - from: 80
-          to: 80
+        - from_port: 443
+          to_port: 443
           proto: tcp
-        - from: 443
-          to: 443
+    - to_machine: ipa
+      from_host_prefix: 10.32.105.31/32
+      ports:
+#        - from_port: 22
+#          to_port: 22
+#          proto: tcp
+        - from_port: 443
+          to_port: 443
           proto: tcp
+    - to_machine: infrastructure
+      from_host_prefix: 10.32.105.32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 53
+          to_port: 53
+          proto: tcp
+        - from_port: 53
+          to_port: 53
+          proto: udp

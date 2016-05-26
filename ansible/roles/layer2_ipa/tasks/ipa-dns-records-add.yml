@@ -8,3 +8,12 @@
   when: item != 'localhost' and hostvars[item].inventory_hostname_short is defined and hostvars[item].inventory_hostname_short not in dns_records.stdout_lines
   with_items: "{{ groups.all }}"
   ignore_errors: true
+
+- name: check MX record
+  shell: echo "{{ ipa_admin_password }}" | kinit admin && ipa dnsrecord-find example.com | awk '/MX/{ print $4 }'
+  register: mx_record
+  changed_when: false
+
+- name: add MX dns record
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }}. {{ hailstorm_dns_domain }}. --mx-rec "10 infrastructure"
+  when: mx_record.stdout == ""

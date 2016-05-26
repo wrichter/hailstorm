@@ -17,7 +17,7 @@
     - name: stop Cloudforms VM
       ovirt:
         user: admin@internal
-        url: "https://{{ hostvars['rhevm'].ansible_host }}"
+        url: "https://localhost"
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: shutdown
@@ -25,7 +25,7 @@
     - name: remove Cloudforms VM
       ovirt:
         user: admin@internal
-        url: "https://{{ hostvars['rhevm'].ansible_host }}"
+        url: "https://localhost"
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: absent

@@ -33,6 +33,9 @@
     - role: layer1
       tags: [ 'layer1' ]
       mode: create
+    - role: layer1_dnat
+      tags: [ 'layer1', 'dnat' ]
+      mode: create
     - role: layer1_rhosp
       tags: [ 'rhosp', layer1 ]
       mode: create
@@ -114,6 +117,7 @@
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'infrastructure', 'vm' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'infrastructure', 'rhel' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
 
 #### RHEV ####
