@@ -138,6 +138,7 @@
     - setup:
       tags: [ 'layer2', 'rhev' ]
   roles:
+    - { role: layer2_dnat, tags: [ 'layer2', 'rhev', 'dnat' ], mode: create }
     - { role: layer2_rhevm_engine, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
 
 - hosts: rhevh

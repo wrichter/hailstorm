@@ -2,9 +2,9 @@
     - name: create xslt template
       template: src=transform.xslt.j2 dest=/tmp/{{ inventory_hostname_short }}.xslt
     - name: get existing domain xml
-      shell: virsh dumpxml {{ inventory_hostname_short }} | xmllint --c14n - > /tmp/{{ inventory_hostname_short }}.current.xml
+      shell: virsh dumpxml {{ inventory_hostname_short }} | xmllint --format --exc-c14n - > /tmp/{{ inventory_hostname_short }}.current.xml
     - name: create new domain xml
-      shell: xsltproc /tmp/{{ inventory_hostname_short }}.xslt /tmp/{{ inventory_hostname_short }}.current.xml  | xmllint --c14n -  >/tmp/{{ inventory_hostname_short }}.new.xml
+      shell: xsltproc /tmp/{{ inventory_hostname_short }}.xslt /tmp/{{ inventory_hostname_short }}.current.xml  | xmllint --format --exc-c14n -  >/tmp/{{ inventory_hostname_short }}.new.xml
     - name: compare current and new domain xml
       shell: diff /tmp/{{ inventory_hostname_short }}.current.xml /tmp/{{ inventory_hostname_short }}.new.xml
       register: diff

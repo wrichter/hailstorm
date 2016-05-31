@@ -3,9 +3,9 @@
   register: ip_addresses
   changed_when: false
 - name: remove static IP configuration for DNAT
-  command: nmcli con modify {{ dnat_rules.layer1_dev }} -ipv4.addresses "{{ item.from_host_prefix }}"
-  when: item.from_host_prefix in ip_addresses.stdout
-  with_items: "{{ dnat_rules.addresses }}"
+  command: nmcli con modify {{ dnat_rules.layer1_dev }} -ipv4.addresses "{{ item.on_host_prefix }}"
+  when: item.on_host_prefix in ip_addresses.stdout
+  with_items: "{{ dnat_rules.mapping }}"
   register: ip_address_change
 - name: reload interface configuration
   command: nmcli con up {{ dnat_rules.layer1_dev }}

@@ -41,37 +41,52 @@ http_proxy:
 
 dnat_rules:
   layer1_dev: em1
-  addresses:
-    - from_host_prefix: 10.32.105.30/32
-      rules:
-        - to_machine: satellite
-          ports:
-            - from_port: 80
-              to_port: 80
-              proto: tcp
-            - from_port: 443
-              to_port: 443
-              proto: tcp
-    - from_host_prefix: 10.32.105.31/32
-      rules:
-        - to_machine: ipa
-          ports:
-            - from_port: 22
-              to_port: 22
-              proto: tcp
-            - from_port: 443
-              to_port: 443
-              proto: tcp
-    - from_host_prefix: 10.32.105.32
-      rules:
-        - to_machine: infrastructure
-          ports:
-            - from_port: 22
-              to_port: 22
-              proto: tcp
-            - from_port: 53
-              to_port: 53
-              proto: tcp
-            - from_port: 53
-              to_port: 53
-              proto: udp
+  mapping:
+    - expose_machine: satellite
+      on_host_prefix: 10.32.105.30/32
+      ports:
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+    - expose_machine: ipa
+      on_host_prefix: 10.32.105.31/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+    - expose_machine: infrastructure
+      on_host_prefix: 10.32.105.32/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 53
+          to_port: 53
+          proto: tcp
+        - from_port: 53
+          to_port: 53
+          proto: udp
+        - from_port: 143
+          to_port: 143
+          proto: tcp
+        - from_port: 993
+          to_port: 993
+          proto: tcp
+        - from_port: 25
+          to_port: 25
+          proto: tcp
+        - from_port: 465
+          to_port: 465
+          proto: tcp

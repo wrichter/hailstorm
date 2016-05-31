@@ -22,17 +22,19 @@
       <xsl:call-template name="iptables"/>
    </xsl:template>
 
+   <xsl:template match="hs:iptables">
+      <xsl:call-template name="iptables"/>
+   </xsl:template>
+
    <xsl:template name="iptables">
       <hs:iptables>
-        {% for addr in dnat_rules.addresses %}
-        {% for rule in addr.rules %}
-        {% if rule.to_machine == inventory_hostname_short %}
-        {% for port in rule.ports %}
-        <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ addr.from_host_prefix }} -j DNAT --to {{ vm_nics[0].ip }}:{{ port.to_port }}</rule>
+        {% for mapping in dnat_rules.mapping %}
+        {% if mapping.expose_machine == inventory_hostname_short %}
+        {% for port in mapping.ports %}
+        <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ vm_nics[0].ip }}:{{ port.to_port }}</rule>
         <rule>FORWARD -t filter -o {{ infrastructure_network_services.bridge }} -p {{ port.proto }} -d {{ vm_nics[0].ip }} --dport {{ port.to_port }} -j ACCEPT</rule>
         {% endfor %}
         {% endif %}
-        {% endfor %}
         {% endfor %}
       </hs:iptables>
    </xsl:template>
