@@ -1,0 +1,39 @@
+- block:
+    - name: create xslt template
+      template: src=transform.xslt.j2 dest=/tmp/{{ inventory_hostname_short }}.xslt
+    - name: get existing domain xml
+      shell: virsh dumpxml {{ inventory_hostname_short }} | xmllint --c14n - > /tmp/{{ inventory_hostname_short }}.current.xml
+    - name: create new domain xml
+      shell: xsltproc /tmp/{{ inventory_hostname_short }}.xslt /tmp/{{ inventory_hostname_short }}.current.xml  | xmllint --c14n -  >/tmp/{{ inventory_hostname_short }}.new.xml
+    - name: compare current and new domain xml
+      shell: diff /tmp/{{ inventory_hostname_short }}.current.xml /tmp/{{ inventory_hostname_short }}.new.xml
+      register: diff
+      changed_when: false
+      failed_when: false
+    - name: redefine domain
+      shell: virsh define /tmp/{{ inventory_hostname_short }}.new.xml
+      when: diff.stdout != ""
+    # - name: remove temp files
+    #   file: path=/tmp/{{inventory_hostname_short}}.{{item}} state=absent
+    #   with_items:
+    #     - xslt
+    #     - new.xml
+    #     - current.xml
+    - name: stop domain (to ensure changed xml is read upon startup)
+      virt: name="{{ inventory_hostname_short }}" state=shutdown uri=qemu:///system
+      when: diff.stdout != ""
+    - name: wait for VM to stop
+      shell: virsh list --name | grep "{{ inventory_hostname_short }}"
+      register: virt_vms
+      until: virt_vms.stdout == ""
+      changed_when: false
+      retries: 30
+      delay: 10
+      failed_when: false
+      when: diff.stdout != ""
+    - name: start domain
+      virt: name="{{ inventory_hostname_short }}" state=running uri=qemu:///system
+      when: diff.stdout != ""
+    - name: wait for VM to finish (re)booting
+      wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"

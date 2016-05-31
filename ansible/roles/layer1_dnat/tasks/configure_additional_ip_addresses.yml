@@ -5,13 +5,8 @@
 - name: add static IP configuration for DNAT
   command: nmcli con modify {{ dnat_rules.layer1_dev }} +ipv4.addresses "{{ item.from_host_prefix }}"
   when: item.from_host_prefix not in ip_addresses.stdout
-  with_items: "{{ dnat_rules.rules }}"
+  with_items: "{{ dnat_rules.addresses }}"
   register: ip_address_change
 - name: reload interface configuration
   command: nmcli con up {{ dnat_rules.layer1_dev }}
   when: ip_address_change|changed
-- name: configure port forwarding
-  command: firewall-cmd --direct --add-rule {{ lookup('template', 'iptables_rule.j2') }}
-  with_subelements:
-    - "{{ dnat_rules.rules }}"
-    - ports

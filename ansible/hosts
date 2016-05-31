@@ -21,6 +21,7 @@ rhevm           hailstorm_number=12 activation_key="AK-CV-RHEV-MANAGER-PROD"
 [rhevh]
 rhevh1          hailstorm_number=13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
 rhevh2          hailstorm_number=14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh3          hailstorm_number=15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
 
 # the CloudForms management engine
 [cloudforms]

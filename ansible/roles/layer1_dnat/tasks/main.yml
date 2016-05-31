@@ -1,7 +1,21 @@
 - block:
-    - include: configure_dnat.yml
+    - include: configure_additional_ip_addresses.yml
+    - name: create libvirt hooks directory
+      file: path=/etc/libvirt/hooks state=directory
+    - name: create libvirt hook
+      copy: src=qemu dest=/etc/libvirt/hooks/qemu mode=0755
+      register: hook
+    - name: restart libvirtd
+      service: name=libvirtd state=restarted
+      when: hook|changed
   when: mode=="create" and dnat_rules is defined
 
 - block:
-    - include: remove_dnat.yml
+    - include: remove_additional_ip_addresses.yml
+    - name: remove libvirt hook
+      file: path=/etc/libvirt/hooks/qemu state=absent
+      register: hook
+    - name: restart libvirtd
+      service: name=libvirtd state=restarted
+      when: hook|changed
   when: mode=="destroy" and dnat_rules is defined

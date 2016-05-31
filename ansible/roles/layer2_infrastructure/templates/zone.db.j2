@@ -15,7 +15,9 @@ $TTL    3h
 @       IN      MX      10 {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}.
 
 {% if dnat_rules is defined %}
-{% for rule in dnat_rules.rules %}
-{{ rule.to_machine }} 				IN      A       {{ rule.from_host_prefix | ipaddr('address') }}
+{% for addr in dnat_rules.addresses %}
+{% for rule in addr.rules %}
+{{ rule.to_machine }} 				IN      A       {{ addr.from_host_prefix | ipaddr('address') }}
+{% endfor %}
 {% endfor %}
 {% endif %}
