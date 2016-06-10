@@ -1,9 +1,0 @@
-- name: reboot server
-  command: shutdown -r now "Ansible updates triggered"
-  async: 0
-  poll: 0
-  ignore_errors: true
-- name: waiting for server to come back
-  wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
-  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
-  # https://github.com/ansible/ansible/issues/11705

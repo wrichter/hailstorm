@@ -17,17 +17,28 @@
   failed_when: false
 - name: install all prerequisites
   yum: name="{{ packages }}" state=latest
-  notify:
-    - reboot server
-    - waiting for server to come back
+  register: prerequisites
   when: not (packages is undefined or packages is none or packages | trim == '')
 # next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383
 - name: enable services
   service: name={{ item }} enabled=yes state=started
   with_items: "{% if enable_services is defined %}{{ enable_services }}{% endif %}"
+  register: enable
   when: not (enable_services is undefined or enable_services is none or enable_services | trim == '')
 - name: disable services
   service: name={{item}} enabled=no state=stopped
   with_items: "{% if disable_services is defined %}{{ disable_services }}{% endif %}"
+  register: disable
   when: not (disable_services is undefined or disable_services is none or disable_services | trim == '')
-- meta: flush_handlers
+
+- name: reboot server
+  shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: prerequisites|changed or enable|changed or disable|changed
+- name: waiting for server to come back
+  wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+  # https://github.com/ansible/ansible/issues/11705
+  when: prerequisites|changed or enable|changed or disable|changed

@@ -1,3 +1,0 @@
-- include: ../../common/handlers/reboot.yml
-- name: reload kernel params
-  command: sysctl -p /etc/sysctl.conf
