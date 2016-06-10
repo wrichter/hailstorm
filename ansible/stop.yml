@@ -32,6 +32,13 @@
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: stop }
 
+- hosts: test-rhel
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: stop }
+
+
 #### OPENSTACK ####
 
 - hosts: rhosp-all
@@ -39,3 +46,19 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'rhosp', 'vm' ], mode: stop }
+
+#### EFK ####
+
+- hosts: efk
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'efk', 'vm' ], mode: stop }
+
+#### INFRASTRUCTURE ####
+
+- hosts: infrastructure
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'infrastructure', 'vm' ], mode: stop }

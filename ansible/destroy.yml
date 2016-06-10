@@ -29,6 +29,21 @@
       tags: [ 'layer2','ose3', 'vms' ]
       mode: destroy
 
+- hosts: cloudforms
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer3_cloudforms_rhev
+      tags: [ 'layer3', 'cf' ]
+      mode: destroy
+
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_rhevm_ldap
+      tags: [ 'rhevm-ldap' ]
+      mode: destroy
 
 - hosts: rhev
   gather_facts: false
@@ -43,15 +58,6 @@
     - role: layer2_vms
       tags: [ 'layer2','rhev', 'vms' ]
       mode: destroy
-
-- hosts: cloudforms
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layer3_cloudforms_rhev
-      tags: [ 'layer3', 'cf' ]
-      mode: destroy
-
 
 - hosts: rhosp-director
   gather_facts: false
@@ -100,6 +106,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','infrastructure', 'vms' ]
+      mode: start
     - role: layer2_infrastructure
       tags: [ 'layer2', 'infrastructure' ]
       mode: destroy
@@ -109,7 +118,6 @@
     - role: layer2_vms
       tags: [ 'layer2','infrastructure', 'vms' ]
       mode: destroy
-
 
 
 - hosts: test-rhel
@@ -126,13 +134,6 @@
       tags: [ 'layer2', 'vms', 'test-rhel' ]
       mode: destroy
 
-- hosts: rhevm
-  remote_user: root
-  gather_facts: false
-  roles:
-    - role: layer2_rhevm_ldap
-      tags: [ 'rhevm-ldap' ]
-      mode: destroy
 
 - hosts: satellite
   gather_facts: false

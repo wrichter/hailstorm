@@ -66,7 +66,7 @@
   #    tags: [ 'layer2','satellite' ]
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
-    - { role: layer2_dnat, tags: [ 'layer2', 'satellite', 'dnat' ], mode: create }
+  #  - { role: layer2_dnat, tags: [ 'layer2', 'satellite', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
     - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
 
@@ -84,7 +84,7 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm' ], mode: create }
-    - { role: layer2_dnat, tags: [ 'layer2', 'ipa', 'dnat' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'ipa', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
     - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
 
@@ -106,7 +106,7 @@
   gather_facts: false
   roles:
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-    - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    #- { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
 
 
 #### Infrastructure (DNS, SMTP/IMAP) ####
@@ -116,7 +116,7 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'infrastructure', 'vm' ], mode: create }
-    - { role: layer2_dnat, tags: [ 'layer2', 'infrastructure', 'dnat' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'infrastructure', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'infrastructure', 'rhel' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
@@ -138,7 +138,7 @@
     - setup:
       tags: [ 'layer2', 'rhev' ]
   roles:
-    - { role: layer2_dnat, tags: [ 'layer2', 'rhev', 'dnat' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'rhev', 'dnat' ], mode: create }
     - { role: layer2_rhevm_engine, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
 
 - hosts: rhevh
