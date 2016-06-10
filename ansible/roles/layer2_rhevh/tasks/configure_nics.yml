@@ -16,7 +16,7 @@
   register: unassigned_nic
   changed_when: false
 
-- debug: var=unassigned_nic
+#- debug: var=unassigned_nic
 
 - block:
     - name: get network ids
