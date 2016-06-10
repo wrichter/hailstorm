@@ -4,3 +4,14 @@
   authorized_key: user={{ rhosp_stack_user }} key={{ ssh_pub_key_undercloud }} state=absent
 - name: disable KVM control for RHOSP director
   file: path=/etc/polkit-1/localauthority/50-local.d/50-libvirt-user-stack.pkla state=absent
+
+- name: remove sysctl entries controlling IPTables for bridge devices
+  lineinfile: dest=/etc/sysctl.conf regexp="{{ item }}" state=absent
+  register: kernel_params
+  with_items:
+    - "net.bridge.bridge-nf-call-arptables.*"
+    - "net.bridge.bridge-nf-call-ip6tables.*"
+    - "net.bridge.bridge-nf-call-iptables.*"
+- name: reload kernel params
+  command: sysctl -p /etc/sysctl.conf
+  when: kernel_params|changed
