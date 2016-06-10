@@ -16,6 +16,13 @@ $TTL    3h
 
 {% if dnat_rules is defined %}
 {% for mapping in dnat_rules.mapping %}
+{% if mapping.expose_machine is defined %}
 {{ mapping.expose_machine }} 				IN      A       {{ mapping.on_host_prefix | ipaddr('address') }}
+{% endif %}
+{% if mapping.additional_external_dns is defined %}
+{% for record in mapping.additional_external_dns %}
+{{ record }} 				IN      A       {{ mapping.on_host_prefix | ipaddr('address') }}
+{% endfor %}
+{% endif %}
 {% endfor %}
 {% endif %}
