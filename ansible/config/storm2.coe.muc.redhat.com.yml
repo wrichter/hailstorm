@@ -1,5 +1,5 @@
 layer1_ansible_host: storm2.coe.muc.redhat.com
-hailstorm_dns_domain: example.com
+hailstorm_dns_domain: hailstorm2.coe.muc.redhat.com
 
 disable_registration_against_satellite: true
 
@@ -39,3 +39,138 @@ http_proxy:
   proxyname: proxy.coe.muc.redhat.com
   port: 3128
   protocol: https
+
+dnat_rules:
+  layer1_dev: em1
+  mapping:
+    - expose_machine: satellite
+      on_host_prefix: 10.32.105.20/32
+      ports:
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+    - expose_machine: ipa
+      on_host_prefix: 10.32.105.21/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+    - expose_machine: infrastructure
+      on_host_prefix: 10.32.105.22/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 53
+          to_port: 53
+          proto: tcp
+        - from_port: 53
+          to_port: 53
+          proto: udp
+        - from_port: 143
+          to_port: 143
+          proto: tcp
+        - from_port: 993
+          to_port: 993
+          proto: tcp
+        - from_port: 25
+          to_port: 25
+          proto: tcp
+        - from_port: 465
+          to_port: 465
+          proto: tcp
+    - expose_machine: rhevm
+      on_host_prefix: 10.32.105.23/32
+      additional_external_dns:
+        - "rhev"
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+    - expose_machine: cloudforms
+      on_host_prefix: 10.32.105.24/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+    - expose_machine: ose3-master
+      on_host_prefix: 10.32.105.25/32
+      additional_external_dns:
+        - "openshift"
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 443
+          to_port: 8443
+          proto: tcp
+        - from_port: 8443
+          to_port: 8443
+          proto: tcp
+    - expose_machine: ose3-infranode1
+      on_host_prefix: 10.32.105.26/32
+      additional_external_dns:
+        - "*.ose3"
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+    - expose_machine: efk
+      on_host_prefix: 10.32.105.27/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
+    - expose_machine: rhosp-director
+      on_host_prefix: 10.32.105.28/32
+      ports:
+        - from_port: 22
+          to_port: 22
+          proto: tcp
+    - expose_ip: 192.168.101.173
+      on_host_prefix: 10.32.105.29/32
+      additional_external_dns:
+        - "rhosp"
+      ports:
+        - from_port: 80
+          to_port: 80
+          proto: tcp
+        - from_port: 443
+          to_port: 443
+          proto: tcp
