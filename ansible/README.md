@@ -29,7 +29,7 @@ $ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml"
 ```
 
 ## Prerequisites
-1. Install Ansible 2.0 on your local machine and run all the playbooks from there. Avoid Ansible 2.1 since we experienced some random problems running the playbooks with 2.1 - specifically the playbook stopping with an error when one of the VMs is being rebooted. Example for RHEL7:
+1. Install Ansible 2.0 or higher on your local machine and run all the playbooks from there. Example for RHEL7:
  - # yum localinstall 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
  - # yum localinstall http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.0.1.0-2.el7.noarch.rpm
 1. Clone this repository to your local machine, example:
