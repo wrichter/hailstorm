@@ -18,7 +18,7 @@ osm_default_subdomain=apps.{{ hailstorm_dns_domain }}
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 {% if ipa_available|success and certificate|success %}
-openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc=example,dc=com', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.example.com:389/cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}?uid?sub?(&(objectClass=posixAccount))'}]
+openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.{{ hailstorm_dns_domain }}:389/cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}?uid?sub?(&(objectClass=posixAccount))'}]
 # Configuring the ldap ca certificate
 #openshift_master_ldap_ca='{#{ certificate.stdout }#}'
 # or
