@@ -34,10 +34,10 @@ test-rhel6      hailstorm_number=18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
 test-rhel7      hailstorm_number=19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
 [ose3-node]
-ose3-master     hailstorm_number=20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ose3-infranode1 hailstorm_number=21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ose3-node1      hailstorm_number=23 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"
-ose3-node2      hailstorm_number=24 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"
+ose3-master     hailstorm_number=20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-infranode1 hailstorm_number=21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-node1      hailstorm_number=23 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-node2      hailstorm_number=24 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
