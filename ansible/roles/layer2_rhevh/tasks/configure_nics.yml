@@ -22,17 +22,18 @@
     - name: get network ids
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/networks" | \
-             xmllint --xpath "//networks/network[name='{{ item.netname }}']/@id" - | \
+             xmllint --xpath "//networks/network[name='{{ item.netname[0:10] }}']/@id" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
       changed_when: false
       register: network_ids
       when: unassigned_nic.stdout.find(item.dev) != -1
       with_items:
-        - "{{vm_nics[3]}}"
-        - "{{vm_nics[2]}}"
-        - "{{vm_nics[1]}}"
-        - "{{vm_nics[0]}}"
-        - "{{vm_nics[0]}}"
+         - "{{vm_nics[4]}}"
+         - "{{vm_nics[3]}}"
+         - "{{vm_nics[2]}}"
+         - "{{vm_nics[1]}}"
+         - "{{vm_nics[0]}}"
+         - "{{vm_nics[0]}}"
       # for some odd reason the first attempt for the default NW fails...hence doing it twice and ignoring the error
 
     - name: get networkattachment links
@@ -61,12 +62,14 @@
       failed_when: false
 
     - name: attach nics to networks
-      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+      shell: curl -v -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d '{{ lookup('template','nic_network_attachment.xml.j2') }}'
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
       with_items: "{{ networkattachment_url.results }}"
       when:  not item|skipped
       failed_when: false
+      register: nic_attachment
+    - debug: var=nic_attachment
 
     - name: get activate host link
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \

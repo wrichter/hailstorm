@@ -103,7 +103,7 @@
 
     - name: reconfigure improperly configured nics
       shell: curl -XPUT {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d '<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname }}</name></network></nic>' \
+             -d '<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname[0:10] }}</name></network></nic>' \
             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
       when: item.item.stdout != item.item.item.mac and item.stdout != ''
       with_items: "{{ vm_individual_nic_url.results }}"
@@ -114,7 +114,7 @@
       #        -d "<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network id="{{ item.stdout }}" /></nic>" \
       #       "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}"
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d '<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname }}</name></network></nic>' \
+             -d '<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname[0:10] }}</name></network></nic>' \
             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}"
       when: item.stdout == ''
       with_items: "{{ vm_individual_nic_url.results }}"
@@ -138,6 +138,6 @@
     - name: wait for CFME VM to become avialable
       wait_for: host={{ hostvars['cloudforms'].vm_nics[1].ip }} port=22 timeout=600
       delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
-      
+
   when: cloudforms_vm.stdout==''
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"

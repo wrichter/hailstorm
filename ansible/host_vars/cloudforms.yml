@@ -3,3 +3,9 @@ mem: 16384
 vcpu: 4
 disk:
   size: 50
+
+nic_attachments:
+  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_admin }}"
+  - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_rhosp_provisioning }}"
