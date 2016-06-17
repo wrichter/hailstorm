@@ -16,6 +16,7 @@ rhosp_images:
   - ironic-python-agent-8.0-20160415.1.tar
   - overcloud-full-8.0-20160415.1.tar
 satellite_manifestfile: manifest.zip
+#cloudforms_ova_appliance: cfme-rhevm-5.6.0.11-1.x86_64.rhevm.ova
 cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: manageiq-ovirt-devel.ova
 

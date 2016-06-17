@@ -1,0 +1,24 @@
+{
+  "type":"{{ item.type }}",
+  "name":"{{ item.name }}",
+  "port":"5000",
+  "hostname":"{{ item.ip }}",
+  "api_version":"v2",
+  "security_protocol":"non-ssl",
+  "credentials" : {% if item.metrics_username is not defined %}{
+    "userid"    : "admin",
+    "password"  : "{{ item.admin_password }}"
+  }{% else %}[{
+    "userid"    : "admin",
+    "password"  : "{{ item.admin_password }}",
+    "auth_type" : "default"
+  },{
+    "userid"    : "{{ item.metrics_username }}",
+    "password"  : "{{ item.metrics_password }}",
+    "auth_type" : "amqp"
+  },{
+    "userid"    : "root",
+    "auth_key"  : "{{ item.ssh_priv_key }}",
+    "auth_type" : "ssh_keypair"
+  }]{% endif %}
+}

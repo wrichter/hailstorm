@@ -170,16 +170,6 @@
   roles:
     - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev', 'satellite', 'rhev' ], mode: create }
 
-#### CLOUDFORMS ####
-
-- hosts: cloudforms
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf' ], mode: create }
-
 #### OpenShift 3 ####
 
 - hosts: ose3
@@ -208,8 +198,7 @@
   #     tags: [ 'layer2', 'rhev' ]
   roles:
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install' ], mode: create }
-
-
+    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'ose3-cfme'], mode: create }
 
 #### OPENSTACK ####
 
@@ -228,6 +217,20 @@
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 #    - { role: layer2_rhosp_gather_node_uuids, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
+
+
+#### CLOUDFORMS ####
+
+- hosts: cloudforms
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'osp-cfme' ], mode: create }
+#    - { role: layer3_cloudforms_ose3, tags: [ 'layer3', 'cf', 'ose3-cfme' ], mode: create }
+
 
 - hosts: efk
   remote_user: root
