@@ -52,3 +52,4 @@
   shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ infrastructure_network_services.host_prefix | ipaddr('address') }}
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+  when: neutron_uuid.stdout_lines|length == 1
