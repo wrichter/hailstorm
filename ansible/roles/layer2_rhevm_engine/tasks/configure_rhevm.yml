@@ -6,7 +6,7 @@
     - "{{ hostvars['rhevh2'].vm_nics[1].ip }} {{ hostvars['rhevh2'].hostname }}"
 
 - name: copy the answerfile over
-  template: src=templates/answers.j2 dest=/root/answers
+  template: src=templates/answers_withdwh.j2 dest=/root/answers
 
 - name: configure rhev via answerfile
   command: engine-setup --config-append=/root/answers  creates=/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf

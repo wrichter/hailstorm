@@ -5,19 +5,19 @@
 #ansible_host: "{{ infrastructure_network_admin.host_prefix | regex_replace('(^.*\\.).*$','\\1') }}{{ hailstorm_number['rhevm'] }}"
 ansible_host: "{{ infrastructure_network_admin.host_prefix | regex_replace('(^.*\\.).*$','\\1') }}{{ hostvars['rhevm'].hailstorm_number }}"
 
-mem: 4096
-vcpu: 2
+mem: "{{ layer2_rhev_manager_mem }}"
+vcpu: "{{ layer2_rhev_manager_cpu }}"
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 30
+  size: 60
   format: qcow2
   partition_table:
-    lvmpv: 29500
-    swap: 2048
+    lvmpv: 59500
+    swap: 16384
     home: 2048
-    root: 10000
+    root: 20000
 
 pool_regex: "{{ rhev_subscription_pool_regex }}"
 
 repos: "{{ rhevm_repos }}"
-packages: rhevm,ovirt-engine-extension-aaa-ldap-setup
+packages: rhevm,ovirt-engine-extension-aaa-ldap-setup,rhevm-dwh
