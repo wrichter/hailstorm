@@ -4,17 +4,16 @@
   service: name=nfs-server state=started enabled=yes
 #- name: open firewall for nfs-server on internal zone
 #  firewalld: port=2049/tcp permanent=true state=enabled zone=internal
-- name: open firewall for nfs-server on internal zone
-  firewalld: service=nfs permanent=true immediate=true state=enabled zone=internal
-- name: open firewall for rpc-bind on internal zone
-  firewalld: service=rpc-bind permanent=true immediate=true state=enabled zone=internal
-- name: open firewall for mountd on internal zone
-  firewalld: service=mountd permanent=true immediate=true state=enabled zone=internal
-#- name: ensure firewalld is running
-#  service: name=firewalld state=started
-- name: ensure admin network is in firewall internal zone
-  command: firewall-cmd --zone=internal --change-interface={{ item.bridge }}
-  with_items:
-    - "{{ infrastructure_network_admin }}"
-- name: trigger firewall reload
-  command: firewall-cmd --reload
+# - name: open firewall for nfs-server on internal zone
+#   firewalld: service=nfs permanent=true immediate=true state=enabled zone=internal
+# - name: open firewall for rpc-bind on internal zone
+#   firewalld: service=rpc-bind permanent=true immediate=true state=enabled zone=internal
+# - name: open firewall for mountd on internal zone
+#   firewalld: service=mountd permanent=true immediate=true state=enabled zone=internal
+# - name: ensure admin network is in firewall internal zone
+#   command: firewall-cmd --zone=internal --change-interface={{ item.bridge }}
+#   with_items:
+#     - "{{ infrastructure_network_admin }}"
+#     - "{{ infrastructure_network_storage }}"
+# - name: trigger firewall reload
+#   command: firewall-cmd --reload

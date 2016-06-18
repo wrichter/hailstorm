@@ -8,6 +8,9 @@ hailstorm_ssh_priv_key_file: hailstorm
 #undercloud_ssh_priv_key_file: undercloud
 rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
 rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+####BEGIN RHOSP
+####RHOSP images are now fetched by installing the appropriate director packages - no need to specify them here
+####Theses lines remain as long as the legacy code to upload the director images from the control host or layer1 host remains
 # rhosp_images:
 #   - deploy-ramdisk-ironic-7.3.1-39.tar
 #   - discovery-ramdisk-7.3.1-59.tar
@@ -15,6 +18,7 @@ rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 rhosp_images:
   - ironic-python-agent-8.0-20160415.1.tar
   - overcloud-full-8.0-20160415.1.tar
+####END RHOSP
 satellite_manifestfile: manifest.zip
 #cloudforms_ova_appliance: cfme-rhevm-5.6.0.11-1.x86_64.rhevm.ova
 cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova

@@ -1,0 +1,26 @@
+- name: open iptables ports
+  lineinfile: dest="/etc/sysconfig/iptables" line="{{ lookup('template', 'iptables_filter.j2') | trim }}" state=present insertafter="^:OUTPUT ACCEPT.*"
+  with_items: "{{ iptables_filter }}"
+  register: ipt_change
+
+# interferes with libvirt iptables rules
+- name: reload iptables
+  command: systemctl reload iptables
+  when: ipt_change|changed
+- name: restart libvirt networks
+  shell: for net in `virsh net-list --name`; do virsh net-destroy $net; virsh net-start $net; done
+  when: ipt_change|changed
+
+- name: ensure that IPTables are not applied to libvirt bridge devices
+  lineinfile: dest=/etc/sysctl.conf line="{{ item }}" create=yes state=present
+  with_items:
+    - "net.bridge.bridge-nf-call-arptables = 0"
+    - "net.bridge.bridge-nf-call-ip6tables = 0"
+    - "net.bridge.bridge-nf-call-iptables = 0"
+- name: reload kernel params
+  command: sysctl -p
+
+- name: ensure that bridge module is loaded early in the boot process (to ensure sysctl is applied)
+  lineinfile: dest=/etc/rc.d/rc.local line="modprobe bridge; sysctl -p"
+- name: ensure that rc.local is evaluated
+  file: path=/etc/rc.d/rc.local mode=0755

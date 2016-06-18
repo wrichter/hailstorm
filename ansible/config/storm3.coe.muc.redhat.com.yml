@@ -16,6 +16,8 @@ nfs_rhev_data_domain_path: /var/hailstorm/rhev-data1
 nfs_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
 nfs_rhev_export_domain_path: /var/hailstorm/rhev-export1
 
+nfs_ose3_pv_path: /var/hailstorm/ose3-pv
+
 layer2_rhev_manager_mem: 16384
 layer2_rhev_manager_cpu: 4
 layer2_rhev_hypervisor_mem: 32768
@@ -35,6 +37,8 @@ layer2_ose3node_mem: 16384
 layer2_ose3node_cpu: 8
 layer2_ose3master_mem: 4096
 layer2_ose3master_cpu: 4
+layer2_ose3lb_mem: 2048
+layer2_ose3lb_cpu: 2
 
 # if a property http_proxy is defined, satellite will be configured to sync via http_proxy
 http_proxy:
@@ -95,8 +99,6 @@ dnat_rules:
           proto: tcp
     - expose_machine: rhevm
       on_host_prefix: 10.32.105.33/32
-      additional_external_dns:
-        - "rhev"
       ports:
         - from_port: 22
           to_port: 22
@@ -119,10 +121,8 @@ dnat_rules:
         - from_port: 443
           to_port: 443
           proto: tcp
-    - expose_machine: ose3-master
+    - expose_machine: ose3-lb
       on_host_prefix: 10.32.105.35/32
-      additional_external_dns:
-        - "openshift"
       ports:
         - from_port: 22
           to_port: 22
@@ -135,8 +135,6 @@ dnat_rules:
           proto: tcp
     - expose_machine: ose3-infranode1
       on_host_prefix: 10.32.105.36/32
-      additional_external_dns:
-        - "*.ose3"
       ports:
         - from_port: 22
           to_port: 22
@@ -165,10 +163,8 @@ dnat_rules:
         - from_port: 22
           to_port: 22
           proto: tcp
-    - expose_ip: 192.168.101.173
+    - expose_machine: openstack
       on_host_prefix: 10.32.105.39/32
-      additional_external_dns:
-        - "rhosp"
       ports:
         - from_port: 80
           to_port: 80

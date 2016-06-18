@@ -13,6 +13,8 @@
       tags: ['layer1','layer1-nfs']
     - include: configure_ntp.yml
       tags: ['layer1','layer1-ntp']
+    - include: configure_iptables.yml
+      tags: ['layer1','layer1-iptables']
   when: mode=='create'
 
 - block:

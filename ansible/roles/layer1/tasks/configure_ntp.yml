@@ -8,8 +8,9 @@
      group=root
      mode=0644
 
-- name: open ntp port
-  firewalld: service=ntp permanent=true state=enabled zone=internal
+# - name: open ntp port
+#   firewalld: service=ntp permanent=true state=enabled zone=internal
+
 - name: enable ntp service
   service: name=ntpd enabled=yes
 - name: start ntp service

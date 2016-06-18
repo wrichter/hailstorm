@@ -1,6 +1,4 @@
 # prepare host
-- name: enable & start firewalld
-  service: name=firewalld state=started enabled=yes
 - name: ensure that root has an ssh key set
   user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
 - name: get root pubkey
@@ -22,9 +20,20 @@
 - name: system-upgrade
   yum: name=* state=latest
 - name: ensure prerequisite packages are present
-  yum: name=libvirt,libvirt-client,qemu-kvm,qemu-img,libvirt-python,virt-install,nfs-utils state=latest
+  yum: name=libvirt,libvirt-client,qemu-kvm,qemu-img,libvirt-python,virt-install,nfs-utils,iptables-services state=latest
   #reboot machine if necessary https://bugzilla.redhat.com/show_bug.cgi?id=950436
   register: prereqs
+
+- name: disable & stop firewalld
+  service: name=firewalld state=stopped enabled=no
+- name: mask firewalld
+  shell: systemctl status firewalld | grep masked || systemctl mask firewalld
+  register: mask_firewalld
+  changed_when: "'Created symlink' in mask_firewalld.stdout"
+- name: enable & start iptables service
+  service: name=iptables state=started enabled=yes
+# - name: enable & start iptables6 service
+#   service: name=iptables6 state=started enables=yes
 - name: enable and start libvirtd
   service: name=libvirtd enabled=yes state=started
 
