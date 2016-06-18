@@ -1,3 +1,40 @@
 # ip address or host name of layer1 system
 ansible_host: "{{ layer1_ansible_host }}"
 ansible_ssh_common_args: "-i ./binary/{{ hailstorm_ssh_priv_key_file }}"
+
+iptables_filter:
+# NTP
+- nic: "{{ infrastructure_network_admin.bridge }}"
+  port: 123
+  proto: udp
+# NFS
+- nic: "{{ infrastructure_network_admin.bridge }}"
+  port: 111
+  proto: udp
+- nic: "{{ infrastructure_network_storage.bridge }}"
+  port: 111
+  proto: udp
+- nic: "{{ infrastructure_network_admin.bridge }}"
+  port: 111
+  proto: tcp
+- nic: "{{ infrastructure_network_storage.bridge }}"
+  port: 111
+  proto: tcp
+- nic: "{{ infrastructure_network_admin.bridge }}"
+  port: 2049
+  proto: udp
+- nic: "{{ infrastructure_network_storage.bridge }}"
+  port: 2049
+  proto: udp
+- nic: "{{ infrastructure_network_admin.bridge }}"
+  port: 2049
+  proto: tcp
+- nic: "{{ infrastructure_network_storage.bridge }}"
+  port: 2049
+  proto: tcp
+- nic: "{{ infrastructure_network_admin.bridge }}"
+  port: 20048
+  proto: tcp
+- nic: "{{ infrastructure_network_storage.bridge }}"
+  port: 20048
+  proto: tcp
