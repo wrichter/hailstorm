@@ -15,7 +15,7 @@ ipa             hailstorm_number=11 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # the single node that is RHEV-Manager
 [rhevm]
-rhevm           hailstorm_number=12 activation_key="AK-CV-RHEV-MANAGER-PROD"
+rhevm           hailstorm_number=12 activation_key="AK-CV-RHEV-MANAGER-PROD" additional_dns="rhev"
 
 # the nodes that are RHEV-Hypervisor
 [rhevh]
@@ -33,16 +33,26 @@ test-rhel6      hailstorm_number=18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
 [test-rhel7]
 test-rhel7      hailstorm_number=19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
+[ose3-master]
+ose3-master1     hailstorm_number=20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master2     hailstorm_number=21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master3    hailstorm_number=22 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+
 [ose3-node]
-ose3-master     hailstorm_number=20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-infranode1 hailstorm_number=21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-node1      hailstorm_number=23 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
-ose3-node2      hailstorm_number=24 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-infranode1 hailstorm_number=23 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
+ose3-node1      hailstorm_number=25 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-node2      hailstorm_number=26 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
+
+[ose3-lb]
+ose3-lb         hailstorm_number=27 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" additional_dns="openshift"
+
+# Elasticsearch, FluentD, Kibana
+[efk]
+efk             hailstorm_number=28 activation_key="AK-CV-RHOSP8-PROD"
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
 infrastructure  hailstorm_number=29 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
-
 
 # The single system where osp-director will be installed to
 [rhosp-director]
@@ -60,12 +70,9 @@ rhosp-control1  hailstorm_number=34 activation_key="AK-CV-RHOSP8-PROD"
 rhosp-control2  hailstorm_number=35 activation_key="AK-CV-RHOSP8-PROD"
 rhosp-control3  hailstorm_number=36 activation_key="AK-CV-RHOSP8-PROD"
 
-# Elasticsearch, FluentD, Kibana
-[efk]
-efk             hailstorm_number=40 activation_key="AK-CV-RHOSP8-PROD"
-
-
-
+# virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
+[vips]
+openstack       hailstorm_number=173 nic_attachments="[ {{ infrastructure_network_services }} ]"
 
 
 #### ADDITIONAL GROUPS
@@ -102,20 +109,18 @@ layer1
 
 # all openshift nodes
 [ose3:children]
+ose3-master
 ose3-node
 ose3-lb
 
-# openshift load balancer
-[ose3-lb]
+# common config items for openshift masters and nodes
+[ose3-common:children]
+ose3-master
+ose3-node
 
 # the node where the ansible playbook will run
 [ose3-installer]
-ose3-master
-
-# all openshift master nodes
-[ose3-master]
-ose3-master
-
+ose3-master1
 
 # All layer2 node groups that are installed with RHEL7
 [rhel7:children]
@@ -150,6 +155,7 @@ efk
 [accessible_via_admin_network:children]
 layer2
 cloudforms
+vips
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]
