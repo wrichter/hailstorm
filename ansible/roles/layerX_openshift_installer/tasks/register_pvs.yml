@@ -1,0 +1,5 @@
+- name: create PV
+  shell: "oc create -f - <<EOF
+         {{ lookup('template','pv.yamlj2') }}
+         EOF"
+  with_sequence: start=0 end=20 format=pv%02d

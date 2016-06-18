@@ -1,0 +1,13 @@
+- name: check replicationcontrollers in default ns
+  command: oc get rc -n default
+  register: rc
+- name: deploy registry
+  command: oadm registry --config=/etc/origin/master/admin.kubeconfig \
+           --credentials=/etc/origin/master/openshift-registry.kubeconfig \
+           --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+  when: "'docker-registry' not in rc.stdout"
+- name: deploy router
+  command: oadm router router --replicas=1 \
+           --credentials='/etc/origin/master/openshift-router.kubeconfig' \
+           --service-account=router
+  when: "'router' not in rc.stdout"

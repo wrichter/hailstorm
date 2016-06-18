@@ -1,7 +1,9 @@
 # Create an OSEv3 group that contains the masters and nodes groups
 [OSEv3:children]
 masters
+etcd
 nodes
+lb
 
 # Set variables common for all OSEv3 hosts
 [OSEv3:vars]
@@ -27,8 +29,11 @@ openshift_master_ldap_ca_file=/etc/origin/master/ipa-ca.crt
 openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider' }]
 {% endif %}
 
-openshift_use_dnsmasq=False
+#openshift_use_dnsmasq=False
 
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=openshift.{{ hailstorm_dns_domain }}
+openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
 
 
 # host group for masters
@@ -37,8 +42,19 @@ openshift_use_dnsmasq=False
 {{ hostvars[master].hostname }}
 {% endfor %}
 
+[etcd]
+{% for master in groups["ose3-master"] %}
+{{ hostvars[master].hostname }}
+{% endfor %}
+
 # host group for nodes, includes region info
 [nodes]
 {% for node in groups["ose3-node"] %}
 {{ hostvars[node].hostname }} openshift_node_labels="{{ hostvars[node].openshift_node_labels }}"
+{% endfor %}
+
+# Specify load balancer host
+[lb]
+{% for lb in groups["ose3-lb"] %}
+{{ hostvars[lb].hostname }}
 {% endfor %}

@@ -6,7 +6,7 @@
       register: root_pub_key
       failed_when: root_pub_key.stdout == ''
       changed_when: false
-      delegate_to: ose3-master
+      delegate_to: ose3-master1
     - name: set root ssh key as authorized key
       authorized_key: user=root key={{ root_pub_key.stdout }}
   when: mode=="create"

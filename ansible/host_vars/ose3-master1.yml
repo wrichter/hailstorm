@@ -1,0 +1,8 @@
+---
+# work around a bug/feature (on the hailstorm side) when delegating, since "inventory_hostname_short"
+# will always resolve to the current host, it means that delegating to a string which contain
+# "inventory_hostname_short" means it delegates to iteself
+ansible_host: "{{ infrastructure_network_admin.host_prefix | regex_replace('(^.*\\.).*$','\\1') }}{{ hostvars['ose3-master1'].hailstorm_number }}"
+
+ose_management_infra_project: management-infra
+ose_cfme_serviceaccount_name: management-admin

@@ -6,4 +6,9 @@
       shell: docker-storage-setup && touch /.docker-storage-is-setup  creates=/.docker-storage-is-setup
     - name: ensure docker is running
       service: name=docker state=started enabled=yes
+    - name: allow NFS access from containers
+      command: setsebool -P {{ item }} on
+      with_items:
+        - virt_use_nfs
+        - virt_sandbox_use_nfs
   when: mode=="create"

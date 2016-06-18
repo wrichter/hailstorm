@@ -1,4 +1,6 @@
 - block:
     - include: prereqs.yml
     - include: install.yml
+    - include: register_pvs.yml
+    - include: deploy_containers.yml
   when: mode=="create"

@@ -4,7 +4,7 @@ vcpu: "{{ layer2_ose3node_cpu }}"
 
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 60
+  size: 30
   format: qcow2
   partition_table:
     lvmpv: 29500

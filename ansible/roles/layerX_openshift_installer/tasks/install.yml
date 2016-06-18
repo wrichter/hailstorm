@@ -24,11 +24,3 @@
   shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
   when: ansible_hosts|changed
   tags: ['playbook']
-- name: deploy registry
-  command: oadm registry --config=/etc/origin/master/admin.kubeconfig \
-           --credentials=/etc/origin/master/openshift-registry.kubeconfig \
-           --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
-- name: deploy router
-  command: oadm router router --replicas=1 \
-           --credentials='/etc/origin/master/openshift-router.kubeconfig' \
-           --service-account=router

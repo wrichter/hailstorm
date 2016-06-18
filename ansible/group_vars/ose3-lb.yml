@@ -1,0 +1,18 @@
+---
+mem: "{{ layer2_ose3lb_mem }}"
+vcpu: "{{ layer2_ose3lb_cpu }}"
+
+disk:
+  path: "{{ inventory_hostname_short }}.qcow2"
+  size: 30
+  format: qcow2
+  partition_table:
+    lvmpv: 29500
+    swap: 2048
+    home: 2048
+    root: 10000
+
+repos:
+  - rhel-7-server-rpms
+
+pool_regex: "{{ rhel_subscription_pool_regex }}"
