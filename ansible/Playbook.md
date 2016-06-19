@@ -29,7 +29,7 @@ A VM's configuration (i.e. the variables and their values available during playb
 One of the design goals is to avoid redundancy in the configuration. Therefore, whenever possible, common configuration between multiple VMs is moved into a group the VMs then become member of. A second design goal is to avoid unecessary files, therefore  config files are only introduced where specifically required.
 
 Every VM configuration includes:
-- a unique "hailstorm_number" that is used to calculate IP and MAC addresses
+- an ansible_host IP that is used to calculate all IP and MAC addresses on all networks
 - number of (virtual) CPU cores
 - single disk configuration (size, partition layout)
 - NICs and network attachment
@@ -43,7 +43,7 @@ Every VM configuration includes:
 
 You may elect to specify the NIC configuration (MAC address, IP address, etc...) directly in the host variable  "vm_nics". This is an array of maps with the keys "ip", "dev", "default_gw", "netmask", "mac" and "netname".
 
-For most VMs, this information is calculated based on their hailstorm_number and the array "nic_attachments", which lists the networks each VM NIC is attached to. They are member of the group "accessible_via_admin_network" which in turn contains a formula to calculate "vm_nics" automatically. It also contains a formula to calculate the "ansible_host" variable to point to the NIC attached to the admin network. This formula introduces a subtle bug/feechur when it is used for delegating tasks to this host: Tasks are delegated to the original host instead. This is why every host which tasks are delegated to needs to overwrite the ansible_host property with a specific formula.
+For most VMs, this information is calculated based on their ansible_host IP and the array "nic_attachments", which lists the networks each VM NIC is attached to. They are member of the group "accessible_via_admin_network" which in turn contains a formula to calculate "vm_nics" automatically. It also contains a formula to calculate the "ansible_host" variable to point to the NIC attached to the admin network.
 
 The variables "default_route_via" and "name_service_via" specify on which network the default gateway and DNS service are provided by the layer1. The variable "ksdevice" specifies on which NIC the kickstart configuration will be provided (required for RHEL6).
 
@@ -51,7 +51,7 @@ For most VMs, the NIC attachments is similar: eth0 is attached to the "services"
 
 ### How to add a new VM (on layer 2)
 
-Think of a name and add it to a (newly defined, if necessary) group in the inventory file. Ansible playbooks always operate on groups of machines, so a single VM might require a group of just that VM. Assign it a unique hailstorm_number BELOW the currently chosen numbers for RHOSP (since the RHOSP deployment roles assume all IP addresses above the one used for director to be freely available). In the inventory file, add the name to the following groups:
+Think of a name and add it to a (newly defined, if necessary) group in the inventory file. Ansible playbooks always operate on groups of machines, so a single VM might require a group of just that VM. Assign it a unique ansible_host IP BELOW the currently chosen numbers for RHOSP (since the RHOSP deployment roles assume all IP addresses above the one used for director to be freely available). In the inventory file, add the name to the following groups:
 - to the RHEL6 or RHEL7 groups, depending on which OS you want installed
 - to the "niclayout-standard" group, if you do not want to specify the NIC layout yourself
 - to the "layer2" group (which will in turn make it a member of "accessible_via_admin_network")
