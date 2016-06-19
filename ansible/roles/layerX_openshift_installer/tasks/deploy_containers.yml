@@ -1,10 +1,22 @@
 - name: check replicationcontrollers in default ns
   command: oc get rc -n default
   register: rc
+  changed_when: false
 - name: deploy registry
   command: oadm registry --config=/etc/origin/master/admin.kubeconfig \
            --credentials=/etc/origin/master/openshift-registry.kubeconfig \
            --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+  when: "'docker-registry' not in rc.stdout"
+- name: create pvc
+  shell: "oc create -f - <<EOF
+         {{ lookup('template','pvc.yaml.j2') }}"
+  with_items:
+    - name: docker-registry
+      size: 5Gi
+      accessmode: ReadWriteMany
+  when: "'docker-registry' not in rc.stdout"
+- name: add pvc to registry
+  command: oc -n default volume deploymentconfigs/docker-registry --add --name=registry-storage -t pvc --claim-name=docker-registry --overwrite
   when: "'docker-registry' not in rc.stdout"
 - name: deploy router
   command: oadm router router --replicas=1 \

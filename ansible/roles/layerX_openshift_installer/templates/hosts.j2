@@ -49,6 +49,9 @@ openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
 
 # host group for nodes, includes region info
 [nodes]
+{% for master in groups["ose3-master"] %}
+{{ hostvars[master].hostname }} openshift_node_labels="{{ hostvars[master].openshift_node_labels }}"
+{% endfor %}
 {% for node in groups["ose3-node"] %}
 {{ hostvars[node].hostname }} openshift_node_labels="{{ hostvars[node].openshift_node_labels }}"
 {% endfor %}

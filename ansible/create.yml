@@ -42,6 +42,9 @@
     - role: layer1_rhev
       tags: [ 'rhev', layer1 ]
       mode: create
+    - role: layer1_openshift
+      tags: [ 'ose3', layer1 ]
+      mode: create
     #- role: layer1_vms
     #  tags: [ 'layer2','satellite','vm' ]
     #  mode: create
@@ -70,12 +73,12 @@
     - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
     - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
 
-- hosts: test-rhel
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'satellite', 'rhel', 'test-rhel' ], mode: create }
+# - hosts: test-rhel
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
+#     - { role: layer2_rhel, tags: [ 'layer2', 'satellite', 'rhel', 'test-rhel' ], mode: create }
 
 #### IPA ####
 
@@ -97,15 +100,15 @@
   #  - setup:
   #    tags: [ 'layer2','satellite' ]
   roles:
-   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
    - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create }
 
 
-- hosts: test-rhel
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+# - hosts: test-rhel
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     #- { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
 
 
@@ -118,7 +121,7 @@
     - { role: layer2_vms, tags: [ 'layer2', 'infrastructure', 'vm' ], mode: create }
 #    - { role: layer2_dnat, tags: [ 'layer2', 'infrastructure', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'infrastructure', 'rhel' ], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
 
 #### RHEV ####
@@ -184,7 +187,7 @@
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layerX_openshift_all, tags: [ 'layer2', 'ose3', 'ose3-installprep' ], mode: create }
 
-- hosts: ose3-node
+- hosts: ose3-common
   remote_user: root
   gather_facts: false
   roles:
@@ -193,9 +196,6 @@
 - hosts: ose3-installer
   remote_user: root
   gather_facts: false
-  # pre_tasks:
-  #   - setup:
-  #     tags: [ 'layer2', 'rhev' ]
   roles:
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install' ], mode: create }
     - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'ose3-cfme'], mode: create }
@@ -229,7 +229,7 @@
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf' ], mode: create }
     - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'osp-cfme' ], mode: create }
-#    - { role: layer3_cloudforms_ose3, tags: [ 'layer3', 'cf', 'ose3-cfme' ], mode: create }
+#    - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'ose3-cfme' ], mode: create }
 
 
 - hosts: efk

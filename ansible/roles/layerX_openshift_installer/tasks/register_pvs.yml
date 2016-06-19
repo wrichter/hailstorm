@@ -1,5 +1,9 @@
+- name: get existing PVs
+  shell: oc get pv |awk '!/NAME/{print $1}'
+  register: pvs
+  changed_when: false
 - name: create PV
   shell: "oc create -f - <<EOF
-         {{ lookup('template','pv.yamlj2') }}
-         EOF"
+         {{ lookup('template','pv.yaml.j2') }}"
   with_sequence: start=0 end=20 format=pv%02d
+  when: item not in pvs.stdout_lines

@@ -1,0 +1,14 @@
+
+
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "{{ item.name }}"
+spec:
+  accessModes:
+    - "{{ item.accessmode }}"
+  resources:
+    requests:
+      storage: "{{ item.size }}"
+
+EOF
