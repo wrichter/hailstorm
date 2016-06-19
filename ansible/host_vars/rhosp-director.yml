@@ -1,9 +1,4 @@
 ---
-# work around a bug/feature (on the hailstorm side) when delegating, since "inventory_hostname_short"
-# will always resolve to the current host, it means that delegating to a string which contain
-# "inventory_hostname_short" means it delegates to iteself
-ansible_host: "{{ infrastructure_network_admin.host_prefix | regex_replace('(^.*\\.).*$','\\1') }}{{ hostvars['rhosp-director'].hailstorm_number }}"
-
 mem: "{{ layer2_rhosp_director_mem }}"
 vcpu: "{{ layer2_rhosp_director_cpu }}"
 disk:
@@ -26,7 +21,7 @@ name_service_via: "{{ infrastructure_network_services }}"
 pool_regex: "{{ rhosp_subscription_pool_regex }}"
 repos: "{{ rhosp_repos }}"
 
-packages: python-rdomanager-oscplugin,python-dracclient
+packages: python-rdomanager-oscplugin,python-dracclient,rhosp-director-images,rhosp-director-images-ipa
 disable_services:
   - NetworkManager
 

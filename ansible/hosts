@@ -2,77 +2,77 @@
 
 # the layer1 group should only contain a single server called layer1
 [layer1]
-layer1          hailstorm_number=1
+layer1          ansible_host=192.168.101.1
 
 #### VM CONFIGURATION (LAYER 2 AND LAYER 3)
 
 [satellite]
-satellite       hailstorm_number=10
+satellite       ansible_host=192.168.101.10
 
 # the IPA server
 [ipa]
-ipa             hailstorm_number=11 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+ipa             ansible_host=192.168.101.11 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # the single node that is RHEV-Manager
 [rhevm]
-rhevm           hailstorm_number=12 activation_key="AK-CV-RHEV-MANAGER-PROD" additional_dns="rhev"
+rhevm           ansible_host=192.168.101.12 activation_key="AK-CV-RHEV-MANAGER-PROD" additional_dns="rhev"
 
 # the nodes that are RHEV-Hypervisor
 [rhevh]
-rhevh1          hailstorm_number=13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
-rhevh2          hailstorm_number=14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
-rhevh3          hailstorm_number=15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh1          ansible_host=192.168.101.13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh2          ansible_host=192.168.101.14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh3          ansible_host=192.168.101.15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
 
 # the CloudForms management engine
 [cloudforms]
-cloudforms      hailstorm_number=17
+cloudforms      ansible_host=192.168.101.17
 
 [test-rhel6]
-test-rhel6      hailstorm_number=18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
+test-rhel6      ansible_host=192.168.101.18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
 
 [test-rhel7]
-test-rhel7      hailstorm_number=19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
+test-rhel7      ansible_host=192.168.101.19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
 [ose3-master]
-ose3-master1     hailstorm_number=20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-master2     hailstorm_number=21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-master3    hailstorm_number=22 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master1    ansible_host=192.168.101.20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master2    ansible_host=192.168.101.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master3    ansible_host=192.168.101.22 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
 
 [ose3-node]
-ose3-infranode1 hailstorm_number=23 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
-ose3-node1      hailstorm_number=25 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
-ose3-node2      hailstorm_number=26 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-infranode1 ansible_host=192.168.101.23 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
+ose3-node1      ansible_host=192.168.101.25 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-node2      ansible_host=192.168.101.26 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
 
 [ose3-lb]
-ose3-lb         hailstorm_number=27 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" additional_dns="openshift"
+ose3-lb         ansible_host=192.168.101.27 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" additional_dns="openshift"
 
 # Elasticsearch, FluentD, Kibana
 [efk]
-efk             hailstorm_number=28 activation_key="AK-CV-RHOSP8-PROD"
+efk             ansible_host=192.168.101.28 activation_key="AK-CV-RHOSP8-PROD"
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
-infrastructure  hailstorm_number=29 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+infrastructure  ansible_host=192.168.101.29 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # The single system where osp-director will be installed to
 [rhosp-director]
-rhosp-director  hailstorm_number=30 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-director  ansible_host=192.168.101.30 activation_key="AK-CV-RHOSP8-PROD"
 
 # The group of all osp compute nodes
 [rhosp-compute]
-rhosp-compute1  hailstorm_number=31 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-compute2  hailstorm_number=32 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-compute3  hailstorm_number=33 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute1  ansible_host=192.168.101.31 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute2  ansible_host=192.168.101.32 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute3  ansible_host=192.168.101.33 activation_key="AK-CV-RHOSP8-PROD"
 
 # The group of all osp control nodes
 [rhosp-control]
-rhosp-control1  hailstorm_number=34 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-control2  hailstorm_number=35 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-control3  hailstorm_number=36 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control1  ansible_host=192.168.101.34 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control2  ansible_host=192.168.101.35 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP8-PROD"
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
-openstack       hailstorm_number=173 nic_attachments="[ {{ infrastructure_network_services }} ]"
+openstack       ansible_host=192.168.101.173 nic_attachments="[ {{ infrastructure_network_services }} ]"
 
 
 #### ADDITIONAL GROUPS
