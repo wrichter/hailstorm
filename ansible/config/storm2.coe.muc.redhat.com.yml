@@ -42,6 +42,7 @@ http_proxy:
   port: 3128
   protocol: https
 
+
 dnat_rules:
   layer1_dev: em1
   mapping:
@@ -95,8 +96,6 @@ dnat_rules:
           proto: tcp
     - expose_machine: rhevm
       on_host_prefix: 10.32.105.23/32
-      additional_external_dns:
-        - "rhev"
       ports:
         - from_port: 22
           to_port: 22
@@ -119,10 +118,8 @@ dnat_rules:
         - from_port: 443
           to_port: 443
           proto: tcp
-    - expose_machine: ose3-master
+    - expose_machine: ose3-lb
       on_host_prefix: 10.32.105.25/32
-      additional_external_dns:
-        - "openshift"
       ports:
         - from_port: 22
           to_port: 22
@@ -135,8 +132,6 @@ dnat_rules:
           proto: tcp
     - expose_machine: ose3-infranode1
       on_host_prefix: 10.32.105.26/32
-      additional_external_dns:
-        - "*.ose3"
       ports:
         - from_port: 22
           to_port: 22
@@ -165,10 +160,8 @@ dnat_rules:
         - from_port: 22
           to_port: 22
           proto: tcp
-    - expose_ip: 192.168.101.173
+    - expose_machine: openstack
       on_host_prefix: 10.32.105.29/32
-      additional_external_dns:
-        - "rhosp"
       ports:
         - from_port: 80
           to_port: 80
