@@ -4,5 +4,11 @@
     - include: install.yml
       tags: ["ose3-ansible"]
     - include: register_pvs.yml
+      tags: ["ose3-pv"]
     - include: deploy_containers.yml
+      tags: ["ose3-infracontainer"]
+    - include: deploy_logging.yml
+      tags: ["ose3-logging"]
+    - include: deploy_metrics.yml
+      tags: ["ose3-metrics"]
   when: mode=="create"

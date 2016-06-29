@@ -1,0 +1,106 @@
+
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: Create logging project
+  shell: "oadm new-project logging"
+  when: "'logging' not in projects.stdout_lines"
+
+- name: Check existing secrets
+  shell: oc get secrets -n logging | awk '{ print $1 }'
+  register: logging_secrets
+  changed_when: false
+
+- name: create secret for logging-deployer
+  command: oc secrets new logging-deployer -n logging nothing=/dev/null -n logging
+  when: "'logging-deployer' not in logging_secrets.stdout_lines"
+
+
+- name: Check existing service accounts
+  shell: oc get serviceaccounts -n logging | awk '{ print $1 }'
+  register: logging_sa
+  changed_when: false
+
+- block:
+    - name: create logging service account
+      shell: "echo '{\"apiVersion\": \"v1\",\"kind\": \"ServiceAccount\",\"metadata\": {\"name\": \"logging-deployer\"}, \"secrets\": [{\"name\": \"logging-deployer\"}] }' | oc create -f - -n logging"
+
+    - name: add edit role to service account
+      command: oc policy add-role-to-user edit --serviceaccount logging-deployer -n logging
+  when: "'logging-deployer' not in logging_sa.stdout_lines"
+
+
+- name: check logging-deployer-template
+  command: oc get template logging-support-template -n logging
+  register: logging_template
+  failed_when: false
+  changed_when: false
+
+- block:
+    - name: add scc to logging user
+      command: oadm policy add-scc-to-user privileged system:serviceaccount:logging:aggregated-logging-fluentd -n logging
+
+    - name: add cluster role to logging user
+      command: oadm policy add-cluster-role-to-user cluster-reader system:serviceaccount:logging:aggregated-logging-fluentd -n logging
+
+    - name:  deploy logging-deployer-template
+      action: command oc new-app logging-deployer-template \
+                 --param KIBANA_HOSTNAME=kibana.apps.{{ hailstorm_dns_domain }} \
+                 --param KIBANA_OPS_HOSTNAME=kibana-ops.apps.{{ hailstorm_dns_domain }} \
+                 --param MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/ \
+                 --param ES_CLUSTER_SIZE=1 \
+                 --param IMAGE_VERSION=latest \
+                 --param PUBLIC_MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/ \
+                 -n logging
+
+    - name: Waiting until the logging-support-template template is available before executing next comand
+      command: oc get template logging-support-template -n logging
+      register: logging_template
+      retries: 20
+      delay: 10
+      until: logging_template|success
+  when: logging_template.stdout == ""
+
+- name: Instantiate logging template
+  command: oc new-app logging-support-template -n logging
+  tags: logging
+  ignore_errors: true
+
+- name: wait for logging DC to become available
+  shell: oc get dc -n logging | awk '/logging-es/{print $1}'
+  retries: 5
+  delay: 5
+  until: logging_dc_es|success
+  register: logging_dc_es
+  changed_when: false
+
+
+- name: check existing PVC
+  shell: oc get pvc -n logging | awk '{ print $1 }'
+  register: logging_pvc
+  changed_when: false
+
+- name: create elasticsearch pvc
+  shell: "oc create -f - -n logging <<EOF
+         {{ lookup('template','pvc.yaml.j2') }}"
+  with_items:
+    - name: elastic-search-claim
+      size: 5Gi
+      accessmode: ReadWriteMany
+  when: "'elastic-search-claim' not in logging_pvc.stdout_lines"
+
+
+- name: check if pvc is already added as volume
+  shell: oc volume dc {{ logging_dc_es.stdout  }} -n logging | grep elastic-search-claim
+  register: logging_es_volume
+  changed_when: false
+
+- name: add elasticsearch pvc as volume
+  shell: "oc volume deploymentconfigs {{ logging_dc_es.stdout  }} -n logging --add --overwrite --name=elasticsearch-storage --type=persistentVolumeClaim --claim-name=elastic-search-claim"
+  when: logging_es_volume.stdout==""
+
+
+- name: scale the fluentd container to match the number of hosts
+  command: oc scale dc/logging-fluentd --replicas={{ groups["ose3-node"]|length }} -n logging

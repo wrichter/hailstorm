@@ -1,0 +1,31 @@
+
+# - debug: msg="Updating the node selector for the default namespace"
+# - name: Set the node-selector for the default namespace
+#   shell: "oc patch ns/openshift-infra --api-version=v1 -p '{\"metadata\": {\"annotations\": {\"openshift.io/node-selector\":\"region=infra\"}}}'"
+
+- name: Check existing service accounts
+  shell: oc get serviceaccounts -n openshift-infra | awk '{ print $1 }'
+  register: metrics_sa
+  changed_when: false
+
+- name: Create service account for metrics deployer
+  shell: "echo '{\"apiVersion\": \"v1\",\"kind\": \"ServiceAccount\",\"metadata\": {\"name\": \"metrics-deployer\"}, \"secrets\": [{\"name\": \"metrics-deployer\"}] }' | oc create -f - -n openshift-infra"
+  when: "'metrics-deployer' not in metrics_sa.stdout_lines"
+
+- name: Grant edit permission on project openshift-infra for the service account metric-deployer
+  command: oadm policy add-role-to-user edit system:serviceaccount:openshift-infra:metrics-deployer -n openshift-infra
+
+- name: Grant Heapster service account the cluster-reader permission to read the stats
+  command: oadm policy add-cluster-role-to-user cluster-reader system:serviceaccount:openshift-infra:heapster -n openshift-infra
+
+- name: Check existing secrets
+  shell: oc get secrets -n openshift-infra | awk '{ print $1 }'
+  register: metrics_secrets
+  changed_when: false
+
+- name: Create a "dummy" secret that does not specify a certificate value for the metrics deployer
+  action: command oc secrets new metrics-deployer nothing=/dev/null -n openshift-infra
+  when: "'metrics-deployer' not in metrics_secrets.stdout_lines"
+
+- name: Process the metrics deployer
+  shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION=3.2.0,MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
