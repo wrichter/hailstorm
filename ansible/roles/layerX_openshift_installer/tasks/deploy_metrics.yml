@@ -28,4 +28,4 @@
   when: "'metrics-deployer' not in metrics_secrets.stdout_lines"
 
 - name: Process the metrics deployer
-  shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION=3.2.0,MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
+  shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION=latest,MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
