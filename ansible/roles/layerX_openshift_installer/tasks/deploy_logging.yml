@@ -96,6 +96,7 @@
   shell: oc volume dc {{ logging_dc_es.stdout  }} -n logging | grep elastic-search-claim
   register: logging_es_volume
   changed_when: false
+  failed_when: false
 
 - name: add elasticsearch pvc as volume
   shell: "oc volume deploymentconfigs {{ logging_dc_es.stdout  }} -n logging --add --overwrite --name=elasticsearch-storage --type=persistentVolumeClaim --claim-name=elastic-search-claim"
