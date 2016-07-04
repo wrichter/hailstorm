@@ -16,6 +16,8 @@ nfs_rhev_data_domain_path: /var/hailstorm/rhev-data1
 nfs_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
 nfs_rhev_export_domain_path: /var/hailstorm/rhev-export1
 
+nfs_ose3_pv_path: /var/hailstorm/ose3-pv
+
 layer2_rhev_manager_mem: 16384
 layer2_rhev_manager_cpu: 4
 layer2_rhev_hypervisor_mem: 32768
