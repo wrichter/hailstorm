@@ -1,0 +1,28 @@
+heat_template_version: 2014-10-16
+
+description: >
+  Example extra config for post-deployment
+
+# Note extra parameters can be defined, then passed data via the
+# environment parameter_defaults, without modifying the parent template
+parameters:
+  servers:
+    type: json
+
+resources:
+  ExtraConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: |
+        #!/bin/sh
+        sed -i 's/^flat_networks.*$/flat_networks =datacentre,floating/g' /etc/neutron/plugin.ini && echo "fixed" >/.fixed_neutron_bug
+        #pcs resource restart neutron-server-clone
+
+  ExtraDeployments:
+    type: OS::Heat::SoftwareDeployments
+    properties:
+      name: ExtraDeployments
+      servers:  {get_param: servers}
+      config: {get_resource: ExtraConfig}
+      actions: ['CREATE'] # Only do this on CREATE

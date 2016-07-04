@@ -19,9 +19,15 @@
     #    sed '$ a # NIC Configs for our roles\n  OS::TripleO::Compute::Net::SoftwareConfig: ../nic-configs/compute.yaml\n  OS::TripleO::Controller::Net::SoftwareConfig: ../nic-configs/controller.yaml\n  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-configs/ceph-storage.yaml'
     #    > ~/my_templates/environments/network-custom.yaml
     - name: create custom install configuration
-      template: src=custom-install.yaml.j2 dest=~/my_templates/environments/custom-install.yaml mode=0644
+      template: src={{ item }}.j2 dest=~/my_templates/environments/{{ item }} mode=0644
+      with_items:
+        - custom-install.yaml
     - name: create first boot configuration
       template: src=firstboot-config.yaml.j2 dest=~/my_templates/firstboot-config.yaml mode=0644
+
+    # - name: create post deploy osp networking fix
+    #   template: src=fix_osp_neutron_bug_post_deployment.yaml.j2 dest=~/my_templates/extraconfig/post_deploy/default.yaml mode=0644
+
     - name: copy nic configs
       template: src={{ item }}.j2 dest=~/my_templates/nic-configs/{{ item }} mode=0644
       with_items:
