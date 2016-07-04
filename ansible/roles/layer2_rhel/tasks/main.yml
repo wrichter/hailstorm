@@ -1,4 +1,5 @@
 - block:
+    - include: configure_sshd.yml
     - include: subscribe_system.yml
     - include: prepare_host.yml
     - include: configure_firewalld_rules.yml
