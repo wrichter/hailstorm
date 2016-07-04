@@ -72,7 +72,7 @@ parameters:
     default: ''
     description: IP address/subnet on the management network
     type: string
-    
+
 resources:
   OsNetConfigImpl:
     type: OS::Heat::StructuredConfig
@@ -152,6 +152,24 @@ resources:
                 -
                   type: interface
                   name: nic2
+                  # force the MAC address of the bridge to this interface
+                  primary: true
+            -
+              # HAILSTORM: this one is for the guests network
+              type: ovs_bridge
+              name: br-guests
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {{ infrastructure_network_guests.host_prefix }}
+                  routes:
+                    -
+                      ip_netmask: 0.0.0.0/0
+                      next_hop: {{ infrastructure_network_guests.host_prefix | ipaddr('address') }}
+              members:
+                -
+                  type: interface
+                  name: nic5
                   # force the MAC address of the bridge to this interface
                   primary: true
 
