@@ -31,7 +31,22 @@ $ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml"
 ## Prerequisites
 1. Install Ansible 2.0 or higher on your local machine and run all the playbooks from there. Example for RHEL7:
  - # yum localinstall 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
- - # yum localinstall http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.0.1.0-2.el7.noarch.rpm
+ - # yum localinstall http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.1.0.0-1.el7.noarch.rpm
+1. Install Ansible 2.1 on RHEL 7 CSB (local install)
+ - # yum-config-manager --add-repo=https://dl.fedoraproject.org/pub/epel/7/x86_64/
+ - # wget -O /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+ - # sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+ - # sudo yum clean all
+ - # sudo yum install -y python-devel libffi-devel openssl-devel gcc python-pip
+ - # pip install --upgrade pip
+ - # pip install paramiko
+ - # pip install ansible
+ - # ansible --version
+    [mreinke@mreinke-t540 yum]# ansible --version
+     ansible 2.1.0.0 
+     config file = 
+     configured module search path = Default w/o overrides
+
 1. Clone this repository to your local machine, example:
  - $ mkdir -p ~/projects/hailstorm ; cd ~/projects/hailstorm ; git clone 'https://github.com/wrichter/hailstorm' git
 1. Change the subscription pool ID, example:
