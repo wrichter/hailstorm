@@ -1,5 +1,5 @@
 layer1_ansible_host: storm1.coe.muc.redhat.com
-hailstorm_dns_domain: example.com
+hailstorm_dns_domain: hailstorm1.coe.muc.redhat.com
 
 disable_registration_against_satellite: true
 
