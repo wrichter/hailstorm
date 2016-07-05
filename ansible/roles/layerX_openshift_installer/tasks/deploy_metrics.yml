@@ -24,13 +24,15 @@
   changed_when: false
 
 - name: Create a "dummy" secret that does not specify a certificate value for the metrics deployer
-  action: command oc secrets new metrics-deployer nothing=/dev/null -n openshift-infra
+  command: oc secrets new metrics-deployer nothing=/dev/null -n openshift-infra
   when: "'metrics-deployer' not in metrics_secrets.stdout_lines"
 
-- name: get ose version
-  shell: oc version | awk '/^oc/{ print substr($2,0,4) }'
-  register: version_tag
-  changed_when: false
+# - name: get ose version
+#   shell: oc version | awk '/^oc/{ print substr($2,0,4) }'
+#   register: version_tag
+#   changed_when: false
 
 - name: Process the metrics deployer
-  shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
+  #shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
+  #shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=false | oc create -n openshift-infra -f -
+  shell: oc process metrics-deployer-template -n openshift -v HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
