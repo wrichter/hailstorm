@@ -42,7 +42,7 @@
         --templates
         --control-flavor control
         --compute-flavor compute
-        --control-scale 3
+        --control-scale 1
         --compute-scale 2
         --neutron-tunnel-types vxlan
         --neutron-network-type vxlan
