@@ -158,6 +158,9 @@ dnat_rules:
         - from_port: 443
           to_port: 443
           proto: tcp
+        - from_port: 9200
+          to_port: 9200
+          proto: tcp
     - expose_machine: rhosp-director
       on_host_prefix: 10.32.105.28/32
       ports:
