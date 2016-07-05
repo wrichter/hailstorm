@@ -15,6 +15,14 @@
       mode: destroy
 
 
+- hosts: ose3-installer
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layerX_openshift_installer
+      tags: [ 'layer2','ose3', 'ose3-metrics' ]
+      mode: destroy
+
 - hosts: ose3
   gather_facts: false
   remote_user: root
