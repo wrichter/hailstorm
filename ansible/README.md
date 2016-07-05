@@ -43,20 +43,14 @@ $ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml"
  - # pip install ansible
  - # ansible --version
     [mreinke@mreinke-t540 yum]# ansible --version
-     ansible 2.1.0.0 
-     config file = 
+     ansible 2.1.0.0
+     config file =
      configured module search path = Default w/o overrides
 
 1. Clone this repository to your local machine, example:
  - $ mkdir -p ~/projects/hailstorm ; cd ~/projects/hailstorm ; git clone 'https://github.com/wrichter/hailstorm' git
-1. Change the subscription pool ID, example:
- - # subscription-manager list --available
- - $ vim config/hailstorm_config.yml
 1. Download the following binary files and put them either into the local ansible/binary directory or ensure they are already present on the layer1 host and configure the host_vars/layer1.yml paramter "layer1_binary_dir":
   - [RHEL-OSP overcloud binaries](https://access.redhat.com/downloads/content/191/ver=7/rhel---7/7/x86_64/product-software)
-    - Overcloud image
-    - Deployment ramdisk
-    - Discovery ramdisk
   - [RHEL 7 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.2/x86_64/product-software)
   - [RHEL 6 binary DVD](https://access.redhat.com/downloads/content/69/ver=/rhel---6/6.7/x86_64/product-software)
 1. Download the manifest for your Organization for the Satellite and copy the manifest-zip file to the local ansible/binary directory and rename it to manifest.zip
