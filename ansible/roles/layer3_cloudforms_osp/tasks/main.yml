@@ -22,7 +22,7 @@
           changed_when: false
       delegate_to: rhosp-director
     - name: create osp provider
-      shell: curl -k -u admin:{{ root_password }} -XPOST -d'{{ lookup('template', 'osp_provider.json.j2') | to_json }}' https://{{ vm_nics[0].ip }}/api/providers
+      shell: curl -k -u admin:{{ root_password }} -XPOST -d'{{ lookup('template', 'osp_provider.json.j2') | to_json }}' https://{{ vm_nics[0].ip }}/api/v2.1.0/providers
       register: osp_provider
       with_items:
         - type: "ManageIQ::Providers::Openstack::CloudManager"
