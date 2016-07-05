@@ -63,6 +63,10 @@ cat  << xxEOFxx >> /root/.ssh/authorized_keys
 xxEOFxx
 # RHEL6 bug workaround #1
 sed -i 's/dhcp/static/' /etc/sysconfig/network-scripts/ifcfg-eth1
+
 # RHEL6 bug workaround #2 # TODO: this will break for satellite since it will try to fetch the policy from itself.... hence permissive mode
 # yum localinstall -y  http://192.168.103.20/pub/selinux-policy-3.7.19-279.el6_7.8.noarch.rpm http://192.168.103.20/pub/selinux-policy-targeted-3.7.19-279.el6_7.8.noarch.rpm
+
+# ensure that OpenSSH does not do reverse lookups to speed up login process
+echo "UseDNS no" >> /etc/ssh/sshd_config
 %end

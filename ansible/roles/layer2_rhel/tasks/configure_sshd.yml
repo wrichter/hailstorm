@@ -1,5 +1,5 @@
 
-- name: disable reverse DNS resolution when logging in via SSH
+- name: ensure reverse DNS resolution is disabled when logging in via SSH (this is already done in kickstart)
   lineinfile: line="UseDNS no" regexp="^UseDNS.*" dest=/etc/ssh/sshd_config
   register: sshd_config
 
