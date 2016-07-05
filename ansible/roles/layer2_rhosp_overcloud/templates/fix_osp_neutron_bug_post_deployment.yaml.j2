@@ -9,6 +9,10 @@ parameters:
   servers:
     type: json
 
+  # Optional implementation specific parameters
+  some_extraparam:
+    type: string
+
 resources:
   ExtraConfig:
     type: OS::Heat::SoftwareConfig

@@ -9,5 +9,7 @@
 
 - block:
     - include: destroy_overcloud.yml
+      tags: ['overcloud-deploy']
     - include: unregister_overcloud_nodes.yml
+      tags: ['register']
   when: mode=="destroy"

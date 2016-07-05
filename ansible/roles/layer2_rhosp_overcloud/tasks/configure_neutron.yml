@@ -1,14 +1,30 @@
-- name: create default network (in admin project)
-  shell: >
-    . ~/overcloudrc &&
-    neutron net-create default &&
-    neutron subnet-create --name default --gateway 172.20.1.1 default 172.20.0.0/16
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
-- name: create external network (in admin project)
-  shell: >
-    . ~/overcloudrc &&
-    neutron net-create nova --router:external --provider:network_type flat --provider:physical_network datacentre &&
-    neutron subnet-create --name nova --enable_dhcp=False --allocation-pool=start=192.168.101.200,end=192.168.101.254 --gateway=192.168.101.1 nova 192.168.101/24
+- block:
+    - name: get existing networks
+      shell: . ~/overcloudrc && neutron net-list -F name | awk 'NR>3 { print $2 }'
+      register: existing_nets
+      changed_when: false
+
+    #- debug: var=existing_nets
+
+    - name: create default network (in admin project)
+      shell: >
+        . ~/overcloudrc &&
+        neutron net-create default &&
+        neutron subnet-create --name default --gateway 172.20.1.1 default 172.20.0.0/16
+      when: '"default" not in existing_nets.stdout_lines'
+
+    - name: create services network (in admin project)
+      shell: >
+        . ~/overcloudrc &&
+        neutron net-create services --router:external --provider:network_type flat --provider:physical_network datacentre &&
+        neutron subnet-create --name services --enable_dhcp=False --allocation-pool=start=192.168.101.200,end=192.168.101.254 --gateway=192.168.101.1 services 192.168.101/24
+      when: '"services" not in existing_nets.stdout_lines'
+
+    - name: create guests network (in admin project)
+      shell: >
+        . ~/overcloudrc &&
+        neutron net-create guests --router:external --provider:physical_network floating --provider:network_type flat &&
+        neutron subnet-create --name guests --enable_dhcp=False --allocation-pool=start=192.168.102.200,end=192.168.102.254 --gateway=192.168.102.1 guests 192.168.102/24
+      when: '"guests" not in existing_nets.stdout_lines'
   become: yes
   become_user: "{{ rhosp_stack_user }}"
