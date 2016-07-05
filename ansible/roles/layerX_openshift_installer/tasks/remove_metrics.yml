@@ -4,4 +4,6 @@
 - shell: oc delete secrets --selector="metrics-infra"  -n openshift-infra
 - shell: oc delete pvc --selector="metrics-infra" -n openshift-infra
 - shell: oc delete sa metrics-deployer -n openshift-infra
+  ignore_errors: true
 - shell: oc delete secret metrics-deployer -n openshift-infra
+  ignore_errors: true

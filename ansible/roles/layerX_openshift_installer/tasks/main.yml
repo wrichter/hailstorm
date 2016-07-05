@@ -12,3 +12,9 @@
     - include: deploy_metrics.yml
       tags: ["ose3-metrics"]
   when: mode=="create"
+
+
+- block:
+    - include: remove_metrics.yml
+      tags: ["ose3-metrics"]
+  when: mode=="destroy"

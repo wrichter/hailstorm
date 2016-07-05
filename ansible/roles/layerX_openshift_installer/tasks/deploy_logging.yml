@@ -45,13 +45,18 @@
     - name: add cluster role to logging user
       command: oadm policy add-cluster-role-to-user cluster-reader system:serviceaccount:logging:aggregated-logging-fluentd -n logging
 
+    - name: get ose version
+      shell: oc version | awk '/^oc/{ print substr($2,0,4) }'
+      register: version_tag
+      changed_when: false
+
     - name:  deploy logging-deployer-template
       action: command oc new-app logging-deployer-template \
                  --param KIBANA_HOSTNAME=kibana.apps.{{ hailstorm_dns_domain }} \
                  --param KIBANA_OPS_HOSTNAME=kibana-ops.apps.{{ hailstorm_dns_domain }} \
                  --param MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/ \
                  --param ES_CLUSTER_SIZE=1 \
-                 --param IMAGE_VERSION=latest \
+                 --param IMAGE_VERSION={{ version_tag.stdout }} \
                  --param PUBLIC_MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/ \
                  -n logging
 
