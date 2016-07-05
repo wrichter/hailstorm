@@ -37,6 +37,8 @@ layer2_ose3node_mem: 16384
 layer2_ose3node_cpu: 8
 layer2_ose3master_mem: 4096
 layer2_ose3master_cpu: 4
+layer2_ose3lb_mem: 2048
+layer2_ose3lb_cpu: 2
 
 # if a property http_proxy is defined, satellite will be configured to sync via http_proxy
 http_proxy:
