@@ -20,7 +20,7 @@
 
 #appliance_console_cli --host=cloudforms.example.com --region=919 --internal --password="redhat01" --key --force-key --dbdisk=/dev/vdb --sshpassword="redhat01"
 - name: perform appliance basic configuration
-  shell: appliance_console_cli --host={{ hostname }} --region=919 --internal --password="{{ root_password }}" --key --force-key --dbdisk=/dev/vdb --sshpassword="{{ root_password }}"  creates=/var/www/miq/vmdb/log/appliance_console.log
+  shell: appliance_console_cli --host={{ hostname }} --region=919 --internal --password="{{ root_password }}" --key --force-key --dbdisk=/dev/vdb --tmpdisk=/dev/vdc --sshpassword="{{ root_password }}"  creates=/var/www/miq/vmdb/log/appliance_console.log
 - name: wait for cfme web ui to become available
   wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"

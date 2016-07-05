@@ -57,10 +57,15 @@
       failed_when: vm_disk_url.stdout == ''
       changed_when: false
 
-    - name: create disk & attach it to VM
+    - name: create disks & attach them to VM
       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              -d "{{ lookup('template','disk.xml.j2') }}" \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_disk_url.stdout }}"
+      with_items:
+        - 26843545600
+        - 107374182400
+#        - 53687091200
+#        - 214748364800
 
     - name: find CFME VM nic url
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
