@@ -1,0 +1,5 @@
+cd hailstorm/
+git remote add wrichter https://github.com/wrichter/hailstorm.git
+git fetch wrichter
+git merge wrichter/master
+git push
