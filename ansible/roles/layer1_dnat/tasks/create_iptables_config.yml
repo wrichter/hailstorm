@@ -1,7 +1,7 @@
 - name: create /etc/hailstorm_iptables.xml
   template: src=hailstorm_iptables.xml.j2 dest=/etc/hailstorm_iptables.xml
   register: iptables
-- name: restart networks
-  shell: virsh net-destroy {{ item.netname }} && virsh net-start {{ item.netname }}
+- name: reload DNAT config
+  shell: /etc/libvirt/hooks/network {{ item.netname }} stopped && /etc/libvirt/hooks/network {{ item.netname }} started
   when: iptables|changed
   with_items: "{{ infrastructure_networks }}"

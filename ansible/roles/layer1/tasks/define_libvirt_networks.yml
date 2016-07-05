@@ -1,7 +1,7 @@
 # define networks
-- name: start default network to ensure host IP can be determined
-  virt_net: uri=qemu:///system name=default state=active
-  ignore_errors: true
+# - name: start default network to ensure host IP can be determined
+#   virt_net: uri=qemu:///system name=default state=active
+#   ignore_errors: true
 - name: reread system facts
   setup:
 - name: delete networks who need to be reconfigured
