@@ -11,7 +11,7 @@
 
 - name: add dns records
   shell: echo {{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ item.name }} --a-rec {{ item.ip }}
-  when: item.name != 'localhost' and hostvars[item.name].inventory_hostname_short is defined and hostvars[item.name].inventory_hostname_short not in dns_records.stdout_lines
+  when: item.name != 'localhost' and item.name not in dns_records.stdout_lines
   with_items: "{{ lookup('template','a_records.j2') }}"
   ignore_errors: true
 
