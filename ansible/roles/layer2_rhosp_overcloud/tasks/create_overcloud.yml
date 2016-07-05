@@ -23,12 +23,15 @@
       template: src={{ item }}.j2 dest=~/my_templates/environments/{{ item }} mode=0644
       with_items:
         - custom-install.yaml
-        - fix_osp_neutron_bug_env.yaml
+        #- fix_osp_neutron_bug_env.yaml
+        #https://bugzilla.redhat.com/show_bug.cgi?id=1352794
+
     - name: create first boot configuration
       template: src=firstboot-config.yaml.j2 dest=~/my_templates/firstboot-config.yaml mode=0644
 
-    - name: create post deploy osp networking fix
-      template: src=fix_osp_neutron_bug_post_deployment.yaml.j2 dest=~/my_templates/extraconfig/post_deploy/fix_osp_neutron_bug_post_deployment.yaml mode=0644
+    # - name: create post deploy osp networking fix
+    #   template: src=fix_osp_neutron_bug_post_deployment.yaml.j2 dest=~/my_templates/extraconfig/post_deploy/fix_osp_neutron_bug_post_deployment.yaml mode=0644
+      #https://bugzilla.redhat.com/show_bug.cgi?id=1352794
 
     - name: copy nic configs
       template: src={{ item }}.j2 dest=~/my_templates/nic-configs/{{ item }} mode=0644
@@ -50,13 +53,10 @@
         --neutron-network-type vxlan
         --ntp-server {{ infrastructure_address_ntp_server }}
         -e ~/my_templates/environments/custom-install.yaml
-        -e ~/my_templates/environments/fix_osp_neutron_bug_env.yaml
-        --neutron-bridge-mappings datacentre:br-ex,floating:br-guests
+    #    -e ~/my_templates/environments/fix_osp_neutron_bug_env.yaml
+    #    --neutron-bridge-mappings datacentre:br-ex,floating:br-guests
     #    -e ~/my_templates/environments/storage-environment.yaml
       tags: ['deploy-overcloud']
-
-    - name: restart neutron (to apply fix)
-      shell: . ~/stackrc && ssh heat-admin@`nova list | awk '/overcloud-controller-0/{ print substr($12,10) }'` sudo pcs resource restart neutron-server-clone
 
   become: yes
   become_user: "{{ rhosp_stack_user }}"

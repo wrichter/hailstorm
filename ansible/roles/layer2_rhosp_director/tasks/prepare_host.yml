@@ -7,9 +7,17 @@
 - name: set static hostname in /etc/hosts
   lineinfile: dest=/etc/hosts line="{{ vm_nics[0].ip }} {{ inventory_hostname_short }} {{ hostname }}"
 
-- name: work around reboot problem
+- name: BUGFIX work around reboot problem
   shell: systemctl mask dracut-shutdown.service && \
          sed -i -e "s|^GRUB_CMDLINE_LINUX=\"\(.*\)\"|GRUB_CMDLINE_LINUX=\"\1 rd.lvm.lv=rhel/home\"|" /etc/default/grub && \
          grub2-mkconfig -o /boot/grub2/grub.cfg && \
          touch /.reboot_workaround  creates=/.reboot_workaround
-# https://bugzilla.redhat.com/show_bug.cgi?id=1178497 
+# https://bugzilla.redhat.com/show_bug.cgi?id=1178497
+
+- name: BUGFIX set ipxe timeout to 0
+  #lineinfile: dest="/etc/ironic/ironic.conf" line="ipxe_timeout=0" regexp="^ipxe_timeout" insertafter="^#ipxe_timeout.*"
+  command: "{{ item }}"
+  with_items:
+    - "sed -i 's,.*pxe/ipxe_timeout.*,,' /usr/share/instack-undercloud/puppet-stack-config/puppet-stack-config.pp"
+    - "sed -i 's,.*ipxe_timeout.*,,' /usr/share/instack-undercloud/puppet-stack-config/puppet-stack-config.yaml.template"
+# https://bugzilla.redhat.com/show_bug.cgi?id=1343649
