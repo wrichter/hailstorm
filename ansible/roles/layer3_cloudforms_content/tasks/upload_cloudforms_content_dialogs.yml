@@ -1,0 +1,10 @@
+- name: create file
+  local_action: shell cd ../CloudForms-Internals/; tar -zcvf dialogs.tar.gz dialogs
+- name: upload dialogs file to CF
+  copy: src=../CloudForms-Internals/dialogs.tar.gz dest=/tmp/dialogs.tar.gz mode=0644
+- name: expand dialogs
+  shell: cd /tmp; tar -zxvf /tmp/dialogs.tar.gz; /usr/bin/miqimport dialogs /tmp/dialogs/
+- name: remove temp file on cfme
+  file: name=/tmp/dialogs/ state=absent
+- name: remove temp file on cfme
+  file: name=/tmp/dialogs.tar.gz state=absent

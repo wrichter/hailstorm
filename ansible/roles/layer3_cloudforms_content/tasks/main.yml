@@ -1,3 +1,9 @@
 - block:
-    - include: upload_cloudforms_content.yml
+    - include: upload_cloudforms_content_rake_scripts.yml
+    - include: upload_cloudforms_content_automate.yml
+    - include: upload_cloudforms_content_dialogs.yml
+    - include: upload_cloudforms_content_buttons.yml
+    - include: upload_cloudforms_content_policies.yml
+#    - include: upload_cloudforms_content_reports.yml
+
   when: mode == "create"
