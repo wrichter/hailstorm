@@ -231,6 +231,7 @@
     - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf' ], mode: create }
     - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'osp-cfme' ], mode: create }
 #    - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'ose3-cfme' ], mode: create }
+    - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create }
 
 
 - hosts: efk
