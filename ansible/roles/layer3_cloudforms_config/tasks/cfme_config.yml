@@ -1,5 +1,5 @@
 - name: copy settings.sql
-  copy: src=setings.sql dst=/tmp/settings.sql user=root group=root chmod=0644
+  copy: src=settings.sql dest=/tmp/settings.sql owner=root group=root mode=0644
 
 - name: apply settings.sql
   shell: sudo -i -u postgres psql -f /tmp/settings.sql vmdb_production
