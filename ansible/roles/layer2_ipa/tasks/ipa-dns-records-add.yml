@@ -1,5 +1,5 @@
 - name: find existing dns records
-  shell: echo "{{ ipa_admin_password }}" | kinit admin &&  ipa dnsrecord-find "{{ hailstorm_dns_domain }}" | grep "Record name:" | cut -c 16-
+  shell: echo "{{ ipa_admin_password }}" | ( kinit admin &&  ipa dnsrecord-find "{{ hailstorm_dns_domain }}" ) | grep "Record name:" | cut -c 16-
   register: dns_records
   changed_when: false
 
@@ -16,9 +16,11 @@
   ignore_errors: true
 
 - name: check MX record
-  shell: echo "{{ ipa_admin_password }}" | kinit admin && ipa dnsrecord-find {{ hailstorm_dns_domain }} | awk '/MX/{ print $4 }'
+  shell: echo "{{ ipa_admin_password }}" | ( kinit admin && ipa dnsrecord-find {{ hailstorm_dns_domain }} ) | awk '/MX/{ print $4 }'
   register: mx_record
   changed_when: false
+
+#- debug: var=mx_record
 
 - name: add MX dns record
   shell: echo {{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }}. {{ hailstorm_dns_domain }}. --mx-rec "10 infrastructure"
