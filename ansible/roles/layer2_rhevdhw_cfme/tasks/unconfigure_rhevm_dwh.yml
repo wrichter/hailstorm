@@ -1,0 +1,4 @@
+- name: drop PSQL user cfme
+  shell: dropuser cfme
+  become: yes
+  become_user: "postgres"
