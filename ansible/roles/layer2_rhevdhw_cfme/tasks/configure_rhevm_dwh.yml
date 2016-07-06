@@ -1,0 +1,31 @@
+  #https://www.postgresql.org/message-id/1121195544.8208.242.camel@state.g2switchworks.com
+- name: query existing PSQL users
+  shell: psql -c "SELECT COUNT(u.usename) FROM pg_catalog.pg_user u WHERE u.usename = 'cfme';" | awk 'NR==3 {print $1}'
+  become: yes
+  become_user: "postgres"
+  register: cfmeusercount
+- debug: var=cfmeusercount
+- name: create PSQL user
+  command: psql -c "CREATE ROLE cfme LOGIN UNENCRYPTED PASSWORD 'smartvm' SUPERUSER VALID UNTIL 'infinity';"
+  become: yes
+  become_user: "postgres"
+  when: cfmeusercount.stdout|int == 0
+- name: Enable external md5 authentication
+  lineinfile: line="host    all      all    0.0.0.0/0     md5" dest="/var/lib/pgsql/data/pg_hba.conf"
+  register: config2
+- name: Enable PostgreSQL to listen for remote connections
+  lineinfile: line="listen_addresses  =  '*'" regexp="listen_addresses.*" dest="/var/lib/pgsql/data/postgresql.conf"
+  register: config1
+- name: restart PostgreSQL
+  service: name="postgresql" state="restarted"
+  when: config1|changed or config2|changed
+
+- name: check current IPTables config
+  shell: iptables -L INPUT -n | grep 5432 | grep ACCEPT
+  changed_when: false
+  failed_when: false
+  register: iptablerule
+- debug: var=iptablerule
+- name: Update the server’s firewall to accept TCP communication on port 5432
+  shell: iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT && service iptables save
+  when: iptablerule.stdout == ""
