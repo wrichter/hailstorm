@@ -10,14 +10,14 @@
       shell: >
         . ~/overcloudrc &&
         neutron net-create services --router:external --provider:network_type flat --provider:physical_network datacentre &&
-        neutron subnet-create --name sub_services --enable_dhcp=False --allocation-pool=start=192.168.101.200,end=192.168.101.254 --gateway=192.168.101.199 --dns-nameserver=192.168.101.1 services 192.168.101.0/24
+        neutron subnet-create --name sub_services --enable_dhcp=False --allocation-pool=start=192.168.101.200,end=192.168.101.254 --dns-nameserver=192.168.101.11 services 192.168.101.0/24
       when: '"services" not in existing_nets.stdout_lines'
 
-    - name: create guests network (in admin project)
+    - name: create guests aka external aka public network (in admin project)
       shell: >
         . ~/overcloudrc &&
         neutron net-create guests --router:external --provider:network_type flat --provider:physical_network guests &&
-        neutron subnet-create --name sub_guests --enable_dhcp=False --allocation-pool=start=192.168.102.200,end=192.168.102.254 --gateway=192.168.102.199 --dns-nameserver=192.168.102.1 guests 192.168.102.0/24
+        neutron subnet-create --name sub_guests --enable_dhcp=False --allocation-pool=start=192.168.102.200,end=192.168.102.254 --gateway=192.168.102.1 --dns-nameserver=10.32.96.1 guests 192.168.102.0/24
       when: '"guests" not in existing_nets.stdout_lines'
 
     - name: create internal network (in openstack project)
