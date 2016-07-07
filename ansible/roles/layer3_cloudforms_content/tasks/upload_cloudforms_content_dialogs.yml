@@ -1,0 +1,25 @@
+- name: copy dialogs contents
+  copy: src=../CloudForms-Internals/dialogs /tmp
+- name: import dialogs
+  shell: /usr/bin/miqimport dialogs /tmp/dialogs/
+- name: remove temp file on cfme
+  file: name=/tmp/dialogs/ state=absent
+
+
+#- name: create temp file name
+#  local_action: command mktemp
+#  register: mktemp
+#- name: remove temp file
+#  local_action: file name={{ mktemp.stdout }} state=absent
+#- name: create local zip file dialogs
+#  local_action: shell cd ../CloudForms-Internals/ && tar -zcvf {{ mktemp.stdout }} dialogs
+#- name: upload dialogs file to CF
+#  copy: src={{ mktemp.stdout }} dest=/tmp/dialogs.tar.gz mode=0644
+#- name: expand dialogs
+#  shell: cd /tmp; tar -zxvf /tmp/dialogs.tar.gz; /usr/bin/miqimport dialogs /tmp/dialogs/
+#- name: remove temp file locally
+#  local_action: file name={{ mktemp.stdout }} state=absent
+#- name: remove temp file on cfme
+#  file: name=/tmp/dialogs/ state=absent
+#- name: remove temp file on cfme
+#  file: name=/tmp/dialogs.tar.gz state=absent

@@ -1,3 +1,24 @@
 - block:
-    - include: upload_cloudforms_content.yml
+    - include: upload_cloudforms_content_rake_scripts.yml
+#    - include: upload_cloudforms_content_automate.yml
+#    - include: upload_cloudforms_content_dialogs.yml
+    - include: upload_import_yml.yml
+      with_items:
+        - filename_local: dialogs
+          filename_remote: ''
+          type: dialogs
+#    - include: upload_cloudforms_content_buttons.yml
+        -
+          filename_local: buttons/buttons.yml
+          filename_remote: buttons.yml
+          type: buttons
+#    - include: upload_cloudforms_content_policies.yml
+#    - include: upload_cloudforms_content_alerts.yml
+#    - include: upload_import_yml.yml
+        -  filename_local: alerts/alerts.yaml
+           filename_remote: alerts.yaml
+           type: policies
+    - include: upload_cloudforms_content_roles.yml
+#    - include: upload_cloudforms_content_reports.yml
+
   when: mode == "create"

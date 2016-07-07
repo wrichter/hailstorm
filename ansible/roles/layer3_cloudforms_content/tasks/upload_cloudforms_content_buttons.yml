@@ -1,0 +1,8 @@
+- name: upload buttons file to CF
+  copy: src=../CloudForms-Internals/buttons/buttons.yml dest=/tmp/buttons.yml mode=0644
+- name: import buttons file
+  shell: cd tmp; /usr/bin/miqimport buttons /tmp/buttons.yml
+- name: remove temp file on cfme
+  file: name=/tmp/buttons.yml state=absent
+#- name: remove temp file on cfme
+# file: name=/tmp/buttons.yml state=absent
