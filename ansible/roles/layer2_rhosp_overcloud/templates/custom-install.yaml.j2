@@ -65,6 +65,7 @@ parameter_defaults:
   StorageMgmtAllocationPools: [{'start': '172.17.4.10', 'end': '172.17.4.200'}]
   StorageMgmtNetworkVlanID: 401
 
+{# --- COMMENTED OUT
 {% for network in infrastructure_networks %}
 {% if network.netname == infrastructure_network_guests.netname %}
   # External Networking Access - Public API Access
@@ -82,6 +83,17 @@ parameter_defaults:
   ManagementInterfaceDefaultRoute: {{ network.host_prefix | ipaddr('address') }}
 {% endif %}
 {% endfor %}
+--- COMMENTED OUT#}
+
+  ExternalNetCidr: {{ infrastructure_network_guests.host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.host_prefix | ipaddr('prefix') }}
+  # Leave room for floating IPs in the External allocation pool (if required)
+  ExternalAllocationPools: [{'start': '{{ infrastructure_network_guests.floating_start }}', 'end': '{{ infrastructure_network_guests.floating_end }}'}]
+  # Set to the router gateway on the external network
+  ExternalInterfaceDefaultRoute: {{ infrastructure_network_guests.host_prefix | ipaddr('address') }}
+
+  ManagementNetCidr: {{ infrastructure_network_services.host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.host_prefix | ipaddr('prefix') }}
+  ManagementAllocationPools: [{'start': '{{ infrastructure_network_services.floating_start }}', 'end': '{{ infrastructure_network_services.floating_end }}'}]
+  ManagementInterfaceDefaultRoute: {{ infrastructure_network_services.default_gw }}
 
 
   # Add in configuration for the Control Plane - see http://docs.openstack.org/developer/tripleo-docs/advanced_deployment/network_isolation.html#updating-existing-configuration-templates-to-support-new-parameters
@@ -89,10 +101,12 @@ parameter_defaults:
   ControlPlaneSubnetCidr: "{{ infrastructure_network_rhosp_provisioning.host_prefix | ipaddr('prefix') }}"
   # Gateway router for the provisioning network (or Undercloud IP)
   ControlPlaneDefaultRoute: {{ infrastructure_network_rhosp_provisioning.host_prefix | ipaddr('address') }}
+
   # Generally the IP of the Undercloud
   EC2MetadataIp: {{ vm_nics[0].ip }}
+
   # Define the DNS servers (maximum 2) for the overcloud nodes
-  DnsServers: ['{{ infrastructure_network_services.host_prefix | ipaddr('address') }}']
+  DnsServers: [{% if ipa_available|success %}'{{ hostvars['ipa'].vm_nics[0].ip }}',{% endif %}'{{ infrastructure_address_default_dns }}']
 
 
   NeutronExternalNetworkBridge: "''"

@@ -16,6 +16,7 @@ infrastructure_network_services:
   bridge: 'virbr1'
   forward_mode: 'nat'
   host_prefix: 192.168.101.1/24
+  default_gw: 192.168.101.1
   dhcp_start: 192.168.101.128
   dhcp_end: 192.168.101.172
   floating_start: 192.168.101.173
@@ -27,6 +28,7 @@ infrastructure_network_guests:
   bridge: 'virbr2'
   forward_mode: 'nat'
   host_prefix: 192.168.102.1/24
+  default_gw: 192.168.102.1
   dhcp_start: 192.168.102.2
   dhcp_end: 192.168.102.128
   floating_start: 192.168.102.129
@@ -37,6 +39,7 @@ infrastructure_network_admin:
   netname: 'admin'
   bridge: 'virbr3'
   host_prefix: 192.168.103.1/24
+  default_gw: 192.168.103.1
   dhcp_start: 192.168.103.172
   dhcp_end: 192.168.103.254
   mac_prefix: "02:00:00:00:03:"
@@ -45,6 +48,7 @@ infrastructure_network_storage:
   netname: 'storage'
   bridge: 'virbr4'
   host_prefix: 192.168.104.1/24
+  default_gw: 192.168.104.1
   mac_prefix: "02:00:00:00:04:"
 
 infrastructure_network_rhosp_provisioning:
@@ -52,12 +56,14 @@ infrastructure_network_rhosp_provisioning:
   bridge: 'virbr5'
   forward_mode: 'nat'
   host_prefix: 192.168.105.1/24
+  default_gw: 192.168.105.1
   mac_prefix: "02:00:00:00:05:"
 
 infrastructure_network_rhosp_internal:
   netname: 'rhosp_internal'
   bridge: 'virbr6'
   host_prefix: 192.168.106.1/24
+  default_gw: 192.168.106.1
   mac_prefix: "02:00:00:00:06:"
 
 infrastructure_networks:

@@ -19,6 +19,11 @@
     #    sed '/Block/Id' |
     #    sed '$ a # NIC Configs for our roles\n  OS::TripleO::Compute::Net::SoftwareConfig: ../nic-configs/compute.yaml\n  OS::TripleO::Controller::Net::SoftwareConfig: ../nic-configs/controller.yaml\n  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-configs/ceph-storage.yaml'
     #    > ~/my_templates/environments/network-custom.yaml
+
+    - name: check IPA is available
+      wait_for: host={{ inventory_hostname }} port=22 timeout=1
+      register: ipa_available
+
     - name: create custom install configuration
       template: src={{ item }}.j2 dest=~/my_templates/environments/{{ item }} mode=0644
       with_items:

@@ -49,7 +49,7 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 - name: configure DNS for provisioning network
-  shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ infrastructure_network_services.host_prefix | ipaddr('address') }}
+  shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ infrastructure_address_default_dns }}
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   when: neutron_uuid.stdout_lines|length == 1
