@@ -13,6 +13,6 @@ spec:
   - ReadOnlyMany
   nfs:
     path: {{ nfs_ose3_pv_path }}/{{ item }}
-    server: {{ infrastructure_network_storage.host_prefix | ipaddr('address') }}
+    server: {{ infrastructure_address_nfs_server }}
   persistentVolumeReclaimPolicy: Recycle
 EOF

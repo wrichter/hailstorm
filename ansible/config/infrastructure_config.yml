@@ -9,6 +9,7 @@ infrastructure_delegate_local_content_host: "layer1"
 infrastructure_address_ssh_jump_host: "{{ layer1_ansible_host }}"
 infrastructure_address_ntp_server: "{{ infrastructure_network_admin.host_prefix | ipaddr('address') }}"
 infrastructure_address_default_dns: "{{ infrastructure_network_services.host_prefix | ipaddr('address') }}"
+infrastructure_address_nfs_server: "{{ infrastructure_network_storage.host_prefix | ipaddr('address') }}"
 
 infrastructure_network_services:
   netname: 'services'
