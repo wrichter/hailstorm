@@ -136,10 +136,9 @@ resources:
                   -
                     ip_netmask: {get_param: TenantIpSubnet}
             -
+              # HAILSTORM: this one is the guests aka public aka external network
               type: ovs_bridge
-              # This will default to br-ex, anything else requires specific
-              # brige mapping entries for it to be used.
-              name: {get_input: bridge_name}
+              name: br-guests
               use_dhcp: false
               addresses:
                 -
@@ -151,27 +150,24 @@ resources:
               members:
                 -
                   type: interface
-                  name: nic2
-                  # force the MAC address of the bridge to this interface
-                  primary: true
-            -
-              # HAILSTORM: this one is for the guests network
-              type: ovs_bridge
-              name: br-guests
-              use_dhcp: false
-              addresses:
-                -
-                  ip_netmask: {{ infrastructure_network_guests.host_prefix }}
-                  routes:
-                    -
-                      ip_netmask: 0.0.0.0/0
-                      next_hop: {{ infrastructure_network_guests.host_prefix | ipaddr('address') }}
-              members:
-                -
-                  type: interface
                   name: nic5
                   # force the MAC address of the bridge to this interface
                   primary: true
+            -
+              # HAILSTORM: this one is the services network
+              type: ovs_bridge
+              name: br-services
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {get_param: ManagementIpSubnet}
+              members:
+                -
+                  type: interface
+                  name: nic2
+                  # force the MAC address of the bridge to this interface
+                  primary: true
+
 
 outputs:
   OS::stack_id:

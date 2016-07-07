@@ -7,6 +7,7 @@ resource_registry:
   OS::TripleO::Network::StorageMgmt: {{ tripleo_template_path }}/network/storage_mgmt.yaml
   OS::TripleO::Network::Storage: {{ tripleo_template_path }}/network/storage.yaml
   OS::TripleO::Network::Tenant: {{ tripleo_template_path }}/network/tenant.yaml
+  OS::TripleO::Network::Management: {{ tripleo_template_path }}/network/management.yaml
 
   # Port assignments for the VIPs
   OS::TripleO::Network::Ports::ExternalVipPort: {{ tripleo_template_path }}/network/ports/external.yaml
@@ -22,15 +23,18 @@ resource_registry:
   OS::TripleO::Controller::Ports::StoragePort: {{ tripleo_template_path }}/network/ports/storage.yaml
   OS::TripleO::Controller::Ports::StorageMgmtPort: {{ tripleo_template_path }}/network/ports/storage_mgmt.yaml
   OS::TripleO::Controller::Ports::TenantPort: {{ tripleo_template_path }}/network/ports/tenant.yaml
+  OS::TripleO::Controller::Ports::ManagementPort: {{ tripleo_template_path }}/network/ports/management.yaml
 
   # Port assignments for the compute role
   OS::TripleO::Compute::Ports::InternalApiPort: {{ tripleo_template_path }}/network/ports/internal_api.yaml
   OS::TripleO::Compute::Ports::StoragePort: {{ tripleo_template_path }}/network/ports/storage.yaml
   OS::TripleO::Compute::Ports::TenantPort: {{ tripleo_template_path }}/network/ports/tenant.yaml
+  OS::TripleO::Compute::Ports::ManagementPort: {{ tripleo_template_path }}/network/ports/management.yaml
 
   # Port assignments for the ceph storage role
   OS::TripleO::CephStorage::Ports::StoragePort: {{ tripleo_template_path }}/network/ports/storage.yaml
   OS::TripleO::CephStorage::Ports::StorageMgmtPort: {{ tripleo_template_path }}/network/ports/storage_mgmt.yaml
+  OS::TripleO::CephStorage::Ports::ManagementPort: {{ tripleo_template_path }}/network/ports/management.yaml
 
   # NIC Configs for our roles
   OS::TripleO::Compute::Net::SoftwareConfig: {{ tripleo_template_path }}/nic-configs/compute.yaml
@@ -72,6 +76,9 @@ parameter_defaults:
   # Set to the router gateway on the external network
 {# ExternalInterfaceDefaultRoute: 192.168.122.1 #}
   ExternalInterfaceDefaultRoute: {{ network.host_prefix | ipaddr('address') }}
+{% elif network.netname == infrastructure_network_guests.netname %}
+  ManagementNetCidr: {{ network.host_prefix | ipaddr('network') }}/{{ network.host_prefix | ipaddr('prefix') }}
+  ManagementAllocationPools: [{'start': '{{ network.floating_start }}', 'end': '{{ network.floating_end }}'}]
 {% endif %}
 {% endfor %}
 
@@ -88,5 +95,5 @@ parameter_defaults:
 
 
   NeutronExternalNetworkBridge: "''"
-  NeutronBridgeMappings: "datacentre:br-ex,guests:br-guests"
+  NeutronBridgeMappings: "datacentre:br-guests,guests:br-services"
   NeutronFlatNetworks: "datacentre, guests"
