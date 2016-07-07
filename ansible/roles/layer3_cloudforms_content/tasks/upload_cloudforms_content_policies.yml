@@ -2,5 +2,7 @@
   copy: src=../CloudForms-Internals/control/Policy.yaml dest=/tmp/Policy.yaml mode=0644
 - name: import policies file
   shell: cd /tmp; mkdir control; mv Policy.yaml control/; /usr/bin/miqimport policies /tmp/control
+- name: remove temp file on cfme
+  file: name=/tmp/control state=absent
 #- name: remove temp file on cfme
 # file: name=/tmp/buttons.yml state=absent
