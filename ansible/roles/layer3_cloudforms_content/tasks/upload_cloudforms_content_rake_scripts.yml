@@ -20,11 +20,13 @@
 - name: remove temp file locally
   local_action: file name=../CloudForms-Internals/rake/cfme-rhconsulting-scripts state=absent
 - name: remove temp file locally
+  local_action: file name=../CloudForms-Internals/rake/cfme-rhconsulting-scripts.tar.gz state=absent
+- name: remove temp file locally
   local_action: file name={{ mktemp.stdout }} state=absent
 - name: remove temp file on cfme
   file: name=/tmp/cfme-rhconsulting-scripts.tar.gz state=absent
-- name: remove temp file on cfme
-  file: name=/tmp/cfme-rhconsulting-scripts state=absent
+#- name: remove temp file on cfme
+#  file: name=/tmp/cfme-rhconsulting-scripts state=absent
 #- name: remove temp file
 #  file name=../CloudForms-Internals/rake/cfme-rhconsulting-scripts.tar.gz state=absent
 #- name: remove temp file on cfme

@@ -1,0 +1,10 @@
+- name: create tmp/control directory
+  file: name=/tmp/control state=directory
+- name: upload policies file to CF
+  copy: src=../CloudForms-Internals/alerts/alerts.yaml dest=/tmp/control/alerts.yaml mode=0644
+- name: import policies file
+  shell: /usr/bin/miqimport policies /tmp/control
+- name: remove temp file on cfme
+  file: name=/tmp/control state=absent
+#- name: remove temp file on cfme
+# file: name=/tmp/buttons.yml state=absent
