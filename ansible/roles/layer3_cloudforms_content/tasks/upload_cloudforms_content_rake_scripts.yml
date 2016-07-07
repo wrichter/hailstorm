@@ -6,19 +6,19 @@
 - name: remove directory
   local_action: file name=../CloudForms-Internals/rake/cfme-rhconsulting-scripts state=absent
 - name: create local zip file of Cloudforms Rake Scripts
-  local_action: shell cd ../CloudForms-Internals/rake; git clone https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git; tar -zcvf cfme-rhconsulting-scripts.tar.gz cfme-rhconsulting-scripts
+  local_action: shell cd ../CloudForms-Internals/rake; git clone https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git; tar -zcvf {{ mktemp.stdout }} cfme-rhconsulting-scripts
 #- name: create local zip file of Cloudforms Content and reset default datastores
 #  local_action: shell cd ../CloudForms-Internals/rake; git clone https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git; zip -rq cfme-rhconsulting-scripts cfme-rhconsulting-scripts
 #  register: output
 # - debug: var=output
 - name: upload scripts zip file to CF
-  copy: src=../CloudForms-Internals/rake/cfme-rhconsulting-scripts.tar.gz dest=/tmp/cfme-rhconsulting-scripts.tar.gz mode=0644
+  copy: src={{ mktemp.stdout }} dest=/tmp/cfme-rhconsulting-scripts.tar.gz mode=0644
 - name: expand and install scripts
-  shell: cd /tmp; tar -zxvf /tmp/cfme-rhconsulting-scripts.tar.gz; cd /tmp/cfme-rhconsulting-scripts; make install
+  shell: cd /tmp; tar -zxvf {{ mktemp.stdout }}; cd /tmp/cfme-rhconsulting-scripts; make install
 - name: remove temp file locally
   local_action: file name=../CloudForms-Internals/rake/cfme-rhconsulting-scripts state=absent
 - name: remove temp file locally
-  local_action: file name=../CloudForms-Internals/rake/cfme-rhconsulting-scripts.tar.gz state=absent
+  local_action: file name={{ mktemp.stdout }} state=absent
 - name: remove temp file on cfme
   file: name=/tmp/cfme-rhconsulting-scripts.tar.gz state=absent
 #- name: remove temp file

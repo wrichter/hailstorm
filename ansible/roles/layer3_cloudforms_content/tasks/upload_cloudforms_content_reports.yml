@@ -1,10 +1,15 @@
+- name: create temp file name
+  local_action: command mktemp
+  register: mktemp
+- name: remove temp file
+  local_action: file name={{ mktemp.stdout }} state=absent
 - name: create file
-  local_action: shell cd ../CloudForms-Internals/; tar -zcvf reports.tar.gz reports
+  local_action: shell cd ../CloudForms-Internals/; tar -zcvf {{ mktemp.stdout }} reports
 - name: upload reports file to CF
-  copy: src=../CloudForms-Internals/reports.tar.gz dest=/tmp/reports.tar.gz mode=0644
+  copy: src={{ mktemp.stdout }} dest=/tmp/reports.tar.gz mode=0644
 - name: expand reports
   shell: cd /tmp; tar -zxvf /tmp/reports.tar.gz; /usr/bin/miqimport reports /tmp/reports/
 - name: remove temp file on cfme
   file: name=/tmp/reports.tar.gz state=absent
-#- name: remove temp file on cfme
-# file: name=/tmp/buttons.yml state=absent
+- name: remove temp file locally
+  local_action: file name={{ mktemp.stdout }} state=absent
