@@ -22,7 +22,7 @@ parameter_defaults:
   ## NFS mount options
   # CinderNfsMountOptions: ''
   ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
-  CinderNfsServers: '192.168.124.92:/srv/node/cinder-nfs'
+  CinderNfsServers: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_cinder_path }}'
 
 
   #### GLANCE FILE BACKEND PACEMAKER SETTINGS (used for mounting NFS) ####
@@ -32,7 +32,7 @@ parameter_defaults:
   ## File system type of the mount
   GlanceFilePcmkFstype: nfs
   ## Pacemaker mount point, e.g. '192.168.122.1:/export/glance' for NFS
-  GlanceFilePcmkDevice: '192.168.124.92:/srv/node/glance-nfs'
+  GlanceFilePcmkDevice: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_glance_path }}'
   ## Options for the mount managed by Pacemaker
   # GlanceFilePcmkOptions: ''
 
