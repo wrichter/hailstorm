@@ -1,0 +1,14 @@
+#- pip: name=httplib2
+# - name: create rhev provider
+#   uri:
+#     url: https://{{ vm_nics[0].ip }}/api/providers
+#     method: POST
+#     user: admin
+#     password: smartvm
+#     body: "{{ lookup('template', 'rhev_provider.j2') }}"
+#     body_format: json
+#   register: rhev_provider
+- name: create rhev providers
+  shell: curl -k -u admin:{{ root_password }} -XPOST -d'{{ lookup('template', 'rhev_provider.j2') | to_json }}' https://{{ vm_nics[0].ip }}/api/providers
+  register: rhev_provider
+- debug: var=rhev_provider

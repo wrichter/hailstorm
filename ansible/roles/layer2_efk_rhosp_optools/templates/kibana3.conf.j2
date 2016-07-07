@@ -1,0 +1,21 @@
+<VirtualHost *:80>
+
+  DocumentRoot /usr/share/kibana
+  <Directory /usr/share/kibana>
+    Require all granted
+    Options -Multiviews
+  </Directory>
+
+  # Proxy for _aliases and .*/_search
+  <LocationMatch "^/(_nodes|_aliases|.*/_aliases|_search|.*/_search|_mapping|.*/_mapping)$">
+    ProxyPassMatch http://127.0.0.1:9200/$1
+    ProxyPassReverse http://127.0.0.1:9200/$1
+  </LocationMatch>
+
+  # Proxy for kibana-int/{dashboard,temp}
+  <LocationMatch "^/(kibana-int/dashboard/|kibana-int/temp)(.*)$">
+    ProxyPassMatch http://127.0.0.1:9200/$1$2
+    ProxyPassReverse http://127.0.0.1:9200/$1$2
+  </LocationMatch>
+
+</VirtualHost>

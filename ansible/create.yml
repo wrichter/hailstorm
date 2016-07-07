@@ -33,11 +33,17 @@
     - role: layer1
       tags: [ 'layer1' ]
       mode: create
+    - role: layer1_dnat
+      tags: [ 'layer1', 'dnat' ]
+      mode: create
     - role: layer1_rhosp
       tags: [ 'rhosp', layer1 ]
       mode: create
     - role: layer1_rhev
       tags: [ 'rhev', layer1 ]
+      mode: create
+    - role: layer1_openshift
+      tags: [ 'ose3', layer1 ]
       mode: create
     #- role: layer1_vms
     #  tags: [ 'layer2','satellite','vm' ]
@@ -63,16 +69,16 @@
   #    tags: [ 'layer2','satellite' ]
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
+  #  - { role: layer2_dnat, tags: [ 'layer2', 'satellite', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
-    #- { role: layer2_rhel_firewalld, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
     - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
 
-- hosts: test-rhel
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'satellite', 'rhel', 'test-rhel' ], mode: create }
+# - hosts: test-rhel
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
+#     - { role: layer2_rhel, tags: [ 'layer2', 'satellite', 'rhel', 'test-rhel' ], mode: create }
 
 #### IPA ####
 
@@ -81,8 +87,8 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'ipa', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
-    #- { role: layer2_rhel_firewalld, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
     - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
 
 #### SATELLITE (again) ####
@@ -94,13 +100,17 @@
   #  - setup:
   #    tags: [ 'layer2','satellite' ]
   roles:
-   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create }
 
-- hosts: test-rhel
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+
+# - hosts: test-rhel
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    #- { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+
 
 #### Infrastructure (DNS, SMTP/IMAP) ####
 
@@ -109,7 +119,9 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'infrastructure', 'vm' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'infrastructure', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'infrastructure', 'rhel' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
 
 #### RHEV ####
@@ -129,7 +141,9 @@
     - setup:
       tags: [ 'layer2', 'rhev' ]
   roles:
+#    - { role: layer2_dnat, tags: [ 'layer2', 'rhev', 'dnat' ], mode: create }
     - { role: layer2_rhevm_engine, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
+    - { role: layer2_rhevdhw_cfme, tags: [ 'layer2', 'rhev', 'rhevm', 'cfme-rhevdwh' ], mode: create }
 
 - hosts: rhevh
   remote_user: root
@@ -158,16 +172,7 @@
     - setup:
       tags: [ 'layer2', 'satellite-rhev' ]
   roles:
-    - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev' ], mode: create }
-
-#### CLOUDFORMS ####
-
-- hosts: cloudforms
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
-
+    - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev', 'satellite', 'rhev' ], mode: create }
 
 #### OpenShift 3 ####
 
@@ -183,7 +188,7 @@
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layerX_openshift_all, tags: [ 'layer2', 'ose3', 'ose3-installprep' ], mode: create }
 
-- hosts: ose3-node
+- hosts: ose3-common
   remote_user: root
   gather_facts: false
   roles:
@@ -192,13 +197,9 @@
 - hosts: ose3-installer
   remote_user: root
   gather_facts: false
-  # pre_tasks:
-  #   - setup:
-  #     tags: [ 'layer2', 'rhev' ]
   roles:
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install' ], mode: create }
-
-
+    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'ose3-cfme'], mode: create }
 
 #### OPENSTACK ####
 
@@ -213,7 +214,31 @@
   gather_facts: false
   roles:
     - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns-config' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 #    - { role: layer2_rhosp_gather_node_uuids, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
+
+
+#### CLOUDFORMS ####
+
+- hosts: cloudforms
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'osp-cfme' ], mode: create }
+#    - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'ose3-cfme' ], mode: create }
+    - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create }
+
+
+- hosts: efk
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'efk', 'vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'efk', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create }

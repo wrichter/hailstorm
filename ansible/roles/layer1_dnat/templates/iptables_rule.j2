@@ -1,0 +1,1 @@
+ipv4 nat PREROUTING 0 -d {{ item.0.from_host_prefix }} -p tcp --dport {{ item.1.from_port }} -j DNAT --to {{ hostvars[item.0.to_machine].vm_nics[0].ip }}:{{ item.1.to_port }}

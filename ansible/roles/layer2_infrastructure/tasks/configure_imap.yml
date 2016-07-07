@@ -1,0 +1,4 @@
+- name: disable SSLv2/SSLv3 in dovecot
+  lineinfile: line="ssl_protocols = !SSLv2 !SSLv3" regexp="ssl_protocols.*" dest=/etc/dovecot/conf.d/10-ssl.conf
+- name: ensure dovecot is started & enabled
+  service: name=dovecot state=restarted enabled=yes

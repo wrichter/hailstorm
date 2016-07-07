@@ -1,7 +1,9 @@
 # Create an OSEv3 group that contains the masters and nodes groups
 [OSEv3:children]
 masters
+etcd
 nodes
+lb
 
 # Set variables common for all OSEv3 hosts
 [OSEv3:vars]
@@ -18,8 +20,7 @@ osm_default_subdomain=apps.{{ hailstorm_dns_domain }}
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 {% if ipa_available|success and certificate|success %}
-#openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=consumer,cn=users,cn=compat,dc=example,dc=com', 'bindPassword': '{{ root_password }}', 'ca': '', 'insecure': 'false', 'url': 'ldap://ipa.example.com:389/cn=compat,dc=example,dc=com?uid'}]
-openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc=example,dc=com', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.example.com:389/cn=compat,dc=example,dc=com?uid?sub?(&(objectClass=posixAccount))'}]
+openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.{{ hailstorm_dns_domain }}:389/cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}?uid?sub?(&(objectClass=posixAccount))'}]
 # Configuring the ldap ca certificate
 #openshift_master_ldap_ca='{#{ certificate.stdout }#}'
 # or
@@ -28,9 +29,12 @@ openshift_master_ldap_ca_file=/etc/origin/master/ipa-ca.crt
 openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider' }]
 {% endif %}
 
-
-
-
+#openshift_use_dnsmasq=False
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=openshift.{{ hailstorm_dns_domain }}
+openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
+openshift_master_logging_public_url=https://kibana.apps.{{ hailstorm_dns_domain }}
+openshift_master_metrics_public_url=https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics
 
 # host group for masters
 [masters]
@@ -38,8 +42,22 @@ openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true',
 {{ hostvars[master].hostname }}
 {% endfor %}
 
+[etcd]
+{% for master in groups["ose3-master"] %}
+{{ hostvars[master].hostname }}
+{% endfor %}
+
 # host group for nodes, includes region info
 [nodes]
+{% for master in groups["ose3-master"] %}
+{{ hostvars[master].hostname }} openshift_node_labels="{{ hostvars[master].openshift_node_labels }}"
+{% endfor %}
 {% for node in groups["ose3-node"] %}
 {{ hostvars[node].hostname }} openshift_node_labels="{{ hostvars[node].openshift_node_labels }}"
+{% endfor %}
+
+# Specify load balancer host
+[lb]
+{% for lb in groups["ose3-lb"] %}
+{{ hostvars[lb].hostname }}
 {% endfor %}

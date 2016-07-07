@@ -1,0 +1,10 @@
+- name: copy settings.sql
+  copy: src=settings.sql dest=/tmp/settings.sql owner=root group=root mode=0644
+
+- name: apply settings.sql
+  shell: sudo -i -u postgres psql -f /tmp/settings.sql vmdb_production
+  notify: restart evmserverd
+
+- name: make sure evmserverd is running
+  service: name=evmserverd state=started enabled=yes
+

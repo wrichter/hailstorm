@@ -1,0 +1,28 @@
+;
+; BIND data file for {{ hailstorm_dns_domain }}
+;
+$ORIGIN {{ hailstorm_dns_domain }}.
+$TTL    3h
+@       IN      SOA       {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}. hostmaster.{{ hailstorm_dns_domain }}. (
+                          1        ; Serial
+                          3h       ; Refresh after 3 hours
+                          1h       ; Retry after 1 hour
+                          1w       ; Expire after 1 week
+                          1h )     ; Negative caching TTL of 1 day
+;
+
+@       IN      NS      {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}.
+@       IN      MX      10 {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}.
+
+{% if dnat_rules is defined %}
+{% for mapping in dnat_rules.mapping %}
+{% if mapping.expose_machine is defined %}
+{{ mapping.expose_machine }} 				IN      A       {{ mapping.on_host_prefix | ipaddr('address') }}
+{% if hostvars[mapping.expose_machine].additional_dns is defined %}
+{% for record in hostvars[mapping.expose_machine].additional_dns.split(",") %}
+{{ record }} 				IN      A       {{ mapping.on_host_prefix | ipaddr('address') }}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}

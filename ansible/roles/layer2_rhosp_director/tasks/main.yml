@@ -2,7 +2,9 @@
     - include: prepare_host.yml
     - include: create_stack_user.yml
     - include: create_undercloud.yml
+      tags: ['install_undercloud']
     - include: import_images_to_undercloud_glance.yml
+      tags: ['install_undercloud']
   when: mode=="create"
 
 # - block:

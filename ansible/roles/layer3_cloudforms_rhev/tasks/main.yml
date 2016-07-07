@@ -1,21 +1,33 @@
 - block:
     - include: import_cfme_template.yml
     - include: instantiate_cfme_template.yml
-    - name: start Cloudforms VM
-      ovirt:
-        user: admin@internal
-        url: "https://{{ hostvars['rhevm'].ansible_host }}"
-        instance_name: Cloudforms
-        password: "{{ root_password }}"
-        state: started
+
+    # - name: start Cloudforms VM
+    #   ovirt:
+    #     user: admin@internal
+    #     url: "https://{{ hostvars['rhevm'].ansible_host }}"
+    #     instance_name: Cloudforms
+    #     password: "{{ root_password }}"
+    #     state: started
+    #   delegate_to: rhevm
+
   when: mode == 'create'
 
 - block:
+    - name: stop Cloudforms VM
+      ovirt:
+        user: admin@internal
+        url: "https://localhost"
+        instance_name: Cloudforms
+        password: "{{ root_password }}"
+        state: shutdown
+      delegate_to: rhevm
     - name: remove Cloudforms VM
       ovirt:
         user: admin@internal
-        url: "https://{{ hostvars['rhevm'].ansible_host }}"
+        url: "https://localhost"
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: absent
+      delegate_to: rhevm
   when: mode == 'destroy'

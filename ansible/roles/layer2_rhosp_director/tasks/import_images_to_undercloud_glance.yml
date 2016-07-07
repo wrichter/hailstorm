@@ -8,16 +8,16 @@
   register: image_count
   changed_when: false
 
-# VARIANT 1 - copy images from control host
+# VARIANT 1 - copy images from control host (disabled via false in when clause)
 - block:
   - name: unpack rhosp images
     unarchive: src=../binary/{{ image }} dest={{ image_path }}
     become: yes
     become_user: "{{ rhosp_stack_user }}"
     with_items: "{{ rhosp_images }}"
-  when: (layer1_binary_dir is not defined) and (image_count.stdout | int < 2)
+  when: false and (layer1_binary_dir is not defined) and (image_count.stdout | int < 2)
 
-# VARIANT 2 - copy images from layer1 host
+# VARIANT 2 - copy images from layer1 host (disabled via false in when clause)
 - block:
   #TODO not very nice - we change the layer1 host (create ssh key) in a layer2 role
   - name: ensure that root has an ssh key set
@@ -45,10 +45,22 @@
   - name: remove rhosp images from /tmp
     file: path=/tmp/{{ item }} state=absent
     with_items: "{{ rhosp_images }}"
-  when: (layer1_binary_dir is defined) and (image_count.stdout | int < 2)
+  when: false and (layer1_binary_dir is defined) and (image_count.stdout | int < 2)
 
-- name: upload images to glance
-  shell: . ~/stackrc && openstack overcloud image upload --image-path "{{ image_path }}"
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
+- block:
+    # VARIANT 3 - copy IPA images from rpms
+    - block:
+      - name: find rhosp images
+        find: paths="/usr/share/rhosp-director-images" patterns="*latest*.tar"
+        register: rhosp_director_images
+      - name: unpack rhosp image
+        unarchive: src={{ item.path }} dest={{ image_path }} copy=no
+        become: yes
+        become_user: "{{ rhosp_stack_user }}"
+        with_items: "{{ rhosp_director_images.files }}"
+
+    - name: upload images to glance
+      shell: . ~/stackrc && openstack overcloud image upload --image-path "{{ image_path }}"
+      become: yes
+      become_user: "{{ rhosp_stack_user }}"
   when: image_count.stdout | int < 2

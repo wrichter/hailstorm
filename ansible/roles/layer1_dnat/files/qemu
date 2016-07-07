@@ -1,0 +1,31 @@
+#!/usr/bin/python
+
+from lxml import etree
+import sys
+import os
+import syslog
+
+iptables_cmd = '/sbin/iptables'
+
+def apply(create, rules):
+	for rule in rules:
+		rule_is_there = os.system(iptables_cmd + " -C " + rule.text + " 2>/dev/null") == 0
+		if rule_is_there != create:
+			cmd = iptables_cmd + (" -I " if create else " -D ") + rule.text
+			syslog.syslog(cmd)
+			os.system(cmd)
+		else:
+		   syslog.syslog('Rule "' + rule.text + ' is already ' + (' inserted' if create else ' deleted'))
+
+domain = sys.argv[1]
+action = sys.argv[2]
+
+syslog.syslog('libvirt hook ' + action + ' for domain ' + domain)
+
+rules = etree.parse(sys.stdin).xpath('//hs:iptables/rule', namespaces={'hs': 'https://github.com/wrichter/hailstorm'})
+
+if action == 'stopped' or action == 'reconnect':
+	apply(False, rules)
+
+if action == 'start' or action == 'reconnect':
+	apply(True, rules)

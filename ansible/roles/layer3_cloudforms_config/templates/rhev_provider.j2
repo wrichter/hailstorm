@@ -1,0 +1,10 @@
+{
+  "type"      : "ManageIQ::Providers::Redhat::InfraManager",
+  "name"      : "{{ hostvars['rhevm'].hostname }}",
+  "hostname"  : "{{ hostvars['rhevm'].hostname }}",
+  "ipaddress" : "{{ hostvars['rhevm'].vm_nics[0].ip }}",
+  "credentials" : {
+    "userid"    : "admin@internal",
+    "password"  : "{{ root_password }}"
+  }
+}

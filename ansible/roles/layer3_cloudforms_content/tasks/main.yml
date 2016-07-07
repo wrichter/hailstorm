@@ -1,0 +1,3 @@
+- block:
+    - include: upload_cloudforms_content.yml
+  when: mode == "create"

@@ -1,5 +1,4 @@
 # BASIC CONFIG
-hailstorm_dns_domain: example.com
 root_password: redhat01
 
 # BINARY FILES
@@ -7,8 +6,11 @@ hailstorm_ssh_pub_key_file: hailstorm.pub
 hailstorm_ssh_priv_key_file: hailstorm
 #undercloud_ssh_pub_key_file: undercloud.pub
 #undercloud_ssh_priv_key_file: undercloud
-rhel6_iso_image: rhel-server-6.7-x86_64-dvd.iso
+rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
 rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+####BEGIN RHOSP
+####RHOSP images are now fetched by installing the appropriate director packages - no need to specify them here
+####Theses lines remain as long as the legacy code to upload the director images from the control host or layer1 host remains
 # rhosp_images:
 #   - deploy-ramdisk-ironic-7.3.1-39.tar
 #   - discovery-ramdisk-7.3.1-59.tar
@@ -16,8 +18,11 @@ rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 rhosp_images:
   - ironic-python-agent-8.0-20160415.1.tar
   - overcloud-full-8.0-20160415.1.tar
+####END RHOSP
 satellite_manifestfile: manifest.zip
-cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
+cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
+#cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
+#cloudforms_ova_appliance: manageiq-ovirt-devel.ova
 
 # RED HAT SUBSCRIPTION POOLS
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
@@ -59,8 +64,15 @@ ipa_repos:
 ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-ose-3.1-rpms
-ose3_additional_packages: docker-1.8.2
+  - rhel-7-server-ose-3.2-rpms
+ose3_additional_packages: docker
+#   - rhel-7-server-ose-3.1-rpms
+# ose3_additional_packages: docker-1.8.2
+tdagent_rpm: https://packages.treasuredata.com/2/redhat/7/x86_64/td-agent-2.2.0-0.x86_64.rpm
+
+
+timezone: Europe/Berlin
+
 
 ipa_user:
   - username: consumer
@@ -119,29 +131,3 @@ ipa_group:
       - nova
       - swift
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=0
-
-
-# the following numbers are the base to generate IP and MAC addresses from
-hailstorm_number:
-  layer1:     1
-  satellite:  10
-  ipa:        11
-  rhevm:      12
-  rhevh1:     13
-  rhevh2:     14
-  cloudforms: 17
-  test-rhel6: 18
-  test-rhel7: 19
-  ose3-master: 20
-  ose3-infranode1: 21
-  ose3-infranode2: 22
-  ose3-node1: 23
-  ose3-node2: 24
-  infrastructure: 29
-  rhosp-director: 30
-  rhosp-compute1: 31
-  rhosp-compute2: 32
-  rhosp-compute3: 33
-  rhosp-control1: 34
-  rhosp-control2: 35
-  rhosp-control3: 36

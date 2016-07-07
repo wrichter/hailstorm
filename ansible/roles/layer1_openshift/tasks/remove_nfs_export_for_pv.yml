@@ -1,0 +1,9 @@
+# remoove  exports
+- name: remove /etc/exports entry
+  lineinfile: dest=/etc/exports state=absent regexp="{{ nfs_ose3_pv_path }}.*"
+  register: etc_exports
+- name: reexport file systems
+  command: exportfs -r
+  when: etc_exports|changed
+- name: remove storage contents
+  file: state=absent path={{ nfs_ose3_pv_path }}

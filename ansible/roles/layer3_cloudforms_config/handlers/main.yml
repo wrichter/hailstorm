@@ -1,0 +1,4 @@
+---
+- name: restart evmserverd
+  service: name=evmserverd state=restarted
+

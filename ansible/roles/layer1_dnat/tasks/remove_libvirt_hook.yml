@@ -1,0 +1,6 @@
+- name: remove libvirt hook
+  file: path=/etc/libvirt/hooks/network state=absent
+  register: hook
+- name: restart libvirtd
+  service: name=libvirtd state=restarted
+  when: hook|changed

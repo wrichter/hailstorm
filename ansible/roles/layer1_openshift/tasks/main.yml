@@ -1,0 +1,7 @@
+- block:
+    - include: prepare_nfs_export_for_pv.yml
+  when: mode=="create"
+
+- block:
+    - include: remove_nfs_export_for_pv.yml
+  when: mode=="destroy"

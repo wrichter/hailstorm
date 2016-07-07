@@ -1,10 +1,27 @@
 - name: find existing dns records
-  shell: echo "{{ ipa_admin_password }}" | kinit admin &&  ipa dnsrecord-find "{{ hailstorm_dns_domain }}" | grep "Record name:" | cut -c 16-
+  shell: echo "{{ ipa_admin_password }}" | ( kinit admin &&  ipa dnsrecord-find "{{ hailstorm_dns_domain }}" ) | grep "Record name:" | cut -c 16-
   register: dns_records
   changed_when: false
 
+# - name: add dns records
+#   shell: "echo {% if hostvars[item].vm_nics is defined %}{% for _nic in hostvars[item].vm_nics %}{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].inventory_hostname_short }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"
+#   when: item != 'localhost' and hostvars[item].inventory_hostname_short is defined and hostvars[item].inventory_hostname_short not in dns_records.stdout_lines
+#   with_items: "{{ groups.all }}"
+#   ignore_errors: true
+
 - name: add dns records
-  shell: "echo {% if hostvars[item].vm_nics is defined %}{% for _nic in hostvars[item].vm_nics %}{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}{{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ hostvars[item].inventory_hostname_short }} --a-rec {{ _nic.ip }}{% endif %}{% endfor %}{% endif %}"
-  when: item != 'localhost' and hostvars[item].inventory_hostname_short is defined and hostvars[item].inventory_hostname_short not in dns_records.stdout_lines
-  with_items: "{{ groups.all }}"
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }} {{ item.name }} --a-rec {{ item.ip }}
+  when: item.name != 'localhost' and item.name not in dns_records.stdout_lines
+  with_items: "{{ lookup('template','a_records.j2') }}"
   ignore_errors: true
+
+- name: check MX record
+  shell: echo "{{ ipa_admin_password }}" | ( kinit admin && ipa dnsrecord-find {{ hailstorm_dns_domain }} ) | awk '/MX/{ print $4 }'
+  register: mx_record
+  changed_when: false
+
+#- debug: var=mx_record
+
+- name: add MX dns record
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa dnsrecord-add {{ hailstorm_dns_domain }}. {{ hailstorm_dns_domain }}. --mx-rec "10 infrastructure"
+  when: mx_record.stdout == ""

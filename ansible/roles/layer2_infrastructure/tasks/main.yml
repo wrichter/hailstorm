@@ -1,7 +1,6 @@
 - block:
-    - debug: msg="placeholder for create infrastructure"
+    - include: configure_named.yml
+      when: dnat_rules is defined
+    - include: configure_smtp.yml
+    - include: configure_imap.yml
   when: mode=="create"
-
-- block:
-    - debug: msg="placeholder for destroy infrastructure"
-  when: mode=="destroy"

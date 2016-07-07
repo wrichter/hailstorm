@@ -1,0 +1,26 @@
+- name: create catch-all user account
+  user: name={{ catch_all_user }} password={{ root_password|password_hash('sha512') }}
+
+- name: configure catch-all user
+  lineinfile: line="@{{ hailstorm_dns_domain }} {{ catch_all_user }}" dest=/etc/postfix/virtual
+  register: postfix_virtual
+
+- name: configure virtual alias map
+  lineinfile: line="virtual_alias_maps = hash:/etc/postfix/virtual"  dest=/etc/postfix/main.cf
+  register: postfix_config3
+
+- name: configure postfix domain
+  lineinfile: line="mydestination = $myhostname, localhost.$mydomain, localhost, {{ hailstorm_dns_domain }}" regexp="mydestination.*" dest=/etc/postfix/main.cf
+  register: postfix_config2
+
+- name: map catch-all user
+  command: postmap /etc/postfix/virtual
+  when: postfix_virtual|changed
+
+- name: configure postfix to listen on eth0
+  lineinfile: line="inet_interfaces = {{ vm_nics[0].ip }},localhost" regexp="inet_interfaces.*" dest=/etc/postfix/main.cf
+  register: postfix_config
+
+- name: ensure postfix is enabled and running
+  service: name=postfix state=restarted enabled=yes
+  when: postfix_virtual|changed or postfix_config|changed or postfix_config2|changed or postfix_config3|changed

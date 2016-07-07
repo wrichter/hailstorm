@@ -33,9 +33,9 @@
 
 - name: create network
   shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         -d "<network><name>{{ item.netname }}</name><usages><usage>vm</usage></usages></network>"
+         -d "<network><name>{{ item.netname[0:10] }}</name><usages><usage>vm</usage></usages></network>"
          "https://{{ vm_nics[0].ip }}{{ networks_url.stdout }}"
-  when: existing_networks.stdout.find(item.netname) == -1
+  when: existing_networks.stdout.find("{{ item.netname[0:10] }}") == -1
   with_items: "{{ vm_nics }}"
 
 - name: get default cluster networks link
@@ -50,7 +50,7 @@
 
 - name: assign network to cluster
   shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         -d "<network><name>{{ item.netname }}</name></network>"
+         -d "<network><name>{{ item.netname[0:10] }}</name></network>"
          "https://{{ vm_nics[0].ip }}{{ cluster_networks_url.stdout }}"
-  when: existing_networks.stdout.find(item.netname) == -1
+  when: existing_networks.stdout.find("{{ item.netname[0:10] }}") == -1
   with_items: "{{ vm_nics }}"

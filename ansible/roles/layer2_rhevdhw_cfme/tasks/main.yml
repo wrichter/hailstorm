@@ -1,0 +1,7 @@
+- block:
+    - include: configure_rhevm_dwh.yml
+  when: mode=="create"
+
+- block:
+    - include: unconfigure_rhevm_dwh.yml
+  when: mode=="destroy"

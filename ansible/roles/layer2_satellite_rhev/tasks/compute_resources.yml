@@ -5,4 +5,4 @@
 
 - name: create RHEV compute resource
   command: hammer compute-resource create --organizations "{{ organization }}" --name {{ hostvars['rhevm'].hostname }} --provider Ovirt --url https://{{ hostvars['rhevm'].hostname }}/api --user admin@internal --password {{ root_password }}
-  when: "'rhevm.example.com' not in compute_resources.stdout"
+  when: "'rhevm.{{ hailstorm_dns_domain }}' not in compute_resources.stdout"

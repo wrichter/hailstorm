@@ -1,0 +1,27 @@
+[{% for item in groups.all %}
+{% if hostvars[item].vm_nics is defined %}
+{% for _nic in hostvars[item].vm_nics %}
+{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}
+
+{
+  "name" :  "{{ hostvars[item].inventory_hostname_short }}",
+  "ip" : "{{ _nic.ip }}"
+}
+
+{% if hostvars[item].additional_dns is defined %}
+{% for name in hostvars[item].additional_dns.split(",") %}
+,{
+  "name" : "{{ name }}",
+  "ip" : "{{ _nic.ip }}"
+}
+{% endfor %}
+{% endif %}
+
+{% if not loop.last %}
+,
+{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}]

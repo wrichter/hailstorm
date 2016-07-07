@@ -23,13 +23,13 @@
 
     - name: undefine vms
       virt: command=undefine name={{ inventory_hostname_short }}
-      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
+      #when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
       ignore_errors: true
     - name: refresh pool to allow unused images to be deleted
       command: virsh pool-refresh {{ layer1_qcow_storage.poolname }}
       changed_when: false
     - name: remove vm volumes
       command: virsh vol-delete {{ disk.path }} --pool {{ layer1_qcow_storage.poolname }}
-      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
+      #when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
       ignore_errors: true
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"

@@ -1,0 +1,8 @@
+- name: create libvirt hooks directory
+  file: path=/etc/libvirt/hooks state=directory
+- name: create libvirt hook
+  copy: src=network dest=/etc/libvirt/hooks/network mode=0755
+  register: hook
+- name: restart libvirtd
+  service: name=libvirtd state=restarted
+  when: hook|changed

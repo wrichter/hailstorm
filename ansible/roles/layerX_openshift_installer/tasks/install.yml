@@ -6,6 +6,8 @@
   command: cat /etc/ipa/ca.crt
   delegate_to: ipa
   register: certificate
+  changed_when: false
+  failed_when: certificate.stdout == ''
   when: ipa_available|success
 
 - name: ensure that /etc/origin/master directory exists
@@ -21,11 +23,4 @@
 - name: run installer playbook
   shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
   when: ansible_hosts|changed
-- name: deploy registry
-  command: oadm registry --config=/etc/origin/master/admin.kubeconfig \
-           --credentials=/etc/origin/master/openshift-registry.kubeconfig \
-           --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
-- name: deploy router
-  command: oadm router router --replicas=1 \
-           --credentials='/etc/origin/master/openshift-router.kubeconfig' \
-           --service-account=router
+  tags: ['playbook']

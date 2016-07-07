@@ -85,3 +85,8 @@ parameter_defaults:
   EC2MetadataIp: {{ vm_nics[0].ip }}
   # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ['{{ infrastructure_network_services.host_prefix | ipaddr('address') }}']
+
+
+  NeutronExternalNetworkBridge: "''"
+  NeutronBridgeMappings: "datacentre:br-ex,guests:br-guests"
+  NeutronFlatNetworks: "datacentre, guests"

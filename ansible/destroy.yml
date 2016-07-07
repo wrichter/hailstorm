@@ -1,5 +1,28 @@
 ---
 
+- hosts: efk
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','efk', 'rhel' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer2','efk', 'rhel' ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','efk', 'vms' ]
+      mode: destroy
+
+
+- hosts: ose3-installer
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layerX_openshift_installer
+      tags: [ 'layer2','ose3', 'ose3-metrics' ]
+      mode: destroy
+
 - hosts: ose3
   gather_facts: false
   remote_user: root
@@ -14,6 +37,21 @@
       tags: [ 'layer2','ose3', 'vms' ]
       mode: destroy
 
+- hosts: cloudforms
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer3_cloudforms_rhev
+      tags: [ 'layer3', 'cf' ]
+      mode: destroy
+
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_rhevm_ldap
+      tags: [ 'rhevm-ldap' ]
+      mode: destroy
 
 - hosts: rhev
   gather_facts: false
@@ -28,15 +66,6 @@
     - role: layer2_vms
       tags: [ 'layer2','rhev', 'vms' ]
       mode: destroy
-
-- hosts: rhevm
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layer3_cloudforms_rhev
-      tags: [ 'layer3', 'cf' ]
-      mode: destroy
-
 
 - hosts: rhosp-director
   gather_facts: false
@@ -85,6 +114,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_vms
+      tags: [ 'layer2','infrastructure', 'vms' ]
+      mode: start
     - role: layer2_infrastructure
       tags: [ 'layer2', 'infrastructure' ]
       mode: destroy
@@ -94,7 +126,6 @@
     - role: layer2_vms
       tags: [ 'layer2','infrastructure', 'vms' ]
       mode: destroy
-
 
 
 - hosts: test-rhel
@@ -111,30 +142,23 @@
       tags: [ 'layer2', 'vms', 'test-rhel' ]
       mode: destroy
 
-- hosts: rhevm
-  remote_user: root
-  gather_facts: false
-  roles:
-    - role: layer2_rhevm_ldap
-      tags: [ 'rhevm-ldap' ]
-      mode: destroy
 
-- hosts: satellite
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layer2_vms
-      tags: [ 'layer2','satellite', 'rhel' ]
-      mode: start
-    - role: layer2_vms
-      tags: [ 'layer2','satellite', 'rhel' ]
-      mode: start
-    - role: layer2_rhel
-      tags: [ 'layer2','satellite', 'rhel'  ]
-      mode: destroy
-    - role: layer2_vms
-      tags: [ 'layer2','satellite', 'vms' ]
-      mode: destroy
+# - hosts: satellite
+#   gather_facts: false
+#   remote_user: root
+#   roles:
+#     - role: layer2_vms
+#       tags: [ 'layer2','satellite', 'rhel' ]
+#       mode: start
+#     - role: layer2_vms
+#       tags: [ 'layer2','satellite', 'rhel' ]
+#       mode: start
+#     - role: layer2_rhel
+#       tags: [ 'layer2','satellite', 'rhel'  ]
+#       mode: destroy
+#     - role: layer2_vms
+#       tags: [ 'layer2','satellite', 'vms' ]
+#       mode: destroy
 
 - hosts: layer1
   gather_facts: false
@@ -144,6 +168,9 @@
     #   tags: [ 'rhev', 'layer2', 'vm' ]
     #   mode: destroy
     #   group: rhev
+    - role: layer1_openshift
+      tags: [ 'ose3' ]
+      mode: destroy
     - role: layer1_rhev
       tags: [ 'rhev' ]
       mode: destroy
@@ -159,6 +186,9 @@
       tags: [ 'rhosp' ]
       mode: destroy
       group: rhosp-all
+    - role: layer1_dnat
+      tags: [ 'layer1', 'dnat' ]
+      mode: destroy
     - role: layer1
       tags: [ 'layer1' ]
       mode: destroy
