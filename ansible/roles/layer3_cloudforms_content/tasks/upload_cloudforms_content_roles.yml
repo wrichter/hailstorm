@@ -1,8 +1,0 @@
-- name: upload buttons file to CF
-  copy: src=../CloudForms-Internals/roles/roles.yml dest=/tmp/roles.yml mode=0644
-- name: import buttons file
-  shell: cd tmp; /usr/bin/miqimport roles /tmp/roles.yml
-- name: remove temp file on cfme
-  file: name=/tmp/roles.yml state=absent
-#- name: remove temp file on cfme
-# file: name=/tmp/buttons.yml state=absent
