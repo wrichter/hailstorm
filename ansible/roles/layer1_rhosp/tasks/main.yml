@@ -12,11 +12,11 @@
         export_params: "(rw,root_squash)"
   when: mode=="create"
 
-  - block:
-      - include: roles/common/tasks/remove_nfs_export.yml
-        vars:
-          items:
-            - path: "{{ nfs_rhosp_glance_path }}"
-            - path: "{{ nfs_rhosp_cinder_path }}"
-            - path: "{{ nfs_rhosp_nova_path }}"
-    when: mode=="destroy"
+- block:
+    - include: roles/common/tasks/remove_nfs_export.yml
+      vars:
+        items:
+          - path: "{{ nfs_rhosp_glance_path }}"
+          - path: "{{ nfs_rhosp_cinder_path }}"
+          - path: "{{ nfs_rhosp_nova_path }}"
+  when: mode=="destroy"
