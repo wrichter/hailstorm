@@ -1,8 +1,0 @@
-- name: create tmp directory
-  file: name=/tmp/miq_import state=directory
-- name: upload contents to CF
-  copy: src=../CloudForms-Internals/{{ item.filename_local }} dest=/tmp/miq_import{% if item.filename_remote!='' %}/{% endif %}{{ item.filename_remote }} mode=0644
-- name: import contents
-  shell: /usr/bin/miqimport {{ item.type }} /tmp/miq_import
-- name: remove temp directory on cfme
-  file: name=/tmp/miq_import state=absent

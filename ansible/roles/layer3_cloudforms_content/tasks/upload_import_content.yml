@@ -1,0 +1,9 @@
+- debug: msg="importing {{ filename_local }}"
+- name: create tmp directory
+  file: name=/tmp/miq_import state=directory
+- name: upload contents to CF
+  copy: src={{content_location}}/{{ filename_local }} dest=/tmp/miq_import{% if filename_remote!='' %}/{% endif %}{{ filename_remote }} mode=0644
+- name: import contents
+  shell: /usr/bin/miqimport {{ type }} /tmp/miq_import{% if import_file is defined %}/{{ import_file }}{% endif %}
+- name: remove temp directory on cfme
+  file: name=/tmp/miq_import state=absent
