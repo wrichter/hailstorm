@@ -1,6 +1,22 @@
 - block:
     - include: prepare_rhosp_settings.yml
+    - include: roles/common/tasks/prepare_nfs_export.yml
+      vars:
+        items:
+          - path: "{{ nfs_rhosp_glance_path }}"
+          - path: "{{ nfs_rhosp_cinder_path }}"
+          - path: "{{ nfs_rhosp_nova_path }}"
+        file_mode: 0777
+        owner: "nfsnobody"
+        group: "nfsnobody"
+        export_params: "(rw,root_squash)"
   when: mode=="create"
 
-#- block:
-#  when: mode=="destroy"
+  - block:
+      - include: roles/common/tasks/remove_nfs_export.yml
+        vars:
+          items:
+            - path: "{{ nfs_rhosp_glance_path }}"
+            - path: "{{ nfs_rhosp_cinder_path }}"
+            - path: "{{ nfs_rhosp_nova_path }}"
+    when: mode=="destroy"

@@ -1,7 +1,17 @@
 - block:
-    - include: prepare_nfs_export_for_storage_domain.yml
+    #- include: prepare_nfs_export_for_storage_domain.yml
+    - include: roles/common/tasks/prepare_nfs_export.yml
+      vars:
+        items: "{{ rhev_storage_domains }}"
+        file_mode: 0755
+        owner: "36"
+        group: "36"
+        export_params: "(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36)"
   when: mode=="create"
 
 - block:
-    - include: remove_nfs_export_for_storage_domain.yml
+    #- include: remove_nfs_export_for_storage_domain.yml
+    - include: roles/common/tasks/remove_nfs_export.yml
+      vars:
+        items: "{{ rhev_storage_domains }}"
   when: mode=="destroy"

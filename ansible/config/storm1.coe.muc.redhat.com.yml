@@ -16,6 +16,10 @@ nfs_rhev_data_domain_path: /var/hailstorm/rhev-data1
 nfs_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
 nfs_rhev_export_domain_path: /var/hailstorm/rhev-export1
 
+nfs_rhosp_nova_path: /var/hailstorm/rhosp-nova
+nfs_rhosp_glance_path: /var/hailstorm/rhosp-glance
+nfs_rhosp_cinder_path: /var/hailstorm/rhosp-cinder
+
 nfs_ose3_pv_path: /var/hailstorm/ose3-pv
 
 layer2_rhev_manager_mem: 16384
