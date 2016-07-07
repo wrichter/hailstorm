@@ -66,7 +66,7 @@ parameter_defaults:
   StorageMgmtNetworkVlanID: 401
 
 {% for network in infrastructure_networks %}
-{% if network.netname == infrastructure_network_services.netname %}
+{% if network.netname == infrastructure_network_guests.netname %}
   # External Networking Access - Public API Access
 {# ExternalNetCidr: 192.168.122.0/24 #}
   ExternalNetCidr: {{ network.host_prefix | ipaddr('network') }}/{{ network.host_prefix | ipaddr('prefix') }}
@@ -76,9 +76,10 @@ parameter_defaults:
   # Set to the router gateway on the external network
 {# ExternalInterfaceDefaultRoute: 192.168.122.1 #}
   ExternalInterfaceDefaultRoute: {{ network.host_prefix | ipaddr('address') }}
-{% elif network.netname == infrastructure_network_guests.netname %}
+{% elif network.netname == infrastructure_network_services.netname %}
   ManagementNetCidr: {{ network.host_prefix | ipaddr('network') }}/{{ network.host_prefix | ipaddr('prefix') }}
   ManagementAllocationPools: [{'start': '{{ network.floating_start }}', 'end': '{{ network.floating_end }}'}]
+  ManagementInterfaceDefaultRoute: {{ network.host_prefix | ipaddr('address') }}
 {% endif %}
 {% endfor %}
 
@@ -95,5 +96,5 @@ parameter_defaults:
 
 
   NeutronExternalNetworkBridge: "''"
-  NeutronBridgeMappings: "datacentre:br-guests,guests:br-services"
+  NeutronBridgeMappings: "datacentre:br-services,guests:br-guests"
   NeutronFlatNetworks: "datacentre, guests"
