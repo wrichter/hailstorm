@@ -65,35 +65,16 @@ parameter_defaults:
   StorageMgmtAllocationPools: [{'start': '172.17.4.10', 'end': '172.17.4.200'}]
   StorageMgmtNetworkVlanID: 401
 
-{# --- COMMENTED OUT
-{% for network in infrastructure_networks %}
-{% if network.netname == infrastructure_network_guests.netname %}
-  # External Networking Access - Public API Access
-{# ExternalNetCidr: 192.168.122.0/24 #}
-  ExternalNetCidr: {{ network.host_prefix | ipaddr('network') }}/{{ network.host_prefix | ipaddr('prefix') }}
-  # Leave room for floating IPs in the External allocation pool (if required)
-{# ExternalAllocationPools: [{'start': '192.168.122.100', 'end': '192.168.122.129'}] #}
-  ExternalAllocationPools: [{'start': '{{ network.floating_start }}', 'end': '{{ network.floating_end }}'}]
-  # Set to the router gateway on the external network
-{# ExternalInterfaceDefaultRoute: 192.168.122.1 #}
-  ExternalInterfaceDefaultRoute: {{ network.host_prefix | ipaddr('address') }}
-{% elif network.netname == infrastructure_network_services.netname %}
-  ManagementNetCidr: {{ network.host_prefix | ipaddr('network') }}/{{ network.host_prefix | ipaddr('prefix') }}
-  ManagementAllocationPools: [{'start': '{{ network.floating_start }}', 'end': '{{ network.floating_end }}'}]
-  ManagementInterfaceDefaultRoute: {{ network.host_prefix | ipaddr('address') }}
-{% endif %}
-{% endfor %}
---- COMMENTED OUT#}
 
-  ExternalNetCidr: {{ infrastructure_network_guests.host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.host_prefix | ipaddr('prefix') }}
+  ExternalNetCidr: {{ infrastructure_network_services.host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.host_prefix | ipaddr('prefix') }}
   # Leave room for floating IPs in the External allocation pool (if required)
-  ExternalAllocationPools: [{'start': '{{ infrastructure_network_guests.floating_start }}', 'end': '{{ infrastructure_network_guests.floating_end }}'}]
+  ExternalAllocationPools: [{'start': '{{ infrastructure_network_services.floating_start }}', 'end': '{{ infrastructure_network_services.floating_end }}'}]
   # Set to the router gateway on the external network
-  ExternalInterfaceDefaultRoute: {{ infrastructure_network_guests.host_prefix | ipaddr('address') }}
+  ExternalInterfaceDefaultRoute: {{ infrastructure_network_services.host_prefix | ipaddr('address') }}
 
-  ManagementNetCidr: {{ infrastructure_network_services.host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.host_prefix | ipaddr('prefix') }}
-  ManagementAllocationPools: [{'start': '{{ infrastructure_network_services.floating_start }}', 'end': '{{ infrastructure_network_services.floating_end }}'}]
-  ManagementInterfaceDefaultRoute: {{ infrastructure_network_services.default_gw }}
+  ManagementNetCidr: {{ infrastructure_network_guests.host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.host_prefix | ipaddr('prefix') }}
+  ManagementAllocationPools: [{'start': '{{ infrastructure_network_guests.floating_start }}', 'end': '{{ infrastructure_network_guests.floating_end }}'}]
+  ManagementInterfaceDefaultRoute: {{ infrastructure_network_guests.default_gw }}
 
 
   # Add in configuration for the Control Plane - see http://docs.openstack.org/developer/tripleo-docs/advanced_deployment/network_isolation.html#updating-existing-configuration-templates-to-support-new-parameters

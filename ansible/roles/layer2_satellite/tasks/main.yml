@@ -1,6 +1,7 @@
 - block:
     - include: install-satellite6.yml
     - include: import_manifest.yml
+      tags: ['manifest']
     - include: enable_repo_and_sync.yml
       tags: ['sync']
     - include: wait-for-sync-tasks.yml

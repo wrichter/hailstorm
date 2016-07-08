@@ -176,3 +176,6 @@ dnat_rules:
         - from_port: 443
           to_port: 443
           proto: tcp
+        - from_port: 6080
+          to_port: 6080
+          proto: tcp

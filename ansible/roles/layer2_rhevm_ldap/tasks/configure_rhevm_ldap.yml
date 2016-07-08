@@ -49,10 +49,12 @@
     - name: create ipausers group
       shell: rhevm-shell -E 'add group --name ipausers --domain-name IPA-authz' | grep -e "^id" | cut -c18-
       register: ipausers_group_id
+      failed_when: ipausers_group_id.stdout == ""
 
     - name: get SuperUser role id
       shell: rhevm-shell -E 'show role SuperUser' | grep -e "^id" | cut -c18-
       register: superuser_role_id
+      failed_when: superuser_role_id.stdout == ""
 
     - name: create permission for ipausers
       shell: rhevm-shell -E 'add permission --role-id {{ superuser_role_id.stdout }} --group-id {{ ipausers_group_id.stdout }}'

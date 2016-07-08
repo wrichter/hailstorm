@@ -60,7 +60,11 @@ parameters:
     default: ''
     description: IP address/subnet on the management network
     type: string
-
+  ManagementInterfaceDefaultRoute:
+    default: ''
+    description: default route for the external network
+    type: string
+    
 resources:
   OsNetConfigImpl:
     type: OS::Heat::StructuredConfig
