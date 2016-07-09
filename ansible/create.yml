@@ -228,7 +228,7 @@
   roles:
     - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf', 'cfme-config' ], mode: create }
     - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'osp-cfme' ], mode: create }
 #    - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'ose3-cfme' ], mode: create }
     - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }

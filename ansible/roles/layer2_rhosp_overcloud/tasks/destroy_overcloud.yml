@@ -6,4 +6,4 @@
   register: stack
   until: stack.stdout == ""
   retries: 30
-  delay: 20
+  delay: 60

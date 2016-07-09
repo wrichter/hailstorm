@@ -6,11 +6,9 @@
 #   become_user: "{{ rhosp_stack_user }}"
 #   changed_when: false
 - name: check deployed stack
-  shell: heat stack-list | grep overcloud
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
+  shell: . ~/stackrc && heat stack-list | grep overcloud
   failed_when: false
-  changed_when: true
+  changed_when: false
   register: stack
 - block:
     - name: Create my_templates directory
@@ -69,8 +67,6 @@
     #    --neutron-bridge-mappings datacentre:br-ex,floating:br-guests
     #    -e ~/my_templates/environments/storage-environment.yaml
       tags: ['deploy-overcloud']
-
+  when: stack.stdout == ""
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  #when: (server_count.stdout | int < 3) #TODO - adapt to number of servers in case storage deployment is performed via director
-  when: stack.stdout == ""

@@ -1,0 +1,4 @@
+- name: get tenant list
+  shell: . ~/overcloudrc && openstack project list -f json
+  register: projects
+- name:

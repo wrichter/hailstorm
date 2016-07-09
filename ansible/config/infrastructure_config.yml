@@ -17,11 +17,16 @@ infrastructure_network_services:
   forward_mode: 'nat'
   host_prefix: 192.168.101.1/24
   default_gw: 192.168.101.1
+  osp_undercloud_start: 192.168.101.30
+  osp_undercloud_end: 192.168.101.80
+  osp_overcloud_start: 192.168.101.81
+  osp_overcloud_end:  192.168.101.100
   dhcp_start: 192.168.101.128
   dhcp_end: 192.168.101.172
   floating_start: 192.168.101.173
   floating_end: 192.168.101.254
   mac_prefix: "02:00:00:00:01:"
+  dns_nameserver: 192.168.101.1
 
 infrastructure_network_guests:
   netname: 'guests'
@@ -34,6 +39,7 @@ infrastructure_network_guests:
   floating_start: 192.168.102.129
   floating_end: 192.168.102.254
   mac_prefix: "02:00:00:00:02:"
+  dns_nameserver: 10.32.96.1
 
 infrastructure_network_admin:
   netname: 'admin'

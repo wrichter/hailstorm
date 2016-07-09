@@ -90,6 +90,7 @@ ipa_user:
   - username: rhev-bind-user
     first: rhev
     last: binduser
+    password: "{{ root_password }}"
   - username: ose-bind-user
     first: ose
     last: binduser

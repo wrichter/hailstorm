@@ -72,7 +72,9 @@ rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP8-PROD"
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
-openstack       ansible_host=192.168.101.173 nic_attachments="[ {{ infrastructure_network_services }} ]"
+openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]"
+undercloud-public ansible_host=192.168.105.40
+undercloud-admin  ansible_host=192.168.105.41
 
 
 #### ADDITIONAL GROUPS

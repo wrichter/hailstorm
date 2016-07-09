@@ -68,7 +68,7 @@ parameter_defaults:
 
   ExternalNetCidr: {{ infrastructure_network_services.host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.host_prefix | ipaddr('prefix') }}
   # Leave room for floating IPs in the External allocation pool (if required)
-  ExternalAllocationPools: [{'start': '{{ infrastructure_network_services.floating_start }}', 'end': '{{ infrastructure_network_services.floating_end }}'}]
+  ExternalAllocationPools: [{'start': '{{ infrastructure_network_services.osp_overcloud_start }}', 'end': '{{ infrastructure_network_services.osp_overcloud_end }}'}]
   # Set to the router gateway on the external network
   ExternalInterfaceDefaultRoute: {{ infrastructure_network_services.host_prefix | ipaddr('address') }}
 
@@ -81,7 +81,10 @@ parameter_defaults:
   # CIDR subnet mask length for provisioning network
   ControlPlaneSubnetCidr: "{{ infrastructure_network_rhosp_provisioning.host_prefix | ipaddr('prefix') }}"
   # Gateway router for the provisioning network (or Undercloud IP)
-  ControlPlaneDefaultRoute: {{ infrastructure_network_rhosp_provisioning.host_prefix | ipaddr('address') }}
+  #ControlPlaneDefaultRoute: {{ infrastructure_network_rhosp_provisioning.host_prefix | ipaddr('address') }}
+# this is intentional - the undercloud's (controller, compute) default gw should be on the services network
+  ControlPlaneDefaultRoute: {{ infrastructure_network_services.host_prefix | ipaddr('address') }}
+
 
   # Generally the IP of the Undercloud
   EC2MetadataIp: {{ vm_nics[0].ip }}

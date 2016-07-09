@@ -4,7 +4,11 @@
     - include: create_overcloud.yml
       tags: ['overcloud-deploy']
     - include: configure_neutron.yml
-      tags: ['overcloud-deploy']
+      tags: ['overcloud-config']
+    - include: configure_security.yml
+      tags: ['overcloud-config']
+    - include: configure_images.yml
+      tags: ['overcloud-config']
   when: mode=="create"
 
 - block:

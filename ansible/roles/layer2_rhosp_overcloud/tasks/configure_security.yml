@@ -1,0 +1,18 @@
+- name: get default security group id for tenant openstack
+  shell: . ~/overcloudrc && OS_TENANT_NAME=openstack openstack security group list | awk '/default/ { print $2 }'
+  register: security_group_id
+  changed_when: false
+  failed_when: security_group_id.stdout == ""
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+
+- name: configure default security group to allow ssh + icmp
+  #shell: . ~/overcloudrc && OS_TENANT_NAME=openstack neutron security-group-rule-create --protocol {{ item.protocol }}{% if item.port_min is defined %} --port-range-min {{ item.port_min }}{% endif %}{% if item.port_max is defined %} --port-range-max {{ item.port_max }}{% endif %} {{ security_group_id.stdout }}
+  shell: . ~/overcloudrc && OS_TENANT_NAME=openstack openstack security group rule create --proto {{ item.protocol }}{% if item.port_range is defined %} --dst-port {{ item.port_range }}{% endif %} {{ security_group_id.stdout }}
+  ignore_errors: true
+  with_items:
+    - protocol: icmp
+    - protocol: tcp
+      port_range: 22
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
