@@ -1,7 +1,9 @@
+- name: remove DNAT config
+  command: /etc/libvirt/hooks/network {{ item.netname }} stopped
+  with_items: "{{ infrastructure_networks }}"
 - name: create /etc/hailstorm_iptables.xml
   template: src=hailstorm_iptables.xml.j2 dest=/etc/hailstorm_iptables.xml
   register: iptables
-- name: reload DNAT config
-  shell: /etc/libvirt/hooks/network {{ item.netname }} stopped && /etc/libvirt/hooks/network {{ item.netname }} started
-  when: iptables|changed
+- name: create DNAT config
+  command: /etc/libvirt/hooks/network {{ item.netname }} started
   with_items: "{{ infrastructure_networks }}"
