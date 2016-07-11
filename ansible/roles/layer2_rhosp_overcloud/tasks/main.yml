@@ -3,6 +3,8 @@
       tags: ['register']
     - include: create_overcloud.yml
       tags: ['overcloud-deploy']
+    - include: configure_tenants.yml
+      tags: ['overcloud-config']
     - include: configure_neutron.yml
       tags: ['overcloud-config']
     - include: configure_security.yml
