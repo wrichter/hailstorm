@@ -162,7 +162,7 @@
       tags: [ 'layer2', 'rhev','rhevm', 'rhevm-ldap','rhevm-storage' ]
   roles:
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm','rhevm-storage' ], mode: create }
-    - { role: layer2_rhevm_ldap, tags: [ 'rhevm-ldap' ], mode: create }
+    - { role: layer2_rhevm_ldap, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
 
 
 - hosts: satellite

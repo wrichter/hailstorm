@@ -2,12 +2,7 @@
   register: ldap_keystore
 
 - block:
-# main process
-
-
 # resolv.conf needs to point to IPA
-
-
 # copy the ca.crt from IPA (using delegate)
     - name: copy certificate of IPA
       command: cat /etc/ipa/ca.crt
@@ -42,9 +37,6 @@
       service: name=ovirt-engine state=restarted
 
     # add an LDAP group to the RHEV superuser role
-
-    - name: create .rhevmshellrc
-      template: src=rhevmshellrc.j2 dest=/root/.rhevmshellrc mode=0600
 
     - name: create ipausers group
       shell: rhevm-shell -E 'add group --name ipausers --domain-name IPA-authz' | grep -e "^id" | cut -c18-

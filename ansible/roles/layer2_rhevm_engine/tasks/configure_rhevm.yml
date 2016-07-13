@@ -12,5 +12,8 @@
   command: engine-setup --config-append=/root/answers  creates=/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf
   register: engine_setup
 
+- name: create .rhevmshellrc
+  template: src=rhevmshellrc.j2 dest=/root/.rhevmshellrc mode=0600
+
 - pause: minutes=2
   when: engine_setup|changed
