@@ -9,3 +9,14 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   when: '"CirrOS" not in images.stdout_lines'
+
+
+# - name: get image facts
+#   os_image_facts:
+#     auth: "{{ os_auth }}"
+#     image: "{{ item.name }}"
+#   register: os_image_facts
+#   with_items:
+#     - name: CirrOS
+#
+# - debug: var=os_image_facts

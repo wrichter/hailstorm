@@ -30,3 +30,6 @@ tripleo_template_path: /home/stack/my_templates
 
 ironic_rpc_timeout: 600
 nova_rpc_timeout: 600
+
+# will be populated during runtime 
+os_auth: {}
