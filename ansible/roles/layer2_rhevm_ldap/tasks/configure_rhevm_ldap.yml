@@ -36,7 +36,14 @@
     - name: restarting rhev services
       service: name=ovirt-engine state=restarted
 
+    - name: wait for rhev web ui to become available
+      wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600
+
     # add an LDAP group to the RHEV superuser role
+    - name: initialize LDAP auth plugin by performing query
+      command: curl -k -u admin@hailstorm2.coe.muc.redhat.com:redhat01 https://localhost/api
+      failed_when: false
+      changed_when: false
 
     - name: create ipausers group
       shell: rhevm-shell -E 'add group --name ipausers --domain-name IPA-authz' | grep -e "^id" | cut -c18-

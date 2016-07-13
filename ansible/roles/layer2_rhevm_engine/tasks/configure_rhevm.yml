@@ -15,5 +15,8 @@
 - name: create .rhevmshellrc
   template: src=rhevmshellrc.j2 dest=/root/.rhevmshellrc mode=0600
 
-- pause: minutes=2
-  when: engine_setup|changed
+# - pause: minutes=2
+#   when: engine_setup|changed
+
+- name: wait for rhev web ui to become available
+  wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600
