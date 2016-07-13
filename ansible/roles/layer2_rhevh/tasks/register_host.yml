@@ -75,7 +75,7 @@
       changed_when: false
       failed_when: false
 
-    - debug: var=host_state
+#    - debug: var=host_state
 
     - name: register host
       shell: rhevm-shell -E 'add host --address "{{ vm_nics[1].ip }}" --cluster-name Default --name  {{ hostname }} --root_password {{ root_password }}'
