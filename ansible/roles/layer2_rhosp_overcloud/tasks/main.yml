@@ -6,6 +6,8 @@
     - include: read_overcloudrc_into_facts.yml
     - include: configure_tenants.yml
       tags: ['overcloud-config']
+    - include: configure_user_access.yml
+      tags: ['overcloud-config']
     - include: configure_neutron.yml
       tags: ['overcloud-config']
     - include: configure_security.yml

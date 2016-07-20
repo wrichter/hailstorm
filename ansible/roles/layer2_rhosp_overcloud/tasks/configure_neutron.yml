@@ -1,6 +1,6 @@
 - block:
     - name: get existing networks
-      shell: . ~/overcloudrc && neutron net-list -F name | awk 'NR>3 { print $2 }'
+      shell: . ~/overcloudrc_v3 && neutron net-list -F name | awk 'NR>3 { print $2 }'
       register: existing_nets
       changed_when: false
 
@@ -8,39 +8,49 @@
 
     - name: create services network (in admin project)
       shell: >
-        . ~/overcloudrc &&
+        . ~/overcloudrc_v3 &&
         neutron net-create services --router:external --provider:network_type flat --provider:physical_network datacentre &&
         neutron subnet-create --name sub_services --enable_dhcp=False --allocation-pool=start={{ infrastructure_network_services.floating_start }},end={{ infrastructure_network_services.floating_end }} services {{ infrastructure_network_services.host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.host_prefix | ipaddr('prefix') }}
       when: '"services" not in existing_nets.stdout_lines'
 
     - name: create guests aka external aka public network (in admin project)
       shell: >
-        . ~/overcloudrc &&
+        . ~/overcloudrc_v3 &&
         neutron net-create guests --router:external --provider:network_type flat --provider:physical_network guests &&
         neutron subnet-create --name sub_guests --enable_dhcp=False --allocation-pool=start={{ infrastructure_network_guests.floating_start }},end={{ infrastructure_network_guests.floating_end }} --gateway={{ infrastructure_network_guests.default_gw }} guests {{ infrastructure_network_guests.host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.host_prefix | ipaddr('prefix') }}
       when: '"guests" not in existing_nets.stdout_lines'
 
-    - name: create internal network (in openstack project)
+    - name: create internal network
       shell: >
-        . ~/overcloudrc &&
-        export OS_TENANT_NAME=openstack &&
+        . ~/overcloudrc_v3 &&
+        export OS_TENANT_NAME={{ item }} &&
+        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron net-create internal &&
         neutron subnet-create --name sub_internal --enable_dhcp=True --gateway 172.20.0.1 --dns-nameserver={{ hostvars['ipa'].vm_nics[0].ip }} internal 172.20.0.0/16
       when: '"internal" not in existing_nets.stdout_lines'
+      with_items: "{{ osp_projects }}"
 
     - name: get existing routers
-      shell: . ~/overcloudrc && neutron router-list -F name | awk 'NR>3 { print $2 }'
+      shell: >
+        . ~/overcloudrc_v3 &&
+        export OS_TENANT_NAME={{ item }} &&
+        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
+        neutron router-list -F name | awk 'NR>3 { print $2 }'
       register: existing_routers
       changed_when: false
+      with_items: "{{ osp_projects }}"
 
-    - name: create routers (in openstack project)
+    - name: create routers
       shell: >
-        . ~/overcloudrc &&
-        export OS_TENANT_NAME=openstack &&
+        . ~/overcloudrc_v3 &&
+        export OS_TENANT_NAME={{ item.item }} &&
+        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron router-create router_internal &&
         neutron router-gateway-set router_internal guests &&
         neutron router-interface-add router_internal sub_internal &&
         neutron router-interface-add router_internal sub_services
-      when: '"router_internal" not in existing_routers.stdout_lines'
+      when: '"router_internal" not in item.stdout_lines'
+      with_items: "{{ existing_routers.results }}"
+
   become: yes
   become_user: "{{ rhosp_stack_user }}"

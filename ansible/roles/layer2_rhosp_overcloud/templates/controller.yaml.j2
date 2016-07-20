@@ -163,6 +163,7 @@ resources:
               type: ovs_bridge
               name: br-services
               use_dhcp: false
+              defroute: yes
               addresses:
                 -
                   ip_netmask: {get_param: ExternalIpSubnet}
@@ -170,6 +171,7 @@ resources:
                     -
                       ip_netmask: 0.0.0.0/0
                       next_hop: {get_param: ExternalInterfaceDefaultRoute }
+                      default: yes
               members:
                 -
                   type: interface
