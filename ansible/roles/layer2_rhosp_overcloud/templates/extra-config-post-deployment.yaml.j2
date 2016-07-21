@@ -46,7 +46,6 @@ resources:
           sudo openstack-config --set /etc/cinder/cinder.conf keystone_authtoken auth_version v3
           sudo systemctl restart openstack-cinder-api
           sudo systemctl restart openstack-cinder-volume
-          sudo systemctl --no-block restart httpd
         }
 
         function keystone_control {
@@ -78,8 +77,8 @@ resources:
         OPENSTACK_API_VERSIONS = {
           "identity": 3
         }
-        OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = True
-        OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
+        OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
+        OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = '{{ osp_domain_name }}'
         EOF
 
           sudo cat <<EOF >/etc/keystone/domains/keystone.{{ osp_domain_name }}.conf
@@ -106,12 +105,11 @@ resources:
           sudo chown keystone:keystone /etc/keystone/domains/keystone.hailstorm.conf
 
           sudo systemctl restart openstack-keystone.service
-          sudo systemctl restart httpd
         }
   {% endif %}
 
         hostname | grep -q overcloud-compute && {% if ipa_available|success %}nova_compute_control && {% endif %} nova_compute
-  {% if ipa_available|success %}      hostname | grep -q overcloud-control && keystone_control && nova_compute_control && cinder_control && nova_control{% endif %}
+  {% if ipa_available|success %}      hostname | grep -q overcloud-control && keystone_control && nova_compute_control && cinder_control && nova_control && sudo systemctl restart httpd{% endif %}
 
         exit 0
   ExtraDeployments:
