@@ -29,6 +29,8 @@ osp_kvm_images:
     name: RHEL7
   - image: cirros-0.3.4-x86_64-disk.img
     name: CirrOS
+  - image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    name: Windows Server 2012
 
 # RED HAT SUBSCRIPTION POOLS
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
