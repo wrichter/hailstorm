@@ -53,7 +53,7 @@
   failed_when: false
   changed_when: false
   register: networks
-  with_items: "{{ vm_nics }}"
+  with_items: "{{ hostvars['rhevh1'].vm_nics }}"
 - name: create networks in Default DC
   shell: rhevm-shell -E 'add network --name {{ item.item.netname[0:10] }} --datacenter-name Default' | awk '/^id/ { print $3 }'
   when: item.stdout == ""

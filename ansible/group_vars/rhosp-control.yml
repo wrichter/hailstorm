@@ -5,7 +5,7 @@ disk:
   size: 60
   format: qcow2
 skip_install: true
-#graphics: vnc,listen=0.0.0.0,password=redhat01
+graphics: vnc,listen=0.0.0.0,password=redhat01
 
 # nic0 needs to be on the provisioning network
 nic_attachments:

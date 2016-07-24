@@ -5,7 +5,7 @@
   file: state=directory path={{ nfs_ose3_pv_path }}/{{ item }} mode=0777 owner=nfsnobody group=nfsnobody
   with_sequence: start=0 end=20 format=pv%02d
 - name: create /etc/exports entry
-  lineinfile: dest=/etc/exports line="{{ nfs_ose3_pv_path }}/{{ item }} {{ infrastructure_network_storage.host_prefix }}(rw,root_squash,no_wdelay)"
+  lineinfile: dest=/etc/exports line="{{ nfs_ose3_pv_path }}/{{ item }} {{ infrastructure_network_storage.default_gw_host_prefix }}(rw,root_squash,no_wdelay)"
   register: etc_exports
   with_sequence: start=0 end=20 format=pv%02d
 - name: export file systems

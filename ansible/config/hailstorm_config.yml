@@ -24,7 +24,11 @@ cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: manageiq-ovirt-devel.ova
 
-rhel_kvm_image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+osp_kvm_images:
+  - image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+    name: RHEL7
+  - image: cirros-0.3.4-x86_64-disk.img
+    name: CirrOS
 
 # RED HAT SUBSCRIPTION POOLS
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791

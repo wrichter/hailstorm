@@ -6,7 +6,7 @@
   setup:
 - name: delete networks who need to be reconfigured
   virt_net: uri=qemu:///system name={{ item.netname }} command=destroy state=absent
-  when: ansible_{{ item.bridge }}.ipv4.address is defined and ansible_{{ item.bridge }}.ipv4.address != item.host_prefix | ipaddr('address')
+  when: ansible_{{ item.bridge }}.ipv4.address is defined and ansible_{{ item.bridge }}.ipv4.address != item.default_gw_host_prefix | ipaddr('address')
   with_items: "{{ infrastructure_networks }}"
 # - name: start firewalld to ensure the define networks command will not fail
 #   service: name=firewalld state=started

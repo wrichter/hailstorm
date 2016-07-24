@@ -146,7 +146,7 @@
         openstack service create --name keystonev3 --description "Keystone Identity Service v3" identityv3
       when: '"keystonev3" not in existing_services.stdout_lines'
 
-    - name: get keystone v3 endpoints
+    - name: get existing keystone v3 endpoints
       shell: >
         . ~/overcloudrc_v3 &&
         openstack endpoint list --service keystonev3 --column Interface -f value

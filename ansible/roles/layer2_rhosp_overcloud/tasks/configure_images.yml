@@ -6,19 +6,20 @@
       register: images
       changed_when: false
 
-    - name: load CirrOS image (default project)
-      shell: >
-        . ~/overcloudrc_v3 &&
-        curl http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img |
-        openstack image create --public --disk-format qcow2 CirrOS
-      when: '"CirrOS" not in images.stdout_lines'
+    # - name: load CirrOS image (default project)
+    #   shell: >
+    #     . ~/overcloudrc_v3 &&
+    #     curl http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img |
+    #     openstack image create --public --disk-format qcow2 CirrOS
+    #   when: '"CirrOS" not in images.stdout_lines'
 
-    - name: load KVM image (from layer1 host binary dir)
+    - name: load KVM images (from layer1 host binary dir)
       shell: >
         . ~/overcloudrc_v3 &&
-        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ rhel_kvm_image }} |
-        openstack image create --public --disk-format qcow2 RHEL7
-      when: '"RHEL7" not in images.stdout_lines'
+        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ item.image }} |
+        openstack image create --public --disk-format qcow2 {{ item.name }}
+      when: item.name not in images.stdout_lines
+      with_items: "{{ osp_kvm_images }}"
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 

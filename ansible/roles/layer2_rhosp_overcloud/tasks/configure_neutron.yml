@@ -10,14 +10,14 @@
       shell: >
         . ~/overcloudrc_v3 &&
         neutron net-create services --router:external --provider:network_type flat --provider:physical_network datacentre &&
-        neutron subnet-create --name sub_services --enable_dhcp=False --allocation-pool=start={{ infrastructure_network_services.floating_start }},end={{ infrastructure_network_services.floating_end }} services {{ infrastructure_network_services.host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.host_prefix | ipaddr('prefix') }}
+        neutron subnet-create --name sub_services --enable_dhcp=False --allocation-pool=start={{ infrastructure_network_services.floating_start }},end={{ infrastructure_network_services.floating_end }} services {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('prefix') }}
       when: '"services" not in existing_nets.stdout_lines'
 
     - name: create guests aka external aka public network (in admin project)
       shell: >
         . ~/overcloudrc_v3 &&
         neutron net-create guests --router:external --provider:network_type flat --provider:physical_network guests &&
-        neutron subnet-create --name sub_guests --enable_dhcp=False --allocation-pool=start={{ infrastructure_network_guests.floating_start }},end={{ infrastructure_network_guests.floating_end }} --gateway={{ infrastructure_network_guests.default_gw }} guests {{ infrastructure_network_guests.host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.host_prefix | ipaddr('prefix') }}
+        neutron subnet-create --name sub_guests --enable_dhcp=False --allocation-pool=start={{ infrastructure_network_guests.floating_start }},end={{ infrastructure_network_guests.floating_end }} --gateway={{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('address') }} guests {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('prefix') }}
       when: '"guests" not in existing_nets.stdout_lines'
 
     - name: create internal network

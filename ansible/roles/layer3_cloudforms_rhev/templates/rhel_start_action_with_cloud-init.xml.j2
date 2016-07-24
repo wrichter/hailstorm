@@ -43,7 +43,7 @@
             <name>ignored</name>
             <content><![CDATA[runcmd:
 {% for nic in vm_nics %}{% if nic.dev == 'eth0' %}
- - echo -e NAME=\"{{nic.dev}}\"\\nONBOOT=yes\\nBOOTPROTO=\"static\"\\nDEVICE={{nic.dev}}\\nIPADDR=\"{{ nic.ip }}\"\\nNETMASK=\"{{ nic.netmask }}\"\\nDNS1=\"{{ infrastructure_address_default_dns }}\"\\nGATEWAY=\"{{ infrastructure_network_services.host_prefix | ipaddr('address') }}\" >/etc/sysconfig/network-scripts/ifcfg-{{nic.dev}}
+ - echo -e NAME=\"{{nic.dev}}\"\\nONBOOT=yes\\nBOOTPROTO=\"static\"\\nDEVICE={{nic.dev}}\\nIPADDR=\"{{ nic.ip }}\"\\nNETMASK=\"{{ nic.netmask }}\"\\nDNS1=\"{{ infrastructure_address_default_dns }}\"\\nGATEWAY=\"{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}\" >/etc/sysconfig/network-scripts/ifcfg-{{nic.dev}}
 {% endif %}{% if nic.dev != 'eth0' %}
  - echo -e NAME=\"{{nic.dev}}\"\\nONBOOT=yes\\nBOOTPROTO=\"static\"\\nDEVICE={{nic.dev}}\\nIPADDR=\"{{ nic.ip }}\"\\nNETMASK=\"{{ nic.netmask }}\" >/etc/sysconfig/network-scripts/ifcfg-{{nic.dev}}
 {% endif %}{% endfor %}

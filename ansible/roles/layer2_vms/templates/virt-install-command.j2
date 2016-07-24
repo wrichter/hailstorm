@@ -4,6 +4,7 @@ virt-install  --name {{ inventory_hostname_short }}
               --os-type {{ os_type }}
               --os-variant {{ os_variant }}
             {% for nic in vm_nics %}
+            {#{% if nic.netname != "guests" %}  --network network={{ nic.netname }},mac={{ nic.mac }},model=virtio {% else %} --network bridge=br0{% endif %}#}
               --network network={{ nic.netname }},mac={{ nic.mac }},model=virtio
             {% endfor %}
               --hvm
@@ -18,5 +19,5 @@ virt-install  --name {{ inventory_hostname_short }}
               --noautoconsole
               --wait 10
               --location {{ layer1_qcow_storage.path }}/{{ rhel_iso_img }}
-              --extra-args='ks=nfs:{{ infrastructure_network_admin.host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
+              --extra-args='ks=nfs:{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
             {% endif %}

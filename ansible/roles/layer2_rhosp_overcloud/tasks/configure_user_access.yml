@@ -21,7 +21,7 @@
       failed_when: project_ids.stdout == ""
       register: project_ids
 
-    - name: get existing role assignemnts for projects
+    - name: get existing role assignments for projects
       shell: >
         . ~/overcloudrc_v3 &&
         openstack role assignment list --project {{ item.stdout }}
@@ -30,7 +30,7 @@
       changed_when: false
 
 
-    - name: get existing role assignemnts for domain
+    - name: get existing role assignments for domain
       shell: >
         . ~/overcloudrc_v3 &&
         openstack role assignment list --domain {{ osp_domain_name }} --column User -f value

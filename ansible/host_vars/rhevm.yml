@@ -15,3 +15,5 @@ pool_regex: "{{ rhev_subscription_pool_regex }}"
 
 repos: "{{ rhevm_repos }}"
 packages: rhevm,ovirt-engine-extension-aaa-ldap-setup,rhevm-dwh
+
+ksdevice: eth1
