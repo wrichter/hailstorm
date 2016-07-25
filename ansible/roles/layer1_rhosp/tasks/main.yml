@@ -9,7 +9,7 @@
         file_mode: 0777
         owner: "nfsnobody"
         group: "nfsnobody"
-        export_params: "(rw,root_squash)"
+        export_params: "(rw,no_root_squash)"
   when: mode=="create"
 
 - block:

@@ -42,6 +42,7 @@
         - custom-install.yaml
         - extra-config-post-deployment-env.yaml
         - cfme_ceilometer_env.yaml
+        - storage-environment.yaml
         #- fix_osp_neutron_bug_env.yaml
         #https://bugzilla.redhat.com/show_bug.cgi?id=1352794
 
@@ -77,9 +78,9 @@
         -e ~/my_templates/environments/custom-install.yaml
         -e ~/my_templates/environments/extra-config-post-deployment-env.yaml
         -e ~/my_templates/environments/cfme_ceilometer_env.yaml
+        -e ~/my_templates/environments/storage-environment.yaml
     #    -e ~/my_templates/environments/fix_osp_neutron_bug_env.yaml
     #    --neutron-bridge-mappings datacentre:br-ex,floating:br-guests
-    #    -e ~/my_templates/environments/storage-environment.yaml
       tags: ['deploy-overcloud']
 
   when: stack.stdout == ""

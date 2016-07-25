@@ -3,10 +3,12 @@
 ## Nova ephemeral storage.
 parameter_defaults:
 
+# see https://access.redhat.com/documentation/en/red-hat-openstack-platform/8/director-installation-and-usage/67-configuring-nfs-storage
+
   #### BACKEND SELECTION ####
 
   ## Whether to enable iscsi backend for Cinder.
-  CinderEnableIscsiBackend: true
+  CinderEnableIscsiBackend: false
   ## Whether to enable rbd (Ceph) backend for Cinder.
   CinderEnableRbdBackend: false
   ## Whether to enable NFS backend for Cinder.
@@ -21,6 +23,7 @@ parameter_defaults:
 
   ## NFS mount options
   # CinderNfsMountOptions: ''
+  CinderNfsMountOptions: 'rw,sync'
   ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
   CinderNfsServers: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_cinder_path }}'
 
@@ -28,14 +31,14 @@ parameter_defaults:
   #### GLANCE FILE BACKEND PACEMAKER SETTINGS (used for mounting NFS) ####
 
   ## Whether to make Glance 'file' backend a mount managed by Pacemaker
-  GlanceFilePcmkManage: false
+  GlanceFilePcmkManage: true
   ## File system type of the mount
   GlanceFilePcmkFstype: nfs
   ## Pacemaker mount point, e.g. '192.168.122.1:/export/glance' for NFS
   GlanceFilePcmkDevice: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_glance_path }}'
   ## Options for the mount managed by Pacemaker
   # GlanceFilePcmkOptions: ''
-
+  GlanceFilePcmkOptions: 'rw,sync,context=system_u:object_r:glance_var_lib_t:s0'
 
   #### CEPH SETTINGS ####
 

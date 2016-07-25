@@ -52,6 +52,8 @@ infrastructure_network_storage:
   netname: 'storage'
   bridge: 'virbr4'
   default_gw_host_prefix: 192.168.104.1/24
+  dhcp_start: 192.168.104.172
+  dhcp_end:   192.168.104.254
   mac_prefix: "02:00:00:00:04:"
 
 infrastructure_network_rhosp_provisioning:

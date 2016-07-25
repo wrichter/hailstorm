@@ -127,6 +127,11 @@ resources:
               type: interface
               name: nic5
               use_dhcp: true
+            -
+              # HAILSTORM: this one is the storage network
+              type: interface
+              name: nic3
+              use_dhcp: true
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
