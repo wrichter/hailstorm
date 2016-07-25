@@ -64,7 +64,7 @@ parameters:
     default: ''
     description: default route for the external network
     type: string
-    
+
 resources:
   OsNetConfigImpl:
     type: OS::Heat::StructuredConfig
@@ -122,7 +122,11 @@ resources:
                   addresses:
                   -
                     ip_netmask: {get_param: TenantIpSubnet}
-
+            -
+              # HAILSTORM: this one is the admin network
+              type: interface
+              name: nic5
+              use_dhcp: true
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

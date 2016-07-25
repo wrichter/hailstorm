@@ -82,8 +82,6 @@
     #    -e ~/my_templates/environments/storage-environment.yaml
       tags: ['deploy-overcloud']
 
-
-
   when: stack.stdout == ""
   become: yes
   become_user: "{{ rhosp_stack_user }}"
@@ -168,11 +166,11 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 
-- name: dirty fix - set default route
-  shell: >
-    . ~/stackrc &&
-    for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
-    ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo ip r add default via 192.168.101.1;
-    done || true
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
+# - name: dirty fix - set default route
+#   shell: >
+#     . ~/stackrc &&
+#     for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
+#     ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo ip r add default via 192.168.101.1;
+#     done || true
+#   become: yes
+#   become_user: "{{ rhosp_stack_user }}"
