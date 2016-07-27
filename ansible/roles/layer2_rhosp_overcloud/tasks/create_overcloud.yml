@@ -79,6 +79,11 @@
         -e ~/my_templates/environments/extra-config-post-deployment-env.yaml
         -e ~/my_templates/environments/cfme_ceilometer_env.yaml
         -e ~/my_templates/environments/storage-environment.yaml
+        # --rhel-reg
+        # --reg-method satellite
+        # --reg-org "{{ hostvars['satellite'].organization_id }}"
+        # --reg-sat-url http://{{ hostvars['satellite'].vm_nics[0].ip }}
+        # --reg-activation-key {{ activation_key }}
     #    -e ~/my_templates/environments/fix_osp_neutron_bug_env.yaml
     #    --neutron-bridge-mappings datacentre:br-ex,floating:br-guests
       tags: ['deploy-overcloud']

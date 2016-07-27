@@ -36,6 +36,11 @@ resources:
           # modify VNC proxy config on compute nodes
           sudo crudini --set /etc/nova/nova.conf DEFAULT novncproxy_base_url http://openstack.{{ hailstorm_dns_domain }}:6080/vnc_auto.html &&
 
+          # ensure that nova instance dir is mounted via NFS
+          sudo setsebool -P virt_use_nfs 1
+          sudo /bin/bash -c "grep -q /var/lib/nova/instances /etc/fstab || echo '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_nova_path }}	/var/lib/nova/instances	nfs4	defaults	_netdev 0 0' >>/etc/fstab"
+          sudo mount -a
+
           # restart compute service
           sudo systemctl restart openstack-nova-compute
         }
