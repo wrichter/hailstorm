@@ -4,7 +4,8 @@
   become: yes
   become_user: "postgres"
   register: cfmeusercount
-- debug: var=cfmeusercount
+  changed_when: false
+#- debug: var=cfmeusercount
 - name: create PSQL user
   command: psql -c "CREATE ROLE cfme LOGIN UNENCRYPTED PASSWORD 'smartvm' SUPERUSER VALID UNTIL 'infinity';"
   become: yes
@@ -25,7 +26,7 @@
   changed_when: false
   failed_when: false
   register: iptablerule
-- debug: var=iptablerule
+#- debug: var=iptablerule
 - name: Update the server’s firewall to accept TCP communication on port 5432
   shell: iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT && service iptables save
   when: iptablerule.stdout == ""

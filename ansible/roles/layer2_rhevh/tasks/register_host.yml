@@ -15,36 +15,36 @@
 #   uri: body_format=json url="https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/clusters" user="admin" password="{{ hostvars['rhevm'].root_password }}"
 #   register: host_state1
 # - debug: var=host_state1
-- name: get host status
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
-         xmllint --xpath "/hosts/host[name='{{ hostname }}']" - || true
-  register: host_state1
-  changed_when: false
-- block:
-    - name: get cluster id
-      shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/clusters" | \
-              xmllint --xpath "/clusters/cluster/@id" - | \
-              awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
-      changed_when: false
-      register: cluster_id
-    - name: register host
-      shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-              -d "{{ lookup('template', 'host.xml.j2') }}" \
-              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts"
-  when: host_state1.stdout == ''
-- name: wait for host to leave state "Installing"
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
-         xmllint --xpath "/hosts/host[name='{{ hostname }}']/status/state/text()" - || true
-  register: host_state
-  until: host_state.stdout != "installing"
-  failed_when: host_state.stdout == ''
-  changed_when: false
-  retries: 30
-  delay: 20
-  ignore_errors: true
+# - name: get host status
+#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
+#          xmllint --xpath "/hosts/host[name='{{ hostname }}']" - || true
+#   register: host_state1
+#   changed_when: false
+# - block:
+#     - name: get cluster id
+#       shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#               "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/clusters" | \
+#               xmllint --xpath "/clusters/cluster/@id" - | \
+#               awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
+#       changed_when: false
+#       register: cluster_id
+#     - name: register host
+#       shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#               -d "{{ lookup('template', 'host.xml.j2') }}" \
+#               "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts"
+#   when: host_state1.stdout == ''
+# - name: wait for host to leave state "Installing"
+#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
+#          xmllint --xpath "/hosts/host[name='{{ hostname }}']/status/state/text()" - || true
+#   register: host_state
+#   until: host_state.stdout != "installing"
+#   failed_when: host_state.stdout == ''
+#   changed_when: false
+#   retries: 30
+#   delay: 20
+#   ignore_errors: true
 ## Commenting this block out as its no longer needed now that firewalld is disabled on the hosts
 ## (iptables is configured by rhev during the install anyway)
 #- name: check if host needs re-installing
@@ -67,3 +67,26 @@
 #              -d "{{ lookup('template', 'host.xml.j2') }}" \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts"
 #  when: host_state.stdout == 'install_failed'
+
+- block:
+    - name: get host status
+      shell: rhevm-shell -E 'show host {{ hostname }}' | awk '/^status-state/ { print $3 }'
+      register: host_state
+      changed_when: false
+      failed_when: false
+
+#    - debug: var=host_state
+
+    - name: register host
+      shell: rhevm-shell -E 'add host --address "{{ vm_nics[1].ip }}" --cluster-name Default --name  {{ hostname }} --root_password {{ root_password }}'
+      when: host_state.stdout == ''
+
+    - name: wait for host to leave state "Installing"
+      shell: rhevm-shell -E 'show host {{ hostname }}' | awk '/^status-state/ { print $3 }'
+      register: host_state
+      until: host_state.stdout != "installing"
+      failed_when: host_state.stdout == ''
+      changed_when: false
+      retries: 30
+      delay: 20
+  delegate_to: rhevm

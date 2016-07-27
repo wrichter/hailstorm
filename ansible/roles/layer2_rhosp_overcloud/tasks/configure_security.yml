@@ -1,0 +1,37 @@
+- block:
+    - name: get default security group id for tenant
+      shell: >
+        . ~/overcloudrc_v3 &&
+        export OS_TENANT_NAME={{ item }} &&
+        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
+        openstack security group list | awk '/default/ { print $2 }'
+      register: security_group_id
+      changed_when: false
+      failed_when: security_group_id.stdout == ""
+      with_items: "{{ osp_projects }}"
+
+    - name: get existing security group rules
+      shell: >
+        . ~/overcloudrc_v3 &&
+        export OS_TENANT_NAME={{ item.item }} &&
+        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
+        openstack security group rule list {{ item.stdout }}
+      with_items: "{{ security_group_id.results }}"
+      register: existing_security_group_rules
+      changed_when: false
+
+    - name: configure default security group to allow ssh + icmp
+      shell: >
+        . ~/overcloudrc_v3 &&
+        export OS_TENANT_NAME={{ item.0.item.item }} &&
+        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
+        openstack security group rule create --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ item.0.item.stdout }}
+      when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
+      with_nested:
+        - "{{ existing_security_group_rules.results }}"
+        -
+          - protocol: icmp
+          - protocol: tcp
+            port_range: "22:22"
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

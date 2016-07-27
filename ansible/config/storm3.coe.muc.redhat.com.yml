@@ -50,6 +50,8 @@ http_proxy:
   port: 3128
   protocol: https
 
+external_network_config:
+
 dnat_rules:
   layer1_dev: em1
   mapping:
@@ -175,4 +177,7 @@ dnat_rules:
           proto: tcp
         - from_port: 443
           to_port: 443
+          proto: tcp
+        - from_port: 6080
+          to_port: 6080
           proto: tcp

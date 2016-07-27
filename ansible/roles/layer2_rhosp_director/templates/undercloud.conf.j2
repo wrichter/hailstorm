@@ -1,12 +1,12 @@
 [DEFAULT]
 local_ip = {{ vm_nics[0].ip }}/24
-undercloud_public_vip = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 1 }}
-undercloud_admin_vip = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 2 }}
 local_interface = {{ vm_nics[0].dev }}
+undercloud_public_vip = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 10 }}
+undercloud_admin_vip = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 11 }}
 masquerade_network = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}0/24
-dhcp_start = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 10 }}
-dhcp_end = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 40 }}
+dhcp_start = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 13 }}
+dhcp_end = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 30 }}
 network_cidr = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}0/24
 network_gateway = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}1
-discovery_iprange = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 50 }},{{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 100 }}
+discovery_iprange = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 31 }},{{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 50 }}
 [auth]

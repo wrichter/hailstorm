@@ -5,7 +5,7 @@ disk:
   size: 60
   format: qcow2
 skip_install: true
-#graphics: vnc,listen=0.0.0.0,password=redhat01
+graphics: vnc,listen=0.0.0.0,password=redhat01
 
 # nic0 needs to be on the provisioning network
 nic_attachments:
@@ -14,5 +14,6 @@ nic_attachments:
   - "{{ infrastructure_network_storage }}"
   - "{{ infrastructure_network_rhosp_internal }}"
   - "{{ infrastructure_network_guests }}"
+  - "{{ infrastructure_network_admin }}"
 default_route_via: "{{ infrastructure_network_services }}"
 name_service_via: "{{ infrastructure_network_services }}"

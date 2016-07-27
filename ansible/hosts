@@ -19,9 +19,9 @@ rhevm           ansible_host=192.168.101.12 activation_key="AK-CV-RHEV-MANAGER-P
 
 # the nodes that are RHEV-Hypervisor
 [rhevh]
-rhevh1          ansible_host=192.168.101.13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
-rhevh2          ansible_host=192.168.101.14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
-rhevh3          ansible_host=192.168.101.15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD"
+rhevh1          ansible_host=192.168.101.13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh1 }}{% endif %}"
+rhevh2          ansible_host=192.168.101.14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh2 }}{% endif %}"
+rhevh3          ansible_host=192.168.101.15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh3 }}{% endif %}"
 
 # the CloudForms management engine
 [cloudforms]
@@ -66,13 +66,15 @@ rhosp-compute3  ansible_host=192.168.101.33 activation_key="AK-CV-RHOSP8-PROD"
 
 # The group of all osp control nodes
 [rhosp-control]
-rhosp-control1  ansible_host=192.168.101.34 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-control2  ansible_host=192.168.101.35 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-control1  ansible_host=192.168.101.34 activation_key="AK-CV-RHOSP8-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
+rhosp-control2  ansible_host=192.168.101.35 activation_key="AK-CV-RHOSP8-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
+rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP8-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
-openstack       ansible_host=192.168.101.173 nic_attachments="[ {{ infrastructure_network_services }} ]"
+openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]"
+undercloud-public ansible_host=192.168.105.40
+undercloud-admin  ansible_host=192.168.105.41
 
 
 #### ADDITIONAL GROUPS
@@ -165,3 +167,4 @@ infrastructure
 ipa
 ose3
 efk
+rhevm

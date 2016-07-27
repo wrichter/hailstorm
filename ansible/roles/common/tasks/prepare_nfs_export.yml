@@ -3,7 +3,7 @@
   file: state=directory path={{ item.path }} mode="{{ file_mode }}" owner="{{ owner }}" group="{{ group }}"
   with_items: "{{ items }}"
 - name: create /etc/exports entry
-  lineinfile: dest=/etc/exports line="{{ item.path }} {{ infrastructure_network_storage.host_prefix }}{{ export_params }}"
+  lineinfile: dest=/etc/exports regexp="{{ item.path }}.*" line="{{ item.path }} {{ infrastructure_network_storage.default_gw_host_prefix }}{{ export_params }}"
   register: etc_exports
   with_items: "{{ items }}"
 - name: export file systems

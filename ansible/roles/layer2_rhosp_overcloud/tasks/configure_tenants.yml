@@ -1,0 +1,17 @@
+- name: get tenant list
+  shell: >
+    . ~/overcloudrc_v3 &&
+    openstack project list -c Name | awk 'NR>3 { print $2 }'
+  register: os_projects
+  changed_when: false
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+#- debug: var=os_projects
+- name: create tenants
+  shell: >
+    . ~/overcloudrc_v3 &&
+    openstack project create "{{ item }}" --domain {{ osp_domain_name }}
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  when: "item not in os_projects.stdout_lines"
+  with_items: "{{ osp_projects }}"

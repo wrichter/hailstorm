@@ -13,5 +13,6 @@ nic_attachments:
   - "{{ infrastructure_network_services }}"
   - "{{ infrastructure_network_storage }}"
   - "{{ infrastructure_network_rhosp_internal }}"
+  - "{{ infrastructure_network_admin }}"
 default_route_via: "{{ infrastructure_network_services }}"
 name_service_via: "{{ infrastructure_network_services }}"

@@ -1,0 +1,47 @@
+- name: get current connections
+  shell: nmcli con show | cut -c68- | awk '{ print $1 }'
+  register: current_connections
+  changed_when: false
+#
+# - name: create bridge
+#   shell: nmcli con add type bridge con-name {{ infrastructure_network_guests.bridge }} ifname {{ infrastructure_network_guests.bridge }}
+#   when: >
+#     infrastructure_network_guests.forward_mode == "bridge"
+#     and
+#     infrastructure_network_guests.bridge not in current_connections.stdout_lines
+#
+# - name: list devices attached to bridge
+#   shell: brctl show {{ infrastructure_network_guests.bridge }} | cut -f6- | sed "s/\t//g"
+#   register: devices_in_bridge
+#   changed_when: false
+#
+# - name: add external device to bridge
+#   shell: nmcli con add type bridge-slave con-name {{ infrastructure_network_guests.bridge }}-{{ external_network_config.guest_network_bridging.layer1_dev }} ifname {{ external_network_config.guest_network_bridging.layer1_dev }} master {{ infrastructure_network_guests.bridge }}
+#   when: >
+#     infrastructure_network_guests.forward_mode == "bridge"
+#     and
+#     external_network_config.guest_network_bridging.layer1_dev not in devices_in_bridge.stdout_lines
+#
+# - name: activate bridge
+#   command: nmcli con up {{ infrastructure_network_guests.bridge }}
+#   when: infrastructure_network_guests.forward_mode == "bridge"
+
+- block:
+    - name: backup device config
+      copy: src="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.guest_network_bridging.layer1_dev }}" dest="/etc/sysconfig/network-scripts/BACKUP-{{ external_network_config.guest_network_bridging.layer1_dev }}" force=no remote_src=true mode=644
+
+    - name: create bridge via libvirt
+      shell: virsh iface-bridge {{ external_network_config.guest_network_bridging.layer1_dev }} {{ infrastructure_network_guests.bridge }} --delay 2 --no-start
+
+    - name: modify ifcfg script to exclude from NetworkManager
+      lineinfile: dest="/etc/sysconfig/network-scripts/ifcfg-{{ item }}" line="NM_MANAGED=No" regexp="^NM_MANAGED.*"
+      with_items:
+        - "{{ external_network_config.guest_network_bridging.layer1_dev }}"
+        - "{{ infrastructure_network_guests.bridge }}"
+
+    - name: start bridge
+      shell: virsh iface-start {{ infrastructure_network_guests.bridge }}
+  when: >
+    external_network_config.guest_network_bridging is defined
+    and
+    infrastructure_network_guests.bridge not in current_connections.stdout_lines

@@ -24,6 +24,14 @@ cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: manageiq-ovirt-devel.ova
 
+osp_kvm_images:
+  - image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+    name: RHEL7
+  - image: cirros-0.3.4-x86_64-disk.img
+    name: CirrOS
+  - image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    name: Windows Server 2012
+
 # RED HAT SUBSCRIPTION POOLS
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
@@ -90,44 +98,35 @@ ipa_user:
   - username: rhev-bind-user
     first: rhev
     last: binduser
+    password: "{{ root_password }}"
   - username: ose-bind-user
     first: ose
     last: binduser
     password: "{{ root_password }}"
-  - username: glance
-    first: OpenStack
-    last: Glance
+  - username: osp-bind-user
+    first: osp
+    last: binduser
     password: "{{ root_password }}"
-  - username: cinder
-    first: OpenStack
-    last: Glance
+  - username: cfme-bind-user
+    first: cmfe
+    last: binduser
     password: "{{ root_password }}"
-  - username: heat
-    first: OpenStack
-    last: Heat
-    password: "{{ root_password }}"
-  - username: neutron
-    first: OpenStack
-    last: Neutron
-    password: "{{ root_password }}"
-  - username: nova
-    first: OpenStack
-    last: Nova
-    password: "{{ root_password }}"
-  - username: swift
-    first: OpenStack
-    last: Swift
-    password: "{{ root_password }}"
+
 
 ipa_group:
   - groupname: service-accounts
     members:
       - rhev-bind-user
       - ose-bind-user
-      - glance
-      - cinder
-      - heat
-      - neutron
-      - nova
-      - swift
+      - osp-bind-user
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=0
+
+osp_domain_name: hailstorm
+osp_projects:
+  - demo
+osp_admin_user:
+  - cfme-bind-user
+osp_member_user:
+  - consumer
+  - developer
+  - approver

@@ -1,6 +1,8 @@
 - block:
     - include: prepare_host.yml
       tags: ['layer1','layer1-host']
+    - include: configure_bridge.yml
+      tags: ['layer1','layer1-bridge']
     - include: define_libvirt_storage_pools.yml
       tags: ['layer1','layer1-libvirt-storage']
     - include: define_libvirt_networks.yml
@@ -19,4 +21,5 @@
 
 - block:
     - include: destroy_libvirt_networks.yml
+    - include: remove_bridge.yml
   when: mode=='destroy'

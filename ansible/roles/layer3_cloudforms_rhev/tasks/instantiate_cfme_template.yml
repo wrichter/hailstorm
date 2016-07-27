@@ -124,6 +124,10 @@
       when: item.stdout == ''
       with_items: "{{ vm_individual_nic_url.results }}"
 
+    # - name: increase CFME VM memory
+    #   shell: rhevm-shell -E ''
+    #   delegate_to: rhevm
+
 
     - name: find CFME VM Start URL
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \

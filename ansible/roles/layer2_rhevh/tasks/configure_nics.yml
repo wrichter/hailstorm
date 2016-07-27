@@ -1,86 +1,108 @@
 
-- name: get host nics link
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
-         xmllint --xpath "//host[name='{{ hostname }}']/link[@rel='nics']/@href" - | \
-         awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-  changed_when: false
-  failed_when: host_nics_url.stdout == ''
-  register: host_nics_url
+# - name: get host nics link
+#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
+#          xmllint --xpath "//host[name='{{ hostname }}']/link[@rel='nics']/@href" - | \
+#          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+#   changed_when: false
+#   failed_when: host_nics_url.stdout == ''
+#   register: host_nics_url
+#
+# #curl -u admin@internal:redhat01 -k https://192.168.103.10/api/hosts/a79a3bfe-2a62-4531-9120-9e957543bd13/nics | xmllint --xpath "//host_nic[not(network)]" -
+# - name: find out which nics have not yet been assigned
+#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ host_nics_url.stdout }}" | \
+#         xmllint --xpath "//host_nic[not(network)]/name/text()" - || true
+#   register: unassigned_nic
+#   changed_when: false
+#
+# #- debug: var=unassigned_nic
+#
+# - block:
+#     - name: get network ids
+#       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/networks" | \
+#              xmllint --xpath "//networks/network[name='{{ item.netname[0:10] }}']/@id" - | \
+#              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+#       changed_when: false
+#       register: network_ids
+#       when: unassigned_nic.stdout.find(item.dev) != -1
+#       with_items:
+#          - "{{vm_nics[4]}}"
+#          - "{{vm_nics[3]}}"
+#          - "{{vm_nics[2]}}"
+#          - "{{vm_nics[1]}}"
+#          - "{{vm_nics[0]}}"
+#          - "{{vm_nics[0]}}"
+#       # for some odd reason the first attempt for the default NW fails...hence doing it twice and ignoring the error
+#
+#     - name: get networkattachment links
+#       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ host_nics_url.stdout }}" | \
+#              xmllint --xpath "//host_nics/host_nic[name='{{ item.item.dev }}']/link[@rel='networkattachments']/@href" - | \
+#              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+#       changed_when: false
+#       failed_when: networkattachment_url.stdout == ''
+#       register: networkattachment_url
+#       with_items: "{{ network_ids.results }}"
+#       when: not item|skipped
+#
+#     - name: get deactivate host link
+#       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
+#              xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='deactivate']/@href" - | \
+#              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+#       changed_when: false
+#       failed_when: deactivate_url.stdout == ''
+#       register: deactivate_url
+#     - name: set host into maintenance mode (deactivate host)
+#       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              -d '<action />'
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ deactivate_url.stdout }}"
+#       failed_when: false
+#
+#     - name: attach nics to networks
+#       shell: curl -v -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              -d '{{ lookup('template','nic_network_attachment.xml.j2') }}'
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
+#       with_items: "{{ networkattachment_url.results }}"
+#       when:  not item|skipped
+#       failed_when: false
+#       register: nic_attachment
+#     - debug: var=nic_attachment
+#
+#     - name: get activate host link
+#       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
+#              xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='activate']/@href" - | \
+#              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+#       changed_when: false
+#       failed_when: activate_url.stdout == ''
+#       register: activate_url
+#     - name: set host into active mode (activate host)
+#       shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#              -d '<action />'
+#              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ activate_url.stdout }}"
+#   when: unassigned_nic.stdout != ''
 
-#curl -u admin@internal:redhat01 -k https://192.168.103.10/api/hosts/a79a3bfe-2a62-4531-9120-9e957543bd13/nics | xmllint --xpath "//host_nic[not(network)]" -
+
 - name: find out which nics have not yet been assigned
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-        "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ host_nics_url.stdout }}" | \
-        xmllint --xpath "//host_nic[not(network)]/name/text()" - || true
+#rhevm-shell -E 'list nics --parent-host-name rhevh1.hailstorm2.coe.muc.redhat.com --show-all'
+# show nic --parent-host-name rhevh1.hailstorm2.coe.muc.redhat.com eth0
+  shell: rhevm-shell -E 'show nic --parent-host-name {{ hostname }} {{ item.dev }}' | awk '/^network-id/ { print $3 }'
+  delegate_to: rhevm
   register: unassigned_nic
   changed_when: false
+  with_items: "{{ vm_nics }}"
 
-#- debug: var=unassigned_nic
 
-- block:
-    - name: get network ids
-      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/networks" | \
-             xmllint --xpath "//networks/network[name='{{ item.netname[0:10] }}']/@id" - | \
-             awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-      changed_when: false
-      register: network_ids
-      when: unassigned_nic.stdout.find(item.dev) != -1
-      with_items:
-         - "{{vm_nics[4]}}"
-         - "{{vm_nics[3]}}"
-         - "{{vm_nics[2]}}"
-         - "{{vm_nics[1]}}"
-         - "{{vm_nics[0]}}"
-         - "{{vm_nics[0]}}"
-      # for some odd reason the first attempt for the default NW fails...hence doing it twice and ignoring the error
+# - name: deactivate host
 
-    - name: get networkattachment links
-      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ host_nics_url.stdout }}" | \
-             xmllint --xpath "//host_nics/host_nic[name='{{ item.item.dev }}']/link[@rel='networkattachments']/@href" - | \
-             awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-      changed_when: false
-      failed_when: networkattachment_url.stdout == ''
-      register: networkattachment_url
-      with_items: "{{ network_ids.results }}"
-      when: not item|skipped
+- name: asign nic to network
+  shell: rhevm-shell -E 'action nic {{ item.item.dev }} attach --parent-host-name {{ hostname }} --network-name {{ item.item.netname[0:10] }}'
+  when: item.stdout == ""
+  with_items: "{{ unassigned_nic.results }}"
+  delegate_to: rhevm
 
-    - name: get deactivate host link
-      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
-             xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='deactivate']/@href" - | \
-             awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-      changed_when: false
-      failed_when: deactivate_url.stdout == ''
-      register: deactivate_url
-    - name: set host into maintenance mode (deactivate host)
-      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d '<action />'
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ deactivate_url.stdout }}"
-      failed_when: false
-
-    - name: attach nics to networks
-      shell: curl -v -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d '{{ lookup('template','nic_network_attachment.xml.j2') }}'
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
-      with_items: "{{ networkattachment_url.results }}"
-      when:  not item|skipped
-      failed_when: false
-      register: nic_attachment
-    - debug: var=nic_attachment
-
-    - name: get activate host link
-      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
-             xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='activate']/@href" - | \
-             awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
-      changed_when: false
-      failed_when: activate_url.stdout == ''
-      register: activate_url
-    - name: set host into active mode (activate host)
-      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d '<action />'
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ activate_url.stdout }}"
-  when: unassigned_nic.stdout != ''
+# - name: activate host
+# - name: wait for host to reach the state up

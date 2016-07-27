@@ -1,0 +1,43 @@
+- block:
+    - name: get image list (default project)
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack image list -c Name | awk 'NR>3 { print $2 }'
+      register: images
+      changed_when: false
+
+    # - name: load CirrOS image (default project)
+    #   shell: >
+    #     . ~/overcloudrc_v3 &&
+    #     curl http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img |
+    #     openstack image create --public --disk-format qcow2 CirrOS
+    #   when: '"CirrOS" not in images.stdout_lines'
+
+    - name: load uncompressed KVM images (from layer1 host binary dir)
+      shell: >
+        . ~/overcloudrc_v3 &&
+        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ item.image }} |
+        openstack image create --public --disk-format qcow2 {{ item.name }}
+      when: item.name not in images.stdout_lines and not item.image | search('\.gz$')
+      with_items: "{{ osp_kvm_images }}"
+
+    - name: load compressed KVM images (from layer1 host binary dir)
+      shell: >
+        . ~/overcloudrc_v3 &&
+        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} zcat {{ layer1_binary_dir }}/{{ item.image }} |
+        openstack image create --public --disk-format qcow2 "{{ item.name }}"
+      when: item.name not in images.stdout_lines and item.image | search('\.gz$')
+      with_items: "{{ osp_kvm_images }}"
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+
+
+# - name: get image facts
+#   os_image_facts:
+#     auth: "{{ os_auth }}"
+#     image: "{{ item.name }}"
+#   register: os_image_facts
+#   with_items:
+#     - name: CirrOS
+#
+# - debug: var=os_image_facts

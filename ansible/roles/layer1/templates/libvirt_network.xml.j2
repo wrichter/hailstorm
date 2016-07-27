@@ -6,8 +6,8 @@
   <forward mode="{{ item.forward_mode }}"/>
   {% endif %}
 
-  {# <ip address="{{item.gw_ip}}" netmask="{{item.netmask}}"> #}
-  <ip address="{{ item.host_prefix | ipaddr('address') }}" netmask="{{ item.host_prefix | ipaddr('netmask')  }}">
+  {% if item.forward_mode is not defined or item.forward_mode != "bridge" %}
+  <ip address="{{ item.default_gw_host_prefix | ipaddr('address') }}" netmask="{{ item.default_gw_host_prefix | ipaddr('netmask')  }}">
 
   {% if item.dhcp_start is defined and item.dhcp_end is defined %}
     <dhcp>
@@ -21,4 +21,5 @@
   {% endif %}
 
   </ip>
+  {% endif %}
 </network>

@@ -1,5 +1,9 @@
 - name: delete overcloud heat stack
-  shell: . ~/stackrc && heat stack-delete overcloud -y
+  shell: . ~/stackrc && heat stack-list | grep overcloud && heat stack-delete overcloud -y || true
   ignore_errors: true
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+  register: stack
+  until: stack.stdout == ""
+  retries: 30
+  delay: 60

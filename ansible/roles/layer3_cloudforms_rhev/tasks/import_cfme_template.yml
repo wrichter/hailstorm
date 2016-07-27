@@ -1,11 +1,17 @@
+# - name: check if template is already imported
+#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/templates" | \
+#          xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]" - || true
+#   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+#   changed_when: false
+#   register: template
+
 - name: check if template is already imported
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/templates" | \
-         xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]" - || true
-  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  shell: rhevm-shell -E 'list templates --query name=RedHat_CFME*' | awk '/^name/'
+  delegate_to: rhevm
   changed_when: false
   register: template
-
+  
 - block:
     - name: get export domain UUID
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \

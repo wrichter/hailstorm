@@ -1,2 +1,11 @@
 ansible_ssh_common_args: "-i ./binary/{{ hailstorm_ssh_priv_key_file }} -o ProxyCommand='ssh -i ./binary/{{ hailstorm_ssh_priv_key_file }} -W %h:%p -q root@{{ infrastructure_address_ssh_jump_host }}' -o StrictHostKeyChecking=no"
-vm_nics: "[{% if nic_attachments is defined %}{% for nic_attachment in nic_attachments %}{\"ip\":\"{{ nic_attachment.host_prefix | regex_replace('(^.*\\.).*$','\\1') }}{{ ansible_host.split('.')[3] }}\", \"dev\": \"eth{{ loop.index0 }}\", \"default_gw\":\"{{ nic_attachment.host_prefix | ipaddr('address') }}\", \"netmask\":\"{{ nic_attachment.host_prefix | ipaddr('netmask') }}\", \"mac\":\"{{ nic_attachment.mac_prefix }}{{ \"%02X\" % (ansible_host.split('.')[3]|int) }}\", \"netname\":\"{{ nic_attachment.netname }}\" }{% if not loop.last %},{% endif %}{% endfor %}{% endif %}]"
+
+vm_nics: >
+  [{% if nic_attachments is defined %}{% for nic_attachment in nic_attachments %}{
+  "mac":        "{% if nic_attachment.forward_mode is defined and nic_attachment.forward_mode == 'bridge' %}{{ bridged_nw_config[nic_attachment.netname].mac }}{% else %}{{ nic_attachment.mac_prefix }}{{ "%02X" % (ansible_host.split('.')[3]|int) }}{% endif %}",
+  "ip":         "{% if nic_attachment.forward_mode is defined and nic_attachment.forward_mode == 'bridge' %}{{ bridged_nw_config[nic_attachment.netname].ip }}{% else %}{{ nic_attachment.default_gw_host_prefix | regex_replace('^(.*\.).*$','\1') }}{{ ansible_host.split('.')[3] }}{% endif %}",
+  "dev":        "eth{{ loop.index0 }}",
+  "default_gw": "{{ nic_attachment.default_gw_host_prefix | ipaddr('address') }}",
+  "netmask":    "{{ nic_attachment.default_gw_host_prefix | ipaddr('netmask') }}",
+  "netname":    "{{ nic_attachment.netname }}"
+  }{% if not loop.last %},{% endif %}{% endfor %}{% endif %}]

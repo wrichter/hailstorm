@@ -1,10 +1,26 @@
-#import node configs
-- name: count deployed servers
-  shell: . ~/stackrc && openstack server list -f csv | wc -l
-  register: server_count
-  become: yes
-  become_user: "{{ rhosp_stack_user }}"
+- name: check deployed stack
+  shell: . ~/stackrc && heat stack-list | grep overcloud
+  failed_when: false
   changed_when: false
+  register: stack
+
+- block:
+    - name: check IPA is available
+      wait_for: host={{ inventory_hostname }} port=22 timeout=1
+      register: ipa_available
+
+    - name: copy certificate of IPA
+      command: "{{ item }}"
+      delegate_to: ipa
+      register: certificate
+      changed_when: false
+      failed_when: certificate.stdout == ''
+      when: ipa_available|success
+      with_items:
+        - cat /etc/ipa/ca.crt
+        - openssl x509 -in /etc/ipa/ca.crt -outform PEM
+  when: stack.stdout == ""
+
 - block:
     - name: Create my_templates directory
       file: path=~/my_templates state=directory
@@ -20,19 +36,21 @@
     #    sed '$ a # NIC Configs for our roles\n  OS::TripleO::Compute::Net::SoftwareConfig: ../nic-configs/compute.yaml\n  OS::TripleO::Controller::Net::SoftwareConfig: ../nic-configs/controller.yaml\n  OS::TripleO::CephStorage::Net::SoftwareConfig: ../nic-configs/ceph-storage.yaml'
     #    > ~/my_templates/environments/network-custom.yaml
 
-    - name: check IPA is available
-      wait_for: host={{ inventory_hostname }} port=22 timeout=1
-      register: ipa_available
-
     - name: create custom install configuration
       template: src={{ item }}.j2 dest=~/my_templates/environments/{{ item }} mode=0644
       with_items:
         - custom-install.yaml
+        - extra-config-post-deployment-env.yaml
+        - cfme_ceilometer_env.yaml
+        - storage-environment.yaml
         #- fix_osp_neutron_bug_env.yaml
         #https://bugzilla.redhat.com/show_bug.cgi?id=1352794
 
     - name: create first boot configuration
       template: src=firstboot-config.yaml.j2 dest=~/my_templates/firstboot-config.yaml mode=0644
+
+    - name: create post deploy configuration (to adapt vnc proxy & keystone settings)
+      template: src=extra-config-post-deployment.yaml.j2 dest=~/my_templates/extraconfig/post_deploy/extra-config-post-deployment.yaml mode=0644
 
     # - name: create post deploy osp networking fix
     #   template: src=fix_osp_neutron_bug_post_deployment.yaml.j2 dest=~/my_templates/extraconfig/post_deploy/fix_osp_neutron_bug_post_deployment.yaml mode=0644
@@ -52,17 +70,108 @@
         --templates
         --control-flavor control
         --compute-flavor compute
-        --control-scale 1
+        --control-scale 3
         --compute-scale 2
         --neutron-tunnel-types vxlan
         --neutron-network-type vxlan
         --ntp-server {{ infrastructure_address_ntp_server }}
         -e ~/my_templates/environments/custom-install.yaml
+        -e ~/my_templates/environments/extra-config-post-deployment-env.yaml
+        -e ~/my_templates/environments/cfme_ceilometer_env.yaml
+        -e ~/my_templates/environments/storage-environment.yaml
     #    -e ~/my_templates/environments/fix_osp_neutron_bug_env.yaml
     #    --neutron-bridge-mappings datacentre:br-ex,floating:br-guests
-    #    -e ~/my_templates/environments/storage-environment.yaml
       tags: ['deploy-overcloud']
+
+  when: stack.stdout == ""
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+
+- block:
+    - name: copy overcloudrc
+      copy: src=~/overcloudrc dest=~/overcloudrc_v3 force=no remote_src=true mode=755
+      when: ipa_available|success
+
+    - name: adapt overcloudrc
+      lineinfile: dest=~/overcloudrc_v3 line="{{ item.line }}" regexp="{{ item.regexp }}"
+      with_items:
+        - line: "export OS_IDENTITY_API_VERSION=3"
+          regexp: "^export OS_IDENTITY_API_VERSION"
+        - line: "export OS_PROJECT_DOMAIN_NAME=Default"
+          regexp: "^export OS_PROJECT_DOMAIN_NAME"
+        - line: "export OS_USER_DOMAIN_NAME=Default"
+          regexp: "^export OS_USER_DOMAIN_NAME"
+
+    - name: change auth url
+      replace: dest=~/overcloudrc_v3 regexp="5000/v2.0" replace="5000/v3"
+
+    - name: list openstack domains
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack domain list -f value -c Name
+      register: domains
+      changed_when: false
+      failed_when: domains.stdout == ""
+
+    - name: create osp domain
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack domain create {{ osp_domain_name }}
+      when: osp_domain_name not in domains.stdout_lines
+
+    - name: restart keystone on controller
+      shell: >
+        . ~/stackrc &&
+        for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl restart openstack-keystone;
+        done
+      when: osp_domain_name not in domains.stdout_lines
 
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  when: (server_count.stdout | int < 3) #TODO - adapt to number of servers in case storage deployment is performed via director
+  when: ipa_available|success
+
+- block:
+    - name: find existing services
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack service list --column Name -f value
+      register: existing_services
+      changed_when: false
+
+    - name: create keystone v3 service
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack service create --name keystonev3 --description "Keystone Identity Service v3" identityv3
+      when: '"keystonev3" not in existing_services.stdout_lines'
+
+    - name: get existing keystone v3 endpoints
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack endpoint list --service keystonev3 --column Interface -f value
+      changed_when: false
+      register: keystonev3_endpoints
+
+    - name: create keystone v3 endpoints
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack endpoint list --service keystone --interface {{ item }} --column URL -f value |
+        sed s/v2.0/v3/g |
+        xargs openstack endpoint create --region regionOne keystonev3 {{ item }}
+      when: item not in keystonev3_endpoints.stdout_lines
+      with_items:
+        - admin
+        - internal
+        - public
+
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+
+# - name: dirty fix - set default route
+#   shell: >
+#     . ~/stackrc &&
+#     for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
+#     ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo ip r add default via 192.168.101.1;
+#     done || true
+#   become: yes
+#   become_user: "{{ rhosp_stack_user }}"

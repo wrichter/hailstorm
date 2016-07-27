@@ -1,0 +1,15 @@
+- name: read overcloudrc
+  command: "awk '{ print substr($2,0,index($2,\"=\")-1) \": \\\"\" substr($2,index($2,\"=\")+1) \"\\\"\" }' overcloudrc"
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  register: overcloudrc
+  changed_when: false
+
+# - debug: var=overcloudrc
+
+- name: add overcloud access data as facts (suitable as auth object for other ansible modules)
+  set_fact:
+    os_auth:  "{{ os_auth | combine( {item.key|replace('OS_','')|lower|replace('tenant','project') : item.value} ) }}"
+  with_dict: "{{ overcloudrc.stdout|from_yaml }}"
+
+#- debug: var=os_auth

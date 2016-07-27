@@ -15,7 +15,7 @@ restrict ::1
 
 # Hosts on local network are less restricted.
 {% for network in infrastructure_networks %}
-restrict {{ network.host_prefix | ipaddr('address') }} mask {{ network.host_prefix | ipaddr('netmask') }} nomodify notrap
+restrict {{ network.default_gw_host_prefix | ipaddr('address') }} mask {{ network.default_gw_host_prefix | ipaddr('netmask') }} nomodify notrap
 {% endfor %}
 
 # Use public servers from the pool.ntp.org project.
