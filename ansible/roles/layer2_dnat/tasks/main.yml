@@ -1,3 +1,3 @@
 - block:
     - include: adapt_libvirt_xml.yml
-  when: mode=="create" and dnat_rules is defined
+  when: mode=="create" and external_network_config.services_network_dnat is defined

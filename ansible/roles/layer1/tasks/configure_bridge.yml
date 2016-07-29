@@ -35,8 +35,14 @@
     - name: backup device config
       copy: src="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.guest_network_bridging.layer1_dev }}" dest="/etc/sysconfig/network-scripts/BACKUP-{{ external_network_config.guest_network_bridging.layer1_dev }}" force=no remote_src=true mode=644
 
-    - name: create bridge via libvirt
-      shell: virsh iface-bridge {{ external_network_config.guest_network_bridging.layer1_dev }} {{ infrastructure_network_guests.bridge }} --delay 2 --no-start
+#    - name: create bridge via libvirt
+#      shell: virsh iface-bridge {{ external_network_config.guest_network_bridging.layer1_dev }} {{ infrastructure_network_guests.bridge }} --delay 2 --no-stp --no-start
+
+    - name: create bridge definition file
+      template: src=libvirt_interface.xml.j2 dest=/tmp/iface-br0.xml
+
+    - name: create bridge from definition file
+      shell: virsh iface-define --file /tmp/iface-br0.xml
 
     # - name: modify ifcfg script to exclude from NetworkManager
     #   lineinfile: dest="/etc/sysconfig/network-scripts/ifcfg-{{ item }}" line="NM_MANAGED=No" regexp="^NM_MANAGED.*"
@@ -49,4 +55,4 @@
   when: >
     external_network_config.guest_network_bridging is defined
     and
-    infrastructure_network_guests.bridge no in bridge_config.stdout_lines
+    infrastructure_network_guests.bridge not in bridge_config.stdout_lines

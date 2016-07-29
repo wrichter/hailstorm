@@ -14,8 +14,8 @@ $TTL    3h
 @       IN      NS      {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}.
 @       IN      MX      10 {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}.
 
-{% if dnat_rules is defined %}
-{% for mapping in dnat_rules.mapping %}
+{% if external_network_config is defined and external_network_config.services_network_dnat is defined %}
+{% for mapping in external_network_config.services_network_dnat.mapping %}
 {% if mapping.expose_machine is defined %}
 {{ mapping.expose_machine }} 				IN      A       {{ mapping.on_host_prefix | ipaddr('address') }}
 {% if hostvars[mapping.expose_machine].additional_dns is defined %}

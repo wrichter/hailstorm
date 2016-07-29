@@ -52,9 +52,6 @@ http_proxy:
   protocol: https
 
 external_network_config:
-
-
-external_network_config:
   services_network_dnat:
     layer1_dev: em1
     mapping:
