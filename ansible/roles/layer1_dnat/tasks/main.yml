@@ -2,7 +2,7 @@
     - include: configure_additional_ip_addresses.yml
     - include: register_libvirt_hook.yml
     - include: create_iptables_config.yml
-  when: mode=="create" and dnat_rules is defined
+  when: mode=="create" and external_network_config.services_network_dnat is defined
 
 - block:
     - name: destroy networks (to remove IPTables entries)
@@ -17,4 +17,4 @@
       ignore_errors: true
       # may throw an error since restarting libvirtd also restarts the network it seems
     - include: remove_additional_ip_addresses.yml
-  when: mode=="destroy" and dnat_rules is defined
+  when: mode=="destroy" and external_network_config.services_network_dnat is defined

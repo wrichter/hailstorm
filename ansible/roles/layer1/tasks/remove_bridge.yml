@@ -1,8 +1,8 @@
-- name: get current connections
-  shell: nmcli con show | cut -c68- | awk '{ print $1 }'
-  register: current_connections
-  changed_when: false
-
+# - name: get current connections
+#   shell: nmcli con show | cut -c68- | awk '{ print $1 }'
+#   register: current_connections
+#   changed_when: false
+#
 # - name: deactivate bridge
 #   command: nmcli con down {{ infrastructure_network_guests.bridge }}
 #   when: >
@@ -16,3 +16,22 @@
 #     infrastructure_network_guests.forward_mode == "bridge"
 #     and
 #     infrastructure_network_guests.bridge not in current_connections.stdout_lines
+
+- name: check if bridge device is configured
+  shell: virsh iface-list --all | awk 'NR>2 {print $1}'
+  changed_when: false
+  register: bridge_config
+
+- block:
+    - name: turn off libvirt iface
+      shell: virsh iface-destroy {{ infrastructure_network_guests.bridge }}
+      
+    - name: remove libvirt iface
+      shell: virsh iface-undefine {{ infrastructure_network_guests.bridge }}
+
+    - name: reconsitute ifcfg file
+      copy: src="/etc/sysconfig/network-scripts/BACKUP-{{ external_network_config.guest_network_bridging.layer1_dev }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.guest_network_bridging.layer1_dev }}" remote_src=true
+  when: >
+    external_network_config.guest_network_bridging is defined
+    and
+    infrastructure_network_guests.bridge no in bridge_config.stdout_lines

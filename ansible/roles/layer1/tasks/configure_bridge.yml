@@ -1,7 +1,7 @@
-- name: get current connections
-  shell: nmcli con show | cut -c68- | awk '{ print $1 }'
-  register: current_connections
-  changed_when: false
+# - name: get current connections
+#   shell: nmcli con show | cut -c68- | awk '{ print $1 }'
+#   register: current_connections
+#   changed_when: false
 #
 # - name: create bridge
 #   shell: nmcli con add type bridge con-name {{ infrastructure_network_guests.bridge }} ifname {{ infrastructure_network_guests.bridge }}
@@ -26,6 +26,11 @@
 #   command: nmcli con up {{ infrastructure_network_guests.bridge }}
 #   when: infrastructure_network_guests.forward_mode == "bridge"
 
+- name: check if bridge device is configured
+  shell: virsh iface-list --all | awk 'NR>2 {print $1}'
+  changed_when: false
+  register: bridge_config
+
 - block:
     - name: backup device config
       copy: src="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.guest_network_bridging.layer1_dev }}" dest="/etc/sysconfig/network-scripts/BACKUP-{{ external_network_config.guest_network_bridging.layer1_dev }}" force=no remote_src=true mode=644
@@ -33,15 +38,15 @@
     - name: create bridge via libvirt
       shell: virsh iface-bridge {{ external_network_config.guest_network_bridging.layer1_dev }} {{ infrastructure_network_guests.bridge }} --delay 2 --no-start
 
-    - name: modify ifcfg script to exclude from NetworkManager
-      lineinfile: dest="/etc/sysconfig/network-scripts/ifcfg-{{ item }}" line="NM_MANAGED=No" regexp="^NM_MANAGED.*"
-      with_items:
-        - "{{ external_network_config.guest_network_bridging.layer1_dev }}"
-        - "{{ infrastructure_network_guests.bridge }}"
+    # - name: modify ifcfg script to exclude from NetworkManager
+    #   lineinfile: dest="/etc/sysconfig/network-scripts/ifcfg-{{ item }}" line="NM_MANAGED=No" regexp="^NM_MANAGED.*"
+    #   with_items:
+    #     - "{{ external_network_config.guest_network_bridging.layer1_dev }}"
+    #     - "{{ infrastructure_network_guests.bridge }}"
 
     - name: start bridge
       shell: virsh iface-start {{ infrastructure_network_guests.bridge }}
   when: >
     external_network_config.guest_network_bridging is defined
     and
-    infrastructure_network_guests.bridge not in current_connections.stdout_lines
+    infrastructure_network_guests.bridge no in bridge_config.stdout_lines

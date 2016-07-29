@@ -3,7 +3,7 @@
   {% set network = infrastructure_network_services %}
   {% set ip = [] %}
   <network name="{{ network.netname }}">
-  {% for mapping in dnat_rules.mapping %}
+  {% for mapping in external_network_config.services_network_dnat.mapping %}
   {% if mapping.expose_machine is defined %}
   {% for nic in hostvars[mapping.expose_machine].vm_nics %}
   {% if nic.netname == network.netname %}

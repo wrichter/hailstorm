@@ -1,12 +1,20 @@
-- name: find configured IP addresses
-  shell: nmcli con show {{ dnat_rules.layer1_dev }} | grep ipv4.addresses
-  register: ip_addresses
-  changed_when: false
-- name: remove static IP configuration for DNAT
-  command: nmcli con modify {{ dnat_rules.layer1_dev }} -ipv4.addresses "{{ item.on_host_prefix }}"
-  when: item.on_host_prefix in ip_addresses.stdout
-  with_items: "{{ dnat_rules.mapping }}"
-  register: ip_address_change
-- name: reload interface configuration
-  command: nmcli con up {{ dnat_rules.layer1_dev }}
-  when: ip_address_change|changed
+# - name: find configured IP addresses
+#   shell: nmcli con show {{ dnat_rules.layer1_dev }} | grep ipv4.addresses
+#   register: ip_addresses
+#   changed_when: false
+# - name: remove static IP configuration for DNAT
+#   command: nmcli con modify {{ dnat_rules.layer1_dev }} -ipv4.addresses "{{ item.on_host_prefix }}"
+#   when: item.on_host_prefix in ip_addresses.stdout
+#   with_items: "{{ dnat_rules.mapping }}"
+#   register: ip_address_change
+# - name: reload interface configuration
+#   command: nmcli con up {{ dnat_rules.layer1_dev }}
+#   when: ip_address_change|changed
+
+
+- name: remove configured additional IP addresses
+  lineinfile: state=absent regexp="^IPADDR[0-9]+|^PREFIX[0-9]+" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
+  register: ifcfg
+
+- name: ifup interface
+  shell: ifup {{ external_network_config.services_network_dnat.layer1_dev }}
