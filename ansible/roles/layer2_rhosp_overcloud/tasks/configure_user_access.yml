@@ -15,7 +15,8 @@
       shell: >
         . ~/overcloudrc_v3 &&
         openstack project list --domain {{ osp_domain_name }} |
-        awk '/{{ item }}/ { print $2 }'
+        awk '/ {{ item }} / { print $2 }'
+      # note the space before and after item - this is to ensure that "demo" does not match "clouddemo"
       with_items: "{{ osp_projects }}"
       changed_when: false
       failed_when: project_ids.stdout == ""
