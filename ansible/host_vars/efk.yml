@@ -16,6 +16,8 @@ repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-openstack-8-optools-rpms
+  - rhel-7-server-optional-rpms
+  - rhel-7-server-extras-rpms
 
 packages: elasticsearch,fluentd,rubygem-fluent-plugin-elasticsearch,kibana,httpd
 

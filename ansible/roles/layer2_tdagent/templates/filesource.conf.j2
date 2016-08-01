@@ -1,0 +1,17 @@
+<source>
+  @type tail
+  path {{ item.1.path }}
+  pos_file {{ item.1.pos_file }}
+  tag {{ item.1.tag }}
+  format {{ item.1.format }}
+  {% if item.1.time_format is defined %}time_format {{ item.1.time_format }}{% endif %}
+
+</source>
+
+<filter {{ item.1.tag }}>
+  @type record_transformer
+  <record>
+    service {{ item.1.tag }}
+    file {{ item.1.path }}
+  </record>
+</filter>

@@ -13,6 +13,7 @@
 <match nova.compute>
   type add
   <pair>
+    file /var/log/nova/nova-compute.log
     service nova.compute
     hostname "#{Socket.gethostname}"
   </pair>
@@ -32,6 +33,7 @@
 <match nova.api>
   type add
   <pair>
+    file /var/log/nova/nova-api.log
     service nova.api
     hostname "#{Socket.gethostname}"
   </pair>
@@ -51,6 +53,7 @@
 <match nova.cert>
   type add
   <pair>
+    file /var/log/nova/nova-cert.log
     service nova.cert
     hostname "#{Socket.gethostname}"
   </pair>
@@ -70,6 +73,7 @@
 <match nova.conductor>
   type add
   <pair>
+    file /var/log/nova/nova-conductor.log
     service nova.conductor
     hostname "#{Socket.gethostname}"
   </pair>
@@ -89,6 +93,7 @@
 <match nova.consoleauth>
   type add
   <pair>
+    file /var/log/nova/nova-consoleauth.log
     service nova.consoleauth
     hostname "#{Socket.gethostname}"
   </pair>
@@ -108,6 +113,7 @@
 <match nova.scheduler>
   type add
   <pair>
+    file /var/log/nova/nova-scheduler.log
     service nova.scheduler
     hostname "#{Socket.gethostname}"
   </pair>
@@ -125,6 +131,7 @@
 <match neutron.openvswitch>
   type add
   <pair>
+    file /var/log/neutron/openvswitch-agent.log
     service neutron.openvswitch
     hostname "#{Socket.gethostname}"
   </pair>
@@ -144,6 +151,7 @@
 <match neutron.server>
   type add
   <pair>
+    file /var/log/neutron/server.log
     service neutron.server
     hostname "#{Socket.gethostname}"
   </pair>
@@ -163,6 +171,7 @@
 <match neutron.dhcp>
   type add
   <pair>
+    file /var/log/neutron/dhcp-agent.log
     service neutron.dhcp
     hostname "#{Socket.gethostname}"
   </pair>
@@ -182,6 +191,7 @@
 <match neutron.l3>
   type add
   <pair>
+    file /var/log/neutron/l3-agent.log
     service neutron.l3
     hostname "#{Socket.gethostname}"
   </pair>
@@ -201,6 +211,7 @@
 <match neutron.metadata>
   type add
   <pair>
+    file /var/log/neutron/metadata-agent.log
     service neutron.metadata
     hostname "#{Socket.gethostname}"
   </pair>
@@ -220,6 +231,7 @@
 <match keystone>
   type add
   <pair>
+    file /var/log/keystone/keystone.log
     service keystone
     hostname "#{Socket.gethostname}"
   </pair>
@@ -239,6 +251,7 @@
 <match glance.api>
   type add
   <pair>
+    file /var/log/glance/api.log
     service glance.api
     hostname "#{Socket.gethostname}"
   </pair>
@@ -258,6 +271,7 @@
 <match glance.registry>
   type add
   <pair>
+    file /var/log/glance/registry.log
     service glance.registry
     hostname "#{Socket.gethostname}"
   </pair>
@@ -277,6 +291,7 @@
 <match cinder.api>
   type add
   <pair>
+    file /var/log/cinder/api.log
     service cinder.api
     hostname "#{Socket.gethostname}"
   </pair>
@@ -296,6 +311,7 @@
 <match cinder.scheduler>
   type add
   <pair>
+    file /var/log/cinder/scheduler.log
     service cinder.scheduler
     hostname "#{Socket.gethostname}"
   </pair>
@@ -315,6 +331,7 @@
 <match cinder.volume>
   type add
   <pair>
+    file /var/log/cinder/volume.log
     service cinder.volume
     hostname "#{Socket.gethostname}"
   </pair>

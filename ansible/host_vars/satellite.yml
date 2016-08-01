@@ -18,8 +18,31 @@ repos: "{{ satellite_repos }}"
 packages: katello,bind-utils,chrony,katello-agent,vim,screen,iptraf-ng
 
 tdagent_configs:
-  - forward_all_to_efk
-  - httpd
+  - tag: syslog.messages
+    path: /var/log/messages
+    pos_file: /var/log/td-agent/messages_log.pos
+    format: syslog
+    permissions:
+      - path: /var/log/messages
+        mode: o+r
+  - tag: httpd.access
+    path: /var/log/httpd/access_log
+    pos_file: /var/log/td-agent/httpd_access_log.pos
+    format: apache2
+    permissions:
+      - path: /var/log/httpd
+        mode: o+xr
+      - path: /var/log/httpd/access_log
+        mode: o+r
+  - tag: httpd.error
+    path: /var/log/httpd/error_log
+    pos_file: /var/log/td-agent/httpd_error_log.pos
+    format: apache2
+    permissions:
+      - path: /var/log/httpd
+        mode: o+xr
+      - path: /var/log/httpd/access_log
+        mode: o+r
 
 firewalld_rules:
  - DNStcp:

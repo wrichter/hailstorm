@@ -1,16 +1,57 @@
 - block:
+    - setup:
+    #- debug: var=ansible_distribution_version
     - name: install tdagent
-      command: yum -y localinstall {{ tdagent_rpm }} creates=/etc/td-agent/td-agent.conf
+      command: yum -y localinstall {{ tdagent_rpm[ansible_distribution_version[0:1]] }} creates=/etc/td-agent/td-agent.conf
     - name: create tdagent config.d directory
       file: state=directory dest=/etc/td-agent/config.d owner=td-agent group=td-agent
     - name: add config.d directory to td-agent.conf
       lineinfile: line="@include config.d/*.conf" dest=/etc/td-agent/td-agent.conf
 
-    - name: add tdagent configs
-      template: src={{item}}.conf.j2 dest=/etc/td-agent/config.d/{{ item }}.conf
-      with_items: "{% if tdagent_configs is defined %}{{ tdagent_configs }}{% endif %}"
+    - name: add additional tdagent configs
+      template: src=filesource.conf.j2 dest=/etc/td-agent/config.d/{{ "%02d" % item.0 }}_{{ item.1.tag }}.conf
+      with_indexed_items: "{% if tdagent_configs is defined %}{{ tdagent_configs }}{% endif %}"
       when: not (tdagent_configs is undefined or tdagent_configs is none or tdagent_configs | length == 0)
+      register: configs
+
+    - name: enable tdagent to access log files
+      file: mode={{ item.1.mode }} path={{ item.1.path}}
+      with_subelements:
+        -  "{% if tdagent_configs is defined %}{{ tdagent_configs }}{% endif %}"
+        - "permissions"
+      when: not (tdagent_configs is undefined or tdagent_configs is none or tdagent_configs | length == 0)
+
+    - name: add additional tdagent configs
+      template: src=forward_all_to_efk.conf.j2 dest=/etc/td-agent/config.d/99_forward_all_to_efk.conf
+      register: configs2
 
     - name: enable & (re)start tdagent
       service: name=td-agent state=restarted enabled=yes
+      when: configs|changed or configs2|changed
+
+    # - name: configure rsyslog to forward to elk
+    #   lineinfile: line="*.* @localhost:42185" dest="/etc/rsyslog.conf"
+    #   register: rsyslog
+    #
+    # - name: restart rsyslogd
+    #   service: name=rsyslog state=restarted
+    #   when: rsyslog|changed
+
   when: mode=='create'
+
+- block:
+    # - name: remove rsyslog config
+    #   lineinfile: state=absent line="*.* @localhost:42185" dest="/etc/rsyslog.conf"
+    #   register: rsyslog
+    #
+    # - name: restart rsyslogd
+    #   service: name=rsyslog state=restarted
+    #   when: rsyslog|changed
+
+    - name: disable & stop tdagent
+      service: name=td-agent state=stopped enabled=no
+      ignore_errors: true
+
+    - name: remove tdagent config.d directory
+      file: state=absent dest=/etc/td-agent/config.d
+  when: mode=='destroy'

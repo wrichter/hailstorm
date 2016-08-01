@@ -15,14 +15,6 @@
       mode: destroy
 
 
-- hosts: ose3-installer
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layerX_openshift_installer
-      tags: [ 'layer2','ose3', 'ose3-metrics' ]
-      mode: destroy
-
 - hosts: ose3
   gather_facts: false
   remote_user: root
@@ -33,6 +25,19 @@
     - role: layer2_rhel
       tags: [ 'layer2','ose3', 'rhel' ]
       mode: destroy
+
+# - hosts: ose3-installer
+#   gather_facts: false
+#   remote_user: root
+#   roles:
+#     - role: layerX_openshift_installer
+#       tags: [ 'layer2','ose3', 'ose3-metrics' ]
+#       mode: destroy
+
+- hosts: ose3
+  gather_facts: false
+  remote_user: root
+  roles:
     - role: layer2_vms
       tags: [ 'layer2','ose3', 'vms' ]
       mode: destroy
@@ -49,6 +54,7 @@
   remote_user: root
   gather_facts: false
   roles:
+    - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent' ], mode: destroy }
     - role: layer2_rhevm_ldap
       tags: [ 'rhevm-ldap' ]
       mode: destroy

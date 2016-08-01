@@ -101,7 +101,7 @@
   #    tags: [ 'layer2','satellite' ]
   roles:
    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create }
+   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'tdagent' ], mode: create }
 
 
 # - hosts: test-rhel
@@ -144,6 +144,7 @@
 #    - { role: layer2_dnat, tags: [ 'layer2', 'rhev', 'dnat' ], mode: create }
     - { role: layer2_rhevm_engine, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
     - { role: layer2_rhevdhw_cfme, tags: [ 'layer2', 'rhev', 'rhevm', 'cfme-rhevdwh' ], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent' ], mode: create }
 
 - hosts: rhevh
   remote_user: root
