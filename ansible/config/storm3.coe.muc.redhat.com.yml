@@ -186,6 +186,7 @@ external_network_config:
   guest_network_bridging:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
+    dns_server: 10.32.96.1
     osp_infra_start: 10.32.105.163
     osp_infra_end: 10.32.105.179
     osp_floating_start: 10.32.105.180

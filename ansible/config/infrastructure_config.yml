@@ -35,6 +35,8 @@ infrastructure_network_guests:
   infra_end:              "{% if external_network_config.guest_network_bridging is not defined %}192.168.102.149{%  else %}{{ external_network_config.guest_network_bridging.osp_infra_end }}{% endif %}"
   floating_start:         "{% if external_network_config.guest_network_bridging is not defined %}192.168.102.150{%  else %}{{ external_network_config.guest_network_bridging.osp_floating_start }}{% endif %}"
   floating_end:           "{% if external_network_config.guest_network_bridging is not defined %}192.168.102.254{%  else %}{{ external_network_config.guest_network_bridging.osp_floating_end }}{% endif %}"
+  dns_server:             "{% if external_network_config.guest_network_bridging is not defined %}192.168.102.1{%  else %}{{ external_network_config.guest_network_bridging.dns_server }}{% endif %}"
+
   # the following are only relevant when forward_mode == 'nat'
   dhcp_start: 192.168.102.2
   dhcp_end:   192.168.102.128
