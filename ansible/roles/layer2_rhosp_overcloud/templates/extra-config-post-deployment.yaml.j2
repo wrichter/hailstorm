@@ -90,7 +90,7 @@ resources:
         [ldap]
         url =  ldap://{{ hostvars['ipa'].vm_nics[0].ip }}
         user = uid=osp-bind-user,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
-        user_filter = (memberOf=cn=ipausers,cn=groups,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }})
+        user_filter = (memberOf=cn=demo-consumer,cn=groups,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }})
         password = {{ root_password }}
         user_tree_dn = cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
         user_objectclass = inetUser

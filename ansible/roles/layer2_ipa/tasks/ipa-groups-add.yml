@@ -28,8 +28,8 @@
   changed_when: false
 
 - name: set group password policy
-  shell: echo {{ ipa_admin_password }} | kinit admin && ipa pwpolicy-add {{ item.item.groupname }} {{ item.item.pwpolicy }}
-  when: item|changed
+  shell: echo {{ ipa_admin_password }} {% if item.item.pwpolicy is defined %}| kinit admin && ipa pwpolicy-add {{ item.item.groupname }} {{ item.item.pwpolicy }}{% endif %}
+  when: item|changed and item.item.pwpolicy is defined
   with_items: "{{ current_ipa_groups_2.results }}"
 
 - name: add missing group members
