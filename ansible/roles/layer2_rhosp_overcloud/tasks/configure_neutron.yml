@@ -69,23 +69,23 @@
       when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
       with_items: "{{ routers.results }}"
 
-    # - name: add interface to internal
-    #   shell: >
-    #     . ~/overcloudrc_v3 &&
-    #     export OS_TENANT_NAME={{ item.item }} &&
-    #     export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-    #     neutron router-interface-add router_internal_{{ item.item }} sub_internal_{{ item.item }}
-    #   when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
-    #   with_items: "{{ routers.results }}"
-
-    - name: add interface to services
+    - name: add interface to internal
       shell: >
         . ~/overcloudrc_v3 &&
         export OS_TENANT_NAME={{ item.item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-        neutron router-interface-add router_internal_{{ item.item }} sub_services
+        neutron router-interface-add router_internal_{{ item.item }} sub_internal_{{ item.item }}
       when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
       with_items: "{{ routers.results }}"
+
+    # - name: add interface to services
+    #   shell: >
+    #     . ~/overcloudrc_v3 &&
+    #     export OS_TENANT_NAME={{ item.item }} &&
+    #     export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
+    #     neutron router-interface-add router_internal_{{ item.item }} sub_services
+    #   when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
+    #   with_items: "{{ routers.results }}"
 
   become: yes
   become_user: "{{ rhosp_stack_user }}"

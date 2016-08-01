@@ -101,6 +101,7 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
   failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] == "CREATE_FAILED"
+  changed_when: false
 
 - block:
     - name: copy overcloudrc
