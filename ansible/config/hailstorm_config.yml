@@ -120,6 +120,17 @@ ipa_group:
     members:
       - admin
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=1
+  - groupname: demo-all
+    members:
+      - admin
+      - developer
+      - consumer
+      - approver
+      - cfme-bind-user
+      - rhev-bind-user
+      - ose-bind-user
+      - osp-bind-user
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=6
   - groupname: demo-consumer
     members:
       - admin
@@ -137,6 +148,7 @@ ipa_group:
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=4
   - groupname: service-accounts
     members:
+      - cfme-bind-user
       - rhev-bind-user
       - ose-bind-user
       - osp-bind-user

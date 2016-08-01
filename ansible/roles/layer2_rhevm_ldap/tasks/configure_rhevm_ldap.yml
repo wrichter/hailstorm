@@ -64,4 +64,4 @@
       shell: rhevm-shell -E 'add permission --role-id {{ superuser_role_id.stdout }} --group-id {{ ipausers_group_id.stdout }}'
 
 
-  when: true or ldap_keystore.stat.exists == False
+  when: ldap_keystore.stat.exists == False
