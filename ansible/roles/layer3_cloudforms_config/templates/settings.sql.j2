@@ -1,0 +1,36 @@
+
+{% for setting in cfme_settings %}
+update settings_changes set value='{{ setting.value }}' where key='{{ setting.key }}';
+{% endfor %}
+
+DO
+$do$
+BEGIN
+
+{% for setting in cfme_settings %}
+  IF NOT EXISTS (select * from settings_changes where key='{{ setting.key }}') THEN
+    insert into settings_changes (key,value,created_at,updated_at,resource_type,resource_id) VALUES ('{{ setting.key }}','{{ setting.value }}',now(),now(),'MiqServer',(select id from miq_servers));
+  END IF;
+{% endfor %}
+
+-- create storage C&U tag
+ IF NOT EXISTS (select * from tags where name='/performance/storage/capture_enabled') THEN
+    insert into tags (name) values ('/performance/storage/capture_enabled');
+  END IF;
+
+-- create host and cluster C&U tag
+ IF NOT EXISTS (select * from tags where name='/performance/host_and_cluster/capture_enabled') THEN
+    insert into tags (name) values ('/performance/host_and_cluster/capture_enabled');
+  END IF;
+
+-- enable C&U for all storages
+ IF NOT EXISTS (select * from taggings where tag_id=(select id from tags where name='/performance/storage/capture_enabled')) THEN
+    insert into taggings (taggable_id,tag_id,taggable_type) values ((select id from miq_regions),(select id from tags where name='/performance/storage/capture_enabled'),'MiqRegion');
+  END IF;
+
+-- enable C&U for all Hosts and Clusters
+  IF NOT EXISTS (select * from taggings where tag_id=(select id from tags where name='/performance/host_and_cluster/capture_enabled')) THEN
+    insert into taggings (taggable_id,tag_id,taggable_type) values ((select id from miq_regions),(select id from tags where name='/performance/host_and_cluster/capture_enabled'),'MiqRegion');
+  END IF;
+END;
+$do$

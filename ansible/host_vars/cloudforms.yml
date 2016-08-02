@@ -9,3 +9,28 @@ nic_attachments:
   - "{{ infrastructure_network_admin }}"
   - "{{ infrastructure_network_storage }}"
   - "{{ infrastructure_network_rhosp_provisioning }}"
+
+
+cfme_settings:
+  - key: '/server/role'
+    value: '--- automate,database_operations,ems_inventory,ems_metrics_collector,ems_metrics_coordinator,ems_metrics_processor,ems_operations,event,reporting,scheduler,smartproxy,smartstate,user_interface,web_services,websocket\n---\n'
+  - key: '/ntp/server'
+    value: '---\n- 192.168.101.1\n'
+  - key: '/server/company'
+    value: '--- Hailstorm\n...\n'
+  - key: '/authentication/mode'
+    value: '--- httpd\n...\n'
+  - key: '/smtp/authentication'
+    value: '--- none\n...\n'
+  - key: '/smtp/authentication'
+    value: '--- none\n...\n'
+  - key: '/smtp/domain'
+    value: '--- {{ hailstorm_dns_domain }}\n...\n'
+  - key: '/smtp/from'
+    value: '--- cloudforms@{{ hailstorm_dns_domain }}\n...\n'
+  - key: '/smtp/host'
+    value: '--- {{ hostvars["infrastructure"].hostname }}\n...\n'
+  - key: '/smtp/enable_starttls_auto'
+    value: '--- false\n...\n'
+  - key: '/smtp/openssl_verify_mode'
+    value: "--- ''''\\n"
