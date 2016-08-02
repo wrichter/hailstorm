@@ -157,6 +157,7 @@ ipa_group:
 osp_domain_name: hailstorm
 osp_projects:
   - demo
+  - demo1
 osp_admin_user:
   - cfme-bind-user
   - admin
