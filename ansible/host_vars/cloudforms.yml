@@ -20,6 +20,8 @@ cfme_settings:
     value: '--- Hailstorm\n...\n'
   - key: '/authentication/mode'
     value: '--- httpd\n...\n'
+  - key: '/authentication/httpd_role'
+    value: '--- true\n...\n'
   - key: '/smtp/authentication'
     value: '--- none\n...\n'
   - key: '/smtp/authentication'
