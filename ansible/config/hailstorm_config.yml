@@ -110,7 +110,7 @@ ipa_user:
     last: binduser
     password: "{{ root_password }}"
   - username: cfme-bind-user
-    first: cmfe
+    first: cfme
     last: binduser
     password: "{{ root_password }}"
 
