@@ -26,6 +26,14 @@
     - name: allow kibana to connect to elasticsearch
       command: setsebool -P httpd_can_network_connect 1
 
+    - name: make logstash dashboard default / backup original dashboard
+      copy: src=/usr/share/kibana/app/dashboards/default.json dest=/usr/share/kibana/app/dashboards/default.json.ORIG force=no remote_src=true mode=755
+      register: orig_dashboard
+
+    - name: make logstash dashboard default / set logstash dashboard
+      copy: src=/usr/share/kibana/app/dashboards/logstash.json dest=/usr/share/kibana/app/dashboards/default.json remote_src=true mode=755
+      when: orig_dashboard|changed
+
     - name: restart httpd
       service: name=httpd state=restarted
       when: kibana|changed
