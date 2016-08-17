@@ -201,6 +201,8 @@
   roles:
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install' ], mode: create }
     - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'ose3-cfme'], mode: create }
+    - { role: layerX_openshift_demo_monster, tags: ['ose3-demo'], mode: create }
+
 
 #### OPENSTACK ####
 

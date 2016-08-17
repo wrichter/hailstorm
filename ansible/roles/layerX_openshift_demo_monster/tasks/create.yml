@@ -19,13 +19,18 @@
   changed_when: false
 
 - name: Create monster dev template in openshift namespace
+# Fails, too:
+#  shell: "echo '{{ lookup('template','monster_template_dev.yml.j2') }}' | oc create -f - -n openshift"
   shell: "oc create -f - -n openshift <<EOF
-         {{ lookup('template','monster_template_dev.yaml.j2') }}"
+         {{ lookup('template','monster_template_dev.yml.j2') }}"
   when: "'monster' not in templates.stdout_lines"
+
 
 - name: Create monster prd template in openshift namespace
   shell: "oc create -f - -n openshift <<EOF
-         {{ lookup('template','monster_template_prod.yaml.j2') }}"
+         {{ lookup('template','monster_template_prod.yml.j2') }}"
   when: "'monster-prod' not in templates.stdout_lines"
 
 # TODO: Do one build&deploy of monster to ensure images are in the registry
+# As user Developer:
+#oc new-app --template monster
