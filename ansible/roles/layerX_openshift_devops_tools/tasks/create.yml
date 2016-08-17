@@ -1,0 +1,33 @@
+# --- Create devops-tools projects:
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: Create devops-tools project
+  shell: "oadm new-project devops-tools --admin='developer' --description='DevOps Tools like nexus, jenkins etc'"
+  when: "'devops-tools' not in projects.stdout_lines"
+
+- name: check existing deploymentconfigs
+  shell: oc get dc -n devops-tools | awk '{ print $1 }'
+  register: deploymentconfigs
+  changed_when: false
+
+# --- Create Nexus from template if not already existing
+# See: https://access.redhat.com/solutions/2293571
+- name: Create nexus
+  shell: "oc create -f - -n devops-tools <<EOF
+         {{ lookup('template','nexus_template.yml.j2') }}"
+  when: "'nexus' not in deploymentconfigs.stdout_lines"
+
+# --- Create Jenkins from openshift build in template
+# See: https://github.com/openshift/origin/blob/master/examples/jenkins/README.md
+# Todo:
+# - check if advanced config is needed as described in above readme
+# - check if build in template is a good idea
+- name: Create jenkins
+  shell: "oc new-app jenkins-persistent  -n devops-tools"
+  when: "'jenkins' not in deploymentconfigs.stdout_lines"
+
+# TODO: Create git
+# See: https://github.com/openshift/origin/blob/master/examples/gitserver

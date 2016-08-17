@@ -1,0 +1,3 @@
+- shell: oc delete all --all -n devops-tools
+- shell: oc delete pvc sonatype-work -n devops-tools
+- shell: oc delete pvc jenkins -n devops-tools
