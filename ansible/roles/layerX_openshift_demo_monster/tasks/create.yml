@@ -1,0 +1,31 @@
+# --- Create necessary projects demo-dev and demo-prod for user developer:
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: Create demo-dev project
+  shell: "oadm new-project demo-dev --admin='developer' --description='ticket monster developers stage'"
+  when: "'demo-dev' not in projects.stdout_lines"
+
+- name: Create demo-prod project
+  shell: "oadm new-project demo-prod --admin='developer' --description='ticket monster production stage'"
+  when: "'demo-prod' not in projects.stdout_lines"
+
+# --- Create Templates monster and monster-prod in namespace openshift:
+- name: check existing templates
+  shell: oc get templates -n openshift | awk '{ print $1 }'
+  register: templates
+  changed_when: false
+
+- name: Create monster dev template in openshift namespace
+  shell: "oc create -f - -n openshift <<EOF
+         {{ lookup('template','monster_template_dev.yaml.j2') }}"
+  when: "'monster' not in templates.stdout_lines"
+
+- name: Create monster prd template in openshift namespace
+  shell: "oc create -f - -n openshift <<EOF
+         {{ lookup('template','monster_template_prod.yaml.j2') }}"
+  when: "'monster-prod' not in templates.stdout_lines"
+
+# TODO: Do one build&deploy of monster to ensure images are in the registry

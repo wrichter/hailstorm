@@ -1,0 +1,4 @@
+- shell: oc delete project demo-dev -n demo-dev
+- shell: oc delete project demo-prod -n demo-prod
+- shell: oc delete template monster  -n openshift
+- shell: oc delete template monster-prod  -n openshift
