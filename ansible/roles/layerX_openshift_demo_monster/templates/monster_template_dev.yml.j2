@@ -25,21 +25,27 @@ objects:
         name: monster:latest
     source:
       git:
-        ref: master
-#
 # DFR - TODO: Change this to our own local git repo
 # Something like:
-# git://ose3-master1.{{ hailstorm_dns_domain }}/demo/monster
 #
-        uri: https://github.com/jim-minter/ose3-ticket-monster
+# Use this one if no local git server available:
+# https://github.com/jim-minter/ose3-ticket-monster
+        ref: master
+        uri: http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
       type: Git
     strategy:
+      type: Source
       sourceStrategy:
         from:
           kind: ImageStreamTag
           name: jboss-eap64-openshift:latest
           namespace: openshift
-      type: Source
+#
+# DFR -TODO - Enable Local Nexus Mirror when deployment automation is okay:
+#        env:
+#        -
+#          name: MAVEN_MIRROR_URL
+#          value: 'http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/content/groups/main/'
     triggers:
     - generic:
         secret: secret

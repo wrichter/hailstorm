@@ -40,8 +40,8 @@ items:
           # the repository already exists on disk, it will be updated
           # from the remote.
           #
-          #- name: GIT_INITIAL_CLONE_1
-          #  value:  <url>[;<name>]
+          - name: GIT_INITIAL_CLONE_1
+            value:  https://github.com/jim-minter/ose3-ticket-monster;ose3-ticket-monster
 
 
           # The namespace of the pod is required for implicit config
@@ -78,7 +78,7 @@ items:
           # If 'true' new-app will be invoked on push for repositories
           # for which a matching BuildConfig is not found.
           - name: GENERATE_ARTIFACTS
-            value: "true"
+            value: "false"
 
           # The strategy to use when creating build artifacts from a repository.
           # With the default empty value, a Docker build  will be generated if
@@ -205,6 +205,10 @@ items:
   spec:
     to:
       name: git
+# Enable TLS if needed, makes things much more complicated as long as
+# we don't have "nice" Server Certs whicht git client accepts:
+#    tls:
+#      termination: edge
 
 # Persistent volume claim
 - apiVersion: v1
@@ -216,4 +220,6 @@ items:
     - ReadWriteOnce
     resources:
       requests:
-storage: 1G
+        storage: 1G
+
+EOF

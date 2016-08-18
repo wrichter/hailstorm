@@ -29,5 +29,10 @@
   shell: "oc new-app jenkins-persistent  -n devops-tools"
   when: "'jenkins' not in deploymentconfigs.stdout_lines"
 
-# TODO: Create git
+# --- Create GIT Repo:
 # See: https://github.com/openshift/origin/blob/master/examples/gitserver
+- name: Create git
+  shell: "oc policy add-role-to-user edit -z git"
+  shell: "oc create -f - -n devops-tools <<EOF
+         {{ lookup('template','gitserver-persistent.yaml.j2') }}"
+  when: "'git' not in deploymentconfigs.stdout_lines"
