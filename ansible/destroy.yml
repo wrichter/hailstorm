@@ -19,6 +19,7 @@
   gather_facts: false
   roles:
     - { role: layerX_openshift_demo_monster, tags: ['ose3-demo'], mode: destroy }
+    - { role: layerX_openshift_devops_tools, tags: ['ose3-devops'], mode: destroy }
 
 - hosts: ose3
   gather_facts: false
