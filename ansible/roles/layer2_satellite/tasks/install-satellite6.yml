@@ -21,4 +21,5 @@
     owner=root
     group=root
     mode=0600
-  when: katello_installed|changed
+#why is the following line commented out? when multiple installs run in parallel, ansible gets confused and resuses a connection to satellite on one physical machine when another is actually targetet. This meant that its hammer cli config did then exist, but with the wrong content... by commenting out we will always overwrite the config with the right content
+#  when: katello_installed|changed
