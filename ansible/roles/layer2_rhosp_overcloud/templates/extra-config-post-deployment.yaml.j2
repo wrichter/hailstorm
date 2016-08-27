@@ -109,7 +109,7 @@ resources:
 
           sudo chown keystone:keystone /etc/keystone/domains/keystone.hailstorm.conf
 
-          sudo systemctl restart openstack-keystone.service
+          sudo systemctl condrestart openstack-keystone.service
         }
   {% endif %}
 

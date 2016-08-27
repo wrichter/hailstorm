@@ -3,7 +3,7 @@
       shell: >
         . ~/overcloudrc_v3 &&
         openstack role show {{ item }} |
-        awk '/id/{ print $4 }'
+        awk '/ id /{ print $4 }'
       register: role_ids
       changed_when: false
       failed_when: role_ids.stdout == ""
@@ -29,7 +29,6 @@
       register: role_assignments
       with_items: "{{ project_ids.results }}"
       changed_when: false
-
 
     - name: get existing role assignments for domain
       shell: >

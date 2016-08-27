@@ -3,13 +3,13 @@ mem: "{{ layer2_rhosp_director_mem }}"
 vcpu: "{{ layer2_rhosp_director_cpu }}"
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 30
+  size: 60
   format: qcow2
   partition_table:
-    lvmpv: 29500
+    lvmpv: 59500
     swap: 4096
     home: 2048
-    root: 20000
+    root: 50000
 
 nic_attachments:
   - "{{ infrastructure_network_rhosp_provisioning }}"
@@ -31,5 +31,5 @@ tripleo_template_path: /home/stack/my_templates
 ironic_rpc_timeout: 600
 nova_rpc_timeout: 600
 
-# will be populated during runtime 
+# will be populated during runtime
 os_auth: {}

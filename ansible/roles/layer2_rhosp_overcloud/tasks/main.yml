@@ -3,7 +3,7 @@
       tags: ['register']
     - include: create_overcloud.yml
       tags: ['overcloud-deploy']
-    - include: read_overcloudrc_into_facts.yml
+    #- include: read_overcloudrc_into_facts.yml
     - include: configure_tenants.yml
       tags: ['overcloud-config-tenants']
     - include: configure_user_access.yml

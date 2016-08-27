@@ -155,7 +155,8 @@
       shell: >
         . ~/stackrc &&
         for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
-        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl restart openstack-keystone;
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart openstack-keystone;
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart httpd;
         done
       when: ipa_available|success and osp_domain_name not in domains.stdout_lines
   become: yes
