@@ -11,9 +11,9 @@
     - include: configure_neutron.yml
       tags: ['overcloud-config-neutron']
     - include: configure_security.yml
-      tags: ['overcloud-config']
+      tags: ['overcloud-config-security']
     - include: configure_images.yml
-      tags: ['overcloud-config']
+      tags: ['overcloud-config-images']
   when: mode=="create"
 
 - block:

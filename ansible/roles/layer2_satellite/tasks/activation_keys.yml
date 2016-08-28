@@ -17,7 +17,7 @@
   shell: hammer --output json subscription list --organization "{{ organization }}"
   register: subscriptions
   changed_when: false
-- debug: msg={{ (subscriptions.stdout | from_json | selectattr("Name","match","^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$") | map(attribute="ID") | list)[0] }}
+#- debug: msg={{ (subscriptions.stdout | from_json | selectattr("Name","match","^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$") | map(attribute="ID") | list)[0] }}
 
 - name: create activation keys for content_view
   command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1.content_view }}" --lifecycle-environment {{ item.0 }} --name "AK-{{ item.1.content_view }}-{{ item.0 }}"

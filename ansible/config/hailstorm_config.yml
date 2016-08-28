@@ -53,8 +53,8 @@ rhosp_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-openstack-8-rpms
-  - rhel-7-server-openstack-8-director-rpms
+  - rhel-7-server-openstack-9-rpms
+  - rhel-7-server-openstack-9-director-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
