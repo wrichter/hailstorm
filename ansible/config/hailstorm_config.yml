@@ -38,7 +38,7 @@ osp_kvm_images:
 #satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
 rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
-rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*)$"
+rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$"
 ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
 

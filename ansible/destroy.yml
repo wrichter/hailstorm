@@ -56,7 +56,7 @@
   roles:
     - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent' ], mode: destroy }
     - role: layer2_rhevm_ldap
-      tags: [ 'rhevm-ldap' ]
+      tags: [ 'rhevm-ldap','rhev' ]
       mode: destroy
 
 - hosts: rhev

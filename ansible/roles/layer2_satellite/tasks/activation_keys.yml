@@ -47,8 +47,10 @@
   #   - "{{ current_lifecycle_environments.stdout_lines }}"
   #   - "{{ content_config }}"
   # when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
-  command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.item.1.content_view }}-{{ item.item.0 }}" --subscription-id {{ (subscriptions.stdout | from_json | selectattr("Name","match", item.item.1.activation_key_subscription_regex) | map(attribute="ID") | list)[0] }}
-  when: item.stdout | length == 0
+
+  #command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.item.1.content_view }}-{{ item.item.0 }}" --subscription-id {{ (subscriptions.stdout | from_json | selectattr("Name","match", item.item.1.activation_key_subscription_regex) | map(attribute="ID") | list)[0] }}
+  shell: for sub in {{ subscriptions.stdout | from_json | selectattr("Name","match", item.item.1.activation_key_subscription_regex) | map(attribute="ID") | join(" ") }}; do hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.item.1.content_view }}-{{ item.item.0 }}" --subscription-id $sub; done
+  when: '(item.stdout_lines | length) < (subscriptions.stdout | from_json | selectattr("Name","match", item.item.1.activation_key_subscription_regex) | list | length)'
   with_items: "{{ assigned_subs.results }}"
 
 - name: override what content that is enabled
