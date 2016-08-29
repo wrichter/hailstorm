@@ -1,4 +1,11 @@
 - name: disable SSLv2/SSLv3 in dovecot
   lineinfile: line="ssl_protocols = !SSLv2 !SSLv3" regexp="ssl_protocols.*" dest=/etc/dovecot/conf.d/10-ssl.conf
+
+- name: set mail location
+  lineinfile: line="mail_location = mbox:~/mail:INBOX=/var/mail/%u" dest=/etc/dovecot/dovecot.conf
+
+- name: set access user id
+  lineinfile: line="mail_access_groups=mail" dest=/etc/dovecot/dovecot.conf
+
 - name: ensure dovecot is started & enabled
   service: name=dovecot state=restarted enabled=yes

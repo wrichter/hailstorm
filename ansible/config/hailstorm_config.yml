@@ -36,11 +36,11 @@ osp_kvm_images:
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
-satellite_subscription_pool_regex: "^Red Hat Satellite Employee Subscription$"
-rhel_subscription_pool_regex: "^Employee SKU$"
-rhev_subscription_pool_regex: "^Employee SKU$"
-rhosp_subscription_pool_regex: "^Employee SKU$"
-ose_subscription_pool_regex: "^Employee SKU$"
+satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
+rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
+rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*)$"
+rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$"
+ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
 
 # REPOSITORIES
 # rhosp_repos:
@@ -53,8 +53,8 @@ rhosp_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-openstack-8-rpms
-  - rhel-7-server-openstack-8-director-rpms
+  - rhel-7-server-openstack-9-rpms
+  - rhel-7-server-openstack-9-director-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
@@ -76,7 +76,9 @@ ose3_repos:
 ose3_additional_packages: docker
 #   - rhel-7-server-ose-3.1-rpms
 # ose3_additional_packages: docker-1.8.2
-tdagent_rpm: https://packages.treasuredata.com/2/redhat/7/x86_64/td-agent-2.2.0-0.x86_64.rpm
+tdagent_rpm:
+  "7": https://packages.treasuredata.com/2/redhat/7/x86_64/td-agent-2.2.0-0.x86_64.rpm
+  "6": https://packages.treasuredata.com/2/redhat/6/x86_64/td-agent-2.2.0-0.x86_64.rpm
 
 
 timezone: Europe/Berlin
@@ -108,14 +110,45 @@ ipa_user:
     last: binduser
     password: "{{ root_password }}"
   - username: cfme-bind-user
-    first: cmfe
+    first: cfme
     last: binduser
     password: "{{ root_password }}"
 
 
 ipa_group:
+  - groupname: demo-admin
+    members:
+      - admin
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=1
+  - groupname: demo-all
+    members:
+      - admin
+      - developer
+      - consumer
+      - approver
+      - cfme-bind-user
+      - rhev-bind-user
+      - ose-bind-user
+      - osp-bind-user
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=6
+  - groupname: demo-consumer
+    members:
+      - admin
+      - developer
+      - consumer
+      - approver
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=2
+  - groupname: demo-approver
+    members:
+      - approver
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=3
+  - groupname: demo-developer
+    members:
+      - developer
+    pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=4
   - groupname: service-accounts
     members:
+      - cfme-bind-user
       - rhev-bind-user
       - ose-bind-user
       - osp-bind-user
@@ -124,8 +157,10 @@ ipa_group:
 osp_domain_name: hailstorm
 osp_projects:
   - demo
+  - demo1
 osp_admin_user:
   - cfme-bind-user
+  - admin
 osp_member_user:
   - consumer
   - developer

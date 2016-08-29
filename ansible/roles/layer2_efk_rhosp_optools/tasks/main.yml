@@ -5,19 +5,73 @@
       with_items:
         - 'http.cors.enabled: true'
         - 'http.cors.allow-origin: "/.*/"'
+      register: elasticsearch
+
     - name: restart elasticsearch
       service: name=elasticsearch state=restarted
+      when: elasticsearch|changed
 
     - name: configure fluentd
       template: src=fluent.conf.j2 dest=/etc/fluentd/fluent.conf
+      register: fluentd
+
     - name: restart fluentd
       service: name=fluentd state=restarted
+      when: fluentd|changed
 
     - name: configure kibana
       template: src=kibana3.conf.j2 dest=/etc/httpd/conf.d/kibana3.conf
+      register: kibana
+
     - name: allow kibana to connect to elasticsearch
       command: setsebool -P httpd_can_network_connect 1
+
+    - name: make logstash dashboard default / backup original dashboard
+      copy: src=/usr/share/kibana/app/dashboards/default.json dest=/usr/share/kibana/app/dashboards/default.json.ORIG force=no remote_src=true mode=755
+      register: orig_dashboard
+
+    - name: make logstash dashboard default / set logstash dashboard
+      copy: src=/usr/share/kibana/app/dashboards/logstash.json dest=/usr/share/kibana/app/dashboards/default.json remote_src=true mode=755
+      when: orig_dashboard|changed
+
     - name: restart httpd
       service: name=httpd state=restarted
+      when: kibana|changed
+
+## install curator
+    - name: check if epel is installed
+      shell: rpm -q epel-release
+      changed_when: false
+      ignore_errors: true
+      register: epel
+
+    - name: install epel-release
+      command: yum -y localinstall  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm
+      when: epel|failed
+
+    - name: install python-pip
+      yum: name=python-pip state=latest
+
+    - name: check if curator is installed
+      shell: pip show elasticsearch-curator || true
+      register: curator
+      changed_when: false
+      ignore_errors: true
+
+    - name: install curator
+      command: pip install elasticsearch-curator==3.3
+      when: curator.stdout == ""
+
+    # - name: create curator config direction
+    #   file: dest=.curator state=directory
+    #
+    # - name: create curator config file
+    #   template: src=curator_config.yml.j2 dest=.curator/curator.yml
+    #
+    # - name: create curator action file
+    #   template: src=curator_action_alias.yml.j2 dest=./alias.yml
+
+    - name: add curator cron job
+      cron: name="curator delete indices older than 14 days" minute="5" hour="1" job="curator --host localhost --port 9200 delete indices --older-than 14 --time-unit days --timestring '%Y.%m.%d'" user=root
 
   when: mode=='create'

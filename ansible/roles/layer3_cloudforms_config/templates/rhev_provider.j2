@@ -3,8 +3,12 @@
   "name"      : "{{ hostvars['rhevm'].hostname }}",
   "hostname"  : "{{ hostvars['rhevm'].hostname }}",
   "ipaddress" : "{{ hostvars['rhevm'].vm_nics[0].ip }}",
-  "credentials" : {
+  "credentials" : [{
     "userid"    : "admin@internal",
     "password"  : "{{ root_password }}"
-  }
+  },{
+    "userid"    : "cfme",
+    "password"  : "smartvm",
+    "auth_type" : "metrics"
+  }]
 }

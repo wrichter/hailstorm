@@ -8,6 +8,7 @@
       command: cat /etc/ipa/ca.crt
       delegate_to: ipa
       register: certificate
+      changed_when: false
 
     - name: create the cert on the RHEV server
       copy: content="{{ certificate.stdout }}" dest=/tmp/ca.crt
@@ -21,32 +22,36 @@
     #  copy: src=files/IPA.properties dest=/etc/ovirt-engine/aaa/IPA.properties owner=ovirt group=ovirt mode=600
     - name: create IPA.properties
       template: src=IPA.properties.j2 dest=/etc/ovirt-engine/aaa/IPA.properties owner=ovirt group=ovirt mode=0600
+      register: ipaprops
 
     # - name: copy IPA-authz.properties
     #   copy: src=files/IPA-authz.properties dest=/etc/ovirt-engine/extensions.d/IPA-authz.properties
     - name: create IPA-authz.properties
       template: src=IPA-authz.properties.j2 dest=/etc/ovirt-engine/extensions.d/IPA-authz.properties
+      register: ipaauthz
 
     # - name: copy IPA-authn.properties
     #   copy: src=files/IPA-authn.properties dest=/etc/ovirt-engine/extensions.d/IPA-authn.properties
     - name: create IPA-authn.properties
       template: src=IPA-authn.properties.j2 dest=/etc/ovirt-engine/extensions.d/IPA-authn.properties
+      register: ipaauthn
 
     # restart ovirt-engine
     - name: restarting rhev services
       service: name=ovirt-engine state=restarted
+      when: ipaprops|changed or ipaauthz|changed or ipaauthn|changed
 
     - name: wait for rhev web ui to become available
       wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600
 
     # add an LDAP group to the RHEV superuser role
     - name: initialize LDAP auth plugin by performing query
-      command: curl -k -u admin@hailstorm2.coe.muc.redhat.com:redhat01 https://localhost/api
+      command: curl -k -u admin@{{ hailstorm_dns_domain }}:{{ root_password }} https://localhost/api
       failed_when: false
       changed_when: false
 
     - name: create ipausers group
-      shell: rhevm-shell -E 'add group --name ipausers --domain-name IPA-authz' | grep -e "^id" | cut -c18-
+      shell: rhevm-shell -E 'add group --name demo-consumer --domain-name IPA-authz' | grep -e "^id" | cut -c18-
       register: ipausers_group_id
       failed_when: ipausers_group_id.stdout == ""
 

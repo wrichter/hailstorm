@@ -92,6 +92,17 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 
+- name: wait for stack creation to complete
+  shell: . ~/stackrc && openstack stack list -f json
+  register: stacklist
+  until: ( stacklist.stdout | from_json )[0]['Stack Status'] != "CREATE_IN_PROGRESS"
+  retries: 720
+  delay: 60
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+  failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] == "CREATE_FAILED"
+  changed_when: false
+
 - block:
     - name: copy overcloudrc
       copy: src=~/overcloudrc dest=~/overcloudrc_v3 force=no remote_src=true mode=755
@@ -106,9 +117,24 @@
           regexp: "^export OS_PROJECT_DOMAIN_NAME"
         - line: "export OS_USER_DOMAIN_NAME=Default"
           regexp: "^export OS_USER_DOMAIN_NAME"
+      when: ipa_available|success
 
     - name: change auth url
       replace: dest=~/overcloudrc_v3 regexp="5000/v2.0" replace="5000/v3"
+      when: ipa_available|success
+
+    - name: create hailstorm domain overcloudrc
+      copy: src=~/overcloudrc_v3 dest=~/overcloudrc_v3_{{ osp_domain_name }} force=no remote_src=true mode=755
+      when: ipa_available|success
+
+    - name: adapt hailstorm domain overcloudrc
+      lineinfile: dest=~/overcloudrc_v3_{{ osp_domain_name }} line="{{ item.line }}" regexp="{{ item.regexp }}"
+      with_items:
+        - line: "export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }}"
+          regexp: "^export OS_PROJECT_DOMAIN_NAME"
+        - line: "export OS_USER_DOMAIN_NAME={{ osp_domain_name }}"
+          regexp: "^export OS_USER_DOMAIN_NAME"
+      when: ipa_available|success
 
     - name: list openstack domains
       shell: >
@@ -117,24 +143,25 @@
       register: domains
       changed_when: false
       failed_when: domains.stdout == ""
+      when: ipa_available|success
 
     - name: create osp domain
       shell: >
         . ~/overcloudrc_v3 &&
         openstack domain create {{ osp_domain_name }}
-      when: osp_domain_name not in domains.stdout_lines
+      when: ipa_available|success and osp_domain_name not in domains.stdout_lines
 
     - name: restart keystone on controller
       shell: >
         . ~/stackrc &&
         for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
-        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl restart openstack-keystone;
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart openstack-keystone;
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart httpd;
         done
-      when: osp_domain_name not in domains.stdout_lines
-
+      when: ipa_available|success and osp_domain_name not in domains.stdout_lines
+      ignore_errors: true
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  when: ipa_available|success
 
 - block:
     - name: find existing services

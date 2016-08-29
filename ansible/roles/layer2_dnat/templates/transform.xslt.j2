@@ -28,7 +28,7 @@
 
    <xsl:template name="iptables">
       <hs:iptables>
-        {% for mapping in dnat_rules.mapping %}
+        {% for mapping in external_network_config.services_network_dnat.mapping %}
         {% if mapping.expose_machine == inventory_hostname_short %}
         {% for port in mapping.ports %}
         <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ vm_nics[0].ip }}:{{ port.to_port }}</rule>

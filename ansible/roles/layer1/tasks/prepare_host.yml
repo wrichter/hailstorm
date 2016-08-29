@@ -24,6 +24,13 @@
   #reboot machine if necessary https://bugzilla.redhat.com/show_bug.cgi?id=950436
   register: prereqs
 
+- name: disable & stop NetworkManager
+  service: name=NetworkManager state=stopped enabled=no
+- name: mask firewalld
+  shell: systemctl status NetworkManager | grep masked || systemctl mask NetworkManager
+  register: mask_nm
+  changed_when: "'Created symlink' in mask_nm.stdout"
+
 - name: disable & stop firewalld
   service: name=firewalld state=stopped enabled=no
 - name: mask firewalld

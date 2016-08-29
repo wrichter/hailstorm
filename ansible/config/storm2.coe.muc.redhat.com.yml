@@ -180,34 +180,35 @@ external_network_config:
   guest_network_bridging:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
-    osp_infra_start: 10.32.105.51
-    osp_infra_end: 10.32.105.70
-    osp_floating_start: 10.32.105.71
-    osp_floating_end: 10.32.105.90
+    dns_server: 10.32.96.1
+    osp_infra_start: 10.32.105.104
+    osp_infra_end: 10.32.105.119
+    osp_floating_start: 10.32.105.120
+    osp_floating_end: 10.32.105.159
     bridged_vms:
       rhevh1:
         guests:
-          mac: 06:12:24:48:96:01
-          ip: 10.32.105.40
+          mac: "52:54:00:48:02:01"
+          ip: 10.32.105.100
       rhevh2:
         guests:
-          mac: 06:12:24:48:96:02
-          ip: 10.32.105.41
+          mac: "52:54:00:48:02:02"
+          ip: 10.32.105.101
       rhevh3:
         guests:
-          mac: 06:12:24:48:96:03
-          ip: 10.32.105.42
+          mac: "52:54:00:48:02:03"
+          ip: 10.32.105.102
       "rhosp-control1":
         guests:
-          mac: 06:12:24:48:96:04
+          mac: "52:54:00:48:02:04"
           ip:
       "rhosp-control2":
         guests:
-          mac: 06:12:24:48:96:05
+          mac: "52:54:00:48:02:05"
           ip:
       "rhosp-control3":
         guests:
-          mac: 06:12:24:48:96:06
+          mac: "52:54:00:48:02:06"
           ip:
 
 # if a property http_proxy is defined, satellite will be configured to sync via http_proxy
@@ -215,137 +216,3 @@ http_proxy:
   proxyname: proxy.coe.muc.redhat.com
   port: 3128
   protocol: https
-
-
-dnat_rules:
-  layer1_dev: em1
-  mapping:
-    - expose_machine: satellite
-      on_host_prefix: 10.32.105.20/32
-      ports:
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-    - expose_machine: ipa
-      on_host_prefix: 10.32.105.21/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-    - expose_machine: infrastructure
-      on_host_prefix: 10.32.105.22/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 53
-          to_port: 53
-          proto: tcp
-        - from_port: 53
-          to_port: 53
-          proto: udp
-        - from_port: 143
-          to_port: 143
-          proto: tcp
-        - from_port: 993
-          to_port: 993
-          proto: tcp
-        - from_port: 25
-          to_port: 25
-          proto: tcp
-        - from_port: 465
-          to_port: 465
-          proto: tcp
-    - expose_machine: rhevm
-      on_host_prefix: 10.32.105.23/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-    - expose_machine: cloudforms
-      on_host_prefix: 10.32.105.24/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-    - expose_machine: ose3-lb
-      on_host_prefix: 10.32.105.25/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 443
-          to_port: 8443
-          proto: tcp
-        - from_port: 8443
-          to_port: 8443
-          proto: tcp
-    - expose_machine: ose3-infranode1
-      on_host_prefix: 10.32.105.26/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-    - expose_machine: efk
-      on_host_prefix: 10.32.105.27/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-        - from_port: 9200
-          to_port: 9200
-          proto: tcp
-    - expose_machine: rhosp-director
-      on_host_prefix: 10.32.105.28/32
-      ports:
-        - from_port: 22
-          to_port: 22
-          proto: tcp
-    - expose_machine: openstack
-      on_host_prefix: 10.32.105.29/32
-      ports:
-        - from_port: 80
-          to_port: 80
-          proto: tcp
-        - from_port: 443
-          to_port: 443
-          proto: tcp
-        - from_port: 6080
-          to_port: 6080
-          proto: tcp

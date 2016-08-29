@@ -8,10 +8,16 @@
   register: current_lifecycle_environments
   changed_when: false
 
-- name: get subscription id
-  shell: hammer subscription list --organization "{{ organization }}" | grep "Employee SKU" | awk '{print $16}'
-  register: sub_id
+# - name: get subscription id
+#   shell: hammer subscription list --organization "{{ organization }}" | grep "Employee SKU" | awk '{print $16}'
+#   register: sub_id
+#   changed_when: false
+
+- name: get subscription ids
+  shell: hammer --output json subscription list --organization "{{ organization }}"
+  register: subscriptions
   changed_when: false
+#- debug: msg={{ (subscriptions.stdout | from_json | selectattr("Name","match","^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$") | map(attribute="ID") | list)[0] }}
 
 - name: create activation keys for content_view
   command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1.content_view }}" --lifecycle-environment {{ item.0 }} --name "AK-{{ item.1.content_view }}-{{ item.0 }}"
@@ -25,12 +31,26 @@
     - "{{ current_lifecycle_environments.stdout_lines }}"
     - "{{ content_config }}"
   when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
-- name: associate subscription to all activation keys
-  command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --subscription-id {{ sub_id.stdout }}
+
+- name: find existing subscriptions for activation keys
+  shell: hammer activation-key subscriptions --name "AK-{{ item.1.content_view }}-{{ item.0 }}"  --organization "{{ organization }}" | awk 'NR>3'
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
     - "{{ content_config }}"
-  when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
+  register: assigned_subs
+  changed_when: false
+
+- name: associate subscription to all activation keys
+  #command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --subscription-id {{ sub_id.stdout }}
+  # command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --subscription-id {{ (subscriptions.stdout | from_json | selectattr("Name","match", item.1.activation_key_subscription_regex) | map(attribute="ID") | list)[0] }}
+  # with_nested:
+  #   - "{{ current_lifecycle_environments.stdout_lines }}"
+  #   - "{{ content_config }}"
+  # when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
+  command: hammer activation-key add-subscription --organization "{{ organization }}" --name "AK-{{ item.item.1.content_view }}-{{ item.item.0 }}" --subscription-id {{ (subscriptions.stdout | from_json | selectattr("Name","match", item.item.1.activation_key_subscription_regex) | map(attribute="ID") | list)[0] }}
+  when: item.stdout | length == 0
+  with_items: "{{ assigned_subs.results }}"
+
 - name: override what content that is enabled
   command: hammer activation-key content-override --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --content-label "{{ item.1.override }}" --value 1
   with_nested:

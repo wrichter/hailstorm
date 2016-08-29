@@ -1,6 +1,6 @@
 - block:
     - include: configure_named.yml
-      when: dnat_rules is defined
+      when: external_network_config.services_network_dnat is defined
     - include: configure_smtp.yml
     - include: configure_imap.yml
   when: mode=="create"

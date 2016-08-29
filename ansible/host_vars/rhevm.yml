@@ -17,3 +17,22 @@ repos: "{{ rhevm_repos }}"
 packages: rhevm,ovirt-engine-extension-aaa-ldap-setup,rhevm-dwh
 
 ksdevice: eth1
+
+tdagent_configs:
+  - tag: syslog.messages
+    path: /var/log/messages
+    pos_file: /var/log/td-agent/messages_log.pos
+    format: syslog
+    permissions:
+      - path: /var/log/messages
+        mode: o+r
+  - tag: engine.log
+    path: /var/log/ovirt-engine/engine.log
+    pos_file: /var/log/td-agent/ovirt_engine_log.pos
+    format: /^(?<time>[^ ]* [^ ]*) (?<loglevel>[^ ]*) +\[(?<component>[^ ]*)\] +\((?<thread>[^ ]*)\) +(?<message>.*)$/
+    time_format: "%Y-%m-%d %H:%M:%S,%L"
+    permissions:
+      - path: /var/log/ovirt-engine
+        mode: o+xr
+      - path: /var/log/ovirt-engine/engine.log
+        mode: o+r

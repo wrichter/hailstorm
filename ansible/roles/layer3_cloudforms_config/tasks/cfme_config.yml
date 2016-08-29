@@ -1,10 +1,17 @@
-- name: copy settings.sql
-  copy: src=settings.sql dest=/tmp/settings.sql owner=root group=root mode=0644
+# - name: copy settings.sql
+#   copy: src=settings.sql dest=/tmp/settings.sql owner=root group=root mode=0644
+- name: create settings.sql
+  template: src=settings.sql.j2 dest=/tmp/settings.sql owner=root group=root mode=0644
+  register: settings
 
 - name: apply settings.sql
   shell: sudo -i -u postgres psql -f /tmp/settings.sql vmdb_production
-  notify: restart evmserverd
+#  notify: restart evmserverd
+  # become: yes
+  # become_user: postgres
+  # when using become, it fails with the error message /opt/rh/rh-postgresql94/root/usr/bin/psql: error while loading shared libraries: libpq.so.rh-postgresql94-5: cannot open shared object file: No such file or directory
+  when: settings|changed
 
-- name: make sure evmserverd is running
-  service: name=evmserverd state=started enabled=yes
-
+- name: make sure evmserverd is restarted
+  service: name=evmserverd state=restarted enabled=yes
+  when: settings|changed

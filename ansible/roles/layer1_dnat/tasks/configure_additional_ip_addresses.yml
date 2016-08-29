@@ -1,12 +1,27 @@
-- name: find configured IP addresses
-  shell: nmcli con show {{ dnat_rules.layer1_dev }} | grep ipv4.addresses
-  register: ip_addresses
-  changed_when: false
+# - name: find configured IP addresses
+#   shell: nmcli con show {{ dnat_rules.layer1_dev }} | grep ipv4.addresses
+#   register: ip_addresses
+#   changed_when: false
+# - name: add static IP configuration for DNAT
+#   command: nmcli con modify {{ dnat_rules.layer1_dev }} +ipv4.addresses "{{ item.on_host_prefix }}"
+#   when: item.on_host_prefix not in ip_addresses.stdout
+#   with_items: "{{ dnat_rules.mapping }}"
+#   register: ip_address_change
+# - name: reload interface configuration
+#   command: nmcli con up {{ dnat_rules.layer1_dev }}
+#   when: ip_address_change|changed
+#
+
+- name: remove configured additional IP addresses
+  lineinfile: state=absent regexp="^IPADDR[0-9]+|^PREFIX[0-9]+" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
+
 - name: add static IP configuration for DNAT
-  command: nmcli con modify {{ dnat_rules.layer1_dev }} +ipv4.addresses "{{ item.on_host_prefix }}"
-  when: item.on_host_prefix not in ip_addresses.stdout
-  with_items: "{{ dnat_rules.mapping }}"
-  register: ip_address_change
-- name: reload interface configuration
-  command: nmcli con up {{ dnat_rules.layer1_dev }}
-  when: ip_address_change|changed
+  lineinfile: state=present regexp="^IPADDR{{ item.0 + 1 }}=.*" line="IPADDR{{ item.0 + 1 }}={{ item.1.on_host_prefix | ipaddr('address') }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
+  with_indexed_items: "{{ external_network_config.services_network_dnat.mapping }}"
+
+- name: add PREFIX for static IP configuration
+  lineinfile: state=present insertafter="^IPADDR{{ item.0 + 1 }}=.*" line="PREFIX{{ item.0 + 1 }}={{ item.1.on_host_prefix | ipaddr('prefix') }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
+  with_indexed_items: "{{ external_network_config.services_network_dnat.mapping }}"
+
+- name: ifup interface
+  shell: ifup {{ external_network_config.services_network_dnat.layer1_dev }}
