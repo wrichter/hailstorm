@@ -124,11 +124,20 @@
       when: item.stdout == ''
       with_items: "{{ vm_individual_nic_url.results }}"
 
-    # - name: increase CFME VM memory
-    #   shell: rhevm-shell -E ''
-    #   delegate_to: rhevm
 
+  when: cloudforms_vm.stdout==''
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 
+- name: increase CFME VM memory
+  shell: rhevm-shell -E 'update vm Cloudforms --{{ item.param }} {{ item.value }}'
+  with_items:
+    - param: memory
+      value: 17179869184
+    - param: memory_policy-guaranteed
+      value: 17179869184
+  delegate_to: rhevm
+
+- block:
     - name: find CFME VM Start URL
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
