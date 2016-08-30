@@ -46,14 +46,14 @@
       register: epel
 
     - name: install epel-release
-      command: yum -y localinstall  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm
+      command: yum -y localinstall  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
       when: epel|failed
 
     - name: install python-pip
       yum: name=python-pip state=latest
 
     - name: check if curator is installed
-      shell: pip show elasticsearch-curator || true
+      shell: pip show elasticsearch-curator || true
       register: curator
       changed_when: false
       ignore_errors: true
