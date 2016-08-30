@@ -1,12 +1,12 @@
-- name: configure BIND to listen on eth0
-  lineinfile: line="  listen-on port 53 { 127.0.0.1; {{ vm_nics[0].ip }}; };" regexp=".*listen-on port 53.*" dest=/etc/named.conf
-- name: configure BIND to answer external queries
-  lineinfile: line="	allow-query     { any; };" regexp=".*allow-query.*" dest=/etc/named.conf
-- name: create zone db directory
-  file: state=directory path=/etc/named/zones/master
-- name: create zone db
-  template: src=zone.db.j2 dest=/etc/named/zones/master/db.{{ hailstorm_dns_domain }}
-- name: add zone db to bind config
-  lineinfile: line="zone \"{{ hailstorm_dns_domain }}\" { type master; file \"/etc/named/zones/master/db.{{ hailstorm_dns_domain }}\"; };" dest=/etc/named.rfc1912.zones
-- name: ensure that named is restarted
-  service: name=named enabled=yes state=restarted
+#- name: configure BIND to listen on eth0
+#  lineinfile: line="  listen-on port 53 { 127.0.0.1; {{ vm_nics[0].ip }}; };" regexp=".*listen-on port 53.*" dest=/etc/named.conf
+#- name: configure BIND to answer external queries
+#  lineinfile: line="	allow-query     { any; };" regexp=".*allow-query.*" dest=/etc/named.conf
+#- name: create zone db directory
+#  file: state=directory path=/etc/named/zones/master
+#- name: create zone db
+#  template: src=zone.db.j2 dest=/etc/named/zones/master/db.{{ hailstorm_dns_domain }}
+#- name: add zone db to bind config
+#  lineinfile: line="zone \"{{ hailstorm_dns_domain }}\" { type master; file \"/etc/named/zones/master/db.{{ hailstorm_dns_domain }}\"; };" dest=/etc/named.rfc1912.zones
+#- name: ensure that named is restarted
+#  service: name=named enabled=yes state=restarted
