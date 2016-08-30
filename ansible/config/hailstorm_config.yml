@@ -20,7 +20,8 @@ rhosp_images:
   - overcloud-full-8.0-20160415.1.tar
 ####END RHOSP
 satellite_manifestfile: manifest.zip
-cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
+cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
+#cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: manageiq-ovirt-devel.ova
 
@@ -36,11 +37,11 @@ osp_kvm_images:
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
-satellite_subscription_pool_regex: "^Red Hat Satellite Employee Subscription$"
-rhel_subscription_pool_regex: "^Employee SKU$"
-rhev_subscription_pool_regex: "^Employee SKU$"
-rhosp_subscription_pool_regex: "^Employee SKU$"
-ose_subscription_pool_regex: "^Employee SKU$"
+satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
+rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
+rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
+rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$"
+ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
 
 # REPOSITORIES
 # rhosp_repos:
@@ -53,8 +54,8 @@ rhosp_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-openstack-8-rpms
-  - rhel-7-server-openstack-8-director-rpms
+  - rhel-7-server-openstack-9-rpms
+  - rhel-7-server-openstack-9-director-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms

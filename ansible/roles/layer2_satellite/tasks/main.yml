@@ -1,12 +1,17 @@
 - block:
     - include: install-satellite6.yml
+      tags: ['install']
     - include: import_manifest.yml
       tags: ['manifest']
     - include: enable_repo_and_sync.yml
       tags: ['sync']
     - include: wait-for-sync-tasks.yml
+      tags: ['wait']
     - include: lifecycle-environments.yml
+      tags: ['lifecycle']
     - include: content_views.yml
+      tags: ['cv']
     - include: host-collections.yml
+      tags: ['hc']
     - include: activation_keys.yml
   when: mode=="create"

@@ -48,7 +48,7 @@ ose3-lb         ansible_host=192.168.101.27 activation_key="AK-CV-OS-RHEL7-SERVE
 
 # Elasticsearch, FluentD, Kibana
 [efk]
-efk             ansible_host=192.168.101.28 activation_key="AK-CV-RHOSP8-PROD"
+efk             ansible_host=192.168.101.28 activation_key="AK-CV-RHOSP-PROD"
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
@@ -56,19 +56,19 @@ infrastructure  ansible_host=192.168.101.29 activation_key="AK-CV-OS-RHEL7-SERVE
 
 # The single system where osp-director will be installed to
 [rhosp-director]
-rhosp-director  ansible_host=192.168.101.30 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-director  ansible_host=192.168.101.30 activation_key="AK-CV-RHOSP-PROD"
 
 # The group of all osp compute nodes
 [rhosp-compute]
-rhosp-compute1  ansible_host=192.168.101.31 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-compute2  ansible_host=192.168.101.32 activation_key="AK-CV-RHOSP8-PROD"
-rhosp-compute3  ansible_host=192.168.101.33 activation_key="AK-CV-RHOSP8-PROD"
+rhosp-compute1  ansible_host=192.168.101.31 activation_key="AK-CV-RHOSP-PROD"
+rhosp-compute2  ansible_host=192.168.101.32 activation_key="AK-CV-RHOSP-PROD"
+rhosp-compute3  ansible_host=192.168.101.33 activation_key="AK-CV-RHOSP-PROD"
 
 # The group of all osp control nodes
 [rhosp-control]
-rhosp-control1  ansible_host=192.168.101.34 activation_key="AK-CV-RHOSP8-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
-rhosp-control2  ansible_host=192.168.101.35 activation_key="AK-CV-RHOSP8-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
-rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP8-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
+rhosp-control1  ansible_host=192.168.101.34 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
+rhosp-control2  ansible_host=192.168.101.35 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
+rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]

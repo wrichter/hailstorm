@@ -142,6 +142,12 @@ product_config:
         releasever: 7Server
       - name: Red Hat OpenStack Platform 8 Operational Tools for RHEL 7 (RPMs)
         releasever: 7Server
+      - name: Red Hat OpenStack Platform 9 director for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform 9 for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform 9 Operational Tools for RHEL 7 (RPMs)
+        releasever: 7Server
 #need manifest WITH satellite
 #  - product: Red Hat Satellite
 #    basearch: x86_64
@@ -163,6 +169,9 @@ product_config:
       - name: Red Hat Enterprise Virtualization Management Agents for RHEL 7 (RPMs)
         releasever: 7Server
       - name: Red Hat Enterprise Virtualization Manager 3.6 (RPMs)
+      - name: Red Hat Virtualization 4 Management Agents for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat Virtualization Manager 4.0 (RHEL 7 Server) (RPMs)
   - product: JBoss Enterprise Application Platform
     basearch: x86_64
     repos:
@@ -193,6 +202,8 @@ content_config:
         repository: "Red Hat Satellite Tools 6.1 for RHEL 6 Server RPMs x86_64"
     host_collection: "RHEL6"
     override: "rhel-6-server-satellite-tools-6.1-rpms"
+    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+
   - content_view: "CV-OS-RHEL7-SERVER"
     content:
       - product: "Red Hat Enterprise Linux Server"
@@ -205,6 +216,8 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
     host_collection: "RHEL7"
     override: "rhel-7-server-satellite-tools-6.1-rpms"
+    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+
   - content_view: "CV-RHEV-MANAGER"
     content:
       - product: "Red Hat Enterprise Virtualization"
@@ -219,6 +232,8 @@ content_config:
         repository: "JBoss Enterprise Application Platform 6 RHEL 6 Server RPMs x86_64 6Server"
     override: "rhel-6-server-satellite-tools-6.1-rpms"
     host_collection: "RHEVM"
+    activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
+
   - content_view: "CV-RHEV-HYPERVISOR"
     content:
       - product: "Red Hat Enterprise Linux Server"
@@ -229,8 +244,16 @@ content_config:
         repository: "Red Hat Enterprise Virtualization Management Agents for RHEL 7 RPMs x86_64 7Server"
     override: "rhel-7-server-satellite-tools-6.1-rpms"
     host_collection: "RHEVH"
-  - content_view: "CV-RHOSP8"
+    activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
+
+  - content_view: "CV-RHOSP"
     content:
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 9 director for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 9 for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 9 Operational Tools for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat OpenStack"
         repository: "Red Hat OpenStack Platform 8 director for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat OpenStack"
@@ -247,6 +270,28 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
     override: "rhel-7-server-satellite-tools-6.1-rpms"
     host_collection: "RHOSP"
+    activation_key_subscription_regex: "{{ rhosp_subscription_pool_regex }}"
+
+  # - content_view: "CV-RHOSP9"
+  #   content:
+  #     - product: "Red Hat OpenStack"
+  #       repository: "Red Hat OpenStack Platform 9 director for RHEL 7 RPMs x86_64 7Server"
+  #     - product: "Red Hat OpenStack"
+  #       repository: "Red Hat OpenStack Platform 9 for RHEL 7 RPMs x86_64 7Server"
+  #     - product: "Red Hat OpenStack"
+  #       repository: "Red Hat OpenStack Platform 9 Operational Tools for RHEL 7 RPMs x86_64 7Server"
+  #     - product: "Red Hat Enterprise Linux Server"
+  #       repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+  #     - product: "Red Hat Enterprise Linux Server"
+  #       repository: "Red Hat Satellite Tools 6.1 for RHEL 7 Server RPMs x86_64"
+  #     - product: "Red Hat Enterprise Linux Server"
+  #       repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+  #     - product: "Red Hat Enterprise Linux Server"
+  #       repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
+  #   override: "rhel-7-server-satellite-tools-6.1-rpms"
+  #   host_collection: "RHOSP"
+  #   activation_key_subscription_regex: "{{ rhosp_subscription_pool_regex }}"
+
   - content_view: "CV-RHOSE3"
     content:
       - product: "Red Hat OpenShift Enterprise"
@@ -259,3 +304,4 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
     override: "rhel-7-server-satellite-tools-6.1-rpms"
     host_collection: "RHOSE3"
+    activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"

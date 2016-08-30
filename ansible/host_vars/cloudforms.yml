@@ -24,8 +24,6 @@ cfme_settings:
     value: '--- true\n...\n'
   - key: '/smtp/authentication'
     value: '--- none\n...\n'
-  - key: '/smtp/authentication'
-    value: '--- none\n...\n'
   - key: '/smtp/domain'
     value: '--- {{ hailstorm_dns_domain }}\n...\n'
   - key: '/smtp/from'

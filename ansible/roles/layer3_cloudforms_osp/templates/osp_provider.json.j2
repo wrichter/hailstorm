@@ -3,22 +3,23 @@
   "name":"{{ item.name }}",
   "port":"5000",
   "hostname":"{{ item.ip }}",
-  "api_version":"v2",
+  "api_version" : "{{ item.api_version }}",
+  {% if item.api_version == "v3" %}"uid_ems" : "{{ item.domain_id }}",{% endif %}
   "security_protocol":"non-ssl",
   "credentials" : {% if item.metrics_username is not defined %}{
-    "userid"    : "admin",
+    "userid"    : "{{ item.admin_name }}",
     "password"  : "{{ item.admin_password }}"
   }{% else %}[{
-    "userid"    : "admin",
+    "userid"    : "{{ item.admin_name }}",
     "password"  : "{{ item.admin_password }}",
     "auth_type" : "default"
-  },{
+  }{#,{
     "userid"    : "{{ item.metrics_username }}",
     "password"  : "{{ item.metrics_password }}",
     "auth_type" : "amqp"
-  },{
-    "userid"    : "root",
-    "auth_key"  : "{{ item.ssh_priv_key }}",
+  }#},{
+    "userid"    : "{{ item.stack_user_name }}",
+    "auth_key"  : "{{ item.stack_user_ssh_priv_key }}",
     "auth_type" : "ssh_keypair"
   }]{% endif %}
 }

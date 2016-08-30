@@ -77,14 +77,26 @@ resources:
           sudo openstack-config --set /etc/keystone/keystone.conf identity domain_config_dir /etc/keystone/domains
           sudo openstack-config --set /etc/keystone/keystone.conf assignment driver keystone.assignment.backends.sql.Assignment
 
-          sudo grep -q -E ^OPENSTACK_API_VERSIONS /etc/openstack-dashboard/local_settings ||
-          sudo cat <<EOF >>/etc/openstack-dashboard/local_settings
+          if [ ! -d /etc/openstack-dashboard/local_settings.d ]; then
+          # Liberty & before
+            sudo grep -q -E ^OPENSTACK_API_VERSIONS /etc/openstack-dashboard/local_settings ||
+            sudo cat <<EOF >>/etc/openstack-dashboard/local_settings
         OPENSTACK_API_VERSIONS = {
           "identity": 3
         }
         OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
         OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = '{{ osp_domain_name }}'
         EOF
+          else
+            # Mitaka & beyond
+            sudo cat <<EOF >/etc/openstack-dashboard/local_settings.d/_99_hailstorm.py
+        OPENSTACK_API_VERSIONS = {
+          "identity": 3
+        }
+        OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
+        OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = '{{ osp_domain_name }}'
+        EOF
+          fi
 
           sudo cat <<EOF >/etc/keystone/domains/keystone.{{ osp_domain_name }}.conf
         [ldap]
@@ -109,7 +121,7 @@ resources:
 
           sudo chown keystone:keystone /etc/keystone/domains/keystone.hailstorm.conf
 
-          sudo systemctl restart openstack-keystone.service
+          sudo systemctl condrestart openstack-keystone.service
         }
   {% endif %}
 
