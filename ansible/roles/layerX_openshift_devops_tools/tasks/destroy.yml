@@ -1,3 +1,11 @@
 - shell: oc delete all --all -n devops-tools
+  ignore_errors: true
+
 - shell: oc delete pvc sonatype-work -n devops-tools
+  ignore_errors: true
+
 - shell: oc delete pvc jenkins -n devops-tools
+  ignore_errors: true
+
+- shell: oc delete project devops-tools -n devops-tools
+  ignore_errors: true

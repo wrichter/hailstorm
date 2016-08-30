@@ -15,9 +15,21 @@
 
 # --- Create Nexus from template if not already existing
 # See: https://access.redhat.com/solutions/2293571
-- name: Create nexus
-  shell: "oc create -f - -n devops-tools <<EOF
-         {{ lookup('template','nexus_template.yml.j2') }}"
+- block:
+  - name: Prepare nexus template
+    template: src=nexus_template.yml.j2 dest=/tmp/nexus_template.yml
+
+  - name: Create nexus
+    shell: "oc new-app -f /tmp/nexus_template.yml -n devops-tools"
+
+  - name: Wait for nexus become online
+    shell: curl "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/"
+    register: tstcurl
+    changed_when: false
+    until: "'<title>Nexus Repository Manager</title>' in tstcurl.stdout"
+    retries: 360
+    delay: 1
+
   when: "'nexus' not in deploymentconfigs.stdout_lines"
 
 # --- Create Jenkins from openshift build in template
@@ -31,8 +43,13 @@
 
 # --- Create GIT Repo:
 # See: https://github.com/openshift/origin/blob/master/examples/gitserver
-- name: Create git
-  shell: "oc policy add-role-to-user edit -z git"
-  shell: "oc create -f - -n devops-tools <<EOF
-         {{ lookup('template','gitserver-persistent.yaml.j2') }}"
+- block:
+  - name: Prepare git yaml
+    template: src=gitserver-persistent.yaml.j2 dest=/tmp/gitserver-persistent.yml
+
+  - name: Create git
+    shell: "oc create -f /tmp/gitserver-persistent.yml -n devops-tools"
+
+  - name: Add Edit Role to Git User
+    shell: "oc policy add-role-to-user edit -z git"
   when: "'git' not in deploymentconfigs.stdout_lines"

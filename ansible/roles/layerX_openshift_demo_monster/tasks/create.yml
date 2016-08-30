@@ -18,19 +18,33 @@
   register: templates
   changed_when: false
 
-- name: Create monster dev template in openshift namespace
-# Fails, too:
-#  shell: "echo '{{ lookup('template','monster_template_dev.yml.j2') }}' | oc create -f - -n openshift"
-  shell: "oc create -f - -n openshift <<EOF
-         {{ lookup('template','monster_template_dev.yml.j2') }}"
-  when: "'monster' not in templates.stdout_lines"
+- block:
+  - name: Prepare Monster Dev Template
+    template: src=monster_template_dev.yml.j2 dest=/tmp/monster_template_dev.yml
+
+  - name: Create monster dev template in openshift namespace
+    shell: "oc create -f /tmp/monster_template_dev.yml -n openshift"
+
+  - name: Doing sample deployment of monster-dev app
+    shell: "oc new-app --template monster-dev -n demo-dev --labels=MonsterDevInitialDeploymentTest=true"
+
+  - name: Wait for monster dev to become online
+    shell: curl "http://monster-demo-dev.apps.{{ hailstorm_dns_domain }}/"
+    register: tstcurl
+    changed_when: false
+    until: "'<title>Ticket Monster</title>' in tstcurl.stdout"
+    retries: 360
+    delay: 1
+
+  - name: Removing sample deployment of monster-dev app
+    shell: "oc delete all -l MonsterDevInitialDeploymentTest -n demo-dev"
+  when: "'monster-dev' not in templates.stdout_lines"
 
 
-- name: Create monster prd template in openshift namespace
-  shell: "oc create -f - -n openshift <<EOF
-         {{ lookup('template','monster_template_prod.yml.j2') }}"
+- block:
+  - name: Prepare Monster Prod Template
+    template: src=monster_template_prod.yml.j2 dest=/tmp/monster_template_prod.yml
+
+  - name: Create monster prd template in openshift namespace
+    shell: "oc create -f /tmp/monster_template_prod.yml -n openshift"
   when: "'monster-prod' not in templates.stdout_lines"
-
-# TODO: Do one build&deploy of monster to ensure images are in the registry
-# As user Developer:
-#oc new-app --template monster
