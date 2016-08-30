@@ -1,11 +1,15 @@
-- shell: oc delete all --all -n devops-tools
+- name: Delete all devops-tools
+  shell: oc delete all --all -n devops-tools
   ignore_errors: true
 
-- shell: oc delete pvc sonatype-work -n devops-tools
+- name: Delete persistence volume controler sonatype
+  shell: oc delete pvc sonatype-work -n devops-tools
   ignore_errors: true
 
-- shell: oc delete pvc jenkins -n devops-tools
+- name: Delete persistence volume controler jenkins
+  shell: oc delete pvc jenkins -n devops-tools
   ignore_errors: true
 
-- shell: oc delete project devops-tools -n devops-tools
+- name: Delete namespace devops-tools
+  shell: oc delete project devops-tools -n devops-tools
   ignore_errors: true

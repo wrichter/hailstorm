@@ -1,7 +1,5 @@
-// TODO:
-// Needs to be added to /sonatype-work/conf/nexus.xml
-// Inside Nexus Container Persistent Volume
-// Any Idea how to do this?
+<!-- This snipped is inserted via ansible into to the existing -->
+<!-- nexus config file -->
   <repository>
      <id>redhat</id>
      <name>redhat</name>
@@ -58,4 +56,4 @@
                   <memberRepository>public</memberRepository>
                 </memberRepositories>
     </externalConfiguration>
-</repository>
+  </repository>

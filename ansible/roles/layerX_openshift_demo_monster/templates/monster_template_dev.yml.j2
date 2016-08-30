@@ -40,12 +40,12 @@ objects:
           kind: ImageStreamTag
           name: jboss-eap64-openshift:latest
           namespace: openshift
-#
-# DFR -TODO - Enable Local Nexus Mirror when deployment automation is okay:
-#        env:
-#        -
-#          name: MAVEN_MIRROR_URL
-#          value: 'http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/content/groups/main/'
+
+# Enable Local Nexus Mirror :
+        env:
+        -
+          name: MAVEN_MIRROR_URL
+          value: 'http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/content/groups/main/'
     triggers:
     - generic:
         secret: secret
