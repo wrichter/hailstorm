@@ -1,0 +1,6 @@
+# Add Users to roles
+# Author: Daniel Fröhlich
+
+# Jira: BOSCHDEMO-528
+- name: Add user admin to ose cluster-admin
+  shell: oadm policy add-cluster-role-to-user cluster-admin admin

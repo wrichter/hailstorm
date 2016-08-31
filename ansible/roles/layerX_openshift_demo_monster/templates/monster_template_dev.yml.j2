@@ -1,0 +1,183 @@
+apiVersion: v1
+kind: Template
+metadata:
+  annotations:
+    description: |
+      Ticket Monster is a moderately complex application that demonstrates how
+      to build modern applications using JBoss web technologies
+    iconClass: icon-jboss
+    tags: instant-app,javaee
+  creationTimestamp: null
+  name: monster-dev
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: monster
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: monster
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: monster:latest
+    source:
+      git:
+# DFR - TODO: Change this to our own local git repo
+# Something like:
+#
+# Use this one if no local git server available:
+# https://github.com/jim-minter/ose3-ticket-monster
+        ref: master
+        uri: http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
+      type: Git
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: jboss-eap64-openshift:latest
+          namespace: openshift
+
+# Enable Local Nexus Mirror :
+        env:
+        -
+          name: MAVEN_MIRROR_URL
+          value: 'http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/content/groups/main/'
+    triggers:
+    - generic:
+        secret: secret
+      type: Generic
+    - type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: monster
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: monster
+    template:
+      metadata:
+        labels:
+          deploymentConfig: monster
+        name: monster
+      spec:
+        containers:
+        - env:
+          - name: DB_SERVICE_PREFIX_MAPPING
+            value: monster-mysql=DB
+          - name: TX_DATABASE_PREFIX_MAPPING
+            value: monster-mysql=DB
+          - name: DB_JNDI
+            value: java:jboss/datasources/MySQLDS
+          - name: DB_DATABASE
+            value: ${MYSQL_DATABASE}
+          - name: DB_USERNAME
+            value: ${MYSQL_USER}
+          - name: DB_PASSWORD
+            value: ${MYSQL_PASSWORD}
+          - name: JAVA_OPTS
+            value: -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.logmanager
+              -Djava.awt.headless=true -Djboss.modules.policy-permissions=true
+          - name: DEBUG
+            value: "true"
+          image: monster
+          name: monster
+          ports:
+          - containerPort: 8080
+            name: http
+          - containerPort: 8778
+            name: jolokia
+          - containerPort: 8787
+            name: debug
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/eap/bin/readinessProbe.sh
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - monster
+        from:
+          kind: ImageStream
+          name: monster
+      type: ImageChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: monster-mysql
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: monster-mysql
+    template:
+      metadata:
+        labels:
+          deploymentConfig: monster-mysql
+        name: monster-mysql
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_USER
+            value: ${MYSQL_USER}
+          - name: MYSQL_PASSWORD
+            value: ${MYSQL_PASSWORD}
+          - name: MYSQL_DATABASE
+            value: ${MYSQL_DATABASE}
+          image: mysql
+          name: monster-mysql
+          ports:
+          - containerPort: 3306
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - monster-mysql
+        from:
+          kind: ImageStreamTag
+          name: mysql:latest
+          namespace: openshift
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: monster
+  spec:
+    ports:
+    - name: http
+      port: 8080
+    selector:
+      deploymentConfig: monster
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: monster-mysql
+  spec:
+    ports:
+    - port: 3306
+    selector:
+      deploymentConfig: monster-mysql
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: monster
+  spec:
+    to:
+      name: monster
+parameters:
+- name: MYSQL_DATABASE
+  value: monster
+- name: MYSQL_USER
+  value: monster
+- from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: MYSQL_PASSWORD
