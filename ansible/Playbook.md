@@ -126,6 +126,10 @@ The following roles exist:
 - **layerX_openshift_all**: prepares all OpenShift machines (nodes, load balancer, etc...) for installation using the ansible playbook
 - **layerX_openshift_node**: prepares all OpenShift nodes for installation (docker config, etc...)
 - **layerX_openshift_installer**: installs OpenShift via ansible playbook and deploys the OpenShift infrastructure components (router, registry, etc...)
+- **layerX_openshift_devops**: installs DevOpsTools (nexus, jenkins, git, ...) into a project named devops-tools
+- **layerX_openshift_demo_monster**: installs JEE Demo App "Ticket Monster"
+
+
 
 #### EFK
 - **layer2_efk**: installs Kibana, ElasticSearch and fluentd based on the RHOSP8 optools

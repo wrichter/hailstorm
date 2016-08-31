@@ -1,0 +1,86 @@
+# --- Create devops-tools projects:
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: Create devops-tools project
+  shell: "oadm new-project devops-tools --admin='developer' --description='DevOps Tools like nexus, jenkins etc'"
+  when: "'devops-tools' not in projects.stdout_lines"
+
+- name: check existing deploymentconfigs
+  shell: oc get dc -n devops-tools | awk '{ print $1 }'
+  register: deploymentconfigs
+  changed_when: false
+
+# --- Create Nexus from template if not already existing
+# See: https://access.redhat.com/solutions/2293571
+- block:
+  - name: Prepare nexus template
+    template: src=nexus_template.yml.j2 dest=/tmp/nexus_template.yml
+
+  - name: Create nexus
+    shell: "oc new-app -f /tmp/nexus_template.yml -n devops-tools"
+
+  - name: Wait for nexus become online
+    shell: curl "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/"
+    register: tstcurl
+    changed_when: false
+    until: "'<title>Nexus Repository Manager</title>' in tstcurl.stdout"
+    retries: 360
+    delay: 1
+
+# Configure Nexus by adding repositories from nexus_config_snippets.xml
+  - name: get nexus pod id
+    shell: oc get pods -n devops-tools | grep nexus | awk '{ print $1 }'
+    register: nexusPod
+    changed_when: false
+
+  - name: get nexus config files from pod
+    shell: mkdir /tmp/nexus_conf;oc rsync {{ nexusPod.stdout }}:/sonatype-work/conf/ /tmp/nexus_conf -n devops-tools
+
+  - name: add RedHat Repositories to nexus config file
+    replace:
+      dest: /tmp/nexus_conf/nexus.xml
+      regexp: '(</repositories>[^<]*<repositoryGrouping>)'
+      replace: >
+        {{ lookup('template','nexus_config_snippets.xml.j2') }} \1
+
+  - name: copy modified nexus config files back to pod
+    shell: oc rsync /tmp/nexus_conf/ {{ nexusPod.stdout }}:/sonatype-work/conf  -n devops-tools
+
+  - name: restart nexus
+    shell: oc scale --replicas=0 rc nexus-1 -n devops-tools;oc scale --replicas=1 rc nexus-1 -n devops-tools
+
+  - name: Wait for nexus become online again
+    shell: curl "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/"
+    register: tstcurl
+    changed_when: false
+    until: "'<title>Nexus Repository Manager</title>' in tstcurl.stdout"
+    retries: 360
+    delay: 1
+
+  when: "'nexus' not in deploymentconfigs.stdout_lines"
+
+
+# --- Create Jenkins from openshift build in template
+# See: https://github.com/openshift/origin/blob/master/examples/jenkins/README.md
+# Todo:
+# - check if advanced config is needed as described in above readme
+# - check if build in template is a good idea
+- name: Create jenkins
+  shell: "oc new-app jenkins-persistent  -n devops-tools"
+  when: "'jenkins' not in deploymentconfigs.stdout_lines"
+
+# --- Create GIT Repo:
+# See: https://github.com/openshift/origin/blob/master/examples/gitserver
+- block:
+  - name: Prepare git yaml
+    template: src=gitserver-persistent.yaml.j2 dest=/tmp/gitserver-persistent.yml
+
+  - name: Create git
+    shell: "oc create -f /tmp/gitserver-persistent.yml -n devops-tools"
+
+  - name: Add Edit Role to Git User
+    shell: "oc policy add-role-to-user edit -z git"
+  when: "'git' not in deploymentconfigs.stdout_lines"

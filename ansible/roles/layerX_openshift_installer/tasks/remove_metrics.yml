@@ -1,9 +1,22 @@
-- shell: oc delete all --selector="metrics-infra"  -n openshift-infra
-- shell: oc delete sa --selector="metrics-infra"  -n openshift-infra
-- shell: oc delete templates --selector="metrics-infra"  -n openshift-infra
-- shell: oc delete secrets --selector="metrics-infra"  -n openshift-infra
-- shell: oc delete pvc --selector="metrics-infra" -n openshift-infra
-- shell: oc delete sa metrics-deployer -n openshift-infra
+- name: delete all metrics-infra
+  shell: oc delete all --selector="metrics-infra"  -n openshift-infra
+
+- name: delete sa metrics-infra
+  shell: oc delete sa --selector="metrics-infra"  -n openshift-infra
+
+- name: delete templates metrics-infra
+  shell: oc delete templates --selector="metrics-infra"  -n openshift-infra
+
+- name: delete secrets metrics-infra
+  shell: oc delete secrets --selector="metrics-infra"  -n openshift-infra
+
+- name: delete pvc metrics-infra
+  shell: oc delete pvc --selector="metrics-infra" -n openshift-infra
+
+- name: delete sa metrics-deployer
+  shell: oc delete sa metrics-deployer -n openshift-infra
   ignore_errors: true
-- shell: oc delete secret metrics-deployer -n openshift-infra
+
+- name: delete secret metrics-deployer
+  shell: oc delete secret metrics-deployer -n openshift-infra
   ignore_errors: true

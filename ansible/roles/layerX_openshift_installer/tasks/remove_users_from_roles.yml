@@ -1,0 +1,7 @@
+# Add Users to roles
+# Author: Daniel Fröhlich
+
+# Jira: XXX-528
+- name: Remove user admin to ose cluster-admin
+  shell: oadm policy remove-cluster-role-from-user cluster-admin admin
+  ignore_errors: true
