@@ -11,10 +11,14 @@
       tags: ["ose3-logging"]
     - include: deploy_metrics.yml
       tags: ["ose3-metrics"]
+    - include: add_users_to_roles.yml
+      tags: ["ose3-roles"]
   when: mode=="create"
 
 
 - block:
     - include: remove_metrics.yml
       tags: ["ose3-metrics"]
+    - include: remove_users_from_roles.yml
+      tags: ["ose3-roles"]
   when: mode=="destroy"
