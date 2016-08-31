@@ -1,0 +1,1 @@
+openstack server list -f value -c ID -c Name | while read line; do UUID=`echo -n $line | awk '{ print $1 }'`; NAME=`echo -n $line | awk '{ print $2 }'`; echo -n "${NAME}: "; ironic node-list --fields instance_uuid properties | sed s/u\'/\'/g | sed s/\'/\"/g | grep $UUID | awk -F '|' '{ print $3 }' | jq ."hailstorm_name"; done | sort

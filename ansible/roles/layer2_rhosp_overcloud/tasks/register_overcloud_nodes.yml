@@ -54,6 +54,13 @@
         $(ironic port-show --address {{ hostvars[item].vm_nics[0].mac }} |  awk '/node_uuid/{ print $4 }') \
         add properties/capabilities='profile:compute,boot_option:local'
       with_items: "{{ groups['rhosp-compute'] }}"
+
+    - name: update all nodes with KVM VM name
+      shell: >
+        . ~/stackrc && ironic node-update \
+        $(ironic port-show --address {{ hostvars[item].vm_nics[0].mac }} |  awk '/node_uuid/{ print $4 }') \
+        add properties/hailstorm_name='{{ hostvars[item].inventory_hostname_short }}'
+      with_items: "{{ groups['rhosp-compute'] + groups['rhosp-control'] }}"
   when: instackenv_json.changed
   become: yes
   become_user: "{{ rhosp_stack_user }}"

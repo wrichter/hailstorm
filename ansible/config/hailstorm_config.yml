@@ -44,18 +44,22 @@ rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux OpenStac
 ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
 
 # REPOSITORIES
-# rhosp_repos:
+# rhosp_undercloud_repos:
 #   - rhel-7-server-rpms
 #   - rhel-7-server-optional-rpms
 #   - rhel-7-server-extras-rpms
 #   - rhel-7-server-openstack-7.0-rpms
 #   - rhel-7-server-openstack-7.0-director-rpms
-rhosp_repos:
+rhosp_undercloud_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
   - rhel-7-server-openstack-9-rpms
   - rhel-7-server-openstack-9-director-rpms
+rhosp_overcloud_repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-optional-rpms
+  - rhel-7-server-openstack-9-optools-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms

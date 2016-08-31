@@ -3,7 +3,21 @@
       tags: ['register']
     - include: create_overcloud.yml
       tags: ['overcloud-deploy']
-    #- include: read_overcloudrc_into_facts.yml
+      vars:
+        templates:
+          - network-isolation-environment.yaml
+          - extra-config-post-deployment-environment.yaml
+          - extra-config-post-deployment.yaml
+          - extra-config-post-deployment-all.sh
+          - ceilometer-config-environment.yaml
+          - storage-environment.yaml
+          - firstboot-config-environment.yaml
+          - firstboot-config.yaml
+          - firstboot-config-rootsshkey.sh
+          - rhel-registration-environment.yaml
+          - timezone-environment.yaml
+    - include: adapt_to_keystone_v3.yml
+      tags: ['overcloud-config-keystone']
     - include: configure_tenants.yml
       tags: ['overcloud-config-tenants']
     - include: configure_user_access.yml
@@ -22,3 +36,19 @@
     - include: unregister_overcloud_nodes.yml
       tags: ['register']
   when: mode=="destroy"
+
+- block:
+    - include: scale_down_via_hostname.yml
+      vars:
+        templates:
+          - network-isolation-environment.yaml
+          - extra-config-post-deployment-environment.yaml
+          - extra-config-post-deployment.yaml
+          - ceilometer-config-environment.yaml
+          - storage-environment.yaml
+          - firstboot-config-environment.yaml
+          - firstboot-config.yaml
+          - firstboot-config-rootsshkey.sh
+          - rhel-registration-environment.yaml
+          - timezone-environment.yaml
+  when: mode=="reset"
