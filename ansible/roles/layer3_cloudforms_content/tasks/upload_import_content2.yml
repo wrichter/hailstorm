@@ -1,8 +1,12 @@
+- debug: msg="importing {{ item.type }}"
 - name: check if type is present
   local_action: stat path={{content_location}}/{{ item.type }}
   register: stat_item
+- name: check if directory has contents
+  local_action: find paths={{content_location}}/{{ item.type }}
+  register: type_files
+  when: stat_item.stat.exists
 - block:
-    - debug: msg="importing {{ item.type }}"
     - name: create tmp directory
       file: name=/tmp/miq_import state=directory
     - name: upload contents to CF
@@ -33,4 +37,4 @@
 
     # - name: remove temp directory on cfme
     #   file: name=/tmp/miq_import state=absent
-  when: stat_item.stat.exists
+  when: stat_item.stat.exists and type_files.files|length > 0
