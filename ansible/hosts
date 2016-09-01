@@ -137,7 +137,6 @@ test-rhel7
 ipa
 infrastructure
 efk
-cloudforms
 lookbusy
 
 # All layer2 node groups that are installed with RHEL6
