@@ -26,7 +26,8 @@ function nova_control {
 
 function nova_compute {
   # modify VNC proxy config on compute nodes
-  sudo crudini --set /etc/nova/nova.conf DEFAULT novncproxy_base_url http://openstack.{{ hailstorm_dns_domain }}:6080/vnc_auto.html &&
+  sudo crudini --set /etc/nova/nova.conf vnc novncproxy_base_url http://openstack.{{ hailstorm_dns_domain }}:6080/vnc_auto.html
+  sudo crudini --del /etc/nova/nova.conf DEFAULT novncproxy_base_url
 
   # ensure that nova instance dir is mounted via NFS
   sudo setsebool -P virt_use_nfs 1
