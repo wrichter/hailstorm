@@ -4,7 +4,7 @@
 - name: remove temp file
   local_action: file name={{ mktemp.stdout }} state=absent
 - name: create local zip file of Cloudforms Content and reset default datastores
-  local_action: shell cd {{ content_location }} && zip -rq {{ mktemp.stdout }} automate
+  local_action: shell cd {{ content_location }}/automate && zip -rq {{ mktemp.stdout }} .
 #  register: output
 # - debug: var=output
 - name: upload zip file to CF
