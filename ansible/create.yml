@@ -230,12 +230,12 @@
   gather_facts: false
   roles:
     - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'cf', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf', 'cfme-config' ], mode: create }
     - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'cfme-osp-provider' ], mode: create }
     - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'cfme-ose3-provider' ], mode: create }
     - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }
-
 
 - hosts: efk
   remote_user: root
@@ -245,3 +245,11 @@
     - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'efk', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create }
+
+- hosts: lookbusy-osp
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'vm'], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'rhel'], mode: create }
+    - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp' ], mode: create }

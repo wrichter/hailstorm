@@ -1,0 +1,14 @@
+- block:
+   - include: instantiate_vm.yml
+   - include: allocate_floating_ip.yml
+  when: mode=="create"
+
+- block:
+   - include: set_floating_ip_as_fact.yml
+   - name: wait for vm to become available
+     local_action: wait_for host={{ ansible_host }} port=22 timeout=600
+  when: mode=="create" or mode=="readfacts"
+
+- block:
+    - include: terminate_vm.yml
+  when: mode=="destroy"

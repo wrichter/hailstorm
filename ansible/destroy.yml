@@ -1,5 +1,19 @@
 ---
 
+- hosts: lookbusy-osp
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer3_vm_on_openstack
+      tags: [ 'layer3','lookbusy-osp','lookbusy' ]
+      mode: readfacts
+    - role: layer2_rhel
+      tags: [ 'layer3','lookbusy-osp','lookbusy', 'rhel' ]
+      mode: destroy
+    - role: layer3_vm_on_openstack
+      tags: [ 'layer3','lookbusy-osp','lookbusy', 'vm' ]
+      mode: destroy
+
 - hosts: efk
   gather_facts: false
   remote_user: root
@@ -53,6 +67,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_rhel
+      tags: [ 'layer3', 'cf', 'rhel']
+      mode: destroy
     - role: layer3_cloudforms_rhev
       tags: [ 'layer3', 'cf' ]
       mode: destroy

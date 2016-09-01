@@ -25,7 +25,7 @@ rhevh3          ansible_host=192.168.101.15 activation_key="AK-CV-RHEV-HYPERVISO
 
 # the CloudForms management engine
 [cloudforms]
-cloudforms      ansible_host=192.168.101.17
+cloudforms      ansible_host=192.168.101.17 activation_key="AK-CV-CLOUDFORMS-PROD"
 
 [test-rhel6]
 test-rhel6      ansible_host=192.168.101.18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
@@ -76,6 +76,9 @@ openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure
 undercloud-public ansible_host=192.168.105.40
 undercloud-admin  ansible_host=192.168.105.41
 
+# layer 3 openstack
+[lookbusy-osp]
+lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-PROD" osp_tenant="demo1" osp_flavor="m1.small" osp_image="RHEL7"
 
 #### ADDITIONAL GROUPS
 
@@ -134,6 +137,8 @@ test-rhel7
 ipa
 infrastructure
 efk
+cloudforms
+lookbusy
 
 # All layer2 node groups that are installed with RHEL6
 [rhel6:children]
@@ -168,3 +173,6 @@ ipa
 ose3
 efk
 rhevm
+
+[lookbusy:children]
+lookbusy-osp

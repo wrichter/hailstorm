@@ -1,0 +1,32 @@
+- block:
+    - name: check if instance already exists
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack server list -f json --name {{ inventory_hostname_short }}
+      register: instance_data
+      failed_when: instance_data.stdout == ""
+      changed_when: false
+
+    - debug: var=instance_data.stdout|from_json
+
+    - name: create userdata file
+      template: src=cloud-config.txt.j2 dest=/tmp/{{ osp_tenant }}_{{ inventory_hostname_short }}_userdata.txt
+      when: instance_data.stdout | from_json | length == 0
+
+    - name: instantiate image
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack server create
+        --image "{{ osp_image }}"
+        --flavor "{{ osp_flavor }}"
+        --user-data "/tmp/{{ osp_tenant }}_{{ inventory_hostname_short }}_userdata.txt"
+        {{ inventory_hostname_short }}
+      when: instance_data.stdout | from_json | length == 0
+
+  become: yes
+  become_user: "{{ hostvars['rhosp-director'].rhosp_stack_user }}"
+  delegate_to: rhosp-director
