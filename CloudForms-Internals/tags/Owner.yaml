@@ -1,0 +1,43 @@
+---
+- description: Owner
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: The individual or group that owns the resource.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: owner
+  entries:
+  - description: Production Linux Team
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: prod_linux
+  - description: Production Operations Team
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: prod_ops
+  - description: Windows 2008 Test Team
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: win2008_test

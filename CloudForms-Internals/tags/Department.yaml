@@ -1,0 +1,174 @@
+---
+- description: Department
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: false
+  example_text: The department the resource is assigned to, such as HR, Accounting,
+    or Sales.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: department
+  entries:
+  - description: Accounting
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: accounting
+  - description: Automotive
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: automotive
+  - description: Communication
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: communication
+  - description: Defense Systems
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: defense
+  - description: Engineering
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: engineering
+  - description: Financial Services
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: finance
+  - description: Human Resources
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: hr
+  - description: Presales
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: presales
+  - description: Retail Operations
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: retail
+  - description: Support
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: support
+  - description: Trading Floor
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: trading
+  - description: Healthcare
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: healthcare
+  - description: Marketing
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: marketing
+  - description: Purchasing
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: purchasing
+  - description: VI Operations
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: vi_operations
+  - description: Retail Operations Test
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: retail_test

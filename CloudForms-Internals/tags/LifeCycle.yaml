@@ -1,0 +1,23 @@
+---
+- description: LifeCycle
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: LifeCycle Options
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: lifecycle
+  entries:
+  - description: Fully retire VM and remove from Provider
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: retire_full

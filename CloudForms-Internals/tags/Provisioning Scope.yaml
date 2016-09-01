@@ -1,0 +1,33 @@
+---
+- description: Provisioning Scope
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: false
+  example_text: Provisioning Scope
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: prov_scope
+  entries:
+  - description: All
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: all
+  - description: EvmGroup-user_self_service
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: evmgroup_user_self_service

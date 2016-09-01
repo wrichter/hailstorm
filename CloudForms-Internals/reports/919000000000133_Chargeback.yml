@@ -1,0 +1,269 @@
+---
+- MiqReport:
+    title: Chargeback
+    rpt_group: Custom
+    rpt_type: Custom
+    priority: 
+    db: ChargebackVm
+    cols:
+    - start_date
+    - display_range
+    - vm_name
+    - cpu_cost
+    - cpu_metric
+    - cpu_used_cost
+    - cpu_used_metric
+    - disk_io_used_cost
+    - disk_io_used_metric
+    - fixed_compute_1_cost
+    - fixed_storage_1_cost
+    - fixed_cost
+    - memory_allocated_cost
+    - memory_allocated_metric
+    - memory_cost
+    - memory_metric
+    - memory_used_cost
+    - memory_used_metric
+    - net_io_used_cost
+    - net_io_used_metric
+    - owner_name
+    - provider_name
+    - provider_uid
+    - storage_allocated_cost
+    - storage_allocated_metric
+    - storage_cost
+    - storage_metric
+    - storage_used_cost
+    - storage_used_metric
+    - total_cost
+    - cpu_allocated_cost
+    - cpu_allocated_metric
+    include: {}
+    col_order:
+    - display_range
+    - vm_name
+    - cpu_cost
+    - cpu_metric
+    - cpu_used_cost
+    - cpu_used_metric
+    - disk_io_used_cost
+    - disk_io_used_metric
+    - fixed_compute_1_cost
+    - fixed_storage_1_cost
+    - fixed_cost
+    - memory_allocated_cost
+    - memory_allocated_metric
+    - memory_cost
+    - memory_metric
+    - memory_used_cost
+    - memory_used_metric
+    - net_io_used_cost
+    - net_io_used_metric
+    - owner_name
+    - provider_name
+    - provider_uid
+    - storage_allocated_cost
+    - storage_allocated_metric
+    - storage_cost
+    - storage_metric
+    - storage_used_cost
+    - storage_used_metric
+    - total_cost
+    - cpu_allocated_cost
+    - cpu_allocated_metric
+    headers:
+    - Date Range
+    - VM Name
+    - CPU Total Cost
+    - CPU Total
+    - CPU Used Cost
+    - CPU Used
+    - Disk I/O Used Cost
+    - Disk I/O Used
+    - Fixed Compute Cost 1
+    - Fixed Storage Cost 1
+    - Fixed Total Cost
+    - Memory Allocated Cost
+    - Memory Allocated over Time Period
+    - Memory Total Cost
+    - Memory Total
+    - Memory Used Cost
+    - Memory Used
+    - Network I/O Used Cost
+    - Network I/O Used
+    - Owner
+    - Provider Name
+    - Provider Uid
+    - Storage Allocated Cost
+    - Storage Allocated
+    - Storage Total Cost
+    - Storage Total
+    - Storage Used Cost
+    - Storage Used
+    - Total Cost
+    - vCPUs Allocated Cost
+    - vCPUs Allocated over Time Period
+    conditions: 
+    order: Ascending
+    sortby:
+    - start_date
+    - vm_name
+    group: y
+    graph: 
+    dims: 
+    filename: 
+    file_mtime: 
+    categories: []
+    timeline: 
+    template_type: report
+    where_clause: 
+    db_options:
+      :rpt_type: ChargebackVm
+      :options:
+        :interval: daily
+        :interval_size: 1
+        :end_interval_offset: 0
+        :tenant_id: 919000000000001
+    generate_cols: 
+    generate_rows: 
+    col_formats:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    tz: UTC
+    time_profile_id: 
+    display_filter: 
+    col_options:
+      cpu_allocated_cost:
+        :grouping:
+        - :total
+      cpu_allocated_metric:
+        :grouping:
+        - :total
+      cpu_cost:
+        :grouping:
+        - :total
+      cpu_metric:
+        :grouping:
+        - :total
+      cpu_used_cost:
+        :grouping:
+        - :total
+      cpu_used_metric:
+        :grouping:
+        - :total
+      disk_io_cost:
+        :grouping:
+        - :total
+      disk_io_metric:
+        :grouping:
+        - :total
+      disk_io_used_cost:
+        :grouping:
+        - :total
+      disk_io_used_metric:
+        :grouping:
+        - :total
+      fixed_compute_1_cost:
+        :grouping:
+        - :total
+      fixed_compute_2_cost:
+        :grouping:
+        - :total
+      fixed_cost:
+        :grouping:
+        - :total
+      fixed_storage_1_cost:
+        :grouping:
+        - :total
+      fixed_storage_2_cost:
+        :grouping:
+        - :total
+      memory_allocated_cost:
+        :grouping:
+        - :total
+      memory_allocated_metric:
+        :grouping:
+        - :total
+      memory_cost:
+        :grouping:
+        - :total
+      memory_metric:
+        :grouping:
+        - :total
+      memory_used_cost:
+        :grouping:
+        - :total
+      memory_used_metric:
+        :grouping:
+        - :total
+      net_io_cost:
+        :grouping:
+        - :total
+      net_io_metric:
+        :grouping:
+        - :total
+      net_io_used_cost:
+        :grouping:
+        - :total
+      net_io_used_metric:
+        :grouping:
+        - :total
+      storage_allocated_cost:
+        :grouping:
+        - :total
+      storage_allocated_metric:
+        :grouping:
+        - :total
+      storage_cost:
+        :grouping:
+        - :total
+      storage_metric:
+        :grouping:
+        - :total
+      storage_used_cost:
+        :grouping:
+        - :total
+      storage_used_metric:
+        :grouping:
+        - :total
+      total_cost:
+        :grouping:
+        - :total
+    rpt_options:
+      :pdf:
+        :page_size: A4 - 210mm x 297mm (default)
+      :queue_timeout: 
+      :summary:
+        :hide_detail_rows: false
+    miq_group_id: 919000000000002
+    user_id: 919000000000001
+    menu_name: Chargeback

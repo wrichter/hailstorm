@@ -1,0 +1,12 @@
+---
+object_type: instance
+version: 1.0
+object:
+  attributes:
+    display_name: remove_cmdb_record
+    name: remove_cmdb_record
+    inherits: 
+    description: remove_cmdb_record
+  fields:
+  - execute:
+      value: remove_cmdb_record

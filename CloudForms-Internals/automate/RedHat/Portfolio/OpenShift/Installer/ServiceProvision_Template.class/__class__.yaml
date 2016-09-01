@@ -1,0 +1,272 @@
+---
+object_type: class
+version: 1.0
+object:
+  attributes:
+    description: Service Provision State Machine
+    display_name: 
+    name: ServiceProvision_Template
+    type: 
+    inherits: 
+    visibility: 
+    owner: 
+  schema:
+  - field:
+      aetype: attribute
+      name: signature
+      display_name: 
+      datatype: string
+      priority: 1
+      owner: 
+      default_value: 
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: 
+      on_exit: 
+      on_error: 
+      max_retries: 
+      max_time: 
+  - field:
+      aetype: attribute
+      name: to_email_address
+      display_name: 
+      datatype: string
+      priority: 2
+      owner: 
+      default_value: 
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: 
+      on_exit: 
+      on_error: 
+      max_retries: 
+      max_time: 
+  - field:
+      aetype: attribute
+      name: from_email_address
+      display_name: 
+      datatype: string
+      priority: 3
+      owner: 
+      default_value: 
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: 
+      on_exit: 
+      on_error: 
+      max_retries: 
+      max_time: 
+  - field:
+      aetype: state
+      name: pre1
+      display_name: 
+      datatype: string
+      priority: 4
+      owner: 
+      default_value: 
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'pre1',status_state => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'pre1',status_state => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in pre1',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: pre2
+      display_name: 
+      datatype: string
+      priority: 5
+      owner: 
+      default_value: 
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'pre2',status_state => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'pre2',status_state => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in pre2',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: configurechilddialog
+      display_name: 
+      datatype: string
+      priority: 6
+      owner: 
+      default_value: "#/Service/Provisioning/StateMachines/Methods/ConfigureChildDialog"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: 
+      on_exit: 
+      on_error: 
+      max_retries: 
+      max_time: 
+  - field:
+      aetype: state
+      name: provision
+      display_name: 
+      datatype: string
+      priority: 7
+      owner: 
+      default_value: "/ManageIQ/Service/Provisioning/StateMachines/Methods/Provision"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'Creating Service',status_state
+        => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'Creating Service',status_state
+        => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in Cloning Service',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: checkprovisioned
+      display_name: 
+      datatype: string
+      priority: 8
+      owner: 
+      default_value: "/Service/Provisioning/StateMachines/Methods/CheckProvisioned"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: 
+      on_exit: update_serviceprovision_status(status => 'Cloning Service',status_state
+        => 'on_exit')
+      on_error: update_serviceprovision_status(status => '${/#ae_reason}',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: pre_setup
+      display_name: ''
+      datatype: string
+      priority: 9
+      owner: 
+      default_value: "/RedHat/Portfolio/OpenShift/Installer/Methods/pre_setup"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'Applying Policy',status_state
+        => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'Applied Policy',status_state
+        => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in Applying Policy',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: check_resources
+      display_name: ''
+      datatype: string
+      priority: 10
+      owner: 
+      default_value: "/RedHat/Portfolio/OpenShift/Installer/Methods/check_resources"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'Checking Resources',status_state
+        => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'Checking Resources',status_state
+        => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in Checking Resources',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: ose_installer
+      display_name: 
+      datatype: string
+      priority: 11
+      owner: 
+      default_value: "/RedHat/Portfolio/OpenShift/Installer/Methods/ose_installer"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'Running OSE Installation',status_state
+        => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'Completed OSE Installation',status_state
+        => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in Running OSE Installation',status_state
+        => 'on_error')
+      max_retries: '100'
+      max_time: 
+  - field:
+      aetype: state
+      name: post_validation
+      display_name: 
+      datatype: string
+      priority: 12
+      owner: 
+      default_value: "/RedHat/Portfolio/OpenShift/Installer/Methods/post_validation"
+      substitute: true
+      message: create
+      visibility: 
+      collect: 
+      scope: 
+      description: 
+      condition: 
+      on_entry: update_serviceprovision_status(status => 'Post Validation Stage',status_state
+        => 'on_entry')
+      on_exit: update_serviceprovision_status(status => 'Post Validation Stage Complete',status_state
+        => 'on_exit')
+      on_error: update_serviceprovision_status(status => 'error in Post Validation
+        Stage',status_state => 'on_error')
+      max_retries: '1000'
+      max_time: 

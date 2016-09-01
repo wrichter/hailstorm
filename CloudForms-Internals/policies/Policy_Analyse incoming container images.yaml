@@ -1,0 +1,50 @@
+---
+- MiqPolicy:
+    name: analyse incoming container images
+    description: Analyse incoming container images
+    expression: 
+    towhat: ContainerImage
+    guid: e7a270bc-109b-11e6-86ba-02424d459b45
+    created_by: admin
+    updated_by: admin
+    notes: 
+    active: true
+    mode: control
+    read_only: true
+    MiqPolicyContent:
+    - qualifier: success
+      success_sequence: 1
+      failure_sequence: 1
+      failure_synchronous: true
+      MiqEventDefinition:
+        name: containerimage_created
+        description: Container Image Discovered
+        guid: 387a0bf0-6e1e-11e6-9ac8-020000000111
+        event_type: Default
+        definition: 
+        default: 
+        enabled: 
+      MiqAction:
+        name: container_image_analyze
+        description: Initiate SmartState Analysis for Container Image
+        guid: 37547c10-6e1e-11e6-9ac8-020000000111
+        action_type: default
+        options: {}
+    Condition:
+    - name: Do not scan image-inspector's image
+      description: Don't scan image-inspector's image
+      modifier: deny
+      expression: !ruby/object:MiqExpression
+        exp:
+          ENDS WITH:
+            field: ContainerImage-name
+            value: "/image-inspector"
+        context_type: 
+      towhat: ContainerImage
+      file_mtime: 
+      guid: e744245a-3d08-11e6-8d39-02422087d789
+      filename: 
+      applies_to_exp: 
+      miq_policy_id: 
+      notes: 
+      read_only: true

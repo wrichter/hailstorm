@@ -1,0 +1,63 @@
+---
+- description: Environment
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: The resource environment, such as Development, QA, Test, or Production
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: environment
+  entries:
+  - description: Development
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: dev
+  - description: Production
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: prod
+  - description: Quarantine
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: quar
+  - description: Test
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: test
+  - description: Quality Assurance
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: qa

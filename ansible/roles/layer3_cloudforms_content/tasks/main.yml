@@ -5,9 +5,16 @@
 #    - include: upload_cloudforms_content_dialogs.yml
     - include: upload_import_content.yml
       vars:
-        filename_local: dialogs
+        filename_local: provision_dialogs
         filename_remote: ''
-        type: dialogs
+        type: provision_dialogs
+        import_file: provision_dialogs
+    - include: upload_import_content.yml
+      vars:
+        filename_local: service_dialogs
+        filename_remote: ''
+        type: service_dialogs
+        import_file: service_dialogs
 
 #    - include: upload_cloudforms_content_buttons.yml
     - include: upload_import_content.yml
@@ -51,4 +58,5 @@
         filename_local: service_catalogs
         filename_remote: ''
         type: service_catalogs
+        import_file: service_catalogs
   when: mode == "create"

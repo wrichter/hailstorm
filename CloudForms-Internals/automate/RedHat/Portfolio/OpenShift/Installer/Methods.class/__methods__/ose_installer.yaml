@@ -1,0 +1,12 @@
+---
+object_type: method
+version: 1.0
+object:
+  attributes:
+    name: ose_installer
+    display_name: ose_installer
+    description: 
+    scope: instance
+    language: ruby
+    location: inline
+  inputs: []

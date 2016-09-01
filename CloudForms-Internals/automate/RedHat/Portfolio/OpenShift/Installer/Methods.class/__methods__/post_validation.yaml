@@ -1,0 +1,12 @@
+---
+object_type: method
+version: 1.0
+object:
+  attributes:
+    name: post_validation
+    display_name: post_validation
+    description: 
+    scope: instance
+    language: ruby
+    location: inline
+  inputs: []

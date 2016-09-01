@@ -1,0 +1,63 @@
+---
+- description: Auto Approve - Max VM
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Maximum number of VMs allowed by Auto Approval
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: prov_max_vm
+  entries:
+  - description: '1'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '1'
+  - description: '2'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '2'
+  - description: '3'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '3'
+  - description: '4'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '4'
+  - description: '5'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '5'

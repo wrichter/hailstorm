@@ -1,0 +1,12 @@
+---
+object_type: domain
+version: 1.0
+object:
+  attributes:
+    name: ManageIQ
+    description: Base domain
+    display_name: 
+    system: true
+    priority: 0
+    enabled: true
+    tenant_id: 919000000000001
