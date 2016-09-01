@@ -1,0 +1,12 @@
+---
+object_type: method
+version: 1.0
+object:
+  attributes:
+    name: check_resources
+    display_name: check_resources
+    description: 
+    scope: instance
+    language: ruby
+    location: inline
+  inputs: []

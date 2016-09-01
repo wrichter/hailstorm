@@ -1,0 +1,44 @@
+---
+- description: Network Location
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: The network location the resource is to be used, such as DMZ, Internal
+    network or Cloud
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: network_location
+  entries:
+  - description: DMZ
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: dmz
+  - description: Internal
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: internal
+  - description: Cloud
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: cloud

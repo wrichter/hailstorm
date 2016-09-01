@@ -1,0 +1,31 @@
+---
+- MiqPolicy:
+    name: schedule compliance after smart state analysis
+    description: Schedule compliance after smart state analysis
+    expression: 
+    towhat: ContainerImage
+    guid: bae4a2b0-1cfe-11e6-a243-02424d459b45
+    created_by: admin
+    updated_by: admin
+    notes: 
+    active: true
+    mode: control
+    read_only: true
+    MiqPolicyContent:
+    - qualifier: success
+      success_sequence: 1
+      MiqEventDefinition:
+        name: containerimage_scan_complete
+        description: Container Image Analysis Complete
+        guid: 387821e6-6e1e-11e6-9ac8-020000000111
+        event_type: Default
+        definition: 
+        default: 
+        enabled: 
+      MiqAction:
+        name: check_compliance
+        description: Check Host or VM Compliance
+        guid: 3762d12a-6e1e-11e6-9ac8-020000000111
+        action_type: default
+        options: {}
+    Condition: []

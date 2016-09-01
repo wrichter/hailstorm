@@ -1,0 +1,12 @@
+---
+object_type: domain
+version: 1.0
+object:
+  attributes:
+    name: RedHat
+    description: 
+    display_name: 
+    system: true
+    priority: 1
+    enabled: true
+    tenant_id: 919000000000001

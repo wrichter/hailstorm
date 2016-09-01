@@ -1,0 +1,14 @@
+---
+- description: Line of Business
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: false
+  example_text: The Line of Business the resource is assigned to, such as Retail,
+    Trading, or Manufacturing.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: lob
+  entries: []

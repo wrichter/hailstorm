@@ -1,0 +1,43 @@
+---
+- description: Service Level
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: The level of service associated with this resource.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: service_level
+  entries:
+  - description: Silver
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: silver
+  - description: Gold
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: gold
+  - description: Platinum
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: platinum

@@ -1,0 +1,12 @@
+---
+object_type: instance
+version: 1.0
+object:
+  attributes:
+    display_name: create_cmdb_record
+    name: create_cmdb_record
+    inherits: 
+    description: create_cmdb_record
+  fields:
+  - execute:
+      value: create_cmdb_record
