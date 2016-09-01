@@ -9,3 +9,10 @@
   local_action: file name={{ mktemp.stdout }} state=absent
 - name: expand and install scripts
   shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install
+
+
+# - name: clone git repo to appliance
+#   git: repo=https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
+#        dest=/tmp/cfme-rhconsulting-scripts
+# - name: make install
+#   shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install

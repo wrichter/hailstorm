@@ -1,0 +1,14 @@
+- name: check if type is present
+  local_action: stat path={{content_location}}/{{ item }}
+  register: stat_item
+- block:
+    - debug: msg="importing {{ item }}"
+    - name: create tmp directory
+      file: name=/tmp/miq_import state=directory
+    - name: upload contents to CF
+      copy: src={{content_location}}/{{ item }} dest=/tmp/miq_import/{{ item }}
+    - name: import contents
+      shell: /usr/bin/miqimport {{ item }} /tmp/miq_import/{{ item }}
+    - name: remove temp directory on cfme
+      file: name=/tmp/miq_import state=absent
+  when: stat_item.stat.exists
