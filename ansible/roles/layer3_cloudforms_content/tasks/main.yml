@@ -6,18 +6,21 @@
 
     - include: upload_import_content2.yml
       with_items:
-        - provision_dialogs
-        - service_dialogs
-        - service_catalogs
-        - roles
-        - tags
-        - buttons
-        - customization_templates
-        - reports
-        - widgets
-        - alerts
-        - alertsets
-        - policies
+        - type: provision_dialogs
+        - type: service_dialogs
+        - type: service_catalogs
+        - type: roles
+        - type: tags
+          import_individual_files: true
+        - type: buttons
+          import_individual_files: true
+        - type: customization_templates
+          import_individual_files: true
+        - type: reports
+        - type: widgets
+        - type: alerts
+        - type: alertsets
+        - type: policies
 
 #     - include: upload_import_content.yml
 #       vars:
