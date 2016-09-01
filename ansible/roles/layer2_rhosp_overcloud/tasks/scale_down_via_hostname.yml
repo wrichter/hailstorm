@@ -1,5 +1,13 @@
 # prereq: the variable hostnames needs to contain an array of (nova)host names to be removed from the cluster
 - block:
+    - name: ensure that no heat operation is currently in progress
+      shell: . ~/stackrc && openstack stack list -f json
+      register: stacklist
+      become: yes
+      become_user: "{{ rhosp_stack_user }}"
+      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS')
+      changed_when: false
+
     # - name: get ironic UUIDs for nova UUIDs
     #   shell: >
     #     . ~/stackrc &&
@@ -39,6 +47,7 @@
       until: server_on_host.stdout | from_json | length == 0
       retries: 30
       delay: 10
+      changed_when: false
 
     - name: scale down nodes
       shell: >
@@ -53,12 +62,12 @@
     - name: wait for heat update to complete
       shell: . ~/stackrc && openstack stack list -f json
       register: stacklist
-      until: not ( stacklist.stdout | from_json )[0]['Stack Status'] | match("PROGRESS")
+      until: not ( ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS') )
       retries: 720
       delay: 60
       become: yes
       become_user: "{{ rhosp_stack_user }}"
-      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | match("FAILED")
+      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('FAILED')
       changed_when: false
 
     - name: get nova service IDs

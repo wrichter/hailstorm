@@ -11,7 +11,11 @@ function nova_compute_control {
   cat <<EOF >/etc/fluentd/fluent.conf
 {{ lookup('template','fluentd.conf.j2') }}
 EOF
-  systemctl start fluentd
+
+  chown nova:nova /var/log/nova
+  chown cinder:cinder /var/log/cinder
+
+  systemctl restart fluentd
   systemctl enable fluentd
 }
 

@@ -12,6 +12,10 @@
           regexp: "^export OS_PROJECT_DOMAIN_NAME"
         - line: "export OS_USER_DOMAIN_NAME=Default"
           regexp: "^export OS_USER_DOMAIN_NAME"
+        - line: "export OS_TENANT_NAME=demo"
+          regexp: "^export OS_TENANT_NAME"
+        - line: "export OS_PASSWORD={{ root_password }}"
+          regexp: "^export OS_PASSWORD"
       when: ipa_available|success
 
     - name: change auth url
