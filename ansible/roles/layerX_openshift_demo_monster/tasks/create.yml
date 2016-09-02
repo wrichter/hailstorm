@@ -8,9 +8,17 @@
   shell: "oadm new-project demo-dev --admin='developer' --description='ticket monster developers stage'"
   when: "'demo-dev' not in projects.stdout_lines"
 
+- name: Reseting demo-dev project to empty state
+  shell: oc delete all --all -n demo-dev
+  when: "'demo-dev' in projects.stdout_lines"
+
 - name: Create demo-prod project
   shell: "oadm new-project demo-prod --admin='developer' --description='ticket monster production stage'"
   when: "'demo-prod' not in projects.stdout_lines"
+
+- name: Reseting demo-prod project to empty state
+  shell: oc delete all --all -n demo-prod
+  when: "'demo-prod' in projects.stdout_lines"
 
 # --- Create Templates monster and monster-prod in namespace openshift:
 - name: check existing templates
@@ -25,6 +33,8 @@
   - name: Create monster dev template in openshift namespace
     shell: "oc create -f /tmp/monster_template_dev.yml -n openshift"
 
+# Do one sample deployment to ensure docker images and maven dependencies
+# are downloaded:
   - name: Doing sample deployment of monster-dev app
     shell: "oc new-app --template monster-dev -n demo-dev --labels=MonsterDevInitialDeploymentTest=true"
 
@@ -40,7 +50,6 @@
     shell: "oc delete all -l MonsterDevInitialDeploymentTest -n demo-dev"
   when: "'monster-dev' not in templates.stdout_lines"
 
-
 - block:
   - name: Prepare Monster Prod Template
     template: src=monster_template_prod.yml.j2 dest=/tmp/monster_template_prod.yml
@@ -48,3 +57,18 @@
   - name: Create monster prd template in openshift namespace
     shell: "oc create -f /tmp/monster_template_prod.yml -n openshift"
   when: "'monster-prod' not in templates.stdout_lines"
+
+
+# Create git  hook for ose3-ticket-monster inside git pod:
+- block:
+  - name: get git pod id
+    shell: oc get pods -n devops-tools | grep git | awk '{ print $1 }'
+    register: gitPod
+    changed_when: false
+
+  - file: path=/tmp/hooks state=directory
+
+  - template: src=post-receive.j2 dest=/tmp/hooks/post-receive mode=a+x
+
+  - name: Create git hook for monster
+    shell: oc rsync /tmp/hooks/ {{ gitPod.stdout }}:/var/lib/git/ose3-ticket-monster.git/hooks  -n devops-tools --strategy=tar
