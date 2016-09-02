@@ -1,0 +1,5 @@
+#!/bin/bash
+mkdir /root/.ssh
+cat  << xxEOFxx >> /root/.ssh/authorized_keys
+{{ ssh_pub_key_hailstorm }}
+xxEOFxx

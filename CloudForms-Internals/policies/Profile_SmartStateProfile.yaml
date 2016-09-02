@@ -1,0 +1,155 @@
+---
+- MiqPolicySet:
+    name: 172bf68c-6eca-11e6-9ef3-020000000111
+    description: SmartStateProfile
+    set_type: MiqPolicySet
+    guid: 172bf68c-6eca-11e6-9ef3-020000000111
+    read_only: 
+    set_data: 
+    mode: control
+    owner_type: 
+    owner_id: 
+    userid: 
+    group_id: 
+    MiqPolicy:
+    - name: 21b025d4-6ec9-11e6-9ef3-020000000111
+      description: SmartState
+      expression: 
+      towhat: Vm
+      guid: 21b025d4-6ec9-11e6-9ef3-020000000111
+      created_by: admin
+      updated_by: admin
+      notes: 
+      active: true
+      mode: control
+      read_only: 
+      MiqPolicyContent:
+      - qualifier: success
+        success_sequence: 1
+        MiqEventDefinition:
+          name: vm_create
+          description: VM Create Complete
+          guid: 3802004c-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: vm_analyze
+          description: Initiate SmartState Analysis for VM
+          guid: 375afca2-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 2
+        MiqEventDefinition:
+          name: vm_create
+          description: VM Create Complete
+          guid: 3802004c-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 3752e756-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 1
+        MiqEventDefinition:
+          name: vm_clone
+          description: VM Clone Complete
+          guid: 38039ea2-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: vm_analyze
+          description: Initiate SmartState Analysis for VM
+          guid: 375afca2-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 2
+        MiqEventDefinition:
+          name: vm_clone
+          description: VM Clone Complete
+          guid: 38039ea2-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 3752e756-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 1
+        MiqEventDefinition:
+          name: vm_provisioned
+          description: VM Provision Complete
+          guid: 3812b734-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: vm_analyze
+          description: Initiate SmartState Analysis for VM
+          guid: 375afca2-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 2
+        MiqEventDefinition:
+          name: vm_provisioned
+          description: VM Provision Complete
+          guid: 3812b734-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 3752e756-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 1
+        MiqEventDefinition:
+          name: vm_reconfigure
+          description: VM Settings Change
+          guid: 3808530c-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: vm_analyze
+          description: Initiate SmartState Analysis for VM
+          guid: 375afca2-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 2
+        MiqEventDefinition:
+          name: vm_reconfigure
+          description: VM Settings Change
+          guid: 3808530c-6e1e-11e6-9ac8-020000000111
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 3752e756-6e1e-11e6-9ac8-020000000111
+          action_type: default
+          options: {}
+      Condition: []

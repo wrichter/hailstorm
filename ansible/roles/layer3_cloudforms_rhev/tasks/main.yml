@@ -21,7 +21,19 @@
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: shutdown
-      delegate_to: rhevm
+        delegate_to: rhevm
+
+    - name: wait for VM to shut down
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='Cloudforms']/status/state/text()" - || true
+      changed_when: false
+      register: vm_status
+      until: vm_status.stdout == 'down'
+      retries: 30
+      delay: 10
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+
     - name: remove Cloudforms VM
       ovirt:
         user: admin@internal

@@ -1,0 +1,54 @@
+---
+- description: Location
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: The geographic location of the resource, such as New York, Chicago,
+    or London.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: location
+  entries:
+  - description: New York
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: ny
+  - description: Chicago
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: chicago
+  - description: London
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: london
+  - description: Paris
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: paris

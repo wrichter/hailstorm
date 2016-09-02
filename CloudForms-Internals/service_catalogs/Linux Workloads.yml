@@ -1,0 +1,59 @@
+---
+- Linux Workloads:
+    name: Linux Workloads
+    description: Linux Workloads
+    template:
+    - name: RHEL 7 Managed
+      description: RHEL 7 Managed
+      type: 
+      display: true
+      service_type: atomic
+      prov_type: openstack
+      provision_cost: 
+      long_description: ''
+      options: {}
+      service_template_catalog_name: Linux Workloads
+      resource_actions:
+      - action: Provision
+        ae_namespace: Service/Provisioning/StateMachines
+        ae_class: ServiceProvision_Template
+        ae_instance: CatalogItemInitialization
+        ae_message: 
+        ae_attributes: {}
+        dialog_label: RHEL7Managed
+      - action: Retirement
+        ae_namespace: Service/Retirement/StateMachines
+        ae_class: ServiceRetirement
+        ae_instance: Default
+        ae_message: 
+        ae_attributes: {}
+        dialog_label: RHEL7Managed
+      custom_buttons: []
+      custom_button_sets: []
+    - name: RHEL 7 UnManaged
+      description: RHEL 7 UnManaged
+      type: 
+      display: true
+      service_type: atomic
+      prov_type: openstack
+      provision_cost: 
+      long_description: ''
+      options: {}
+      service_template_catalog_name: Linux Workloads
+      resource_actions:
+      - action: Provision
+        ae_namespace: Service/Provisioning/StateMachines
+        ae_class: ServiceProvision_Template
+        ae_instance: CatalogItemInitialization
+        ae_message: 
+        ae_attributes: {}
+        dialog_label: RHEL7UnManaged
+      - action: Retirement
+        ae_namespace: Service/Retirement/StateMachines
+        ae_class: ServiceRetirement
+        ae_instance: Default
+        ae_message: 
+        ae_attributes: {}
+        dialog_label: RHEL7UnManaged
+      custom_buttons: []
+      custom_button_sets: []

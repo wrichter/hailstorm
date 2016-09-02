@@ -42,20 +42,25 @@ rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*U
 rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$"
 ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
+cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Enterprise Linux OpenStack Platform.*)$"
 
 # REPOSITORIES
-# rhosp_repos:
+# rhosp_undercloud_repos:
 #   - rhel-7-server-rpms
 #   - rhel-7-server-optional-rpms
 #   - rhel-7-server-extras-rpms
 #   - rhel-7-server-openstack-7.0-rpms
 #   - rhel-7-server-openstack-7.0-director-rpms
-rhosp_repos:
+rhosp_undercloud_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
   - rhel-7-server-openstack-9-rpms
   - rhel-7-server-openstack-9-director-rpms
+rhosp_overcloud_repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-optional-rpms
+  - rhel-7-server-openstack-9-optools-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
@@ -70,6 +75,10 @@ rhevh_repos:
   - rhel-7-server-rhev-mgmt-agent-rpms
 ipa_repos:
   - rhel-7-server-rpms
+cloudforms_repos:
+  - rhel-7-server-rpms
+  - rhel-server-rhscl-7-rpms
+  - cf-me-5.6-for-rhel-7-rpms
 ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms

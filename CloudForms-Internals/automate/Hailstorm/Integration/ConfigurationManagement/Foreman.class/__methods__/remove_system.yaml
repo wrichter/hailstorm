@@ -1,0 +1,12 @@
+---
+object_type: method
+version: 1.0
+object:
+  attributes:
+    name: remove_system
+    display_name: remove_system
+    description: 
+    scope: instance
+    language: ruby
+    location: inline
+  inputs: []

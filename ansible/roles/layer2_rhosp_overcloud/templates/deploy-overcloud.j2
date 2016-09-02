@@ -1,0 +1,13 @@
+openstack overcloud deploy \
+--templates /usr/share/openstack-tripleo-heat-templates \
+--control-flavor control \
+--compute-flavor compute \
+--control-scale 3 \
+--compute-scale 2 \
+--neutron-tunnel-types vxlan \
+--neutron-network-type vxlan \
+--ntp-server {{ infrastructure_address_ntp_server }} \
+-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
+{% for template in templates %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }}{% if not loop.last %} \{% endif %}
+
+{% endif %}{% endfor %}

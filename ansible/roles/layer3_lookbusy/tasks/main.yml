@@ -1,0 +1,20 @@
+- name: clone load generator installer
+  git: repo=https://github.com/wrichter/cpu-load-generator.git dest=/root/cpu-load-generator
+
+- name: install load generator
+  command: ./install-lookbusy.sh
+  args:
+    chdir: /root/cpu-load-generator
+    creates: /usr/local/bin/lookbusy
+
+- name: generate random sequence
+  shell: for i in `seq 100`; do echo $((RANDOM%100)); done >random.data
+  args:
+    chdir: /root/cpu-load-generator
+    creates: /root/cpu-load-generator/random.data
+
+- name: create systemd unit file
+  template: src=lookbusy.service.j2 dest=/etc/systemd/system/generate-random-load.service
+
+- name: enable lookbusy Service
+  service: name=generate-random-load state=restarted enabled=yes

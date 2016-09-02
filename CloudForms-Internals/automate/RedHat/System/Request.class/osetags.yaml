@@ -1,0 +1,12 @@
+---
+object_type: instance
+version: 1.0
+object:
+  attributes:
+    display_name: osetags
+    name: osetags
+    inherits: 
+    description: osetags
+  fields:
+  - rel1:
+      value: "/Portfolio/OpenShift/Installer/Methods/ose_tags"

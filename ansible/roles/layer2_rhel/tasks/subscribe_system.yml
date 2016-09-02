@@ -40,7 +40,7 @@
 
 - name: unsubscribe (from RHN)
   redhat_subscription: state=absent
-  when: (not disable_registration_against_satellite) and activation_key is defined and subscription_status.stdout == 'Current' and rhsm_target.stdout != hostvars['satellite'].hostname
+  when: (not disable_registration_against_satellite) and activation_key is defined and (subscription_status.stdout == 'Current' or subscription_status.stdout == 'Insufficient') and rhsm_target.stdout != hostvars['satellite'].hostname
 
 - block:
     - name: add satellite entry to /etc/hosts
@@ -58,7 +58,7 @@
       yum:
         name: katello-agent
         state: present
-  when: not disable_registration_against_satellite and activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or subscription_status.stdout != 'Current')
+  when: not disable_registration_against_satellite and activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or (subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'))
 
 - name: register system using username/pw against RHN
   redhat_subscription:
@@ -66,4 +66,4 @@
     username: "{{ rhsm_username }}"
     password: "{{ rhsm_password }}"
     pool: "{{ pool_regex }}"
-  when: (disable_registration_against_satellite or activation_key is not defined) and subscription_status.stdout != 'Current'
+  when: (disable_registration_against_satellite or activation_key is not defined) and subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'

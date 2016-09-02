@@ -1,0 +1,53 @@
+---
+- description: Auto Approve - Max Memory
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Maximum Memory allowed by Auto Approval (GB)
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: prov_max_memory
+  entries:
+  - description: 1GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '1024'
+  - description: 2GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '2048'
+  - description: 4GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '4096'
+  - description: 8GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '8192'

@@ -1,0 +1,18 @@
+---
+object_type: instance
+version: 1.0
+object:
+  attributes:
+    display_name: remove_system
+    name: remove_system
+    inherits: 
+    description: remove_system
+  fields:
+  - foreman_host:
+      value: 192.168.101.10
+  - foreman_user:
+      value: admin
+  - foreman_password:
+      value: v2:{CQJsVIAfJ9giLS3Z7lrt4w==}
+  - execute:
+      value: remove_system

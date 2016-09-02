@@ -1,0 +1,25 @@
+---
+object_type: instance
+version: 1.0
+object:
+  attributes:
+    display_name: oseINSTALLER
+    name: oseINSTALLER
+    inherits: 
+    description: oseINSTALLER
+  fields:
+  - signature:
+      value: OpenShift Team
+  - from_email_address:
+      value: osedeploy@redhat.com
+  - pre1:
+      value: "/ManageIQ/Service/Provisioning/StateMachines/Methods/GroupSequenceCheck"
+  - check_resources:
+      on_exit: oseEmailer
+      on_error: oseEmailer
+  - ose_installer:
+      on_exit: oseEmailer
+      on_error: oseEmailer
+  - post_validation:
+      on_exit: oseEmailer
+      on_error: oseEmailer

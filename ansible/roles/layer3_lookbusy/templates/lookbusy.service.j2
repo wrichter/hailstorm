@@ -1,0 +1,7 @@
+[Unit]
+Description=Generate System Load
+[Service]
+Type=simple
+ExecStart=/bin/sh -c "cd /root/cpu-load-generator; while true; do python cpu-load-generator.py 360 random.data ; done"
+[Install]
+WantedBy=multi-user.target

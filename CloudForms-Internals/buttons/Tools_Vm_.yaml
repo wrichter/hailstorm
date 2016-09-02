@@ -1,0 +1,80 @@
+---
+:custom_buttons_sets:
+- name: Tools|Vm|
+  description: Tools
+  set_type: CustomButtonSet
+  read_only: 
+  mode: 
+  custom_buttons:
+  - description: Install all available Updates
+    applies_to_class: Vm
+    applies_to_exp: 
+    options:
+      :button_image: 14
+      :display: true
+    userid: admin
+    wait_for_complete: 
+    name: Install all Updates
+    visibility:
+      :roles:
+      - _ALL_
+    applies_to_id: 
+    resource_actions:
+      action: 
+      ae_namespace: SYSTEM
+      ae_class: PROCESS
+      ae_instance: Request
+      ae_message: 
+      ae_attributes:
+        request: install_all_updates
+      dialog_label: Confirmation
+  - description: Assign next available IP
+    applies_to_class: Vm
+    applies_to_exp: 
+    options:
+      :button_image: 12
+      :display: true
+    userid: admin
+    wait_for_complete: 
+    name: Add Floating IP
+    visibility:
+      :roles:
+      - _ALL_
+    applies_to_id: 
+    resource_actions:
+      action: 
+      ae_namespace: SYSTEM
+      ae_class: PROCESS
+      ae_instance: Request
+      ae_message: 
+      ae_attributes:
+        request: assign_floating_ip
+      dialog_label: Confirmation
+  - description: Allocate Floating IP
+    applies_to_class: Vm
+    applies_to_exp: 
+    options:
+      :button_image: 1
+      :display: true
+    userid: admin
+    wait_for_complete: 
+    name: Allocate IP
+    visibility:
+      :roles:
+      - _ALL_
+    applies_to_id: 
+    resource_actions:
+      action: 
+      ae_namespace: SYSTEM
+      ae_class: PROCESS
+      ae_instance: Request
+      ae_message: 
+      ae_attributes:
+        request: assign_floating_ip
+  set_data:
+    :button_order:
+    - Add Floating IP
+    - Install all Updates
+    :button_image: 9
+    :display: true
+    :group_index: 1

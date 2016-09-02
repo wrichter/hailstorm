@@ -1,0 +1,33 @@
+---
+- description: Cost Center
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Cost Center
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: cc
+  entries:
+  - description: Cost Center 001
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '001'
+  - description: Cost Center 002
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '002'

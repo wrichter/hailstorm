@@ -17,26 +17,26 @@
       register: ifcfgscripts
 
     - name: for each file -> check if line starting with DNS1= or DNS2= exists
-      shell: grep -e "^DNS1=" -e "^DNS2=" "{{ item.path }}" || true
+      shell: grep -e "^DNS1=" -e "^DNS2=" "{{ item }}" || true
       changed_when: false
       register: dns_lines
-      with_items: "{% if ifcfgscripts.files is defined %}{{ ifcfgscripts.files }}{% endif %}"
+      with_items: "{% if ifcfgscripts.files is defined %}{{ ifcfgscripts.files|map(attribute='path')|list }}{% endif %}"
       when: not ifcfgscripts|skipped
 
     - name: if DNS1 exists but no DNS2, ensure that DNS1 points to nameserver and DNS2 points to the previous DNS1 record (DNS1 line)
-      lineinfile: state=present regexp="^DNS1=" line="DNS1={{ nameserver }}" dest="{{ item.item.path }}"
+      lineinfile: state=present regexp="^DNS1=" line="DNS1={{ nameserver }}" dest="{{ item.item }}"
       when: item.stdout_lines|length == 1 and item.stdout.startswith('DNS1')
       with_items: "{{ dns_lines.results }}"
       register: dns1
 
     - name: if DNS1 exists but no DNS2, ensure that DNS1 points to nameserver and DNS2 points to the previous DNS1 record (DNS2 line)
-      lineinfile: state=present insertafter="^DNS1=" line="DNS2={{ item.stdout | regex_replace('(DNS1=)(.*)', '\\2') }}" dest="{{ item.item.path }}"
+      lineinfile: state=present insertafter="^DNS1=" line="DNS2={{ item.stdout | regex_replace('(DNS1=)(.*)', '\\2') }}" dest="{{ item.item }}"
       when: item.stdout_lines|length == 1 and item.stdout.startswith('DNS1')
       with_items: "{{dns_lines.results}}"
       register: dns2
 
     - name: if DNS1 exists and DNS2, ensure that DNS1 points to the nameserver, leave DNS2 unchanged
-      lineinfile: state=present regexp="^DNS1=" line="DNS1={{ nameserver }}" dest="{{ item.item.path }}"
+      lineinfile: state=present regexp="^DNS1=" line="DNS1={{ nameserver }}" dest="{{ item.item }}"
       when: item.stdout_lines|length == 2
       with_items: "{{dns_lines.results}}"
       register: dns3
@@ -53,17 +53,17 @@
       find: path=/etc/sysconfig/network-scripts/ pattern=ifcfg-*
       register: ifcfgscripts
     - name: for each file -> check if line starting with DNS1= or DNS2= exists
-      shell: grep -e "^DNS1=" -e "^DNS2=" "{{ item.path }}" || true
+      shell: grep -e "^DNS1=" -e "^DNS2=" "{{ item }}" || true
       changed_when: false
       register: dns_lines
-      with_items: "{% if ifcfgscripts.files is defined %}{{ ifcfgscripts.files }}{% endif %}"
+      with_items: "{% if ifcfgscripts.files is defined %}{{ ifcfgscripts.files|map(attribute='path')|list }}{% endif %}"
     - name: if DNS1 exists and DNS2, ensure that DNS1 points to  DNS2, remove DNS2 (DNS1 line)
-      lineinfile: state=present regexp="^DNS1=" line="DNS1={{ item.stdout | regex_replace('.*(DNS2=)(.*)$.*', '\\2') }}" dest="{{ item.item.path }}"
+      lineinfile: state=present regexp="^DNS1=" line="DNS1={{ item.stdout | regex_replace('.*(DNS2=)(.*)$.*', '\\2') }}" dest="{{ item.item }}"
       when: item.stdout_lines|length == 2
       with_items: "{{ dns_lines.results }}"
       register: dns1
     - name: if DNS1 exists and DNS2, ensure that DNS1 points to  DNS2, remove DNS2 (DNS2 line)
-      lineinfile: state=absent regexp="^DNS2=" dest="{{ item.item.path }}"
+      lineinfile: state=absent regexp="^DNS2=" dest="{{ item.item }}"
       when: item.stdout_lines|length == 2
       with_items: "{{ dns_lines.results }}"
       register: dns2
