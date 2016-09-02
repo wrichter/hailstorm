@@ -10,6 +10,7 @@
         - type: service_dialogs
         - type: service_catalogs
         - type: roles
+          import_individual_files: true
         - type: tags
           import_individual_files: true
         - type: buttons

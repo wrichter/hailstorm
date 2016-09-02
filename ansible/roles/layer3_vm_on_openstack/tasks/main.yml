@@ -10,5 +10,7 @@
   when: mode=="create" or mode=="readfacts"
 
 - block:
+    - include: set_floating_ip_as_fact.yml
+    - include: remove_floating_ip.yml
     - include: terminate_vm.yml
   when: mode=="destroy"

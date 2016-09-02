@@ -1,9 +1,10 @@
 #!/bin/bash
 
 #sleep 60
+systemctl stop sshd
 
-add subscription manager
-yum -t -y -e 0 install subscription-manager
+#add subscription manager
+#yum -t -y -e 0 install subscription-manager
 rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
 
 echo "Registering the System"
@@ -18,3 +19,7 @@ yum -t -y -e 0 install katello-agent
 chkconfig goferd on
 #trigger config upload to satellite so it appears at once
 katello-package-upload
+
+systemctl start sshd
+
+exit 0

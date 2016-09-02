@@ -21,7 +21,7 @@
         instance_name: Cloudforms
         password: "{{ root_password }}"
         state: shutdown
-        delegate_to: rhevm
+      delegate_to: rhevm
 
     - name: wait for VM to shut down
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
