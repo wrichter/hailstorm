@@ -14,7 +14,7 @@
       :display: true
     userid: admin
     wait_for_complete: 
-    name: Install all updates
+    name: Install all Updates
     visibility:
       :roles:
       - _ALL_
@@ -50,10 +50,31 @@
       ae_attributes:
         request: assign_floating_ip
       dialog_label: Confirmation
+  - description: Allocate Floating IP
+    applies_to_class: Vm
+    applies_to_exp: 
+    options:
+      :button_image: 1
+      :display: true
+    userid: admin
+    wait_for_complete: 
+    name: Allocate IP
+    visibility:
+      :roles:
+      - _ALL_
+    applies_to_id: 
+    resource_actions:
+      action: 
+      ae_namespace: SYSTEM
+      ae_class: PROCESS
+      ae_instance: Request
+      ae_message: 
+      ae_attributes:
+        request: assign_floating_ip
   set_data:
     :button_order:
     - Add Floating IP
-    - Install all updates
+    - Install all Updates
     :button_image: 9
     :display: true
     :group_index: 1

@@ -26,7 +26,6 @@
       MiqPolicyContent:
       - qualifier: success
         success_sequence: 1
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_create
           description: VM Create Complete
@@ -43,7 +42,6 @@
           options: {}
       - qualifier: success
         success_sequence: 2
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_create
           description: VM Create Complete
@@ -60,7 +58,6 @@
           options: {}
       - qualifier: success
         success_sequence: 1
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_clone
           description: VM Clone Complete
@@ -77,7 +74,6 @@
           options: {}
       - qualifier: success
         success_sequence: 2
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_clone
           description: VM Clone Complete
@@ -94,7 +90,6 @@
           options: {}
       - qualifier: success
         success_sequence: 1
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_provisioned
           description: VM Provision Complete
@@ -111,7 +106,6 @@
           options: {}
       - qualifier: success
         success_sequence: 2
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_provisioned
           description: VM Provision Complete
@@ -128,7 +122,6 @@
           options: {}
       - qualifier: success
         success_sequence: 1
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_reconfigure
           description: VM Settings Change
@@ -145,7 +138,6 @@
           options: {}
       - qualifier: success
         success_sequence: 2
-        success_synchronous: true
         MiqEventDefinition:
           name: vm_reconfigure
           description: VM Settings Change

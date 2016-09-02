@@ -55,7 +55,7 @@ object:
       aetype: attribute
       name: foreman_password
       display_name: 
-      datatype: string
+      datatype: password
       priority: 3
       owner: 
       default_value: 
