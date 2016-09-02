@@ -7,8 +7,8 @@ require 'socket'
 # Get provisioning object
 prov = $evm.root["miq_provision"]
 
-#$evm.root.attributes.sort.each { |k, v| $evm.log("info", "Root:<$evm.root> Attribute - #{k}: #{v}")}
-#prov.attributes.sort.each { |k, v| $evm.log("info", "Root:<$evm.root> Attribute - #{k}: #{v}")}
+$evm.root.attributes.sort.each { |k, v| $evm.log("info", "Root:<$evm.root> Attribute - #{k}: #{v}")}
+prov.attributes.sort.each { |k, v| $evm.log("info", "Root:<$evm.root> Attribute - #{k}: #{v}")}
 
 source_ems_id=prov.get_option(:src_ems_id)
 $evm.log("info", "EVM Source ID: #{source_ems_id}")
@@ -39,3 +39,13 @@ hostname = Socket.gethostname
 domainname=hostname.split('.')[1,hostname.length].join('.')
 $evm.log("info", "Storing Domain Name #{domainname} for use in cloud-init")  
 prov.set_option(:domainname,domainname)
+
+@servicename=prov.get_option(:name)
+$evm.log("info","Looking for Unmanaged as part of the service name: #{@servicename}")
+if "#{@servicename}".match("UnManaged")
+  $evm.log("info","Setting management_status tag to unmanaged")
+  prov.add_tag("management_status","unmanaged")
+else
+  $evm.log("info","Setting management_status tag to managed")
+  prov.add_tag("management_status","managed")
+end
