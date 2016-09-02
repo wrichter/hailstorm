@@ -1,0 +1,13 @@
+---
+- description: Customer
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: The name of the customer associated with this resource.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: customer
+  entries: []

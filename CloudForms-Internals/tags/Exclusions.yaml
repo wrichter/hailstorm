@@ -1,0 +1,34 @@
+---
+- description: Exclusions
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: false
+  example_text: Operations that the resource may be excluded from, such as Analysis
+    or Cloning.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: exclusions
+  entries:
+  - description: Do not Analyze
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: do_not_analyze
+  - description: Do not Clone
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: do_not_clone

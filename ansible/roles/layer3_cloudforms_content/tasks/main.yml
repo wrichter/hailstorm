@@ -1,54 +1,81 @@
 - block:
     - include: upload_cloudforms_content_rake_scripts.yml
+      tags: ['rake']
     - include: upload_cloudforms_content_automate.yml
+      tags: ['automate']
 
-#    - include: upload_cloudforms_content_dialogs.yml
-    - include: upload_import_content.yml
-      vars:
-        filename_local: dialogs
-        filename_remote: ''
-        type: dialogs
+    - include: upload_import_content2.yml
+      with_items:
+        - type: provision_dialogs
+        - type: service_dialogs
+        - type: service_catalogs
+        - type: roles
+        - type: tags
+          import_individual_files: true
+        - type: buttons
+          import_individual_files: true
+        - type: customization_templates
+          import_individual_files: true
+        - type: reports
+        - type: widgets
+        - type: alerts
+        - type: alertsets
+        - type: policies
 
-#    - include: upload_cloudforms_content_buttons.yml
-    - include: upload_import_content.yml
-      vars:
-        filename_local: buttons/buttons.yml
-        filename_remote: buttons.yml
-        type: buttons
-        import_file: buttons.yml
-
-#    - include: upload_cloudforms_content_policies.yml
-    - include: upload_import_content.yml
-      vars:
-        filename_local: control/Policy.yaml
-        filename_remote: Policy.yaml
-        type: policies
-
-#    - include: upload_cloudforms_content_alerts.yml
-    - include: upload_import_content.yml
-      vars:
-        filename_local: alerts/alerts.yaml
-        filename_remote: alerts.yaml
-        type: policies
-
-#    - include: upload_cloudforms_content_roles.yml
-    - include: upload_import_content.yml
-      vars:
-        filename_local: roles/roles.yml
-        filename_remote: roles.yml
-        type: roles
-        import_file: roles.yml
-
-#    - include: upload_cloudforms_content_reports.yml
-    - include: upload_import_content.yml
-      vars:
-        filename_local: reports
-        filename_remote: ''
-        type: reports
-
-    - include: upload_import_content.yml
-      vars:
-        filename_local: service_catalogs
-        filename_remote: ''
-        type: service_catalogs
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: provision_dialogs
+#         filename_remote: ''
+#         type: provision_dialogs
+#         import_file: provision_dialogs
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: service_dialogs
+#         filename_remote: ''
+#         type: service_dialogs
+#         import_file: service_dialogs
+#
+# #    - include: upload_cloudforms_content_buttons.yml
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: buttons/buttons.yml
+#         filename_remote: buttons.yml
+#         type: buttons
+#         import_file: buttons.yml
+#
+# #    - include: upload_cloudforms_content_policies.yml
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: control/Policy.yaml
+#         filename_remote: Policy.yaml
+#         type: policies
+#
+# #    - include: upload_cloudforms_content_alerts.yml
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: alerts/alerts.yaml
+#         filename_remote: alerts.yaml
+#         type: policies
+#
+# #    - include: upload_cloudforms_content_roles.yml
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: roles/roles.yml
+#         filename_remote: roles.yml
+#         type: roles
+#         import_file: roles.yml
+#
+# #    - include: upload_cloudforms_content_reports.yml
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: reports
+#         filename_remote: ''
+#         type: reports
+#
+#     - include: upload_import_content.yml
+#       vars:
+#         filename_local: service_catalogs
+#         filename_remote: ''
+#         type: service_catalogs
+#         import_file: service_catalogs
   when: mode == "create"

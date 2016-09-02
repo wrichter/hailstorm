@@ -5,21 +5,22 @@ resources:
     type: OS::Heat::MultipartMime
     properties:
       parts:
-      - config: {get_resource: repo_config}
+{% for template in templates %}{% if template | match('^firstboot.*\.sh$') %}
+        - config: {{ template | replace('-', '_') | replace('.sh','') }}
+{% endif %}{% endfor %}
 
   repo_config:
     type: OS::Heat::SoftwareConfig
     properties:
       config: |
-        #!/bin/bash
-        #rpm -ivh http://rhos-release.virt.bos.redhat.com/repos/rhos-release/rhos-release-latest.noarch.rpm
-        #rhos-release -p Y1 7-director
-        #rhos-release -p Z2 7
-        echo "HELLO WORLD"
-        mkdir /root/.ssh
-        cat  << xxEOFxx >> /root/.ssh/authorized_keys
-        {{ ssh_pub_key_hailstorm }}
-        xxEOFxx
+
+{% for template in templates %}{% if template | match('^firstboot.*\.sh$') %}
+  {{ template | replace('-', '_') | replace('.sh','') }}:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: {get_file: ./{{ template }} }
+{% endif %}{% endfor %}
 
 outputs:
   OS::stack_id:

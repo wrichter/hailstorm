@@ -1,0 +1,40 @@
+#cloud-config
+
+cloud_init_modules:
+- migrator
+- bootcmd
+- write-files
+- growpart
+- resizefs
+- set_hostname
+- update_hostname
+- update_etc_hosts
+- rsyslog
+- users-groups
+- ssh
+
+users:
+{% if users is defined %}{% for user in users %}
+- name: {{ user.name }}
+  ssh_authorized_keys:
+  - {{ user.pubkey }}
+{% endfor %}{% endif %}
+- name: root
+  ssh_authorized_keys:
+  - {{ ssh_pub_key_hailstorm }}
+
+hostname: {{ inventory_hostname_short }}
+fqdn: {{ hostname }}
+manage_etc_hosts: true
+
+write_files:
+- path: /tmp/system-setup.sh
+  permissions: '0755'
+  content: |
+    {{ lookup('template','system-setup.sh.j2')|indent(4) }}
+
+runcmd:
+- [ cloud-init-per, once, foreman-userdata, /tmp/system-setup.sh ]
+output: {all: '| tee -a /root/install.userdata.log'}
+
+# end of example

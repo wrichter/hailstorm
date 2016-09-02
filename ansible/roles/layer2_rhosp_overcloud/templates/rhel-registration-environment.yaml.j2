@@ -1,0 +1,26 @@
+resource_registry:
+  OS::TripleO::NodeExtraConfig: /usr/share/openstack-tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration.yaml
+
+# Note this can be specified either in the call
+# to heat stack-create via an additional -e option
+# or via the global environment on the seed in
+# /etc/heat/environment.d/default.yaml
+parameter_defaults:
+  rhel_reg_activation_key: "{{ activation_key }}"
+  rhel_reg_auto_attach: ""
+  rhel_reg_base_url: ""
+  rhel_reg_environment: ""
+  rhel_reg_force: ""
+  rhel_reg_machine_name: ""
+  rhel_reg_org: "{{ hostvars['satellite'].organization_id }}"
+  rhel_reg_password: ""
+  rhel_reg_pool_id: ""
+  rhel_reg_release: ""
+  rhel_reg_repos: "{{ rhosp_overcloud_repos | join(' ') }}"
+  rhel_reg_sat_url: "http://{{ hostvars['satellite'].vm_nics[0].ip }}"
+  rhel_reg_server_url: ""
+  rhel_reg_service_level: ""
+  rhel_reg_user: ""
+  rhel_reg_type: ""
+  rhel_reg_method: "satellite"
+  rhel_reg_sat_repo: "rhel-7-server-satellite-tools-6.1-rpms"

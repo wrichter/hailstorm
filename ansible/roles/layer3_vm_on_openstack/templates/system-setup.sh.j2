@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#sleep 60
+
+add subscription manager
+yum -t -y -e 0 install subscription-manager
+rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
+
+echo "Registering the System"
+subscription-manager register --org="{{ hostvars['satellite'].organization_id }}" --name={{ hostname }} --activationkey="{{ activation_key }}"
+
+# add the rhel rpms to install katello agent
+# not required here since this is already configured via Satellite Activation Key
+# subscription-manager repos --enable=rhel-7-server-satellite-tools-6.1-rpms
+
+echo "Installing Katello Agent"
+yum -t -y -e 0 install katello-agent
+chkconfig goferd on
+#trigger config upload to satellite so it appears at once
+katello-package-upload

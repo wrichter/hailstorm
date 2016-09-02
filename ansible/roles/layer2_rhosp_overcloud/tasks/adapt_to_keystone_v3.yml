@@ -1,0 +1,102 @@
+- block:
+    - name: copy overcloudrc
+      copy: src=~/overcloudrc dest=~/overcloudrc_v3 force=no remote_src=true mode=755
+      when: ipa_available|success
+
+    - name: adapt overcloudrc
+      lineinfile: dest=~/overcloudrc_v3 line="{{ item.line }}" regexp="{{ item.regexp }}"
+      with_items:
+        - line: "export OS_IDENTITY_API_VERSION=3"
+          regexp: "^export OS_IDENTITY_API_VERSION"
+        - line: "export OS_PROJECT_DOMAIN_NAME=Default"
+          regexp: "^export OS_PROJECT_DOMAIN_NAME"
+        - line: "export OS_USER_DOMAIN_NAME=Default"
+          regexp: "^export OS_USER_DOMAIN_NAME"
+        - line: "export OS_TENANT_NAME=demo"
+          regexp: "^export OS_TENANT_NAME"
+        - line: "export OS_PASSWORD={{ root_password }}"
+          regexp: "^export OS_PASSWORD"
+      when: ipa_available|success
+
+    - name: change auth url
+      replace: dest=~/overcloudrc_v3 regexp="5000/v2.0" replace="5000/v3"
+      when: ipa_available|success
+
+    - name: create hailstorm domain overcloudrc
+      copy: src=~/overcloudrc_v3 dest=~/overcloudrc_v3_{{ osp_domain_name }} force=no remote_src=true mode=755
+      when: ipa_available|success
+
+    - name: adapt hailstorm domain overcloudrc
+      lineinfile: dest=~/overcloudrc_v3_{{ osp_domain_name }} line="{{ item.line }}" regexp="{{ item.regexp }}"
+      with_items:
+        - line: "export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }}"
+          regexp: "^export OS_PROJECT_DOMAIN_NAME"
+        - line: "export OS_USER_DOMAIN_NAME={{ osp_domain_name }}"
+          regexp: "^export OS_USER_DOMAIN_NAME"
+      when: ipa_available|success
+
+    - name: list openstack domains
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack domain list -f value -c Name
+      register: domains
+      changed_when: false
+      failed_when: domains.stdout == ""
+      when: ipa_available|success
+
+    - name: create osp domain
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack domain create {{ osp_domain_name }}
+      when: ipa_available|success and osp_domain_name not in domains.stdout_lines
+
+    - name: restart keystone on controller
+      shell: >
+        . ~/stackrc &&
+        for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart openstack-keystone;
+        ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart httpd;
+        done
+      when: ipa_available|success and osp_domain_name not in domains.stdout_lines
+      ignore_errors: true
+
+    - name: wait httpd to be avialable again
+      wait_for: host={{ hostvars['openstack'].vm_nics[0].ip }} port=80 delay=0 timeout=900
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"
+
+- block:
+    - name: find existing services
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack service list --column Name -f value
+      register: existing_services
+      changed_when: false
+
+    - name: create keystone v3 service
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack service create --name keystonev3 --description "Keystone Identity Service v3" identityv3
+      when: '"keystonev3" not in existing_services.stdout_lines'
+
+    - name: get existing keystone v3 endpoints
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack endpoint list --service keystonev3 --column Interface -f value
+      changed_when: false
+      register: keystonev3_endpoints
+
+    - name: create keystone v3 endpoints
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack endpoint list --service keystone --interface {{ item }} --column URL -f value |
+        sed s/v2.0/v3/g |
+        xargs openstack endpoint create --region regionOne keystonev3 {{ item }}
+      when: item not in keystonev3_endpoints.stdout_lines
+      with_items:
+        - admin
+        - internal
+        - public
+
+  become: yes
+  become_user: "{{ rhosp_stack_user }}"

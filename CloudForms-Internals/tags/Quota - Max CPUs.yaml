@@ -1,0 +1,113 @@
+---
+- description: Quota - Max CPUs
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Maximum number of CPUs allowed by Quota
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: quota_max_cpu
+  entries:
+  - description: '1'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '1'
+  - description: '2'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '2'
+  - description: '3'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '3'
+  - description: '4'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '4'
+  - description: '5'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '5'
+  - description: '10'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '10'
+  - description: '20'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '20'
+  - description: '30'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '30'
+  - description: '40'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '40'
+  - description: '50'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '50'

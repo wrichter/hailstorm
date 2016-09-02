@@ -1,0 +1,43 @@
+---
+- description: EVM Operations
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Operations
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: operations
+  entries:
+  - description: Analysis Failed
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: analysis_failed
+  - description: Analysis Required
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: analysis_required
+  - description: Analysis Successful
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: analysis_success

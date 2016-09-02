@@ -1,0 +1,83 @@
+---
+- description: Quota - Max  Storage
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Maximum Storage allowed by Quota (GB)
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: quota_max_storage
+  entries:
+  - description: 10GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '10'
+  - description: 20GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '20'
+  - description: 40GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '40'
+  - description: 100GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '100'
+  - description: 200GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '200'
+  - description: 400GB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '400'
+  - description: 1TB
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '1000'

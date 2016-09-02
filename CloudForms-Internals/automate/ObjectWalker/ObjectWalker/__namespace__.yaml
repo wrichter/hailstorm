@@ -1,0 +1,11 @@
+---
+object_type: namespace
+version: 1.0
+object:
+  attributes:
+    name: ObjectWalker
+    description: ObjectWalker
+    display_name: 
+    system: 
+    priority: 
+    enabled: 

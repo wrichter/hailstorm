@@ -1,0 +1,111 @@
+# prereq: the variable hostnames needs to contain an array of (nova)host names to be removed from the cluster
+- block:
+    - name: ensure that no heat operation is currently in progress
+      shell: . ~/stackrc && openstack stack list -f json
+      register: stacklist
+      become: yes
+      become_user: "{{ rhosp_stack_user }}"
+      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS')
+      changed_when: false
+
+    # - name: get ironic UUIDs for nova UUIDs
+    #   shell: >
+    #     . ~/stackrc &&
+    #     openstack baremetal list -c "Instance UUID" -c "UUID" -f json
+    #   register: ironic_nova_mapping
+    #   changed_when: false
+
+    - name: get nova UUIDs
+      shell: >
+        . ~/stackrc &&
+        openstack server list -c ID -c Name -f json
+      register: nova_uuids
+      changed_when: false
+    - debug: var=nova_uuids.stdout|from_json
+
+    - name: disable nova service for node
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova service-disable {{ item }}.localdomain nova-compute
+      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      with_items: "{{ hostnames }}"
+
+    - name: evacuate node
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova host-evacuate-live {{ item }}.localdomain
+      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      with_items: "{{ hostnames }}"
+
+    - name: wait until node is empty
+      shell: >
+        . ~/overcloudrc_v3 &&
+        openstack server list --all-projects -f json --host {{ item }}.localdomain
+      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      with_items: "{{ hostnames }}"
+      register: server_on_host
+      until: server_on_host.stdout | from_json | length == 0
+      retries: 30
+      delay: 10
+      changed_when: false
+
+    - name: scale down nodes
+      shell: >
+        . ~/stackrc &&
+        openstack overcloud node delete
+        --stack overcloud
+        --templates
+        -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml
+        {% for template in templates %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }} {% endif %}{% endfor %}
+        {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","equalto", item) | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
+
+    - name: wait for heat update to complete
+      shell: . ~/stackrc && openstack stack list -f json
+      register: stacklist
+      until: not ( ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS') )
+      retries: 720
+      delay: 60
+      become: yes
+      become_user: "{{ rhosp_stack_user }}"
+      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('FAILED')
+      changed_when: false
+
+    - name: get nova service IDs
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova service-list --binary nova-compute | awk '/{{ item }}\.localdomain.*disabled/ { print $2 }'
+      register: nova_service_ids
+      failed_when: nova_service_ids.stdout==""
+      changed_when: false
+      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      with_items: "{{ hostnames }}"
+
+    #- debug: var=nova_service_ids
+
+    - name: remove nova service
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova service-delete {% if item.stdout is defined %}{{ item.stdout }}{% endif %}
+      when: not item|skipped
+      with_items: "{{ nova_service_ids.results }}"
+      register: remove_nova
+
+    - name: get neutron agent IDs
+      shell: >
+        . ~/overcloudrc_v3 &&
+        neutron agent-list -f json
+      register: neutron_agent_uuids
+      changed_when: false
+
+    - name: remove neutron agent
+      shell: >
+        . ~/overcloudrc_v3 &&
+        neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","equalto", "neutron-openvswitch-agent") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
+      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      with_items: "{{ hostnames }}"
+    #
+    #   register: rem_neutron
+    # - debug: var=rem_neutron
+
+  become: true
+  become_user: "{{ rhosp_stack_user }}"

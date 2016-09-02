@@ -10,6 +10,10 @@ nic_attachments:
   - "{{ infrastructure_network_storage }}"
   - "{{ infrastructure_network_rhosp_provisioning }}"
 
+repos: "{{ cloudforms_repos }}"
+pool_regex: "{{ cloudforms_subscription_pool_regex }}"
+packages: git
+ntp_client: will_be_configured_in_the_cf_config_role
 
 cfme_settings:
   - key: '/server/role'

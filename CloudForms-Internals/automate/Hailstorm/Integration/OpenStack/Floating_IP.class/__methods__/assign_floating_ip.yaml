@@ -1,0 +1,12 @@
+---
+object_type: method
+version: 1.0
+object:
+  attributes:
+    name: assign_floating_ip
+    display_name: assign_floating_ip
+    description: 
+    scope: instance
+    language: ruby
+    location: inline
+  inputs: []

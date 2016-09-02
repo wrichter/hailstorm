@@ -1,0 +1,53 @@
+---
+- description: Auto Approve - Max Retirement Days
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: Maximum Days for Retirement allowed by Auto Approval
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: prov_max_retirement_days
+  entries:
+  - description: '30'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '30'
+  - description: '60'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '60'
+  - description: '90'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '90'
+  - description: '180'
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: true
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: '180'

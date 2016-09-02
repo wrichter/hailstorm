@@ -1,0 +1,82 @@
+# prereq: the variable ironic_uuids needs to contain an array of ironic UUIDs to be removed from the cluster
+# e.g. invoke the playbook as follows:
+# ansible-playbook -i hosts -e @config/hailstorm_config.yml -e @config/infrastructure_config.yml -e @config/storm3.coe.muc.redhat.com.yml -e "hostnames=[\"overcloud-compute-5\"]" reset.yml
+- block:
+    - name: get nova UUIDs for ironic UUIDs
+      shell: >
+        . ~/stackrc &&
+        openstack baremetal list -c "Instance UUID" -c "UUID" -f json
+      register: ironic_nova_mapping
+      changed_when: false
+
+    #- debug: var=ironic_nova_mapping
+
+    - name: get nova node names
+      shell: >
+        . ~/stackrc &&
+        openstack server list -c ID -c Name -f json
+      register: nova_names
+      changed_when: false
+
+    #- debug: var=nova_names
+
+    - name: disable nova service for node
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova service-disable {{ (nova_names.stdout | from_json | selectattr("ID","equalto", ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] ) | map(attribute="Name") | list)[0] }}.localdomain nova-compute
+      when: ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] != None
+      with_items: "{{ ironic_uuids }}"
+
+    - name: evacuate node
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova host-evacuate-live {{ (nova_names.stdout | from_json | selectattr("ID","equalto", ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] ) | map(attribute="Name") | list)[0] }}.localdomain
+      when: ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] != None
+      with_items: "{{ ironic_uuids }}"
+
+    # - name: wait until node is empty
+    #   shell: >
+    #     . ~/overcloudrc_v3 &&
+    #     nova list --all-tenants --host {{ (nova_names.stdout | from_json | selectattr("ID","equalto", ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] ) | map(attribute="Name") | list)[0] }}.localdomain
+    #   when: ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] != None
+    #   with_items: "{{ ironic_uuids }}"
+    #   register:
+
+    - name: get nova service IDs
+      shell: >
+        . ~/overcloudrc_v3 &&
+        nova service-list --binary nova-compute | awk '/{{ (nova_names.stdout | from_json | selectattr("ID","equalto", ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] ) | map(attribute="Name") | list)[0] }}.localdomain.*disabled/ { print $2 }'
+      register: nova_service_ids
+      failed_when: nova_service_ids.stdout==""
+      changed_when: false
+      when: ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] != None
+      with_items: "{{ ironic_uuids }}"
+
+    #- debug: var=nova_service_ids
+
+    - name: remove nova service
+      shell: >
+        . ~/overcloudrc_v3 &&
+        echo nova service-delete {% if item.stdout is defined %}{{ item.stdout }}{% endif %}
+      when: not item|skipped
+      with_items: "{{ nova_service_ids.results }}"
+      register: remove_nova
+
+    - name: get neutron agent IDs
+      shell: >
+        . ~/overcloudrc_v3 &&
+        neutron agent-list -f json
+      register: neutron_agent_uuids
+      changed_when: false
+
+    - name: remove neutron agent
+      shell: >
+        . ~/overcloudrc_v3 &&
+        echo neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","equalto","neutron-openvswitch-agent") | selectattr("host","equalto", ( ironic_nova_mapping.stdout | from_json | selectattr("UUID","equalto", item ) | map(attribute="Instance UUID") | list)[0] ) | map(attribute="id") | list)[0] }}
+      with_items: "{{ ironic_uuids }}"
+      register: abc
+    - debug: var=abc
+
+    # - name: scale down
+  become: true
+  become_user: "{{ rhosp_stack_user }}"

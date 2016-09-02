@@ -1,0 +1,12 @@
+---
+object_type: method
+version: 1.0
+object:
+  attributes:
+    name: oseEmailer
+    display_name: oseEmailer
+    description: 
+    scope: instance
+    language: ruby
+    location: inline
+  inputs: []

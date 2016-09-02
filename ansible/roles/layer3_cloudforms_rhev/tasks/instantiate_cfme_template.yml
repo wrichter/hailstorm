@@ -132,9 +132,9 @@
   shell: rhevm-shell -E 'update vm Cloudforms --{{ item.param }} {{ item.value }}'
   with_items:
     - param: memory
-      value: 17179869184
+      value: "{{ mem*1024*1024 }}"
     - param: memory_policy-guaranteed
-      value: 17179869184
+      value: "{{ mem*1024*1024 }}"
   delegate_to: rhevm
 
 - block:

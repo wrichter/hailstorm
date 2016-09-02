@@ -1,0 +1,104 @@
+---
+- description: Workload
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: false
+  example_text: The workloads a resource provides, such as Web Server, Database, or
+    Firewall.
+  parent_id: 0
+  show: true
+  default: true
+  perf_by_tag: 
+  name: function
+  entries:
+  - description: Desktop
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: desktop
+  - description: Active Directory Server
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: active_directory
+  - description: Application Servers
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: application_servers
+  - description: Database
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: database
+  - description: DHCP Server
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: dhcp
+  - description: EVM Appliance
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: evm_appliance
+  - description: Virtual Infrastructure Management
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: infrastructure
+  - description: Messaging
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: messaging
+  - description: Security
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: true
+    perf_by_tag: 
+    name: security

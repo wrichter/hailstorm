@@ -1,0 +1,12 @@
+---
+object_type: instance
+version: 1.0
+object:
+  attributes:
+    display_name: object_walker
+    name: object_walker
+    inherits: 
+    description: object_walker
+  fields:
+  - rel1:
+      value: "/ObjectWalker/ObjectWalker/object_walker"
