@@ -3,8 +3,8 @@ object_type: method
 version: 1.0
 object:
   attributes:
-    name: object_walker
-    display_name: object_walker
+    name: remove_system
+    display_name: remove_system
     description: 
     scope: instance
     language: ruby
