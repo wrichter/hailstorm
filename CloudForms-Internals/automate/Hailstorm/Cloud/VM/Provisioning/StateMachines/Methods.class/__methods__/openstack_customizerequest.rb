@@ -2,6 +2,8 @@
 # Description: This method is used to Customize the Openstack Provisioning Request
 #
 
+require 'socket'
+
 # Get provisioning object
 prov = $evm.root["miq_provision"]
 
@@ -33,6 +35,7 @@ end
 
 $evm.log("info", "Setting flavor ID: #{id} and name: #{name}")
 
-#prov.set_option(:instance_type,[id,name]) unless id==0
-
-#prov.attributes.sort.each { |k, v| $evm.log("info", "Root:<$evm.root> Attribute - #{k}: #{v}")}
+hostname = Socket.gethostname
+domainname=hostname.split('.')[1,hostname.length].join('.')
+$evm.log("info", "Storing Domain Name #{domainname} for use in cloud-init")  
+prov.set_option(:domainname,domainname)

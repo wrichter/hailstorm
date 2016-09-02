@@ -1,10 +1,10 @@
 - name: remove DNAT config
-  command: /etc/libvirt/hooks/network {{ item.netname }} stopped
-  with_items: "{{ infrastructure_networks }}"
+  command: /etc/libvirt/hooks/network {{ item }} stopped
+  with_items: "{{ infrastructure_networks|map(attribute='netname')|list }}"
   ignore_errors: true
 - name: create /etc/hailstorm_iptables.xml
   template: src=hailstorm_iptables.xml.j2 dest=/etc/hailstorm_iptables.xml
   register: iptables
 - name: create DNAT config
-  command: /etc/libvirt/hooks/network {{ item.netname }} started
-  with_items: "{{ infrastructure_networks }}"
+  command: /etc/libvirt/hooks/network {{ item }} started
+  with_items: "{{ infrastructure_networks|map(attribute='netname')|list }}"
