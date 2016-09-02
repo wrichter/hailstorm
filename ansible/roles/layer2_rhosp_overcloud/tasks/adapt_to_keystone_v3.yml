@@ -33,6 +33,8 @@
           regexp: "^export OS_PROJECT_DOMAIN_NAME"
         - line: "export OS_USER_DOMAIN_NAME={{ osp_domain_name }}"
           regexp: "^export OS_USER_DOMAIN_NAME"
+        - line: "export OS_TENANT_NAME={{ osp_projects[0] }}"
+          regexp: "^export OS_TENANT_NAME"
       when: ipa_available|success
 
     - name: list openstack domains
