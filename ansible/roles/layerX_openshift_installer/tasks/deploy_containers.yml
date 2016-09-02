@@ -3,9 +3,12 @@
   register: rc
   changed_when: false
 - name: deploy registry
-  command: oadm registry --config=/etc/origin/master/admin.kubeconfig \
-           --credentials=/etc/origin/master/openshift-registry.kubeconfig \
-           --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+  command: >
+    oadm registry
+    --replicas=1
+    --config=/etc/origin/master/admin.kubeconfig
+    --credentials=/etc/origin/master/openshift-registry.kubeconfig
+    --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
   when: "'docker-registry' not in rc.stdout"
 - name: create pvc
   shell: "oc create -f - <<EOF

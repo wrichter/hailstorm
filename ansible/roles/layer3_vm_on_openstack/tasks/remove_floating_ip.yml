@@ -1,0 +1,17 @@
+- block:
+    - name: remove floating IP from server
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack ip floating remove {{ ansible_host }} {{ inventory_hostname_short }}
+
+    - name: remove floating IP
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack ip floating delete {{ ansible_host }}
+  become: yes
+  become_user: "{{ hostvars['rhosp-director'].rhosp_stack_user }}"
+  delegate_to: rhosp-director
