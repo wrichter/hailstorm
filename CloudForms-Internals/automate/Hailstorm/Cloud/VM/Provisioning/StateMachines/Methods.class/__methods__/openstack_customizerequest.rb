@@ -34,6 +34,7 @@ ems.flavors.each do |flavor|
 end
 
 $evm.log("info", "Setting flavor ID: #{id} and name: #{name}")
+prov.set_option(:instance_type,[id,name]) unless id==0
 
 hostname = Socket.gethostname
 domainname=hostname.split('.')[1,hostname.length].join('.')
