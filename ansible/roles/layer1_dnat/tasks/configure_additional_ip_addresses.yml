@@ -16,12 +16,12 @@
   lineinfile: state=absent regexp="^IPADDR[0-9]+|^PREFIX[0-9]+" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
 
 - name: add static IP configuration for DNAT
-  lineinfile: state=present regexp="^IPADDR{{ item.0 + 1 }}=.*" line="IPADDR{{ item.0 + 1 }}={{ item.1.on_host_prefix | ipaddr('address') }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
-  with_indexed_items: "{{ external_network_config.services_network_dnat.mapping }}"
+  lineinfile: state=present regexp="^IPADDR{{ item.0 + 1 }}=.*" line="IPADDR{{ item.0 + 1 }}={{ item.1 | ipaddr('address') }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
+  with_indexed_items: "{{ external_network_config.services_network_dnat.mapping|map(attribute='on_host_prefix')|list }}"
 
 - name: add PREFIX for static IP configuration
-  lineinfile: state=present insertafter="^IPADDR{{ item.0 + 1 }}=.*" line="PREFIX{{ item.0 + 1 }}={{ item.1.on_host_prefix | ipaddr('prefix') }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
-  with_indexed_items: "{{ external_network_config.services_network_dnat.mapping }}"
+  lineinfile: state=present insertafter="^IPADDR{{ item.0 + 1 }}=.*" line="PREFIX{{ item.0 + 1 }}={{ item.1 | ipaddr('prefix') }}" dest="/etc/sysconfig/network-scripts/ifcfg-{{ external_network_config.services_network_dnat.layer1_dev }}"
+  with_indexed_items: "{{ external_network_config.services_network_dnat.mapping|map(attribute='on_host_prefix')|list }}"
 
 - name: ifup interface
   shell: ifup {{ external_network_config.services_network_dnat.layer1_dev }}

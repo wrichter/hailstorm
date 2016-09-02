@@ -17,4 +17,4 @@
   template: src=lookbusy.service.j2 dest=/etc/systemd/system/generate-random-load.service
 
 - name: enable lookbusy Service
-  service: name=generate-random-load state=started enabled=yes
+  service: name=generate-random-load state=restarted enabled=yes
