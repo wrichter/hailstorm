@@ -1,0 +1,111 @@
+- name: find existing VM
+  shell: >
+    rhevm-shell -E 'list vms --query name={{ inventory_hostname_short }}' |
+    awk '/^id/ { print $3 }'
+  register: vm_id
+  delegate_to: rhevm
+  changed_when: false
+
+- block:
+    - name: create VM from template
+      # ovirt:
+      #   user: admin@internal
+      #   url: https://localhost
+      #   instance_name: "{{ inventory_hostname_short }}"
+      #   password: "{{ root_password }}"
+      #   resource_type: template
+      #   image: "{{ rhev_image }}"
+      # delegate_to: rhevm
+      command: rhevm-shell -E 'add vm --template-name {{ rhev_image }} --cluster-name Default --name {{ inventory_hostname_short }}'
+      delegate_to: rhevm
+      register: create_vm
+
+    # - debug: var=create_vm
+  when: vm_id.stdout == ""
+
+- block:
+    - name: find VM Start URL
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='{{ inventory_hostname_short }}']/actions/link[@rel='start']/@href" - | \
+             awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+      register: cloudforms_vm_start_url
+      failed_when: cloudforms_vm_start_url.stdout == ''
+      changed_when: false
+
+    - name: wait for VM to unlock
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='{{ inventory_hostname_short }}']/status/state/text()" - || true
+      changed_when: false
+      register: vm_status
+      until: vm_status.stdout == 'down'
+      retries: 30
+      delay: 10
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+
+
+    # - name: get VNIC profile ids
+    #   shell: >
+    #     rhevm-shell -E 'list vnicprofiles' |
+    #     awk 'BEGIN { print "vnicprofiles" } /^name/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
+    #   register: vnicprofiles
+    #
+    # - name:
+
+
+    - name: find VM nic url
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
+             xmllint --xpath "//vm[name='{{ inventory_hostname_short }}']/link[@rel='nics']/@href" - | \
+             awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+      register: vm_nic_url
+      failed_when: vm_nic_url.stdout == ''
+      changed_when: false
+
+    - name: get nic mac addresses
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+            "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}" | \
+            xmllint --xpath "//nic[name='{{ item.dev }}']/mac/@address" - | \
+            awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+      register: vm_nic_mac
+      changed_when: false
+      with_items: "{{ vm_nics }}"
+
+    - name: get nic links
+      shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}" | \
+             xmllint --xpath "//nic[name='{{ item.item.dev }}']/@href" - | \
+             awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
+      register: vm_individual_nic_url
+      changed_when: false
+      with_items: "{{ vm_nic_mac.results }}"
+
+    - name: reconfigure improperly configured nics
+      shell: curl -XPUT {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d '<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname[0:10] }}</name></network></nic>' \
+            "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
+      when: item.item.stdout != item.item.item.mac and item.stdout != ''
+      with_items: "{{ vm_individual_nic_url.results }}"
+
+    - name: create missing nics  & attach it to VM
+      shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d '<nic><name>{{ item.item.item.dev }}</name><interface>virtio</interface><mac address="{{ item.item.item.mac }}" /><network><name>{{ item.item.item.netname[0:10] }}</name></network></nic>' \
+            "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ vm_nic_url.stdout }}"
+      when: item.stdout == ''
+      with_items: "{{ vm_individual_nic_url.results }}"
+
+    - name: start VM with cloud-init
+      command: >
+        curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }}
+             -d '{{ lookup('template','start_action.xml.j2') | trim }}'
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ cloudforms_vm_start_url.stdout }}"
+      #format explained here: http://www.ovirt.org/develop/api/rest-api/rest-api/ and here: https://github.com/oVirt/ovirt-engine/blob/3c7527401a0778a1e06203da932fda6fa4e72b2a/backend/manager/modules/restapi/interface/definition/src/main/resources/v3/api.xsd
+
+  when: vm_id.stdout == ""
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+
+- name: wait for VM to become avialable
+  wait_for: host={{ vm_nics[0].ip }} port=22 timeout=600
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+  when: vm_id.stdout == ""

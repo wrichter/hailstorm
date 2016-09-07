@@ -1,0 +1,7 @@
+- block:
+    - include: instantiate_vm.yml
+  when: mode=="create"
+
+- block:
+    - include: terminate_vm.yml
+  when: mode=="destroy"

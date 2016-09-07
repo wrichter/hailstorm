@@ -1,4 +1,17 @@
 ---
+- hosts: lookbusy-rhev
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer3_vm_on_rhev
+      tags: [ 'layer3','lookbusy-rhev','lookbusy' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer3','lookbusy-rhev','lookbusy', 'rhel' ]
+      mode: destroy
+    - role: layer3_vm_on_rhev
+      tags: [ 'layer3','lookbusy-rhev','lookbusy', 'vm' ]
+      mode: destroy
 
 - hosts: lookbusy-osp
   gather_facts: false

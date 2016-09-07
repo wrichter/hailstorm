@@ -1,0 +1,116 @@
+- name: check existing template
+  shell: >
+    rhevm-shell -E 'list templates' |
+    awk 'BEGIN { print "template:" } /^name.*{{ item.name }}/ { print "  - name: \"" f "\"\n    id: \"" $3 "\"" } { f=$3 }'
+  register: template
+  changed_when: false
+
+- debug: var=template
+
+- name: check existing VM
+  shell: >
+    rhevm-shell -E 'list vms' |
+    awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
+  register: vm
+  changed_when: false
+  when: (template.stdout|from_yaml).template[0] is not defined
+
+- debug: var=vm
+
+- name: find storagedomain id
+  shell: rhevm-shell -E 'list storagedomains' | awk '/^name.*export1/ { print f } { f=$3 }'
+  register: storagedomain_id
+  failed_when: storagedomain_id.stdout == ""
+  changed_when: false
+  when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined
+
+- name: check existing VM in export domain
+  shell: >
+    rhevm-shell -E 'list vms --storagedomain-identifier {{ storagedomain_id.stdout }} ' |
+    awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
+  register: vm_in_export_domain
+  changed_when: false
+  when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined
+
+- debug: var=vm_in_export_domain
+
+- block:
+    - name: ensure that layer1 root has an ssh key set
+      user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+    - name: read layer1 root ssh pub key
+      shell: cat /root/.ssh/id_rsa.pub
+      register: layer1_ssh_pub_key
+      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+      changed_when: false
+    - name: add layer1 root ssh pub key to rhevh1
+      authorized_key: user=root key={{ layer1_ssh_pub_key.stdout }}
+      delegate_to: "{{ groups['rhevh'][0] }}"
+    - name: copy KVM image from layer1
+      synchronize: mode=push src={{ layer1_binary_dir }}/{{ item.image }} dest=/tmp/{{ item.image }}
+      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+
+    - name: install virt-v2v
+      yum: name=virt-v2v state=latest
+      delegate_to: "{{ groups['rhevh'][0] }}"
+
+    - name: convert image to VM
+      shell: virt-v2v -i disk /tmp/{{ item.image }} -o rhev -os {{ infrastructure_address_nfs_server }}:{{ nfs_rhev_export_domain_path }}
+      delegate_to: "{{ groups['rhevh'][0] }}"
+      register: v2v
+
+    - debug: var=v2v
+
+    #- name: import VM
+
+
+    - name: remove image
+      file: path=/tmp/{{ item.image }} state=absent
+
+  when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined and (vm_in_export_domain.stdout|from_yaml).vm[0] is not defined
+
+- name: get VM
+  shell: >
+    rhevm-shell -E 'list vms' |
+    awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
+  register: vm
+  changed_when: false
+  when: (template.stdout|from_yaml).template[0] is not defined
+
+- name: convert VM to template
+  shell: >
+    rhevm-shell -E 'add template --vm-id {{ (vm.stdout|from_yaml).vm[0].id }} --name "{{ item.name }}"'
+  when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is defined
+  register: created_template
+
+- debug: var=created_template
+
+- name: get VM disk ID
+  shell: >
+    rhevm-shell -E 'list disks --parent-vm-identifier {{ (vm.stdout|from_yaml).vm[0].id }}' |
+    awk '/^id/ { print $3 }'
+  register: disk_id
+  changed_when: false
+  failed_when: disk_id.stdout == ""
+  when: (vm.stdout|from_yaml).vm[0] is defined
+
+- debug: var=disk_id
+
+- name: wait for disk to unlock
+  shell: >
+    rhevm-shell -E 'show disk {{ disk_id.stdout }}' |
+    awk '/^status-state/ { print $3 }'
+  register: disk_status
+  changed_when: false
+  until: disk_status.stdout == "ok"
+  retries: 30
+  delay: 10
+  when: (vm.stdout|from_yaml).vm[0] is defined
+
+- name: remove VM
+  shell: >
+    rhevm-shell -E 'remove vm {{ (vm.stdout|from_yaml).vm[0].id }}'
+  when: (vm.stdout|from_yaml).vm[0] is defined
+  register: remove_vm
+
+- debug: var=remove_vm

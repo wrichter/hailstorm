@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#sleep 60
+systemctl stop sshd
+
+{% for nic in vm_nics %}{% if nic.netname == 'services' %}
+echo -e NAME=\"{{nic.dev}}\"\\nONBOOT=yes\\nBOOTPROTO=\"static\"\\nDEVICE={{nic.dev}}\\nIPADDR=\"{{ nic.ip }}\"\\nNETMASK=\"{{ nic.netmask }}\"\\nDNS1=\"{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address')  }}\"\\nGATEWAY=\"{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address')  }}\" >/etc/sysconfig/network-scripts/ifcfg-{{nic.dev}}
+{% else %}
+echo -e NAME=\"{{nic.dev}}\"\\nONBOOT=yes\\nBOOTPROTO=\"static\"\\nDEVICE={{nic.dev}}\\nIPADDR=\"{{ nic.ip }}\"\\nNETMASK=\"{{ nic.netmask }}\" >/etc/sysconfig/network-scripts/ifcfg-{{nic.dev}}
+{% endif %}{% endfor %}
+systemctl restart network
+
+echo -e {{ root_password }}\\n{{ root_password }} | passwd root
+
+{# -- COMMENTED OUT
+#add subscription manager
+#yum -t -y -e 0 install subscription-manager
+rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
+
+echo "Registering the System"
+subscription-manager register --org="{{ hostvars['satellite'].organization_id }}" --name={{ hostname }} --activationkey="{{ activation_key }}"
+
+# add the rhel rpms to install katello agent
+# not required here since this is already configured via Satellite Activation Key
+# subscription-manager repos --enable=rhel-7-server-satellite-tools-6.1-rpms
+
+echo "Installing Katello Agent"
+yum -t -y -e 0 install katello-agent
+chkconfig goferd on
+#trigger config upload to satellite so it appears at once
+katello-package-upload
+
+-- COMMENTED OUT #}
+
+systemctl start sshd
+
+exit 0

@@ -1,0 +1,8 @@
+- block:
+    - include: import_kvm_image_as_template.yml
+      with_items: "{{ rhev_templates }}"
+  when: mode=="create"
+
+# - block:
+#
+#   when: mode=="destroy"

@@ -164,6 +164,7 @@
   roles:
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm','rhevm-storage' ], mode: create }
     - { role: layer2_rhevm_ldap, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
+    - { role: layer2_rhevm_templates, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-templates' ], mode: create }
 
 
 - hosts: satellite
@@ -254,3 +255,12 @@
     - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'vm'], mode: create }
     - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'rhel'], mode: create }
     - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp' ], mode: create }
+
+- hosts: lookbusy-rhev
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_vm_on_rhev, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'vm'], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'rhel'], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev' ], mode: create }

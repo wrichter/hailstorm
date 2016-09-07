@@ -33,6 +33,10 @@ osp_kvm_images:
   - image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
     name: Windows Server 2012
 
+rhev_templates:
+  - image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+    name: "RHEL7"
+
 # RED HAT SUBSCRIPTION POOLS
 #rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
 #rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791

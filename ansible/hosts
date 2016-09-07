@@ -2,73 +2,76 @@
 
 # the layer1 group should only contain a single server called layer1
 [layer1]
-layer1          ansible_host=192.168.101.1
+layer1          ansible_host=192.168.103.1
 
 #### VM CONFIGURATION (LAYER 2 AND LAYER 3)
 
 [satellite]
-satellite       ansible_host=192.168.101.10
+satellite       ansible_host=192.168.103.10
 
 # the IPA server
 [ipa]
-ipa             ansible_host=192.168.101.11 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+ipa             ansible_host=192.168.103.11 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # the single node that is RHEV-Manager
 [rhevm]
-rhevm           ansible_host=192.168.101.12 activation_key="AK-CV-RHEV-MANAGER-PROD" additional_dns="rhev"
+rhevm           ansible_host=192.168.103.12 activation_key="AK-CV-RHEV-MANAGER-PROD" additional_dns="rhev"
 
 # the nodes that are RHEV-Hypervisor
 [rhevh]
-rhevh1          ansible_host=192.168.101.13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh1 }}{% endif %}"
-rhevh2          ansible_host=192.168.101.14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh2 }}{% endif %}"
-rhevh3          ansible_host=192.168.101.15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh3 }}{% endif %}"
+rhevh1          ansible_host=192.168.103.13 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh1 }}{% endif %}"
+rhevh2          ansible_host=192.168.103.14 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh2 }}{% endif %}"
+rhevh3          ansible_host=192.168.103.15 activation_key="AK-CV-RHEV-HYPERVISOR-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh3 }}{% endif %}"
 
 # the CloudForms management engine
 [cloudforms]
-cloudforms      ansible_host=192.168.101.17 activation_key="AK-CV-CLOUDFORMS-PROD"
+cloudforms      ansible_host=192.168.103.17 activation_key="AK-CV-CLOUDFORMS-PROD"
 
 [test-rhel6]
-test-rhel6      ansible_host=192.168.101.18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
+test-rhel6      ansible_host=192.168.103.18 activation_key="AK-CV-OS-RHEL6-SERVER-TEST"
 
 [test-rhel7]
-test-rhel7      ansible_host=192.168.101.19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
+test-rhel7      ansible_host=192.168.103.19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
 [ose3-master]
-ose3-master1    ansible_host=192.168.101.20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-master2    ansible_host=192.168.101.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-master3    ansible_host=192.168.101.22 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master1    ansible_host=192.168.103.20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master2    ansible_host=192.168.103.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master3    ansible_host=192.168.103.22 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
 
 [ose3-node]
-ose3-infranode1 ansible_host=192.168.101.23 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
-ose3-node1      ansible_host=192.168.101.25 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
-ose3-node2      ansible_host=192.168.101.26 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-infranode1 ansible_host=192.168.103.23 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
+ose3-node1      ansible_host=192.168.103.25 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-node2      ansible_host=192.168.103.26 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
 
 [ose3-lb]
-ose3-lb         ansible_host=192.168.101.27 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" additional_dns="openshift"
+ose3-lb         ansible_host=192.168.103.27 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" additional_dns="openshift"
 
 # Elasticsearch, FluentD, Kibana
 [efk]
-efk             ansible_host=192.168.101.28 activation_key="AK-CV-RHOSP-PROD"
+efk             ansible_host=192.168.103.28 activation_key="AK-CV-RHOSP-PROD"
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
-infrastructure  ansible_host=192.168.101.29 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+infrastructure  ansible_host=192.168.103.29 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
 
 # The single system where osp-director will be installed to
 [rhosp-director]
-rhosp-director  ansible_host=192.168.101.30 activation_key="AK-CV-RHOSP-PROD"
+rhosp-director  ansible_host=192.168.103.30 activation_key="AK-CV-RHOSP-PROD"
 
 # The group of all osp compute nodes
 [rhosp-compute]
-rhosp-compute1  ansible_host=192.168.101.31 activation_key="AK-CV-RHOSP-PROD"
-rhosp-compute2  ansible_host=192.168.101.32 activation_key="AK-CV-RHOSP-PROD"
-rhosp-compute3  ansible_host=192.168.101.33 activation_key="AK-CV-RHOSP-PROD"
+rhosp-compute1  ansible_host=192.168.103.31 activation_key="AK-CV-RHOSP-PROD"
+rhosp-compute2  ansible_host=192.168.103.32 activation_key="AK-CV-RHOSP-PROD"
+rhosp-compute3  ansible_host=192.168.103.33 activation_key="AK-CV-RHOSP-PROD"
 
 # The group of all osp control nodes
 [rhosp-control]
-rhosp-control1  ansible_host=192.168.101.34 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
-rhosp-control2  ansible_host=192.168.101.35 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
-rhosp-control3  ansible_host=192.168.101.36 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
+rhosp-control1  ansible_host=192.168.103.34 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
+rhosp-control2  ansible_host=192.168.103.35 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
+rhosp-control3  ansible_host=192.168.103.36 activation_key="AK-CV-RHOSP-PROD" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
+
+[lookbusy-rhev]
+lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" rhev_image="RHEL7" nic_attachments="[ {{ infrastructure_network_services }},{{ infrastructure_network_admin }} ]"
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
@@ -162,6 +165,8 @@ efk
 layer2
 cloudforms
 vips
+lookbusy-rhev
+
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]
@@ -172,6 +177,8 @@ ipa
 ose3
 efk
 rhevm
+lookbusy-rhev
 
 [lookbusy:children]
 lookbusy-osp
+lookbusy-rhev

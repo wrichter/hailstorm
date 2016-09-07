@@ -1,0 +1,68 @@
+<action>
+  <use_cloud_init>true</use_cloud_init>
+  <vm>
+    <initialization>
+      <cloud_init>
+        <host>
+          <address>{{ hostname }}</address>
+        </host>
+        <authorized_keys>
+          <authorized_key>
+            <user>root</user>
+            <key>{{ ssh_pub_key_hailstorm }}</key>
+          </authorized_key>
+        </authorized_keys>
+        <network_configuration>
+          <nics>
+            {# as soon as any NIC is configured here, access via ssh does not work any longer #}
+            {# % for nic in vm_nics %}{% if nic.dev != 'eth0' %}<nic>
+              <name>{{ nic.dev }}</name>
+              <boot_protocol>static</boot_protocol>
+              <network>
+                <ip address="{{ nic.ip }}" netmask="{{ nic.netmask }}" {% if default_route_via.netname == nic.netname %}gateway="{{ nic.default_gw }}" {% endif %}/>
+              </network>
+              <on_boot>true</on_boot>
+            </nic>{% endif %}{% endfor % #}
+          </nics>
+          <dns>
+            <servers>
+              <host>
+                <address>{{ infrastructure_address_default_dns }}</address>
+              </host>
+            </servers>
+            <search_domains>
+              <host>
+                <address>{{ hailstorm_dns_domain }}</address>
+              </host>
+            </search_domains>
+          </dns>
+        </network_configuration>
+        <timezone>{{ timezone }}</timezone>
+        <files>
+          <file>
+            <name>ignored</name>
+            <content><![CDATA[write_files:
+- path: /tmp/system-setup.sh
+  permissions: "0755"
+  content: |
+    {{ lookup('template','system-setup.sh.j2')|indent(4) }}
+runcmd:
+- [ cloud-init-per, once, foreman-userdata, /tmp/system-setup.sh ]
+output: {all: "| tee -a /root/install.userdata.log"}
+]]></content>
+            <type>plaintext</type>
+          </file>
+        </files>
+      </cloud_init>
+      <custom_script><![CDATA[write_files:
+- path: /tmp/system-setup.sh
+  permissions: "0755"
+  content: |
+    {{ lookup('template','system-setup.sh.j2')|indent(4) }}
+runcmd:
+- [ cloud-init-per, once, foreman-userdata, /tmp/system-setup.sh ]
+output: {all: "| tee -a /root/install.userdata.log"}
+]]></custom_script>
+    </initialization>
+  </vm>
+</action>
