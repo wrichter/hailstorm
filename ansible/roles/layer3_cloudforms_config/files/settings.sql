@@ -7,6 +7,9 @@ update settings_changes set value='---\n- 192.168.101.1\n' where key='/ntp/serve
 -- update company name
 update settings_changes set value='--- Hailstorm\n...\n' where key='/server/company';
 
+-- update Time Zone
+update settings_changes set value='--- Berlin\n...\n' where key='/server/timezone';
+
 DO
 $do$
 BEGIN
@@ -24,6 +27,11 @@ BEGIN
 -- set company name
   IF NOT EXISTS (select key,value from settings_changes where key='/server/company') THEN
     insert into settings_changes (key,value,created_at,updated_at,resource_type,resource_id) VALUES ('/server/company','--- Hailstom\n...\n',now(),now(),'MiqServer',(select id from miq_servers));
+  END IF;
+
+-- set Time Zone
+  IF NOT EXISTS (select key,value from settings_changes where key='/server/timezone') THEN
+    insert into settings_changes (key,value,created_at,updated_at,resource_type,resource_id) VALUES ('/server/timezone','--- Berlin\n...\n',now(),now(),'MiqServer',(select id from miq_servers));
   END IF;
 
 -- create storage C&U tag
