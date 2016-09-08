@@ -1,0 +1,12 @@
+---
+object_type: domain
+version: 1.0
+object:
+  attributes:
+    name: Temp
+    description: 
+    display_name: 
+    system: false
+    priority: 4
+    enabled: true
+    tenant_id: 919000000000001

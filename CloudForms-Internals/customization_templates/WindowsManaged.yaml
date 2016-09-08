@@ -1,0 +1,13 @@
+---
+- name: WindowsManaged
+  description: WindowsUnManaged
+  script: |
+    <%
+       ssh_key = evm[:sshkey]
+       script_username = evm[:scriptusername]
+    %>rem cmd
+    net user <%=script_username%> <%=ssh_key%> /ADD
+    net localgroup "Remote Desktop Users" <%=script_username%> /ADD
+  pxe_image_type_id: 919000000000004
+  type: CustomizationTemplateCloudInit
+  system: 
