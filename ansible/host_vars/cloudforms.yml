@@ -17,9 +17,11 @@ ntp_client: will_be_configured_in_the_cf_config_role
 
 cfme_settings:
   - key: '/server/role'
-    value: '--- automate,database_operations,ems_inventory,ems_metrics_collector,ems_metrics_coordinator,ems_metrics_processor,ems_operations,event,reporting,scheduler,smartproxy,smartstate,user_interface,web_services,websocket\n---\n'
+    value: '--- automate,database_operations,ems_inventory,ems_metrics_collector,ems_metrics_coordinator,ems_metrics_processor,ems_operations,event,notifier,reporting,scheduler,smartproxy,smartstate,user_interface,web_services,websocket\n---\n'
   - key: '/ntp/server'
     value: '---\n- 192.168.101.1\n'
+  - key: '/server/timezone'
+    value: '--- Berlin\n...\n'
   - key: '/server/company'
     value: '--- Hailstorm\n...\n'
   - key: '/authentication/mode'

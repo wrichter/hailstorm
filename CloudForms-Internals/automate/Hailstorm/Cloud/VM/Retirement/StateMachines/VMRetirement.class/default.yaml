@@ -10,8 +10,6 @@ object:
   fields:
   - DeactivateCMDB:
       value: "/Integration/CMDB/CMDB_Records/remove_cmdb_record"
-  - PreDeleteFromProvider:
-      value: "/Integration/ConfigurationManagement/Foreman/remove_system"
   - RemoveFromProvider:
       value: "/Cloud/VM/Retirement/StateMachines/Methods/RemoveFromProvider"
   - CheckRemovedFromProvider:
