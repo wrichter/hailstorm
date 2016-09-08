@@ -17,16 +17,16 @@
 
 - debug: var=vm
 
-- name: find storagedomain id
-  shell: rhevm-shell -E 'list storagedomains' | awk '/^name.*export1/ { print f } { f=$3 }'
-  register: storagedomain_id
-  failed_when: storagedomain_id.stdout == ""
-  changed_when: false
-  when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined
+# - name: find storagedomain id
+#   shell: rhevm-shell -E 'list storagedomains' | awk '/^name.*export1/ { print f } { f=$3 }'
+#   register: storagedomain_id
+#   failed_when: storagedomain_id.stdout == ""
+#   changed_when: false
+#   when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined
 
 - name: check existing VM in export domain
   shell: >
-    rhevm-shell -E 'list vms --storagedomain-identifier {{ storagedomain_id.stdout }} ' |
+    rhevm-shell -E 'list vms --parent-storagedomain-name export1' |
     awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
   register: vm_in_export_domain
   changed_when: false
@@ -46,28 +46,47 @@
     - name: add layer1 root ssh pub key to rhevh1
       authorized_key: user=root key={{ layer1_ssh_pub_key.stdout }}
       delegate_to: "{{ groups['rhevh'][0] }}"
+    # - name: ensure rsync is installed
+    #   yum: name=rsync state=latest
+    #   delegate_to: "{{ groups['rhevh'][0] }}"
     - name: copy KVM image from layer1
-      synchronize: mode=push src={{ layer1_binary_dir }}/{{ item.image }} dest=/tmp/{{ item.image }}
-      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+      #synchronize: src={{ layer1_binary_dir }}/{{ item.image }} dest={{ hostvars[groups['rhevh'][0]].vm_nics[1].ip }}:/tmp/{{ item.image }}
+      command: scp -o StrictHostKeyChecking=no {{ layer1_binary_dir }}/{{ item.image }} {{ hostvars[groups['rhevh'][0]].vm_nics[1].ip }}:/tmp/{{ item.image }}
+      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
 
     - name: install virt-v2v
       yum: name=virt-v2v state=latest
       delegate_to: "{{ groups['rhevh'][0] }}"
 
     - name: convert image to VM
-      shell: virt-v2v -i disk /tmp/{{ item.image }} -o rhev -os {{ infrastructure_address_nfs_server }}:{{ nfs_rhev_export_domain_path }}
+      shell: LIBGUESTFS_BACKEND=direct virt-v2v -i disk /tmp/{{ item.image }} -o rhev -os {{ infrastructure_address_nfs_server }}:{{ nfs_rhev_export_domain_path }}
       delegate_to: "{{ groups['rhevh'][0] }}"
       register: v2v
 
     - debug: var=v2v
 
-    #- name: import VM
-
-
     - name: remove image
       file: path=/tmp/{{ item.image }} state=absent
-
+      delegate_to: "{{ groups['rhevh'][0] }}"
   when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined and (vm_in_export_domain.stdout|from_yaml).vm[0] is not defined
+
+- name: get VM in export domain
+  shell: >
+    rhevm-shell -E 'list vms --parent-storagedomain-name export1' |
+    awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
+  register: vm_in_export_domain
+  changed_when: false
+  failed_when: (vm_in_export_domain.stdout|from_yaml).vm[0] is not defined
+  when: >
+    (template.stdout|from_yaml).template[0] is not defined and
+    (vm.stdout|from_yaml).vm[0] is not defined
+
+- name: import VM
+  shell: rhevm-shell -E 'action vm {{ (vm_in_export_domain.stdout|from_yaml).vm[0].id }} import_vm --parent-storagedomain-name export1 --cluster-name Default --storage_domain-name data1'
+  when: >
+    (template.stdout|from_yaml).template[0] is not defined and
+    (vm.stdout|from_yaml).vm[0] is not defined and
+    (vm_in_export_domain.stdout|from_yaml).vm[0] is defined
 
 - name: get VM
   shell: >
@@ -75,12 +94,30 @@
     awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
   register: vm
   changed_when: false
-  when: (template.stdout|from_yaml).template[0] is not defined
+  when: >
+    (template.stdout|from_yaml).template[0] is not defined and
+    (vm_in_export_domain.stdout|from_yaml).vm[0] is defined
+
+- name: wait for VM to unlock
+  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
+         xmllint --xpath "//vm[name='{{ item.image | regex_replace('.qcow2','') }}']/status/state/text()" - || true
+  changed_when: false
+  register: vm_status
+  until: vm_status.stdout == 'down'
+  retries: 30
+  delay: 10
+  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+  when: >
+    (template.stdout|from_yaml).template[0] is not defined and
+    (vm.stdout|from_yaml).vm[0] is defined
 
 - name: convert VM to template
   shell: >
     rhevm-shell -E 'add template --vm-id {{ (vm.stdout|from_yaml).vm[0].id }} --name "{{ item.name }}"'
-  when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is defined
+  when: >
+    (template.stdout|from_yaml).template[0] is not defined and
+    (vm.stdout|from_yaml).vm[0] is defined
   register: created_template
 
 - debug: var=created_template
