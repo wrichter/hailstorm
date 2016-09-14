@@ -31,7 +31,7 @@ objects:
 # Use this one if no local git server available:
 # https://github.com/jim-minter/ose3-ticket-monster
         ref: master
-        uri: http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
+        uri: ${GIT_URL}
       type: Git
     strategy:
       type: Source
@@ -181,3 +181,5 @@ parameters:
 - from: '[a-zA-Z0-9]{8}'
   generate: expression
   name: MYSQL_PASSWORD
+- name: GIT_URL
+  value: http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
