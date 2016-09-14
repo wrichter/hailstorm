@@ -1,0 +1,3 @@
+- block:
+    - include: configure_virtwho.yml
+  when: mode=="create"

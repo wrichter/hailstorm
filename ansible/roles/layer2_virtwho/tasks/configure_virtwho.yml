@@ -1,0 +1,36 @@
+- name: install virt-who
+  yum: name=virt-who state=latest
+
+- name: configure VIRT-WHO main config
+  lineinfile: line="VIRTWHO_SATELLITE6=1" insertafter="# VIRTWHO_SATELLITE6=" dest=/etc/sysconfig/virt-who
+
+
+- set_fact:
+     type: rhevm
+     protocol: https
+     port: 443
+     username: admin@internal
+     password: "{{ root_password }}"
+
+- name: configure VIRT-WHO for rhevm 
+  template: src=virt-who.j2 dest=/etc/virt-who.d/{{ item }}.conf
+  with_flattened:
+  - "{{ groups['rhevm'] }}"
+
+- set_fact:
+     type: libvirt
+     protocol: qemu+ssh
+     port: 22
+     username: root
+     password: "{{ root_password }}"
+
+## - name: configure VIRT-WHO for OSP and layer1
+##   template: src=virt-who.j2 dest=/etc/virt-who.d/{{ item }}.conf
+##   with_flattened:
+##   - "{{ groups['rhosp-compute'] }}"
+##   - "{{ groups['layer1'] }}"
+
+
+
+- name: ensure that virt-who is restarted
+  service: name=virt-who enabled=yes state=restarted
