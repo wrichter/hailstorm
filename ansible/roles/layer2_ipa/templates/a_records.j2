@@ -1,4 +1,7 @@
-[{% for item in groups.all %}
+[{
+  "name" :  "{{ hostvars['layer1'].inventory_hostname_short }}",
+  "ip" : "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}"
+},{% for item in groups.all %}
 {% if hostvars[item].vm_nics is defined %}
 {% for _nic in hostvars[item].vm_nics %}
 {% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}
