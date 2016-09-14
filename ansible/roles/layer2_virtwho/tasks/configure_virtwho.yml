@@ -4,33 +4,52 @@
 - name: configure VIRT-WHO main config
   lineinfile: line="VIRTWHO_SATELLITE6=1" insertafter="# VIRTWHO_SATELLITE6=" dest=/etc/sysconfig/virt-who
 
-
 - set_fact:
-     type: rhevm
-     protocol: https
-     port: 443
      username: admin@internal
      password: "{{ root_password }}"
 
-- name: configure VIRT-WHO for rhevm 
-  template: src=virt-who.j2 dest=/etc/virt-who.d/{{ item }}.conf
+- name: configure VIRT-WHO 
+  template: src=virt-who_rhevm.j2 dest=/etc/virt-who.d/{{ item }}.conf
   with_flattened:
   - "{{ groups['rhevm'] }}"
+  
+- name: configure VIRT-WHO for OSP and layer1
+  template: src=virt-who_libvirt.j2 dest=/etc/virt-who.d/{{ item }}.conf
+  with_flattened:
+  - "{{ groups['rhosp-compute'] }}"
+  - "{{ groups['layer1'] }}"
 
-- set_fact:
-     type: libvirt
-     protocol: qemu+ssh
-     port: 22
-     username: root
-     password: "{{ root_password }}"
+## need ssh from virtwho-host to hypervisors....
+## rhevm is handled differently
 
-## - name: configure VIRT-WHO for OSP and layer1
-##   template: src=virt-who.j2 dest=/etc/virt-who.d/{{ item }}.conf
+## # old idea: creating new key-pair and rolling out pu-key to all hosts needed
+## - name: ensure that root has an ssh key set on virt-who host
+##   user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+## 
+## - name: read root ssh pub key on virt-who host
+##   shell: cat /root/.ssh/id_rsa.pub
+##   register: virtwho_ssh_pub_key
+##   changed_when: false
+## 
+## - name: add virtwho-hosts root ssh pub key to hypervisors
+##   authorized_key: user=root key={{ virtwho_ssh_pub_key.stdout }}
+##   delegate_to: "{{ item }}"
 ##   with_flattened:
 ##   - "{{ groups['rhosp-compute'] }}"
 ##   - "{{ groups['layer1'] }}"
+## 
 
+# new idea use hailstorm key-pair - pub-key is rolled out allready ;-)
+- name: copy ssh key
+#  copy: src=binary/hailstorm dest=/root/.ssh/id_rsa owner=root group=root mode="600"
+  copy: src=binary/undercloud dest=/root/.ssh/id_rsa owner=root group=root mode="600"
 
+- name: copy ssh public key
+#  copy: src=binary/hailstorm.pub dest=/root/.ssh/id_rsa.pub owner=root group=root mode="644"
+  copy: src=binary/undercloud.pub dest=/root/.ssh/id_rsa.pub owner=root group=root mode="644"
 
-- name: ensure that virt-who is restarted
-  service: name=virt-who enabled=yes state=restarted
+- name: disable stricktHostKeyChecking
+  lineinfile: line="StrictHostKeyChecking=no" dest=/root/.ssh/config create=yes state=present
+
+#- name: ensure that virt-who is restarted
+#  service: name=virt-who enabled=yes state=restarted

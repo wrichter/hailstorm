@@ -18,10 +18,10 @@
 
 ## Terse version of the config template:
 [{{ item }}]
-type={{ type }} 
-server={{ protocol }}://{{ item }}.{{ hailstorm_dns_domain }}:{{ port }}
-username={{ username }}
-password={{ password }}
+type=libvirt
+server=qemu+ssh://{{ item }}.{{ hailstorm_dns_domain }}
+#username=
+#password=
 #encryped_password=
 owner={{ hostvars['satellite'].organization_id }}
 env=production
