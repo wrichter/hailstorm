@@ -273,3 +273,13 @@
     - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev' ], mode: create }
+
+
+- hosts: dev-client
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'dev-client', 'ose3', 'vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }

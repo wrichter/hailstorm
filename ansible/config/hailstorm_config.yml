@@ -68,7 +68,8 @@ rhosp_overcloud_repos:
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
-  - rhel-7-server-satellite-6.1-rpms
+#  - rhel-7-server-satellite-6.1-rpms
+  - rhel-7-server-satellite-6.2-rpms
 rhevm_repos:
   - rhel-6-server-rpms
   - rhel-6-server-supplementary-rpms

@@ -29,3 +29,12 @@
   shell: "echo -e 'dummy4711\n{{ item.password }}\n{{ item.password }}' | kinit {{ item.username }}"
   when: item.username not in users.stdout_lines and item.password is defined
   with_items: "{{ ipa_user }}"
+# 
+# - name: check if admin has email set
+#   shell: echo "{{ ipa_admin_password }}" | ipa user-show admin | awk '/Email/{ print $3 }'
+#   changed_when: false
+#   register: admin_email
+#
+# - name: set admin email address
+#   shell: echo "{{ ipa_admin_password }}" | ipa user-mod admin --email=admin@{{ hailstorm_dns_domain }}
+#   when: admin_email.stdout == ""

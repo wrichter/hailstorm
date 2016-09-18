@@ -1,0 +1,15 @@
+- block:
+  when: mode == "create"
+
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: Create redhat-msa project
+  shell: "oadm new-project redhat-msa --admin='developer' --description='Red Hat MSA Demo'"
+  when: "'redhat-msa' not in projects.stdout_lines"
+
+- name: Reseting redhat-msa project to empty state
+  shell: oc delete all --all -n demo-dev
+  when: "'demo-dev' in projects.stdout_lines"

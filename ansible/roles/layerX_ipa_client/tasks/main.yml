@@ -1,0 +1,32 @@
+- block:
+    - name: install IPA client package
+      yum: name=ipa-client state=latest
+
+    - name: check if IPA client is installed
+      stat: path=/etc/sssd/sssd.conf
+      register: sssd_conf
+
+    - debug: var=sssd_conf
+
+    - name: install IPA client
+      shell: >
+        ipa-client-install
+        --server={{ hostvars['ipa'].hostname }}
+        --domain={{ hailstorm_dns_domain }}
+        --principal=admin
+        --no-ntp
+        --password={{ root_password }}
+        --mkhomedir
+        --force-join
+        --unattended
+      when:  sssd_conf.stat.exists is not defined or not sssd_conf.stat.exists
+  when: mode=="create"
+
+- block:
+    - name: remove IPA client
+      shell: ipa-client-install --uninstall --unattended
+      ignore_errors: true
+    - name: remove IPA client package
+      yum: name=ipa-client state=absent
+    # probably also need to remove /etc/krb5.{keytab|conf}
+  when: mode=="destroy"
