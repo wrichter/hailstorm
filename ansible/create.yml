@@ -283,3 +283,4 @@
     - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }
+    - { role: layerX_openshift_demo_redhatmsa_on_devclient, tags: [ 'layer2', 'dev-client',  'ose3', 'redhat-msa' ], mode: create }

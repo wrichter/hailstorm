@@ -1,0 +1,19 @@
+- block:
+    - name: login to OpenShift
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/  creates=~/.kube/openshift.{{ hailstorm_dns_domain }}_8443/
+
+    - name: check existing projects
+      shell: oc get projects | awk '{ print $1 }'
+      register: projects
+      changed_when: false
+
+    - name: Create redhat-msa project
+      shell: "oc new-project redhat-msa --description='Red Hat MSA Demo'"
+      when: "'redhat-msa' not in projects.stdout_lines"
+
+    # - name: Resetting redhat-msa project to empty state
+    #   shell: oc delete all --all -n demo-dev
+    #   when: "'redhat-msa' in projects.stdout_lines"
+  become: true
+  become_user: developer
+  become_method: su

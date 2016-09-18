@@ -44,6 +44,10 @@ layer2_ose3master_cpu: 4
 layer2_ose3lb_mem: 2048
 layer2_ose3lb_cpu: 2
 
+layer2_devclient_mem: 2048
+layer2_devclient_cpu: 2
+
+
 external_network_config:
   services_network_dnat:
     layer1_dev: em1

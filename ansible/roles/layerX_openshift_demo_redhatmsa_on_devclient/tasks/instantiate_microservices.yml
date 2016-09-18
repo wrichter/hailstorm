@@ -1,0 +1,86 @@
+- block:
+    - name: Create Workdir
+      file: path="{{ workdir }}" state=directory
+
+    - name: Checkout source code from github
+      git:
+        repo: "https://github.com/redhat-helloworld-msa/{{ item.name }}"
+        dest: "{{ workdir }}/{{ item.name }}"
+      with_items: "{{ msa_projects }}"
+
+    - name: Compile Java Projects
+      shell: "scl enable rh-maven33 -- mvn -f {{ workdir }}/{{ item.name }}/pom.xml package"
+      with_items: "{{ msa_projects }}"
+      when: "item.project == 'java'"
+
+    - name: NPM install NodeJS Projects
+      shell: "scl enable rh-nodejs4 -- npm --prefix {{ workdir }}/{{ item.name }} install {{ workdir }}/{{ item.name }}"
+      with_items: "{{ msa_projects }}"
+      when: "item.project == 'node'"
+
+    - name: login to OpenShift
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/
+
+    - name: Create OpenShift new-build
+      shell: "oc new-build -n {{ redhat_msa_project }} --binary --name={{ item.name }} -l app={{ item.name }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Build OpenShift images
+      shell: "oc start-build -n {{ redhat_msa_project }} {{ item.name }} --from-dir={{ workdir }}/{{ item.name }} --follow"
+      with_items: "{{ msa_projects }}"
+
+    - name: Create OpenShift applications from previously created images
+      shell: "oc new-app -n {{ redhat_msa_project }} {{ item.name }} -l app={{ item.name }}{{ (item.hystrix == True) | ternary(',hystrix.enabled=true','') }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Expose OpenShift applications
+      shell: "oc expose service -n {{ redhat_msa_project }} {{ item.name }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Define Frontend domain
+      shell: "oc env dc/frontend OS_SUBDOMAIN=apps.{{ hailstorm_dns_domain }}"
+
+    - name: Create OpenShift Readiness Probe for applications
+      shell: "oc set probe dc/{{ item.name }} --readiness --get-url={{ item.probe }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      # Avoid projects without probe
+      when: "item.probe != False"
+
+    - name: Enable Jolokia for applications
+      shell: "oc patch dc/{{ item.name }} -p '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"{{ item.name }}\",\"ports\":[{\"containerPort\": 8778,\"name\":\"jolokia\"}]}]}}}}'"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      # Avoid  no Jolokia projects
+      when:  "item.jolokia != False"
+
+    - name: Install Kubeflix
+      shell: >
+        oc create -f http://central.maven.org/maven2/io/fabric8/kubeflix/packages/kubeflix/1.0.17/kubeflix-1.0.17-kubernetes.yml &&
+        oc new-app kubeflix &&
+        oc expose service hystrix-dashboard --port=8080 --hostname=hystrix-dashboard-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }} &&
+        oc policy add-role-to-user admin system:serviceaccount:{{ redhat_msa_project }}:turbine
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Install Kubernetes Zipkin
+      shell: >
+        oc create -f http://repo1.maven.org/maven2/io/fabric8/zipkin/zipkin-starter-minimal/0.0.8/zipkin-starter-minimal-0.0.8-kubernetes.yml &&
+        oc expose service zipkin-query --hostname=zipkin-query-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }}
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+  become: true
+  become_user: developer
+  become_method: su

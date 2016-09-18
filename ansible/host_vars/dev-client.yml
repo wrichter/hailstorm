@@ -1,6 +1,6 @@
 ---
-mem: "{{ layer2_ose3lb_mem }}"
-vcpu: "{{ layer2_ose3lb_cpu }}"
+mem: "{{ layer2_devclient_mem }}"
+vcpu: "{{ layer2_devclient_cpu }}"
 
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
@@ -12,11 +12,45 @@ disk:
     home: 2048
     root: 10000
 
-
 scl_packages:
   - rh-maven33
   - rh-nodejs4
 
 repos: "{{ ose3_repos + ['rhel-server-rhscl-7-rpms'] }}"
-packages: "git,bash-completion,atomic-openshift-clients,ipa-client,{{ scl_packages | join(',') }}"
+packages: "git,bash-completion,atomic-openshift-clients,ipa-client,java-1.8.0-openjdk-devel,{{ scl_packages | join(',') }}"
 pool_regex: "{{ ose_subscription_pool_regex }}"
+
+redhat_msa_project: redhat-msa
+workdir: git
+
+msa_projects:
+  - name: hola
+    project: java
+    hystrix: true
+    probe: http://:8080/api/health
+    jolokia: false
+  - name: frontend
+    project: node
+    hystrix: false
+    probe: False
+    jolokia: false
+  - name: bonjour
+    project: node
+    hystrix: false
+    probe: http://:8080/api/health
+    jolokia: false
+  - name: api-gateway
+    project: java
+    hystrix: true
+    probe: http://:8080/health
+    jolokia: true
+  - name: ola
+    project: java
+    hystrix: true
+    probe: http://:8080/api/health
+    jolokia: true
+  - name: aloha
+    project: java
+    hystrix: true
+    probe: http://:8080/api/health
+    jolokia: true
