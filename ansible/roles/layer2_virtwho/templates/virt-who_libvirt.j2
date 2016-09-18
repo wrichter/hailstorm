@@ -1,0 +1,29 @@
+## virt-who checks all files in /etc/virt-who.d/ if they're valid ini-like
+## files and uses them as configuration. Each file might contain more configs.
+##
+## You can uncomment and fill following template or create new file with
+## similar content.
+
+#[config name]
+#type=               ; insert one of libvirt/esx/hyperv/rhevm/vdsm/fake
+#server=             ; insert hostname or ip address of the server to connect to
+#username=           ; username for server authentication
+#password=           ; password for server authentication
+#encrypted_password= ; password encrypted using virt-who-password utility
+#owner=              ; owner for use with SAM, Customer Portal, or Satellite 6
+#env=                ; environment for use with SAM, Customer Portal, or Satellite 6
+#hypervisor_id=      ; how will be the hypervisor identified, one of: uuid, hostname, hwuuid
+
+## For complete list of options, see virt-who-config(5) manual page.
+
+## Terse version of the config template:
+[{{ item }}]
+type=libvirt
+server=qemu+ssh://{{ item }}.{{ hailstorm_dns_domain }}
+#username=
+#password=
+#encryped_password=
+owner={{ hostvars['satellite'].organization_id }}
+env=production
+hypervisor_id=hostname
+
