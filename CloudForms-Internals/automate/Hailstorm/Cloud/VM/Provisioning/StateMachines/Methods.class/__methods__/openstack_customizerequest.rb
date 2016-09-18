@@ -34,8 +34,20 @@ ems.flavors.each do |flavor|
 end
 
 $evm.log("info", "Setting flavor ID: #{id} and name: #{name}")
+prov.set_option(:instance_type,[id,name]) unless id==0
 
 hostname = Socket.gethostname
 domainname=hostname.split('.')[1,hostname.length].join('.')
-$evm.log("info", "Storing Domain Name #{domainname} for use in cloud-init")  
+$evm.log("info", "Storing Domain Name #{domainname} for use in cloud-init")
 prov.set_option(:domainname,domainname)
+
+
+@servicename=prov.get_option(:name)
+$evm.log("info","Looking for Unmanaged as part of the service name: #{@servicename}")
+if "#{@servicename}".match("UnManaged")
+   $evm.log("info","Setting management_status tag to unmanaged")
+   prov.add_tag("management_status","unmanaged")
+else
+   $evm.log("info","Setting management_status tag to managed")
+   prov.add_tag("management_status","managed")
+end
