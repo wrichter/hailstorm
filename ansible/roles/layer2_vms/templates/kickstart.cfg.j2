@@ -40,12 +40,16 @@ bootloader --append=" crashkernel=auto" --location=mbr
 zerombr
 clearpart --all --initlabel
 # Disk partitioning information
-part /boot --fstype="{{ fstype }}" --ondisk=vda --size=500
-part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ disk.partition_table.lvmpv }}
+part /boot --fstype="{{ fstype }}" --ondisk=vda --size={{ disk.physvols.boot }}
+{#part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ disk.partition_table.lvmpv }}#}
+part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ disk.physvols.rhel }}
 volgroup rhel --pesize=4096 pv.123
-logvol swap  --fstype="swap" --size={{ disk.partition_table.swap }} --name=swap --vgname=rhel
-logvol /home  --fstype="{{ fstype }}" --size={{ disk.partition_table.home }} --name=home --vgname=rhel
-logvol /  --fstype="{{ fstype }}" --size={{ disk.partition_table.root }} --name=root --vgname=rhel
+{#logvol swap  --fstype="swap" --size={{ disk.partition_table.swap }} --name=swap --vgname=rhel
+#logvol /home  --fstype="{{ fstype }}" --size={{ disk.partition_table.home }} --name=home --vgname=rhel
+#logvol /  --fstype="{{ fstype }}" --size={{ disk.partition_table.root }} --name=root --vgname=rhel#}
+{% for logvol in disk.logvols %}
+logvol {{ logvol.mountpoint }}  --fstype="{{ logvol.fstype }}" --size={{ logvol.size }} --name={{ logvol.name }} --vgname=rhel
+{% endfor %}
 
 %packages
 @core

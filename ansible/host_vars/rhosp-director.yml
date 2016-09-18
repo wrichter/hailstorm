@@ -5,11 +5,28 @@ disk:
   path: "{{ inventory_hostname_short }}.qcow2"
   size: 60
   format: qcow2
-  partition_table:
-    lvmpv: 59500
-    swap: 4096
-    home: 2048
-    root: 50000
+  # partition_table:
+  #   lvmpv: 59500
+  #   swap: 4096
+  #   home: 2048
+  #   root: 50000
+  physvols:
+    boot: 500
+    rhel: 59500
+  logvols:
+    - name: swap
+      fstype: swap
+      mountpoint: swap
+      size: 4096
+    - name: root
+      fstype: "{{ fstype }}"
+      mountpoint: /
+      size: 50000
+    - name: home
+      fstype: "{{ fstype }}"
+      mountpoint: /home
+      size: 2048
+
 
 nic_attachments:
   - "{{ infrastructure_network_rhosp_provisioning }}"

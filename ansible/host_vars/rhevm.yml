@@ -5,11 +5,29 @@ disk:
   path: "{{ inventory_hostname_short }}.qcow2"
   size: 60
   format: qcow2
-  partition_table:
-    lvmpv: 59500
-    swap: 16384
-    home: 2048
-    root: 20000
+  # partition_table:
+  #   lvmpv: 59500
+  #   swap: 16384
+  #   home: 2048
+  #   root: 20000
+
+  physvols:
+    boot: 500
+    rhel: 59500
+  logvols:
+    - name: swap
+      fstype: swap
+      mountpoint: swap
+      size: 16384
+    - name: root
+      fstype: "{{ fstype }}"
+      mountpoint: /
+      size: 20000
+    - name: home
+      fstype: "{{ fstype }}"
+      mountpoint: /home
+      size: 2048
+
 
 pool_regex: "{{ rhev_subscription_pool_regex }}"
 

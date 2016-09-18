@@ -4,10 +4,31 @@ vcpu: "{{ layer2_ose3node_cpu }}"
 
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 30
+  size: 60
   format: qcow2
-  partition_table:
-    lvmpv: 29500
-    swap: 2048
-    home: 2048
-    root: 10000
+  # partition_table:
+  #   lvmpv: 29500
+  #   swap: 2048
+  #   home: 2048
+  #   root: 10000
+  
+  physvols:
+    boot: 500
+    rhel: 59500
+  logvols:
+    - name: swap
+      fstype: swap
+      mountpoint: swap
+      size: 2048
+    - name: root
+      fstype: "{{ fstype }}"
+      mountpoint: /
+      size: 5120
+    - name: home
+      fstype: "{{ fstype }}"
+      mountpoint: /home
+      size: 2048
+    - name: var
+      fstype: "{{ fstype }}"
+      mountpoint: /var
+      size: 30720
