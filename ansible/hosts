@@ -90,7 +90,7 @@ lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-PROD" osp_tenant="demo1" o
 #### ADDITIONAL GROUPS
 
 [virt-who]
-infrastructure
+satellite
 
 # some test nodes to test subscription with satellite
 [test-rhel:children]

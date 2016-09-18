@@ -2,8 +2,10 @@
 - name: add entry to /etc/hosts
   lineinfile: dest=/etc/hosts line="{{ vm_nics[0].ip}} {{ hostname }}  {{ inventory_hostname_short }} "
 
-- name: run katello-installer
-  shell: katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} {% if http_proxy is defined %}--katello-proxy-url {{ http_proxy.protocol }}://{{ http_proxy.proxyname }} --katello-proxy-port {{ http_proxy.port }}{% endif %} && touch /.katello-is-installed  creates=/.katello-is-installed
+# - name: run katello-installer
+#   shell: katello-installer --foreman-admin-username admin --foreman-admin-password {{ root_password }} {% if http_proxy is defined %}--katello-proxy-url {{ http_proxy.protocol }}://{{ http_proxy.proxyname }} --katello-proxy-port {{ http_proxy.port }}{% endif %} && touch /.katello-is-installed  creates=/.katello-is-installed
+- name: run satellite-installer
+  shell: satellite-installer --scenario satellite --foreman-admin-username admin --foreman-admin-password {{ root_password }} {% if http_proxy is defined %}--katello-proxy-url {{ http_proxy.protocol }}://{{ http_proxy.proxyname }} --katello-proxy-port {{ http_proxy.port }}{% endif %} && touch /.katello-is-installed  creates=/.katello-is-installed
   register: katello_installed
 
 # create hammer-config-file
