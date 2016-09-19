@@ -106,6 +106,6 @@
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 
 - name: wait for VM to become avialable
-  wait_for: host={{ vm_nics[0].ip }} port=22 timeout=600
+  wait_for: host={{ ansible_host }} port=22 timeout=600
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
   when: vm_id.stdout == ""
