@@ -1,0 +1,122 @@
+---
+- hosts: all
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - set_fact:
+        rhsm_username: "{{ rhsm_username }}"
+        rhsm_password: "{{ rhsm_password }}"
+      tags:
+        - always
+    - debug: var=vm_nics
+      tags:
+        - always
+    # - debug: msg={{ vm_nics }}
+    #   tags:
+    #     - always
+
+  vars_prompt:
+    - name: "rhsm_username"
+      prompt: "what is your Red Hat Subscription Manager username?"
+      default: "wrichter"
+      private: no
+    - name: "rhsm_password"
+      prompt: "what is your Red Hat Subscription Manager password?"
+
+- hosts: layer1
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer1', 'rhosp', 'rhev', 'ose3', 'dnat' ]
+  roles:
+    - role: layer1
+      tags: [ 'layer1' ]
+      mode: create
+    - role: layer1_dnat
+      tags: [ 'layer1', 'dnat' ]
+      mode: create
+    # - role: layer1_rhosp
+    #   tags: [ 'rhosp', layer1 ]
+    #   mode: create
+    # - role: layer1_rhev
+    #   tags: [ 'rhev', layer1 ]
+    #   mode: create
+    # - role: layer1_openshift
+    #   tags: [ 'ose3', layer1 ]
+    #   mode: create
+
+
+#### SATELLITE ####
+
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  #pre_tasks:
+  #  - setup:
+  #    tags: [ 'layer2','satellite' ]
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
+  #  - { role: layer2_dnat, tags: [ 'layer2', 'satellite', 'dnat' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
+    - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
+
+# - hosts: test-rhel
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'test-rhel' ], mode: create }
+#     - { role: layer2_rhel, tags: [ 'layer2', 'satellite', 'rhel', 'test-rhel' ], mode: create }
+
+#### IPA ####
+
+- hosts: ipa
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'ipa', 'dnat' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
+    - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
+
+#### SATELLITE (again) ####
+
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  #pre_tasks:
+  #  - setup:
+  #    tags: [ 'layer2','satellite' ]
+  roles:
+   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'tdagent' ], mode: create }
+
+
+# - hosts: test-rhel
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    #- { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+
+
+#### Infrastructure (DNS, SMTP/IMAP) ####
+
+- hosts: infrastructure
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'infrastructure', 'vm' ], mode: create }
+#    - { role: layer2_dnat, tags: [ 'layer2', 'infrastructure', 'dnat' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'infrastructure', 'rhel' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
+
+
+#### VIRT-WHO host (either infrastrcture or satellite)
+
+- hosts: virt-who
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_virtwho, tags: [ 'layer2', 'virtwho' ], mode: create }

@@ -1,0 +1,96 @@
+---
+# - hosts: all
+#   remote_user: root
+#   gather_facts: false
+#   tasks:
+#     - set_fact:
+#         rhsm_username: "{{ rhsm_username }}"
+#         rhsm_password: "{{ rhsm_password }}"
+#       tags:
+#         - always
+#     - debug: var=vm_nics
+#       tags:
+#         - always
+#     # - debug: msg={{ vm_nics }}
+#     #   tags:
+#     #     - always
+#
+#   vars_prompt:
+#     - name: "rhsm_username"
+#       prompt: "what is your Red Hat Subscription Manager username?"
+#       default: "wrichter"
+#       private: no
+#     - name: "rhsm_password"
+#       prompt: "what is your Red Hat Subscription Manager password?"
+
+
+#### RHEV ####
+
+- hosts: layer1
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer1', 'rhosp', 'rhev', 'ose3', 'dnat' ]
+  roles:
+    - role: layer1_rhev
+      tags: [ 'rhev', layer1 ]
+      mode: create
+
+- hosts: rhev
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'rhev', 'vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'rhev', 'rhel' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'rhev' ]
+  roles:
+#    - { role: layer2_dnat, tags: [ 'layer2', 'rhev', 'dnat' ], mode: create }
+    - { role: layer2_rhevm_engine, tags: [ 'layer2', 'rhev', 'rhevm' ], mode: create }
+    - { role: layer2_rhevdhw_cfme, tags: [ 'layer2', 'rhev', 'rhevm', 'cfme-rhevdwh' ], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent' ], mode: create }
+
+- hosts: rhevh
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'rhev' ]
+  roles:
+    - { role: layer2_rhevh, tags: [ 'layer2', 'rhev', 'rhevh' ], mode: create }
+
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'rhev','rhevm', 'rhevm-ldap','rhevm-storage' ]
+  roles:
+    - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm','rhevm-storage' ], mode: create }
+    - { role: layer2_rhevm_ldap, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
+    - { role: layer2_rhevm_templates, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-templates' ], mode: create }
+
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - setup:
+      tags: [ 'layer2', 'satellite-rhev' ]
+  roles:
+    - { role: layer2_satellite_rhev, tags: [ 'layer2', 'satellite-rhev', 'satellite', 'rhev' ], mode: create }
+
+- hosts: lookbusy-rhev
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_vm_on_rhev, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'vm'], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'rhel'], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev' ], mode: create }

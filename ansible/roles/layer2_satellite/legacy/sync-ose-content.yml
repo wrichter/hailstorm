@@ -1,6 +1,0 @@
-- name: enable OpenShift 3.1 repo
-  command: 'hammer repository-set enable --organization "Default Organization" --basearch "x86_64" --product "Red Hat OpenShift Enterprise" --name "Red Hat OpenShift Enterprise 3.1 (RPMs)"'
-  ignore_errors: yes
-
-- name: start sync tasks for OpenShift 3.1 repo
-  command: 'hammer product synchronize --async --organization "Default Organization" --name "Red Hat OpenShift Enterprise"'
