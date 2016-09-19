@@ -17,9 +17,12 @@
       tags: ['layer1','layer1-ntp']
     - include: configure_iptables.yml
       tags: ['layer1','layer1-iptables']
+    - include: prepare_user_with_kvm_access.yml
   when: mode=='create'
 
 - block:
+    #- include: remove_user_with_kvm_access.yml
+    #- include: remove_iptables.yml
     - include: destroy_libvirt_networks.yml
     - include: remove_bridge.yml
   when: mode=='destroy'

@@ -59,7 +59,7 @@
     - name: Build OpenShift images
       shell: "oc start-build -n {{ redhat_msa_project }} {{ item.name }} --from-dir={{ workdir }}/{{ item.name }} --follow"
       with_items: "{{ msa_projects }}"
-      when: (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
 
     - name: Create OpenShift applications from previously created images
       shell: "oc new-app -n {{ redhat_msa_project }} {{ item.name }} -l app={{ item.name }}{{ (item.hystrix == True) | ternary(',hystrix.enabled=true','') }}"

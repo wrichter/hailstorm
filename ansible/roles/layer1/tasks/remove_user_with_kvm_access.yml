@@ -1,0 +1,6 @@
+- name: Create RHOSP stack user in layer 1
+  user: name={{ rhosp_stack_user }} state=absent
+- name: remove stack user ssh key from KVM hypervisor host
+  authorized_key: user={{ rhosp_stack_user }} key={{ ssh_pub_key_undercloud }} state=absent
+- name: disable KVM control for RHOSP director
+  file: path=/etc/polkit-1/localauthority/50-local.d/50-libvirt-user-stack.pkla state=absent

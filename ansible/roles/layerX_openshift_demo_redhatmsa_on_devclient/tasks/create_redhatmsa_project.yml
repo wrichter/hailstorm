@@ -13,7 +13,7 @@
 
     # - name: Resetting redhat-msa project to empty state
     #   shell: oc delete all --all -n demo-dev
-    #   when: "'redhat-msa' in projects.stdout_lines"
+    #   when: "redhat_msa_project in projects.stdout_lines"
   become: true
   become_user: developer
   become_method: su

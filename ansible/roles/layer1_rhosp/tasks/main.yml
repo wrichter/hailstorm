@@ -1,5 +1,4 @@
 - block:
-    - include: prepare_rhosp_settings.yml
     - include: roles/common/tasks/prepare_nfs_export.yml
       vars:
         items:

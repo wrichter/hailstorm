@@ -34,10 +34,10 @@
   when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
 
 - name: find existing subscriptions for activation keys
-  shell: hammer activation-key subscriptions --name "AK-{{ item.1 }}-{{ item.0 }}"  --organization "{{ organization }}" | awk 'NR>3'
+  shell: hammer activation-key subscriptions --name "AK-{{ item.1.content_view }}-{{ item.0 }}"  --organization "{{ organization }}" | awk 'NR>3'
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ content_config | map(attribute='content_view') | list }}"
+    - "{{ content_config }}"
   register: assigned_subs
   changed_when: false
 
