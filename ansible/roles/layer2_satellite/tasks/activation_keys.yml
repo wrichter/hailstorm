@@ -20,11 +20,12 @@
 #- debug: msg={{ (subscriptions.stdout | from_json | selectattr("Name","match","^(Employee SKU|Red Hat Enterprise Linux OpenStack Platform.*)$") | map(attribute="ID") | list)[0] }}
 
 - name: create activation keys for content_view
-  command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1.content_view }}" --lifecycle-environment {{ item.0 }} --name "AK-{{ item.1.content_view }}-{{ item.0 }}"
+  command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1 }}" --lifecycle-environment {{ item.0 }} --name "AK-{{ item.1 }}-{{ item.0 }}"
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ content_config }}"
-  when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
+    - "{{ content_config | map(attribute='content_view') | list }}"
+  when: "'AK-{{ item.1 }}-{{ item.0 }}' not in current_activation_keys.stdout"
+
 - name: associate activation keys to host collection
   command: hammer activation-key add-host-collection --organization "{{ organization }}" --name "AK-{{ item.1.content_view }}-{{ item.0 }}" --host-collection "{{ item.1.host_collection }}"
   with_nested:
@@ -33,10 +34,10 @@
   when: "'AK-{{ item.1.content_view }}-{{ item.0 }}' not in current_activation_keys.stdout"
 
 - name: find existing subscriptions for activation keys
-  shell: hammer activation-key subscriptions --name "AK-{{ item.1.content_view }}-{{ item.0 }}"  --organization "{{ organization }}" | awk 'NR>3'
+  shell: hammer activation-key subscriptions --name "AK-{{ item.1 }}-{{ item.0 }}"  --organization "{{ organization }}" | awk 'NR>3'
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ content_config }}"
+    - "{{ content_config | map(attribute='content_view') | list }}"
   register: assigned_subs
   changed_when: false
 

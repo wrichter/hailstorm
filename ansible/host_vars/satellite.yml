@@ -343,7 +343,7 @@ content_config:
 
   - content_view: "CV-RHOSE3"
     content:
-      - product: "Red Hat OpenShift Enterprise"
+      - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
@@ -358,7 +358,7 @@ content_config:
 
   - content_view: "CV-RHOSE3-CLIENT"
     content:
-      - product: "Red Hat OpenShift Enterprise"
+      - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"

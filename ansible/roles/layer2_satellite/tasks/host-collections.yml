@@ -5,6 +5,6 @@
 
 # just fill the list with the host collections that are needed
 - name: create host collections
-  command: hammer host-collection create --organization "Default Organization" --name {{ item.host_collection }}
-  when: "item.host_collection not in host_collections.stdout"
-  with_items: "{{ content_config }}"
+  command: hammer host-collection create --organization "Default Organization" --name {{ item }}
+  when: "item not in host_collections.stdout"
+  with_items: "{{ content_config | map(attribute='host_collection') | list | unique }}"

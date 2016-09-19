@@ -29,6 +29,6 @@
   with_items: "{{ current_lifecycle_environments.stdout_lines }}"
 
 - name: override what content that is enabled
-  command: hammer activation-key content-override --organization "Default Organization" --name "AK-CV-OS-RHEL7-SERVER-{{ item }}" --content-label "rhel-7-server-satellite-tools-6.1-rpms" --value 1
+  command: hammer activation-key content-override --organization "Default Organization" --name "AK-CV-OS-RHEL7-SERVER-{{ item }}" --content-label "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms" --value 1
   changed_when: false
   with_items: "{{ current_lifecycle_environments.stdout_lines }}"
