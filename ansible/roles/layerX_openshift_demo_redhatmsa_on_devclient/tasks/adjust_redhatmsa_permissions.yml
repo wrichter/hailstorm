@@ -16,12 +16,12 @@
       shell: oc project {{ redhat_msa_project }}
       when: current_project.stdout != redhat_msa_project
 
-    - name: granting anyuid scc to project default user
-      shell: oadm policy add-scc-to-user anyuid -z default
+    - name: granting anyuid scc to project ribbon user (defined later in the kubeflix template)
+      shell: oadm policy add-scc-to-user anyuid -z ribbon
 
     - name: change current project back
       shell: oc project {{ current_project.stdout }}
       when: current_project.stdout != redhat_msa_project
 
   delegate_to: "{{ groups['ose3-installer'][0] }}"
-  when: "'system:serviceaccount:{{ redhat_msa_project }}:default' not in (anyuid.stdout|from_yaml)['users']"
+  when: "(anyuid.stdout|from_yaml)['users'] is not defined or 'system:serviceaccount:{{ redhat_msa_project }}:ribbon' not in (anyuid.stdout|from_yaml)['users']"
