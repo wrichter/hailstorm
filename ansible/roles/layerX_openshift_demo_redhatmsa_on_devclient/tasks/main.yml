@@ -1,6 +1,8 @@
 - block:
     - include: create_redhatmsa_project.yml
+      tags: ['project']
     - include: adjust_redhatmsa_permissions.yml
+      tags: ['project']
     - include: instantiate_microservices.yml
   when: mode == "create"
 

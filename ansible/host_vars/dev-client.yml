@@ -12,7 +12,9 @@ disk:
   #   home: 2048
   #   root: 10000
 
-  lvmpv: 29500
+  physvols:
+    boot: 500
+    rhel: 29500
   logvols:
     - name: swap
       fstype: swap
@@ -27,7 +29,7 @@ disk:
       mountpoint: /home
       size: 2048
 
-      
+
 scl_packages:
   - rh-maven33
   - rh-nodejs4
@@ -36,7 +38,7 @@ repos: "{{ ose3_repos + ['rhel-server-rhscl-7-rpms'] }}"
 packages: "git,bash-completion,atomic-openshift-clients,ipa-client,java-1.8.0-openjdk-devel,{{ scl_packages | join(',') }}"
 pool_regex: "{{ ose_subscription_pool_regex }}"
 
-redhat_msa_project: redhat-msa
+redhat_msa_project: helloworld-msa
 workdir: git
 
 msa_projects:

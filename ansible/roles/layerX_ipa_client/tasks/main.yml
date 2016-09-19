@@ -6,7 +6,7 @@
       stat: path=/etc/sssd/sssd.conf
       register: sssd_conf
 
-    - debug: var=sssd_conf
+#    - debug: var=sssd_conf
 
     - name: install IPA client
       shell: >

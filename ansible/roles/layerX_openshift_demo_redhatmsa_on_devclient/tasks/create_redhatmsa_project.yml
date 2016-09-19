@@ -8,8 +8,8 @@
       changed_when: false
 
     - name: Create redhat-msa project
-      shell: "oc new-project redhat-msa --description='Red Hat MSA Demo'"
-      when: "'redhat-msa' not in projects.stdout_lines"
+      shell: "oc new-project {{ redhat_msa_project }} --description='Red Hat MSA Demo'"
+      when: "redhat_msa_project not in projects.stdout_lines"
 
     # - name: Resetting redhat-msa project to empty state
     #   shell: oc delete all --all -n demo-dev

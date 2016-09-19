@@ -1,3 +1,3 @@
 - name: granting anyuid scc to redhat-msa default users
-  shell: oadm policy -n redhat-msa add-scc-to-user anyuid -z system:serviceaccount:redhat-msa:default
+  shell: oadm policy -n redhat-msa add-scc-to-user anyuid -z system:serviceaccount:{{ redhat_msa_project }}:default
   delegate_to: "{{ groups['ose3-installer'][0] }}"
