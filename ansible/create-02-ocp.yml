@@ -30,7 +30,7 @@
   gather_facts: false
   pre_tasks:
     - setup:
-      tags: [ 'layer1', 'rhosp', 'rhev', 'ose3', 'dnat' ]
+      tags: [ 'layer1', 'ose3' ]
   roles:
     - role: layer1_openshift
       tags: [ 'ose3', layer1 ]
@@ -59,7 +59,7 @@
   gather_facts: false
   roles:
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles' ], mode: create }
-    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'cfme-ose3-provider'], mode: create }
+#    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'cfme-ose3-provider'], mode: create }
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
 

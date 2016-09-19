@@ -89,8 +89,9 @@ lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-PROD" osp_tenant="demo1" o
 
 #### ADDITIONAL GROUPS
 
+# which system will host virt-who -> this should not be satellite since virt-who reports to subscription-manager which reports to RHN (which doesn't know the Default Organization) on satellite
 [virt-who]
-satellite
+infrastructure
 
 # some test nodes to test subscription with satellite
 [test-rhel:children]

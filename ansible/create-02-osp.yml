@@ -30,7 +30,7 @@
   gather_facts: false
   pre_tasks:
     - setup:
-      tags: [ 'layer1', 'rhosp', 'rhev', 'ose3', 'dnat' ]
+      tags: [ 'layer1', 'rhosp' ]
   roles:
     - role: layer1_rhosp
       tags: [ 'rhosp', layer1 ]
