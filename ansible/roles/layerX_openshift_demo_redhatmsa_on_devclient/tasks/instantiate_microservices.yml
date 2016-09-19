@@ -99,11 +99,11 @@
       # Avoid  no Jolokia projects
       when:  "item.jolokia != False"
 
-    - name: Create Kubeflix template (hystrix-dashboard)
+    - name: Instantiate Kubeflix template (hystrix-dashboard)
       shell: oc create -n {{ redhat_msa_project }} -f http://central.maven.org/maven2/io/fabric8/kubeflix/packages/kubeflix/1.0.17/kubeflix-1.0.17-kubernetes.yml
       when: (templates.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','kubeflix') | list | length == 0
 
-    - name: Instantiate Kubeflix (hystrix-dashboard)
+    - name: Instantiate Kubeflix application
       shell: oc new-app -n {{ redhat_msa_project }} kubeflix
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
