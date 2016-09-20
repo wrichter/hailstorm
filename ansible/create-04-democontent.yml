@@ -2,7 +2,7 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_rhevm_ldap_democontent, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
+    - { role: layer2_rhevm_ldap_demopermissions, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
 
 - hosts: lookbusy-rhev
   remote_user: root

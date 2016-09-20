@@ -173,6 +173,7 @@
   roles:
     - { role: layer2_rhevm_storage, tags: [ 'layer2', 'rhev', 'rhevm','rhevm-storage' ], mode: create }
     - { role: layer2_rhevm_ldap, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
+    - { role: layer2_rhevm_ldap_demopermissions, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
     - { role: layer2_rhevm_templates, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-templates' ], mode: create }
 
 
