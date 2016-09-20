@@ -1,0 +1,41 @@
+---
+- name: developer
+  read_only: false
+  settings:
+  feature_identifiers:
+  - vm_explorer
+  - vm_infra_explorer
+  - vm_cloud_explorer
+  - miq_request_view
+  - miq_request_admin
+  - svc_catalog_accord
+  - service
+  - dashboard
+  - miq_report_saved_reports
+  - miq_report_view
+  - miq_report_run
+  - miq_report_schedules
+  - chargeback
+  - timeline
+  - rss
+  - my_settings_visuals
+  - my_settings_default_views
+  - my_settings_time_profiles
+  - job_my_smartproxy
+  - miq_task_my_ui
+  - about
+  - ontap_storage_system_show_list
+  - ontap_storage_system_show
+  - ontap_storage_volume_show_list
+  - ontap_storage_volume_show
+  - ontap_logical_disk_show_list
+  - ontap_logical_disk_show
+  - cim_base_storage_extent_show_list
+  - cim_base_storage_extent_show
+  - ontap_file_share_show_list
+  - ontap_file_share_show
+  - snia_local_file_system_show_list
+  - snia_local_file_system_show
+  - storage_manager_show_list
+  - storage_manager_show
+  - all_vm_rules

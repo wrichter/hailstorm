@@ -1,18 +1,21 @@
-- name: create temp dir locally
-  local_action: command mktemp -d
-  register: mktemp
-- name: download CloudForms rake scripts
-  local_action: shell cd {{ mktemp.stdout }} && git clone https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
-- name: upload scripts zip file to CF
-  copy: src={{ mktemp.stdout }}/cfme-rhconsulting-scripts dest=/tmp/ mode=0644
-- name: remove temp dir locally
-  local_action: file name={{ mktemp.stdout }} state=absent
-- name: expand and install scripts
-  shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install
-
-
-# - name: clone git repo to appliance
-#   git: repo=https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
-#        dest=/tmp/cfme-rhconsulting-scripts
-# - name: make install
+# - name: create temp dir locally
+#   local_action: command mktemp -d
+#   register: mktemp
+# - name: download CloudForms rake scripts
+#   local_action: shell cd {{ mktemp.stdout }} && git clone https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
+# - name: upload scripts zip file to CF
+#   copy: src={{ mktemp.stdout }}/cfme-rhconsulting-scripts dest=/tmp/ mode=0644
+# - name: remove temp dir locally
+#   local_action: file name={{ mktemp.stdout }} state=absent
+# - name: expand and install scripts
 #   shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install
+
+
+#git is now available on the appliance
+- name: clone git repo to appliance
+  git: repo=https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
+       dest=/tmp/cfme-rhconsulting-scripts
+  register: repo
+- name: make install
+  shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install && git stash
+  when: repo|changed
