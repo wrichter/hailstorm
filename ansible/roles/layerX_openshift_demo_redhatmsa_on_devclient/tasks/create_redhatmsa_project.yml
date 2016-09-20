@@ -6,14 +6,175 @@
       shell: oc get projects | awk '{ print $1 }'
       register: projects
       changed_when: false
+      tags: project
 
     - name: Create redhat-msa project
       shell: "oc new-project {{ redhat_msa_project }} --description='Red Hat MSA Demo'"
       when: "redhat_msa_project not in projects.stdout_lines"
+      tags: project
 
     # - name: Resetting redhat-msa project to empty state
-    #   shell: oc delete all --all -n demo-dev
+    #   shell: oc delete all,events,templates,sa --all -n demo-dev
     #   when: "redhat_msa_project in projects.stdout_lines"
+  become: true
+  become_user: developer
+  become_method: su
+
+- block:
+    - name: login to OpenShift
+      shell: oc login --insecure-skip-tls-verify=true -u admin -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/  creates=~/.kube/openshift.{{ hailstorm_dns_domain }}_8443/
+
+    - name: check if anyuid scc is assigned
+      shell: oc get scc anyuid -o yaml
+      register: anyuid
+      failed_when: anyuid.stdout == ""
+      changed_when: false
+      tags: project
+
+    - name: patch anyuid scc
+      shell: oc patch scc anyuid -p '{"users":["system:serviceaccount:{{ redhat_msa_project }}:ribbon"{% if (anyuid.stdout|from_yaml)['users'] is defined %},"{{ (anyuid.stdout|from_yaml)['users'] | join('","') }}"{% endif %}]}'
+      when: "(anyuid.stdout|from_yaml)['users'] is not defined or 'system:serviceaccount:{{ redhat_msa_project }}:ribbon' not in (anyuid.stdout|from_yaml)['users']"
+      tags: project
+
+  become: true
+  become_user: admin
+  become_method: su
+
+- block:
+    - name: Create Workdir
+      file: path="{{ workdir }}" state=directory
+
+    - name: Checkout source code from github
+      git:
+        repo: "https://github.com/redhat-helloworld-msa/{{ item.name }}"
+        dest: "{{ workdir }}/{{ item.name }}"
+      with_items: "{{ msa_projects }}"
+      tags: git
+
+    - name: Compile Java Projects
+      shell: "scl enable rh-maven33 -- mvn -f {{ workdir }}/{{ item.name }}/pom.xml package"
+      with_items: "{{ msa_projects }}"
+      when: "item.project == 'java'"
+      tags: compile
+
+    - name: NPM install NodeJS Projects
+      shell: "scl enable rh-nodejs4 -- npm --prefix {{ workdir }}/{{ item.name }} install {{ workdir }}/{{ item.name }}"
+      with_items: "{{ msa_projects }}"
+      when: "item.project == 'node'"
+      tags: compile
+
+    - name: login to OpenShift
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/
+
+    - name: Get existing templates
+      shell: oc get templates -n {{ redhat_msa_project }} -o yaml
+      register: templates
+      changed_when: false
+
+    - name: Get existing build configs
+      shell: oc get bc -n {{ redhat_msa_project }} -o yaml
+      register: bcs
+      changed_when: false
+
+    - name: Get existing deployment controller
+      shell: oc get dc -n {{ redhat_msa_project }} -o yaml
+      register: dcs
+      changed_when: false
+
+    - name: Get existing services
+      shell: oc get service -n {{ redhat_msa_project }} -o yaml
+      register: services
+      changed_when: false
+
+    - name: Get existing routes
+      shell: oc get route -n {{ redhat_msa_project }} -o yaml
+      register: routes
+      changed_when: false
+
+    # - debug: msg={{ (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','aloha' ) | list | length }}
+    # - debug: var=dcs.stdout|from_yaml
+    # - debug: var=templates.stdout|from_yaml
+
+    - name: Create OpenShift new-build
+      shell: "oc new-build -n {{ redhat_msa_project }} --binary --name={{ item.name }} -l app={{ item.name }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+
+    - name: Build OpenShift images
+      shell: "oc start-build -n {{ redhat_msa_project }} {{ item.name }} --from-dir={{ workdir }}/{{ item.name }} --follow"
+      with_items: "{{ msa_projects }}"
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+
+    - name: Create OpenShift applications from previously created images
+      shell: "oc new-app -n {{ redhat_msa_project }} {{ item.name }} -l app={{ item.name }}{{ (item.hystrix == True) | ternary(',hystrix.enabled=true','') }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+
+    - name: Expose OpenShift applications
+      shell: "oc expose service -n {{ redhat_msa_project }} {{ item.name }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+
+    - name: Define Frontend domain
+      shell: "oc env -n {{ redhat_msa_project }} dc/frontend OS_SUBDOMAIN=apps.{{ hailstorm_dns_domain }}"
+
+    - name: Create OpenShift Readiness Probe for applications
+      shell: "oc set -n {{ redhat_msa_project }} probe dc/{{ item.name }} --readiness --get-url={{ item.probe }}"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      # Avoid projects without probe
+      when: "item.probe != False"
+
+    - name: Enable Jolokia for applications
+      shell: "oc patch -n {{ redhat_msa_project }} dc/{{ item.name }} -p '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"{{ item.name }}\",\"ports\":[{\"containerPort\": 8778,\"name\":\"jolokia\"}]}]}}}}'"
+      register: command_result
+      with_items: "{{ msa_projects }}"
+      # Avoid  no Jolokia projects
+      when:  "item.jolokia != False"
+
+    - name: Instantiate Kubeflix template (hystrix-dashboard)
+      shell: oc create -n {{ redhat_msa_project }} -f http://central.maven.org/maven2/io/fabric8/kubeflix/packages/kubeflix/1.0.17/kubeflix-1.0.17-kubernetes.yml
+      when: (templates.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','kubeflix') | list | length == 0
+
+    - name: Instantiate Kubeflix application
+      shell: oc new-app -n {{ redhat_msa_project }} kubeflix
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','hystrix-dashboard') | list | length == 0
+
+    - name: Expose hystrix-dashboard service
+      shell: oc expose -n {{ redhat_msa_project }} service hystrix-dashboard --hostname=hystrix-dashboard-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }}
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (routes.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','hystrix-dashboard') | list | length == 0
+
+    - name: Add admin role to turbine service account
+      shell:  oc policy -n {{ redhat_msa_project }} add-role-to-user admin system:serviceaccount:{{ redhat_msa_project }}:turbine
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','hystrix-dashboard') | list | length == 0
+
+    - name: Install Kubernetes Zipkin
+      shell: >
+        oc create -n {{ redhat_msa_project }} -f http://repo1.maven.org/maven2/io/fabric8/zipkin/zipkin-starter-minimal/0.0.8/zipkin-starter-minimal-0.0.8-kubernetes.yml &&
+        oc expose -n {{ redhat_msa_project }} service zipkin-query --hostname=zipkin-query-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }}
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','zipkin-query') | list | length == 0
+
   become: true
   become_user: developer
   become_method: su

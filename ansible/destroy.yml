@@ -6,6 +6,9 @@
     - role: layer2_vms
       tags: [ 'layer2','dev-client', 'ose3', 'vm' ]
       mode: start
+    - role: layerX_openshift_demo_redhatmsa_on_devclient
+      tags: [ 'layer2','dev-client', 'ose3', 'msademo' ]
+      mode: destroy
     - role: layerX_ipa_client
       tags: [ 'layer2','dev-client', 'ose3', 'ipa-client' ]
       mode: destroy
