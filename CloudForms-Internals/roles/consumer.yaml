@@ -1,13 +1,15 @@
 ---
 - name: consumer
   read_only: false
-  settings:
+  settings: 
   feature_identifiers:
   - vm_explorer
   - vm_infra_explorer
   - vm_cloud_explorer
   - miq_request_view
   - miq_request_admin
+  - svc_catalog_accord
+  - service
   - dashboard
   - miq_report_saved_reports
   - miq_report_view
@@ -37,5 +39,3 @@
   - storage_manager_show_list
   - storage_manager_show
   - all_vm_rules
-  - service
-  - svc_catalog_accord

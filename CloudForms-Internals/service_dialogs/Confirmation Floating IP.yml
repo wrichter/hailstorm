@@ -1,7 +1,7 @@
 ---
-- description: WindowsUnManaged
+- description: Confirmation Floating IP
   buttons: submit,cancel
-  label: WindowsUnManaged
+  label: Confirmation Floating IP
   dialog_tabs:
   - description: General
     display: edit
@@ -17,10 +17,10 @@
       display_method_options: 
       position: 0
       dialog_fields:
-      - name: flavor
-        description: Select VM size
-        type: DialogFieldDropDownList
-        data_type: string
+      - name: confirmation
+        description: Check box to confirm action
+        type: DialogFieldCheckBox
+        data_type: 
         notes: 
         notes_display: 
         display: edit
@@ -29,20 +29,12 @@
         required: true
         required_method: 
         required_method_options: {}
-        default_value: m1.small
-        values:
-        - - m1.small
-          - small
-        - - m1.medium
-          - medium
-        - - m1.large
-          - large
+        default_value: f
+        values: 
         values_method: 
         values_method_options: {}
-        options:
-          :sort_by: :description
-          :sort_order: :descending
-        label: Size
+        options: {}
+        label: Are you sure?
         position: 0
         validator_type: 
         validator_rule: 
@@ -61,9 +53,9 @@
           ae_instance: 
           ae_message: 
           ae_attributes: {}
-      - name: scriptusername
-        description: The user to be created in the VM
-        type: DialogFieldTextBox
+      - name: floating_network
+        description: Floating Network
+        type: DialogFieldDropDownList
         data_type: string
         notes: 
         notes_display: 
@@ -73,13 +65,16 @@
         required: true
         required_method: 
         required_method_options: {}
-        default_value: ''
-        values: 
+        default_value: 
+        values:
+        - - guests
+          - External Network
         values_method: 
         values_method_options: {}
         options:
-          :protected: false
-        label: User Name
+          :sort_by: :description
+          :sort_order: :ascending
+        label: Floating Network
         position: 1
         validator_type: 
         validator_rule: 
@@ -89,44 +84,7 @@
         load_values_on_init: 
         read_only: false
         auto_refresh: 
-        trigger_auto_refresh: 
-        resource_action:
-          action: 
-          resource_type: DialogField
-          ae_namespace: 
-          ae_class: 
-          ae_instance: 
-          ae_message: 
-          ae_attributes: {}
-      - name: sshkey
-        description: 
-        type: DialogFieldTextBox
-        data_type: string
-        notes: 
-        notes_display: 
-        display: edit
-        display_method: 
-        display_method_options: {}
-        required: true
-        required_method: 
-        required_method_options: {}
-        default_value: ''
-        values: 
-        values_method: 
-        values_method_options: {}
-        options:
-          :protected: false
-        label: Password
-        position: 2
-        validator_type: 
-        validator_rule: 
-        reconfigurable: 
-        dynamic: false
-        show_refresh_button: 
-        load_values_on_init: 
-        read_only: false
-        auto_refresh: 
-        trigger_auto_refresh: 
+        trigger_auto_refresh: false
         resource_action:
           action: 
           resource_type: DialogField

@@ -1,7 +1,7 @@
 ---
-- description: WindowsUnManaged
+- description: WindowsManaged
   buttons: submit,cancel
-  label: WindowsUnManaged
+  label: WindowsManaged
   dialog_tabs:
   - description: General
     display: edit
@@ -61,43 +61,6 @@
           ae_instance: 
           ae_message: 
           ae_attributes: {}
-      - name: scriptusername
-        description: The user to be created in the VM
-        type: DialogFieldTextBox
-        data_type: string
-        notes: 
-        notes_display: 
-        display: edit
-        display_method: 
-        display_method_options: {}
-        required: true
-        required_method: 
-        required_method_options: {}
-        default_value: ''
-        values: 
-        values_method: 
-        values_method_options: {}
-        options:
-          :protected: false
-        label: User Name
-        position: 1
-        validator_type: 
-        validator_rule: 
-        reconfigurable: 
-        dynamic: false
-        show_refresh_button: 
-        load_values_on_init: 
-        read_only: false
-        auto_refresh: 
-        trigger_auto_refresh: 
-        resource_action:
-          action: 
-          resource_type: DialogField
-          ae_namespace: 
-          ae_class: 
-          ae_instance: 
-          ae_message: 
-          ae_attributes: {}
       - name: sshkey
         description: 
         type: DialogFieldTextBox
@@ -117,7 +80,7 @@
         options:
           :protected: false
         label: Password
-        position: 2
+        position: 1
         validator_type: 
         validator_rule: 
         reconfigurable: 
