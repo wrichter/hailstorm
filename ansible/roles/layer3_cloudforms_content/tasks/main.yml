@@ -6,22 +6,22 @@
 
     - include: upload_import_content.yml
       with_items:
-#         - type: provision_dialogs
-#         - type: service_dialogs
-# # TODO: service catalog items are broken at the moment, created entries are not editable
-# #        - type: service_catalogs
-#         - type: roles
-#           import_individual_files: true
-#         - type: tags
-#           import_individual_files: true
-#         - type: buttons
-#           import_individual_files: true
+        - type: provision_dialogs
+        - type: service_dialogs
+# TODO: service catalog items are broken at the moment, created entries are not editable
+#        - type: service_catalogs
+        - type: roles
+          import_individual_files: true
+        - type: tags
+          import_individual_files: true
+        - type: buttons
+          import_individual_files: true
         - type: customization_templates
           import_individual_files: true
           apply_template: true
-        # - type: reports
-        # - type: widgets
-        # - type: alerts
-        # - type: alertsets
-        # - type: policies
+        - type: reports
+        - type: widgets
+        - type: alerts
+        - type: alertsets
+        - type: policies
   when: mode == "create"
