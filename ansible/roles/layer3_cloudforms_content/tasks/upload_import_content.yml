@@ -1,9 +1,53 @@
-- debug: msg="importing {{ filename_local }}"
-- name: create tmp directory
-  file: name=/tmp/miq_import state=directory
-- name: upload contents to CF
-  copy: src={{content_location}}/{{ filename_local }} dest=/tmp/miq_import{% if filename_remote!='' %}/{% endif %}{{ filename_remote }} mode=0644
-- name: import contents
-  shell: /usr/bin/miqimport {{ type }} /tmp/miq_import{% if import_file is defined %}/{{ import_file }}{% endif %}
-- name: remove temp directory on cfme
-  file: name=/tmp/miq_import state=absent
+- debug: msg="importing {{ item.type }}"
+- name: check if type is present
+  local_action: stat path={{content_location}}/{{ item.type }}
+  register: stat_item
+- name: check if content directory has contents
+  local_action: find paths={{content_location}}/{{ item.type }}
+  register: type_files
+  when: stat_item.stat.exists
+- block:
+    - name: remove tmp directory (removing old content)
+      file: name=/tmp/miq_import/{{ item.type }} state=absent
+
+    - name: create tmp directory
+      file: name=/tmp/miq_import/{{ item.type }} state=directory
+
+    - name: upload contents to CF
+      copy: src={{ content_location }}/{{ item.type }} dest=/tmp/miq_import
+      when: item.apply_template is not defined or item.apply_template != true
+
+    - set_fact:
+        outer_item: "{{ item }}"
+    - name: upload contents to CF (applying template)
+      template: src={{ item }} dest=/tmp/miq_import/{{ outer_item.type }}/{{ item | basename }}
+      when: outer_item.apply_template is defined and outer_item.apply_template
+      with_items: "{{ type_files.files | map(attribute='path') | list }}"
+
+    - name: import contents
+      shell: /usr/bin/miqimport {{ item.type }} /tmp/miq_import/{{ item.type }}
+      when: outer_item.import_individual_files is not defined or not outer_item.import_individual_files
+
+    - name: find individual content files
+      find: paths=/tmp/miq_import/{{ item.type }}
+      register: content_files
+      when: outer_item.import_individual_files is defined and outer_item.import_individual_files
+
+    # - debug: var=content_files
+
+    - name: rename individual files / remove spaces
+      shell: mv "{{ item }}" "{{ item|regex_replace('\s','_') }}"
+      when: not content_files|skipped and item|search('\s')
+      with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
+
+    - name: import contents (individual files)
+      shell: /usr/bin/miqimport {{ item.0 }} "{{ item.1|regex_replace('\s','_') }}"
+      with_nested:
+        -
+          - "{{ outer_item.type }}"
+        -  "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
+      when: not content_files|skipped
+
+    # - name: remove temp directory on cfme
+    #   file: name=/tmp/miq_import state=absent
+  when: stat_item.stat.exists and type_files.files|length > 0

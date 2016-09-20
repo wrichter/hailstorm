@@ -1,8 +1,11 @@
 ---
 - name: WindowsManaged
-  description: WindowsUnManaged
+  description: WindowsManaged
   script: |
     <%
+       evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
+       script_hostname = evm[:hostname]
+       script_domainname = evm[:domainname]
        ssh_key = evm[:sshkey]
        script_username = evm[:scriptusername]
     %>rem cmd
@@ -10,4 +13,4 @@
     net localgroup "Remote Desktop Users" <%=script_username%> /ADD
   pxe_image_type_id: 919000000000004
   type: CustomizationTemplateCloudInit
-  system: 
+  system:

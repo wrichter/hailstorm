@@ -1,12 +1,12 @@
 ---
-- name: RHEL7UnManaged
-  description: RHEL7UnManaged
+- name: RHEL7Managed_Static_Domain
+  description: RHEL7Managed (Static Domain)
   script: |
     <%
        evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
        script_hostname = evm[:hostname]
-       script_domainname = evm[:domainname]
        ssh_key = evm[:sshkey]
+       script_username = evm[:scriptusername]
     %>#cloud-config
 
     cloud_init_modules:
@@ -22,17 +22,18 @@
      - users-groups
      - ssh
 
-    hostname: <%=script_hostname%>
-    fqdn: <%=script_hostname%>.<%=script_domainname%>
-    manage_etc_hosts: true
-    ssh_authorized_keys:
-     - <%=ssh_key%>
-
     users:
-     - name: root
-       ssh_authorized_keys:
-       - {{ ssh_pub_key_hailstorm }}
-       - <%=ssh_key%>
+    - name: <%=script_username%>
+      ssh-authorized-keys:
+      - <%=ssh_key%>
+    - name: root
+      ssh_authorized_keys:
+      - {{ ssh_pub_key_hailstorm }}
+
+    hostname: <%=script_hostname%>
+    fqdn: <%=script_hostname%>.{{ hailstorm_dns_domain }}
+    manage_etc_hosts: true
+
     write_files:
     - path: /tmp/foreman-userdata.sh
       permissions: '0755'
@@ -43,11 +44,11 @@
 
        # add subscription manager
        # yum -t -y -e 0 install subscription-manager
-
-       rpm -ivh http://satellite.<%=script_domainname%>/pub/katello-ca-consumer-latest.noarch.rpm
+       # rpm -ivh http://10.32.99.175/pub/katello-ca-consumer-latest.noarch.rpm
+       rpm -ivh http://satellite.{{ hailstorm_dns_domain }}/pub/katello-ca-consumer-latest.noarch.rpm
 
        echo "Registering the System"
-       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.<%=script_domainname%> --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
+       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.{{ hailstorm_dns_domain }} --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
 
        # add the rhel rpms to install katello agent
        # subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ satellite_version }}-rpms

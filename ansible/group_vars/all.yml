@@ -1,2 +1,2 @@
-ssh_pub_key_hailstorm: "{{ lookup('file', '../binary/hailstorm.pub') }}"
+ssh_pub_key_hailstorm: "{{ lookup('file', '../binary/' + hailstorm_ssh_pub_key_file) }}"
 hostname: "{{ inventory_hostname_short }}.{{ hailstorm_dns_domain }}"

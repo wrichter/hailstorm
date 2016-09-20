@@ -1,11 +1,10 @@
 ---
-- name: Copy of RHEL7UnManaged
-  description: RHEL7UnManaged
+- name: RHEL7UnManaged_Static_Domain
+  description: RHEL7UnManaged (Static Domain)
   script: |
     <%
        evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
        script_hostname = evm[:hostname]
-       script_domainname = evm[:domainname]
        ssh_key = evm[:sshkey]
     %>#cloud-config
 
@@ -23,9 +22,9 @@
      - ssh
 
     hostname: <%=script_hostname%>
-    fqdn: <%=script_hostname%>.<%=script_domainname%>
+    fqdn: <%=script_hostname%>.{{ hailstorm_dns_domain }}
     manage_etc_hosts: true
-    ssh-authorized-keys:
+    ssh_authorized_keys:
      - <%=ssh_key%>
 
     write_files:
@@ -38,10 +37,11 @@
 
        # add subscription manager
        # yum -t -y -e 0 install subscription-manager
-       rpm -ivh http://satellite.<%=script_domainname%>/pub/katello-ca-consumer-latest.noarch.rpm
+       # rpm -ivh http://10.32.99.175/pub/katello-ca-consumer-latest.noarch.rpm
+       rpm -ivh http://satellite.{{ hailstorm_dns_domain }}/pub/katello-ca-consumer-latest.noarch.rpm
 
        echo "Registering the System"
-       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.<%=script_domainname%> --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
+       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.{{ hailstorm_dns_domain }} --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
 
        # add the rhel rpms to install katello agent
        # subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ satellite_version }}-rpms
@@ -58,4 +58,4 @@
     # end of example
   pxe_image_type_id: 919000000000003
   type: CustomizationTemplateCloudInit
-  system: 
+  system:

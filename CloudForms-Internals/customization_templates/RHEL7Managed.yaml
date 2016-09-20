@@ -7,6 +7,7 @@
        script_hostname = evm[:hostname]
        ssh_key = evm[:sshkey]
        script_username = evm[:scriptusername]
+       script_domainname = evm[:domainname]
     %>#cloud-config
 
     cloud_init_modules:
@@ -24,14 +25,14 @@
 
     users:
     - name: <%=script_username%>
-      ssh-authorized-keys:
+      ssh_authorized_keys:
       - <%=ssh_key%>
     - name: root
       ssh_authorized_keys:
-      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDuqdf1RWW9NLmb1Sa4QyB26lJlLYq8m17FRnVdf24afd6WIKJn6f2aU5GPQEJFL+G5m4Tz8D2OzBK6q2Tup6Wg152ANpOZzfJU7NMopdh+oXHbJWM07QUp7HMOb2SfyMLcAPEgXrJwqCz78dJwea8vZTPwGymZXZw3IW6MabzZKHdHP8dYVK71l73Bbxg/9S1SvLnW2xX1G/zlU2+QRnVrbyARhFTdINejYwHTzozKHK0Zi3HaPZ4aQqXO6HK9Fqh7C+nyKbJaZbLYLxNn2Co+hbCw0gJXDStyU7l3XFrUr3bCgcbZ5adgsAkgoTzAgQaOqCceI402r4if68o+mJJJ root@infra.cd.coe.muc.redhat.com
+      - {{ ssh_pub_key_hailstorm }}
 
     hostname: <%=script_hostname%>
-    fqdn: <%=script_hostname%>.hailstorm3.coe.muc.redhat.com
+    fqdn: <%=script_hostname%>.<%=script_domainname%>
     manage_etc_hosts: true
 
     write_files:
@@ -44,11 +45,11 @@
 
        # add subscription manager
        # yum -t -y -e 0 install subscription-manager
-       # rpm -ivh http://10.32.99.175/pub/katello-ca-consumer-latest.noarch.rpm
-       rpm -ivh http://satellite.hailstorm3.coe.muc.redhat.com/pub/katello-ca-consumer-latest.noarch.rpm
+
+       rpm -ivh http://satellite.<%=script_domainname%>/pub/katello-ca-consumer-latest.noarch.rpm
 
        echo "Registering the System"
-       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.hailstorm3.coe.muc.redhat.com --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
+       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.<%=script_domainname%> --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
 
        # add the rhel rpms to install katello agent
        # subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ satellite_version }}-rpms
@@ -65,4 +66,4 @@
     # end of example
   pxe_image_type_id: 919000000000003
   type: CustomizationTemplateCloudInit
-  system: 
+  system:
