@@ -8,7 +8,8 @@
       with_items:
         - type: provision_dialogs
         - type: service_dialogs
-        - type: service_catalogs
+# TODO: service catalog items are broken at the moment, created entries are not editable
+#        - type: service_catalogs
         - type: roles
           import_individual_files: true
         - type: tags
