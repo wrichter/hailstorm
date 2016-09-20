@@ -3,3 +3,4 @@
 - include: create-02-osp.yml
 - include: create-02-ocp.yml
 - include: create-03-finalize.yml
+- include: create-04-democontent.yml

@@ -1,0 +1,25 @@
+# add an LDAP group to the RHEV superuser role
+- name: initialize LDAP auth plugin by performing query
+  command: curl -k -u admin@{{ hailstorm_dns_domain }}:{{ root_password }} https://localhost/api
+  failed_when: false
+  changed_when: false
+
+- name: check if demo ipausers group exists
+  shell: rhevm-shell -E 'list groups' | grep "demo-consumer" || true
+  register: existing_user_group
+  changed_when: false
+
+- block:
+    - name: create ipausers group
+      shell: rhevm-shell -E 'add group --name demo-consumer --domain-name IPA-authz' | grep -e "^id" | cut -c18-
+      register: ipausers_group_id
+      failed_when: ipausers_group_id.stdout == ""
+
+    - name: get SuperUser role id
+      shell: rhevm-shell -E 'show role SuperUser' | grep -e "^id" | cut -c18-
+      register: superuser_role_id
+      failed_when: superuser_role_id.stdout == ""
+
+    - name: create permission for ipausers
+      shell: rhevm-shell -E 'add permission --role-id {{ superuser_role_id.stdout }} --group-id {{ ipausers_group_id.stdout }}'
+  when: existing_user_group.stdout == ''

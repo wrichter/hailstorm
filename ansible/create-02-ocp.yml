@@ -61,14 +61,14 @@
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles' ], mode: create }
 #    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'cfme-ose3-provider'], mode: create }
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
-    - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
-
-- hosts: dev-client
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer2_vms, tags: [ 'layer2', 'dev-client', 'ose3', 'vm' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-    - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }
-    - { role: layerX_openshift_demo_redhatmsa_on_devclient, tags: [ 'layer2', 'dev-client',  'ose3', 'msademo' ], mode: create }
+#     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
+#
+# - hosts: dev-client
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_vms, tags: [ 'layer2', 'dev-client', 'ose3', 'vm' ], mode: create }
+#     - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
+#     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+#     - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }
+#     - { role: layerX_openshift_demo_redhatmsa_on_devclient, tags: [ 'layer2', 'dev-client',  'ose3', 'msademo' ], mode: create }

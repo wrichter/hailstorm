@@ -1,0 +1,3 @@
+- block:
+    - include: configure_rhevm_ldap.yml
+  when: mode=="create"

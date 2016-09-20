@@ -48,7 +48,7 @@
   gather_facts: false
   roles:
     - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'cfme-ose3-provider' ], mode: create }
-    - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }
+#    - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }
 
 #### EFK ####
 
