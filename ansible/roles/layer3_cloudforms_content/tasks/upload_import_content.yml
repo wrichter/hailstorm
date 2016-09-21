@@ -1,4 +1,8 @@
 - debug: msg="importing {{ item.type }}"
+
+- set_fact:
+    outer_item: "{{ item }}"
+
 - name: check if type is present
   local_action: stat path={{content_location}}/{{ item.type }}
   register: stat_item
@@ -17,8 +21,6 @@
       copy: src={{ content_location }}/{{ item.type }} dest=/tmp/miq_import
       when: item.apply_template is not defined or item.apply_template != true
 
-    - set_fact:
-        outer_item: "{{ item }}"
     - name: upload contents to CF (applying template)
       template: src={{ item }} dest=/tmp/miq_import/{{ outer_item.type }}/{{ item | basename }}
       when: outer_item.apply_template is defined and outer_item.apply_template
@@ -26,6 +28,8 @@
 
     - name: import contents
       shell: /usr/bin/miqimport {{ item.type }} /tmp/miq_import/{{ item.type }}
+      register: import
+      failed_when: "'aborted' in import.stderr"
       when: outer_item.import_individual_files is not defined or not outer_item.import_individual_files
 
     - name: find individual content files
@@ -46,8 +50,10 @@
         -
           - "{{ outer_item.type }}"
         -  "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
+      register: import
+      failed_when: "'aborted' in import.stderr"
       when: not content_files|skipped
 
     # - name: remove temp directory on cfme
     #   file: name=/tmp/miq_import state=absent
-  when: stat_item.stat.exists and type_files.files|length > 0
+  when: stat_item.stat.exists and type_files.files|length > 0 and (apply_only is not defined or outer_item.type in apply_only)
