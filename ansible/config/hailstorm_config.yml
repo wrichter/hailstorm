@@ -48,8 +48,6 @@ rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux OpenStac
 ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
 cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Enterprise Linux OpenStack Platform.*)$"
 
-satellite_version: 6.2
-
 # REPOSITORIES
 # rhosp_undercloud_repos:
 #   - rhel-7-server-rpms
