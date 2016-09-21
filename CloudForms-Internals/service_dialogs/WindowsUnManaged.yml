@@ -6,28 +6,28 @@
   - description: General
     display: edit
     label: General
-    display_method: 
-    display_method_options: 
+    display_method:
+    display_method_options:
     position: 0
     dialog_groups:
     - description: General
       display: edit
       label: General
-      display_method: 
-      display_method_options: 
+      display_method:
+      display_method_options:
       position: 0
       dialog_fields:
       - name: flavor
         description: Select VM size
         type: DialogFieldDropDownList
         data_type: string
-        notes: 
-        notes_display: 
+        notes:
+        notes_display:
         display: edit
-        display_method: 
+        display_method:
         display_method_options: {}
         required: true
-        required_method: 
+        required_method:
         required_method_options: {}
         default_value: m1.small
         values:
@@ -37,101 +37,64 @@
           - medium
         - - m1.large
           - large
-        values_method: 
+        values_method:
         values_method_options: {}
         options:
           :sort_by: :description
           :sort_order: :descending
         label: Size
         position: 0
-        validator_type: 
-        validator_rule: 
-        reconfigurable: 
+        validator_type:
+        validator_rule:
+        reconfigurable:
         dynamic: false
-        show_refresh_button: 
-        load_values_on_init: 
+        show_refresh_button:
+        load_values_on_init:
         read_only: false
-        auto_refresh: 
-        trigger_auto_refresh: 
+        auto_refresh:
+        trigger_auto_refresh:
         resource_action:
-          action: 
+          action:
           resource_type: DialogField
-          ae_namespace: 
-          ae_class: 
-          ae_instance: 
-          ae_message: 
-          ae_attributes: {}
-      - name: scriptusername
-        description: The user to be created in the VM
-        type: DialogFieldTextBox
-        data_type: string
-        notes: 
-        notes_display: 
-        display: edit
-        display_method: 
-        display_method_options: {}
-        required: true
-        required_method: 
-        required_method_options: {}
-        default_value: ''
-        values: 
-        values_method: 
-        values_method_options: {}
-        options:
-          :protected: false
-        label: User Name
-        position: 1
-        validator_type: 
-        validator_rule: 
-        reconfigurable: 
-        dynamic: false
-        show_refresh_button: 
-        load_values_on_init: 
-        read_only: false
-        auto_refresh: 
-        trigger_auto_refresh: 
-        resource_action:
-          action: 
-          resource_type: DialogField
-          ae_namespace: 
-          ae_class: 
-          ae_instance: 
-          ae_message: 
+          ae_namespace:
+          ae_class:
+          ae_instance:
+          ae_message:
           ae_attributes: {}
       - name: sshkey
-        description: 
+        description:
         type: DialogFieldTextBox
         data_type: string
-        notes: 
-        notes_display: 
+        notes:
+        notes_display:
         display: edit
-        display_method: 
+        display_method:
         display_method_options: {}
         required: true
-        required_method: 
+        required_method:
         required_method_options: {}
         default_value: ''
-        values: 
-        values_method: 
+        values:
+        values_method:
         values_method_options: {}
         options:
           :protected: false
         label: Password
-        position: 2
-        validator_type: 
-        validator_rule: 
-        reconfigurable: 
+        position: 1
+        validator_type:
+        validator_rule:
+        reconfigurable:
         dynamic: false
-        show_refresh_button: 
-        load_values_on_init: 
+        show_refresh_button:
+        load_values_on_init:
         read_only: false
-        auto_refresh: 
-        trigger_auto_refresh: 
+        auto_refresh:
+        trigger_auto_refresh:
         resource_action:
-          action: 
+          action:
           resource_type: DialogField
-          ae_namespace: 
-          ae_class: 
-          ae_instance: 
-          ae_message: 
+          ae_namespace:
+          ae_class:
+          ae_instance:
+          ae_message:
           ae_attributes: {}

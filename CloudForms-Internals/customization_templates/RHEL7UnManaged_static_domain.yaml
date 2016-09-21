@@ -26,7 +26,18 @@
     manage_etc_hosts: true
     ssh_authorized_keys:
      - <%=ssh_key%>
+     - {{ ssh_pub_key_hailstorm }}
 
+    users:
+    - name: root
+      ssh_authorized_keys:
+      - {{ ssh_pub_key_hailstorm }}
+      - <%=ssh_key%>
+    - name: cloud-user
+      ssh_authorized_keys:
+      - {{ ssh_pub_key_hailstorm }}
+      - <%=ssh_key%>
+      
     write_files:
     - path: /tmp/foreman-userdata.sh
       permissions: '0755'
