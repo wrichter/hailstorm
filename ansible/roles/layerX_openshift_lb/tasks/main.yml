@@ -1,0 +1,14 @@
+- block:
+    - name: install httpd
+      yum: name=httpd state=latest
+    - name: open firewall port
+      lineinfile: dest=/etc/sysconfig/iptables line="-A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT" insertbefore="^COMMIT"
+      with_items:
+        - 80
+    - name: create rewrite CONFIG
+      template: src=redirect_to_https.conf.j2 dest=/etc/httpd/conf.d/redirect_to_https.conf
+    - name: restart httpd
+      service: name=httpd state=restarted enabled=yes
+    - name: restart iptables
+      service: name=iptables state=restarted
+  when: mode=="create"

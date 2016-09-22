@@ -159,6 +159,9 @@ external_network_config:
           - from_port: 22
             to_port: 22
             proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
           - from_port: 443
             to_port: 8443
             proto: tcp

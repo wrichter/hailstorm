@@ -215,6 +215,12 @@
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
 
+- hosts: ose3-lb
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layerX_openshift_lb, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-lb' ], mode: create }
+
 #### OPENSTACK ####
 
 - hosts: rhosp-all
