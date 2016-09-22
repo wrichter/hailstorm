@@ -29,12 +29,31 @@
   shell: "echo -e 'dummy4711\n{{ item.password }}\n{{ item.password }}' | kinit {{ item.username }}"
   when: item.username not in users.stdout_lines and item.password is defined
   with_items: "{{ ipa_user }}"
-# 
-# - name: check if admin has email set
-#   shell: echo "{{ ipa_admin_password }}" | ipa user-show admin | awk '/Email/{ print $3 }'
-#   changed_when: false
-#   register: admin_email
-#
-# - name: set admin email address
-#   shell: echo "{{ ipa_admin_password }}" | ipa user-mod admin --email=admin@{{ hailstorm_dns_domain }}
-#   when: admin_email.stdout == ""
+
+- name: check if admin has email set
+  shell: echo "{{ ipa_admin_password }}" | ipa user-show admin | awk '/Email/{ print $3 }'
+  changed_when: false
+  register: admin_email
+
+- block:
+    - name: get admin account objectClasses
+      shell:
+        ldapsearch
+        -h localhost
+        -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
+        -w {{ root_password }}
+        -b cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
+        uid=admin objectClass |
+        awk '/^objectClass/ { print $2 }'
+      register: objectClasses
+      changed_when: false
+      failed_when: objectClasses.stdout == ""
+    - name: create ldif file
+      template: src=admin_inetOrgPerson.ldif.j2 dest=/tmp/admin_inetOrgPerson.ldif
+      when: "'inetOrgPerson' not in objectClasses.stdout_lines"
+    - name: add inetOrgPerson to admin account
+      shell: ldapmodify -x -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }} -w {{ root_password }} -f /tmp/admin_inetOrgPerson.ldif
+      when: "'inetOrgPerson' not in objectClasses.stdout_lines"
+    - name: set admin email address
+      shell: echo "{{ ipa_admin_password }}" | ipa user-mod admin --email=admin@{{ hailstorm_dns_domain }}
+  when: admin_email.stdout == ""
