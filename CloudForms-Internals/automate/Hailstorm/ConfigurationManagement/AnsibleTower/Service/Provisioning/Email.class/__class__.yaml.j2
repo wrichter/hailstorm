@@ -13,32 +13,12 @@ object:
   schema:
   - field:
       aetype: attribute
-      name: appliance
+      name: to_email_address
       display_name: 
       datatype: string
       priority: 1
       owner: 
-      default_value: 
-      substitute: true
-      message: create
-      visibility: 
-      collect: 
-      scope: 
-      description: 
-      condition: 
-      on_entry: 
-      on_exit: 
-      on_error: 
-      max_retries: 
-      max_time: 
-  - field:
-      aetype: attribute
-      name: to_email_address
-      display_name: 
-      datatype: string
-      priority: 2
-      owner: 
-      default_value: cloudforms@hailstorm3.coe.muc.redhat.com
+      default_value: cloudforms@{{ hailstorm_dns_domain }}
       substitute: true
       message: create
       visibility: 
@@ -56,9 +36,9 @@ object:
       name: from_email_address
       display_name: 
       datatype: string
-      priority: 3
+      priority: 2
       owner: 
-      default_value: cloudforms@hailstorm3.coe.muc.redhat.com
+      default_value: cloudforms@{{ hailstorm_dns_domain }}
       substitute: true
       message: create
       visibility: 
@@ -76,9 +56,9 @@ object:
       name: signature
       display_name: 
       datatype: string
-      priority: 4
+      priority: 3
       owner: 
-      default_value: EVM Operations Team
+      default_value: Virtualization Infrastructure Team
       substitute: true
       message: create
       visibility: 
@@ -93,12 +73,12 @@ object:
       max_time: 
   - field:
       aetype: attribute
-      name: email
+      name: vm_retire_extend_days
       display_name: 
       datatype: string
-      priority: 5
+      priority: 4
       owner: 
-      default_value: 'false'
+      default_value: 
       substitute: true
       message: create
       visibility: 
@@ -113,10 +93,10 @@ object:
       max_time: 
   - field:
       aetype: method
-      name: execute
+      name: method1
       display_name: 
       datatype: string
-      priority: 6
+      priority: 5
       owner: 
       default_value: 
       substitute: true
