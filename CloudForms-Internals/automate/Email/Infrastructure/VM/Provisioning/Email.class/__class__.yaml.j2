@@ -18,7 +18,7 @@ object:
       datatype: string
       priority: 1
       owner: 
-      default_value: cloudforms@hailstorm3.coe.muc.redhat.com
+      default_value: cloudforms@{{ hailstorm_dns_domain }}
       substitute: true
       message: create
       visibility: 
@@ -38,7 +38,7 @@ object:
       datatype: string
       priority: 2
       owner: 
-      default_value: cloudforms@hailstorm3.coe.muc.redhat.com
+      default_value: cloudforms@{{ hailstorm_dns_domain }}
       substitute: true
       message: create
       visibility: 
@@ -73,7 +73,7 @@ object:
       max_time: 
   - field:
       aetype: attribute
-      name: service_retire_extend_days
+      name: vm_retire_extend_days
       display_name: 
       datatype: string
       priority: 4

@@ -38,9 +38,9 @@ begin
 
   # Raise automation event: request_pending
   @miq_request.pending
-  
+
   # send mail to approver
-  to="approver@cd.coe.muc.redhat.com"
+  to="approver@{{ hailstorm_dns_domain }}"
   user=$evm.root["user"]
   user.attributes.sort.each { |k, v| log(:info, "\t Attribute: #{k} = #{v}")}
   from=user["email"]
@@ -50,7 +50,7 @@ begin
   body+="</br>Requester: #{owner_name}"
   body+="</br>Regards,"
   body+="</br>Virtualization Team"
-  
+
   $evm.execute(:send_email, to, from, subject, body)
 
   ###############

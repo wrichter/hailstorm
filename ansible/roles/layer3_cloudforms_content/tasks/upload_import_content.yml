@@ -22,7 +22,7 @@
       when: item.apply_template is not defined or item.apply_template != true
 
     - name: upload contents to CF (applying template)
-      template: src={{ item }} dest=/tmp/miq_import/{{ outer_item.type }}/{{ item | basename }}
+      template: src={{ item }} dest=/tmp/miq_import/{{ outer_item.type }}/{{ item | basename | regex_replace('.j2$','') }}
       when: outer_item.apply_template is defined and outer_item.apply_template
       with_items: "{{ type_files.files | map(attribute='path') | list }}"
 
