@@ -1,7 +1,7 @@
 ---
 - Linux Workloads:
     name: Linux Workloads
-    description: Linux Workloads
+    description: 
     template:
     - name: RHEL 7 Managed
       description: RHEL 7 Managed

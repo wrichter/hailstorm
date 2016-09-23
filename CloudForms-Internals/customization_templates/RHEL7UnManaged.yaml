@@ -1,0 +1,73 @@
+---
+- name: RHEL7UnManaged
+  description: RHEL7UnManaged
+  script: |
+    <%
+       evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
+       script_hostname = evm[:hostname]
+       script_domainname = evm[:domainname]
+       ssh_key = evm[:sshkey]
+    %>#cloud-config
+
+    cloud_init_modules:
+     - migrator
+     - bootcmd
+     - write-files
+     - growpart
+     - resizefs
+     - set_hostname
+     - update_hostname
+     - update_etc_hosts
+     - rsyslog
+     - users-groups
+     - ssh
+
+    hostname: <%=script_hostname%>
+    fqdn: <%=script_hostname%>.<%=script_domainname%>
+    manage_etc_hosts: true
+    ssh_authorized_keys:
+     - <%=ssh_key%>
+     - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7oqEhyYxdNbUSyLsGb/dDoqXbTGhOThN9BLb0eTThFwwrnmytXbcrHItArgBT1tLXDdOzr+2ig05+OQ3etKAU/7EmDIqjdYErN1oaAVfqp84ENLLaDoKq8QZvgOkwrp3Pl42pXjba8dxQ3CnZwR2lPzZpWgcY3dxgvnneFSsU/igfLr4hwstq+/uzzsskw/FJkNQQmrSuzybBkiDEYfS8PHqamLNE1Eusky2gS5dmdEYDbkVO1fFK6ZAgHY5+StF2VfEn0R82ag/QvP63BKfJX4Qx58nM5f7JLhE+IdGACcx7MtDDg9n1GWroC0F0khmOjACusHS5qboJOhGFOQC3 wolfram@Wolframs-MacBook-Pro-5.local
+
+    users:
+    - name: root
+      ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7oqEhyYxdNbUSyLsGb/dDoqXbTGhOThN9BLb0eTThFwwrnmytXbcrHItArgBT1tLXDdOzr+2ig05+OQ3etKAU/7EmDIqjdYErN1oaAVfqp84ENLLaDoKq8QZvgOkwrp3Pl42pXjba8dxQ3CnZwR2lPzZpWgcY3dxgvnneFSsU/igfLr4hwstq+/uzzsskw/FJkNQQmrSuzybBkiDEYfS8PHqamLNE1Eusky2gS5dmdEYDbkVO1fFK6ZAgHY5+StF2VfEn0R82ag/QvP63BKfJX4Qx58nM5f7JLhE+IdGACcx7MtDDg9n1GWroC0F0khmOjACusHS5qboJOhGFOQC3 wolfram@Wolframs-MacBook-Pro-5.local
+      - <%=ssh_key%>
+    - name: cloud-user
+      ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7oqEhyYxdNbUSyLsGb/dDoqXbTGhOThN9BLb0eTThFwwrnmytXbcrHItArgBT1tLXDdOzr+2ig05+OQ3etKAU/7EmDIqjdYErN1oaAVfqp84ENLLaDoKq8QZvgOkwrp3Pl42pXjba8dxQ3CnZwR2lPzZpWgcY3dxgvnneFSsU/igfLr4hwstq+/uzzsskw/FJkNQQmrSuzybBkiDEYfS8PHqamLNE1Eusky2gS5dmdEYDbkVO1fFK6ZAgHY5+StF2VfEn0R82ag/QvP63BKfJX4Qx58nM5f7JLhE+IdGACcx7MtDDg9n1GWroC0F0khmOjACusHS5qboJOhGFOQC3 wolfram@Wolframs-MacBook-Pro-5.local
+      - <%=ssh_key%>
+
+    write_files:
+    - path: /tmp/foreman-userdata.sh
+      permissions: '0755'
+      content: |
+       #!/bin/bash
+
+       sleep 60
+
+       # add subscription manager
+       # yum -t -y -e 0 install subscription-manager
+
+       rpm -ivh http://satellite.<%=script_domainname%>/pub/katello-ca-consumer-latest.noarch.rpm
+
+       echo "Registering the System"
+       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.<%=script_domainname%> --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
+
+       # add the rhel rpms to install katello agent
+       # subscription-manager repos --enable=rhel-7-server-satellite-tools-6.2-rpms
+
+       echo "Installing Katello Agent"
+       yum -t -y -e 0 install katello-agent
+       chkconfig goferd on
+       katello-package-upload
+
+    runcmd:
+     - [ cloud-init-per, once, foreman-userdata, /tmp/foreman-userdata.sh ]
+    output: {all: '| tee -a /root/install.userdata.log'}
+
+    # end of example
+  pxe_image_type_id: 919000000000003
+  type: CustomizationTemplateCloudInit
+  system: 
