@@ -32,7 +32,7 @@ pool_regex: "{{ satellite_subscription_pool_regex }}"
 #poolid: "{{ satellite_subscription_poolid }}"
 repos: "{{ satellite_repos }}"
 
-packages: satellite,bind-utils,chrony,katello-agent,vim,screen,iptraf-ng
+packages: "{% if satellite_version != '6.1' %}satellite,{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng"
 
 tdagent_configs:
   - tag: syslog.messages
@@ -180,7 +180,7 @@ product_config:
     basearch: x86_64
     repos:
       - name: Red Hat OpenShift Enterprise 3.2 (RPMs)
-#      - name: Red Hat OpenShift Container Platform 3.3 (RPMs)
+      - name: Red Hat OpenShift Container Platform 3.3 (RPMs)
   - product: Red Hat Enterprise Virtualization
     basearch: x86_64
     repos:
@@ -345,6 +345,8 @@ content_config:
     content:
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
@@ -360,6 +362,8 @@ content_config:
     content:
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
