@@ -1,10 +1,10 @@
 ---
 - Windows Workloads:
     name: Windows Workloads
-    description: Windows Workloads
+    description: 
     template:
-    - name: Windows 2012R2
-      description: Windows 2012R2
+    - name: Windows 2012R2 UnManaged
+      description: Windows 2012R2 UnManaged
       type: 
       display: true
       service_type: atomic
@@ -28,5 +28,32 @@
         ae_message: 
         ae_attributes: {}
         dialog_label: WindowsUnManaged
+      custom_buttons: []
+      custom_button_sets: []
+    - name: Windows 2012R2 Managed
+      description: Windows 2012R2 Managed
+      type: 
+      display: true
+      service_type: atomic
+      prov_type: openstack
+      provision_cost: 
+      long_description: ''
+      options: {}
+      service_template_catalog_name: Windows Workloads
+      resource_actions:
+      - action: Provision
+        ae_namespace: Service/Provisioning/StateMachines
+        ae_class: ServiceProvision_Template
+        ae_instance: CatalogItemInitialization
+        ae_message: 
+        ae_attributes: {}
+        dialog_label: WindowsManaged
+      - action: Retirement
+        ae_namespace: Service/Retirement/StateMachines
+        ae_class: ServiceRetirement
+        ae_instance: Default
+        ae_message: 
+        ae_attributes: {}
+        dialog_label: WindowsManaged
       custom_buttons: []
       custom_button_sets: []

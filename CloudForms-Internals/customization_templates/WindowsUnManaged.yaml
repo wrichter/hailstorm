@@ -1,0 +1,14 @@
+---
+- name: WindowsUnManaged
+  description: WindowsUnManaged
+  script: |
+    <%
+       evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
+       script_hostname = evm[:hostname]
+       script_domainname = evm[:domainname]
+       ssh_key = evm[:sshkey]
+    %>rem cmd
+    net user Administrator <%=ssh_key%>
+  pxe_image_type_id: 919000000000004
+  type: CustomizationTemplateCloudInit
+  system: 

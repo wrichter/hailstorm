@@ -1,0 +1,33 @@
+---
+- description: management_status
+  icon: 
+  read_only: false
+  syntax: string
+  single_value: true
+  example_text: management_status
+  parent_id: 0
+  show: true
+  default: 
+  perf_by_tag: true
+  name: management_status
+  entries:
+  - description: unmanaged
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: 
+    perf_by_tag: 
+    name: unmanaged
+  - description: managed
+    icon: 
+    read_only: false
+    syntax: string
+    single_value: false
+    example_text: 
+    show: true
+    default: 
+    perf_by_tag: 
+    name: managed
