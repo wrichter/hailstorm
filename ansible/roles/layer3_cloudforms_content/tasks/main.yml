@@ -5,6 +5,7 @@
       tags: ['automate']
 
     - include: upload_import_content.yml
+      tags: ['content']
       with_items:
         - type: provision_dialogs
         - type: service_dialogs

@@ -13,4 +13,6 @@
       tags: ['ipa-users']
     - include: ipa-groups-add.yml
       tags: ['ipa-groups']
+    - include: ipa-users-add-ssh-keys.yml
+      tags: ['ipa-ssh']
   when: mode=="create"

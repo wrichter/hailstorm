@@ -1,0 +1,68 @@
+---
+- name: RHEL7Managed_Static_Domain
+  description: RHEL7Managed (Static Domain)
+  script: |
+    <%
+       evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
+       script_hostname = evm[:hostname]
+       ssh_key = evm[:sshkey]
+       script_username = evm[:scriptusername]
+    %>#cloud-config
+
+    cloud_init_modules:
+     - migrator
+     - bootcmd
+     - write-files
+     - growpart
+     - resizefs
+     - set_hostname
+     - update_hostname
+     - update_etc_hosts
+     - rsyslog
+     - users-groups
+     - ssh
+
+    users:
+    - name: <%=script_username%>
+      ssh-authorized-keys:
+      - <%=ssh_key%>
+    - name: root
+      ssh_authorized_keys:
+      - {{ ssh_pub_key_hailstorm }}
+
+    hostname: <%=script_hostname%>
+    fqdn: <%=script_hostname%>.{{ hailstorm_dns_domain }}
+    manage_etc_hosts: true
+
+    write_files:
+    - path: /tmp/foreman-userdata.sh
+      permissions: '0755'
+      content: |
+       #!/bin/bash
+
+       sleep 60
+
+       # add subscription manager
+       # yum -t -y -e 0 install subscription-manager
+       # rpm -ivh http://10.32.99.175/pub/katello-ca-consumer-latest.noarch.rpm
+       rpm -ivh http://satellite.{{ hailstorm_dns_domain }}/pub/katello-ca-consumer-latest.noarch.rpm
+
+       echo "Registering the System"
+       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.{{ hailstorm_dns_domain }} --activationkey="AK-CV-OS-RHEL7-SERVER-TEST"
+
+       # add the rhel rpms to install katello agent
+       # subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ satellite_version }}-rpms
+
+       echo "Installing Katello Agent"
+       yum -t -y -e 0 install katello-agent
+       chkconfig goferd on
+       katello-package-upload
+
+    runcmd:
+     - [ cloud-init-per, once, foreman-userdata, /tmp/foreman-userdata.sh ]
+    output: {all: '| tee -a /root/install.userdata.log'}
+
+    # end of example
+  pxe_image_type_id: 919000000000003
+  type: CustomizationTemplateCloudInit
+  system:

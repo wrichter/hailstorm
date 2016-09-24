@@ -40,7 +40,7 @@ begin
   @miq_request.pending
   
   # send mail to approver
-  to="approver@cd.coe.muc.redhat.com"
+  to="approver@{{ hailstorm_dns_domain }}"
   user=$evm.root["user"]
   user.attributes.sort.each { |k, v| log(:info, "\t Attribute: #{k} = #{v}")}
   from=user["email"]
