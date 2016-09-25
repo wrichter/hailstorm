@@ -8,6 +8,7 @@
        ssh_key = evm[:sshkey]
        script_username = evm[:scriptusername]
        script_domainname = evm[:domainname]
+       script_ldapentry = evm[:ldapentry]
     %>#cloud-config
 
     cloud_init_modules:
@@ -27,6 +28,9 @@
     - name: <%=script_username%>
       ssh_authorized_keys:
       - <%=ssh_key%>
+    <% if script_ldap_ipasshpubkey != nil %>
+      - <%= script_ldap_ipasshpubkey %>
+    <% end %>
     - name: root
       ssh_authorized_keys:
       - {{ ssh_pub_key_hailstorm }}

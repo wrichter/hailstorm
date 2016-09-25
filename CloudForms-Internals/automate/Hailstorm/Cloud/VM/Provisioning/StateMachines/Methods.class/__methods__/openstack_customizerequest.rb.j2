@@ -51,3 +51,34 @@ else
    $evm.log("info","Setting management_status tag to managed")
    prov.add_tag("management_status","managed")
 end
+
+# BEGIN WOLFRAM LDAP INTEGRATION
+require 'rubygems'
+require 'net/ldap'
+
+treebase = "cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}"
+ldap = Net::LDAP.new :host => "{{ hostvars['ipa'].vm_nics[0].ip }}",
+     :port => 389,
+     :auth => {
+           :method => :simple,
+           :username => "uid=cfme-bind-user,#{treebase}",
+           :password => "{{ root_password }}"
+     }
+filter = Net::LDAP::Filter.eq( "uid", prov.miq_request.requester.userid )
+ldapentry = ldap.search( :base => treebase, :filter => filter ).first
+fields = ['ipasshpubkey','mail']
+if ldapentry != nil
+  $evm.log("info","retrieved ldap record for #{ldapentry.dn}:")
+  ldapentry.each do |attribute,values|
+    $evm.log("info","- #{attribute}")
+    if fields.include? attribute
+      prov.set_option('ldap_' + attribute, values.first)
+    end
+    values.each do |value|
+      $evm.log("info","-- #{value}")
+    end
+  end
+else
+  $evm.log("info","did not find ldap record for #{prov.miq_request.requester.userid}")
+end
+# END WOLFRAM LDAP INTEGRATION
