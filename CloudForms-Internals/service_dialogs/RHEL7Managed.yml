@@ -107,7 +107,7 @@
         display: edit
         display_method: 
         display_method_options: {}
-        required: true
+        required: false
         required_method: 
         required_method_options: {}
         default_value: ''
@@ -116,10 +116,10 @@
         values_method_options: {}
         options:
           :protected: false
-        label: SSH Public Key
+        label: Optional SSH Public Key
         position: 2
-        validator_type: 
-        validator_rule: 
+        validator_type: regex
+        validator_rule: ssh-rsa AAAA[0-9A-Za-z+\/]+[=]{0,3}\s.*
         reconfigurable: 
         dynamic: false
         show_refresh_button: 
