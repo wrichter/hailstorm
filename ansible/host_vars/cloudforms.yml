@@ -48,7 +48,7 @@ tdagent_configs:
     pos_file: /var/log/td-agent/evm_log.pos
     format: multiline
     format_firstline: '/^\[----\].*/'
-    format1: '/^\[----\]\ [A-Z],\ \[(?<time>[^\ ]*)\ #(?<pid>[0-9]*):(?<thread>[\h]*)\]\s+(?<level>[A-Z]*)\ --\ :(?<message>.*)/'
+    format1: '/^\[----\]\ [A-Z],\ \[(?<time>[^\ ]*)\ #(?<pid>[0-9]*):(?<thread>[\h]*)\]\s+(?<loglevel>[A-Z]*)\ --\ :(?<message>.*)/'
     time_format: "%Y-%m-%dT%H:%M:%S.%N"
     permissions:
       - path: /var/www/miq/vmdb/log/evm.log
