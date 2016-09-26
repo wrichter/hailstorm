@@ -4,7 +4,12 @@
   pos_file {{ item.1.pos_file }}
   tag {{ item.1.tag }}
   format {{ item.1.format }}
-  {% if item.1.time_format is defined %}time_format {{ item.1.time_format }}{% endif %}
+
+  {% if item.1.format_firstline is defined %}format_firstline '{{ item.1.format_firstline }}'{% endif %}
+
+  {% if item.1.format1 is defined %}format1 '{{ item.1.format1 }}'{% endif %}
+
+  {% if item.1.time_format is defined %}time_format '{{ item.1.time_format }}'{% endif %}
 
 </source>
 

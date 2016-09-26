@@ -53,7 +53,7 @@ begin
 
 	@foreman_host = $evm.object['foreman_host']
 	@foreman_user = $evm.object['foreman_user']
-	@foreman_password = $evm.object.decrypt('foreman_password')
+	@foreman_password = $evm.object['foreman_password']
 
 	katello_url = "https://#{@foreman_host}/katello/api/v2/"
 
