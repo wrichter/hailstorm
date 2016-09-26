@@ -8,6 +8,10 @@
        ssh_key = evm[:sshkey]
        script_username = evm[:scriptusername]
        script_domainname = evm[:domainname]
+
+       require 'rubygems'
+       require 'json'
+       script_ldapentry = JSON.parse(evm[:ldapentry])['myhash'] unless evm[:ldapentry].nil?
     %>#cloud-config
 
     cloud_init_modules:
@@ -27,6 +31,9 @@
     - name: <%=script_username%>
       ssh_authorized_keys:
       - <%=ssh_key%>
+    <% if script_ldapentry != nil %>
+      - <%= script_ldapentry['ipasshpubkey'][0] %>
+    <% end %>
     - name: root
       ssh_authorized_keys:
       - {{ ssh_pub_key_hailstorm }}
