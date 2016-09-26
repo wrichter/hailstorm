@@ -31,7 +31,7 @@ object:
   - quota_source:
       value: "/System/CommonMethods/QuotaMethods/quota_source"
   - limits:
-      value: " \t/System/CommonMethods/QuotaMethods/limits"
+      value: "/System/CommonMethods/QuotaMethods/limits"
   - used:
       value: "/System/CommonMethods/QuotaMethods/used"
   - requested:
