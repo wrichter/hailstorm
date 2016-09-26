@@ -55,6 +55,7 @@ end
 # BEGIN WOLFRAM LDAP INTEGRATION
 require 'rubygems'
 require 'net/ldap'
+require 'json'
 
 treebase = "cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}"
 ldap = Net::LDAP.new :host => "{{ hostvars['ipa'].vm_nics[0].ip }}",
@@ -69,11 +70,10 @@ ldapentry = ldap.search( :base => treebase, :filter => filter ).first
 fields = ['ipasshpubkey','mail']
 if ldapentry != nil
   $evm.log("info","retrieved ldap record for #{ldapentry.dn}:")
+  $evm.log("info","#{ldapentry.to_json}")
+  prov.set_option(:ldapentry, ldapentry.to_json)
   ldapentry.each do |attribute,values|
     $evm.log("info","- #{attribute}")
-    if fields.include? attribute
-      prov.set_option('ldap_' + attribute, values.first)
-    end
     values.each do |value|
       $evm.log("info","-- #{value}")
     end
