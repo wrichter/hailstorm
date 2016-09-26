@@ -25,7 +25,7 @@ begin
 
 	@foreman_host = $evm.object['foreman_host']
 	@foreman_user = $evm.object['foreman_user']
-	@foreman_password = $evm.object.decrypt('foreman_password')
+	@foreman_password = $evm.object['foreman_password']
 
   def get_json(location)
   	response = RestClient::Request.new(
