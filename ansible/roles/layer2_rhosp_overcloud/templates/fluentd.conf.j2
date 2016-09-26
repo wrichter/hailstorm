@@ -341,8 +341,8 @@
   @type forward
   heartbeat_type tcp
   <server>
-    name {{ hostvars['efk'].vm_nic[0].ip }}
-    host {{ hostvars['efk'].vm_nic[0].ip }}
+    name {{ hostvars['efk'].vm_nics[0].ip }}
+    host {{ hostvars['efk'].vm_nics[0].ip }}
     port 4000
   </server>
 </match>
