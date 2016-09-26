@@ -78,6 +78,7 @@
 #    - { role: layer2_dnat, tags: [ 'layer2', 'ipa', 'dnat' ], mode: create }
     - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
     - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'ipa', 'tdagent'], mode: create }
 
 #### SATELLITE (again) ####
 
@@ -111,6 +112,7 @@
     - { role: layer2_rhel, tags: [ 'layer2', 'infrastructure', 'rhel' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'infrastructure', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'tdagent', 'infrastructure'], mode: create }
 
 
 #### VIRT-WHO host (either infrastrcture or satellite)
