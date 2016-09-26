@@ -86,7 +86,7 @@ service_template = $evm.vmdb(@miq_request.source_type, @miq_request.source_id)
 $evm.log(:info, "service_template id: #{service_template.id} service_type: #{service_template.service_type}")
 $evm.log(:info, "description: #{service_template.description} services: #{service_template.service_resources.count}")
 
-appliance = $evm.root['miq_server'].ipaddress
+appliance = $evm.root['miq_server'].hostname
 
 email_requester(appliance)
 email_approver(appliance)

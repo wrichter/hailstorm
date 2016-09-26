@@ -94,7 +94,7 @@ $evm.log(:info, "service_template id: #{service_template.id} service_type: #{ser
 $evm.log(:info, "description: #{service_template.description} services: #{service_template.service_resources.count}")
 
 msg = @miq_request.resource.message || "Request denied"
-appliance = $evm.root['miq_server'].ipaddress
+appliance = $evm.root['miq_server'].hostname
 
 email_requester(appliance, msg)
 email_approver(appliance, msg)
