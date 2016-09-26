@@ -82,9 +82,9 @@
        chkconfig goferd on
        katello-package-upload
 
-    <% if script_ldapentry != nil && script_ldapentry['mail'] != nil %>
-       sendmail <%= script_ldapentry['mail'] %><<EOF
-       Subject: your unmanaged vm <%= script_hostname %> is ready
+    <% if script_ldapentry != nil && script_ldapentry['mail'] != nil && script_ldapentry['mail'][0] != nil  %>
+       sendmail <%= script_ldapentry['mail'][0] %><<EOF
+       Subject: Your unmanaged virtual machine <%= script_hostname %> is ready
 
        Your unmanaged VM <%= script_hostname %> is ready.
        .
