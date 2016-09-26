@@ -7,6 +7,10 @@
        script_hostname = evm[:hostname]
        script_domainname = evm[:domainname]
        ssh_key = evm[:sshkey]
+
+       require 'rubygems'
+       require 'json'
+       script_ldapentry = JSON.parse(evm[:ldapentry])['myhash'] unless evm[:ldapentry].nil?
     %>#cloud-config
 
     cloud_init_modules:
@@ -26,18 +30,33 @@
     fqdn: <%=script_hostname%>.<%=script_domainname%>
     manage_etc_hosts: true
     ssh_authorized_keys:
-     - <%=ssh_key%>
      - {{ ssh_pub_key_hailstorm }}
+    <% if ssh_key != nil && ssh_key != '' %>
+     - <%=ssh_key%>
+    <% end %>
+    <% if script_ldapentry != nil %><% (script_ldapentry['ipasshpubkey'] || []).each do |key| %>
+     - <%= key %>
+    <% end %><% end %>
 
     users:
     - name: root
       ssh_authorized_keys:
       - {{ ssh_pub_key_hailstorm }}
+    <% if ssh_key != nil && ssh_key != '' %>
       - <%=ssh_key%>
+    <% end %>
+    <% if script_ldapentry != nil %><% (script_ldapentry['ipasshpubkey'] || []).each do |key| %>
+      - <%= key %>
+    <% end %><% end %>
     - name: cloud-user
       ssh_authorized_keys:
       - {{ ssh_pub_key_hailstorm }}
+    <% if ssh_key != nil && ssh_key != '' %>
       - <%=ssh_key%>
+    <% end %>
+    <% if script_ldapentry != nil %><% (script_ldapentry['ipasshpubkey'] || []).each do |key| %>
+      - <%= key %>
+    <% end %><% end %>
 
     write_files:
     - path: /tmp/foreman-userdata.sh
@@ -63,6 +82,14 @@
        chkconfig goferd on
        katello-package-upload
 
+    <% if script_ldapentry != nil && script_ldapentry['mail'] != nil %>
+       sendmail <%= script_ldapentry['mail'] %><<EOF
+       Subject: your unmanaged vm <%= script_hostname %> is ready
+
+       Your unmanaged VM <%= script_hostname %> is ready.
+       .
+       EOF
+    <% end %>
     runcmd:
      - [ cloud-init-per, once, foreman-userdata, /tmp/foreman-userdata.sh ]
     output: {all: '| tee -a /root/install.userdata.log'}
