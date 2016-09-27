@@ -48,7 +48,7 @@ begin
   body="A VM request needs approval."
   owner_name = user["name"]
   body+="</br>Requester: #{owner_name}"
-  body += "<br><br>To view this Request go to: <a href='https://#{appliance}/miq_request/show/#{miq_request.id}'>https://#{appliance}/miq_request/show/#{miq_request.id}</a>"
+  body += "<br><br>To view this Request go to: <a href='https://#{$evm.root["miq_server"].hostname}/miq_request/show/#{@miq_request.id}'>https://#{$evm.root["miq_server"].hostname}/miq_request/show/#{@miq_request.id}</a>"
   body+="</br>Regards,"
   body+="</br>Virtualization Team"
 
