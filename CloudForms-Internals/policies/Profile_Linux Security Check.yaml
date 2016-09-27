@@ -1,0 +1,477 @@
+---
+- MiqPolicySet:
+    name: dd1698b0-e59d-11e3-96d8-001a4ab4f909
+    description: Linux Security Check
+    set_type: MiqPolicySet
+    guid: dd1698b0-e59d-11e3-96d8-001a4ab4f909
+    read_only: 
+    set_data: 
+    mode: control
+    owner_type: 
+    owner_id: 
+    userid: 
+    group_id: 
+    MiqPolicy:
+    - name: b03a4e74-473e-11e4-b745-005056b3585a
+      description: Shell-Shock Vulnerability
+      expression: !ruby/object:MiqExpression
+        exp:
+          INCLUDES:
+            field: Vm-platform
+            value: linux
+        context_type: 
+      towhat: Vm
+      guid: b03a4e74-473e-11e4-b745-005056b3585a
+      created_by: admin
+      updated_by: admin
+      notes: |-
+        This policy is based on https://access.redhat.com/articles/1200223.
+        Red Hat Enterprise Linux 6
+        bash-4.1.2-15.el6_5.2
+        bash-4.1.2-15.el6_5.1.sjis.2
+        bash-4.1.2-9.el6_2.2
+        bash-4.1.2-15.el6_4.2
+      active: true
+      mode: compliance
+      read_only: 
+      MiqPolicyContent:
+      - qualifier: failure
+        failure_sequence: 1
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: log
+          description: Generate log message
+          guid: e800c9aa-d60f-11e3-85b2-001a4ab4f909
+          action_type: default
+          options: {}
+      - qualifier: failure
+        failure_sequence: 2
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: compliance_failed
+          description: Mark as Non-Compliant
+          guid: 339f0cc8-317e-11e3-88e1-005056b80000
+          action_type: default
+          options: {}
+      - qualifier: failure
+        failure_sequence: 3
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: d4ea28d8-f051-11e2-97c5-000c297e26aa
+          description: Send Email to Security Team
+          guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
+          action_type: email
+          options:
+            :from: cloudforms_demo@redhat.com
+            :to: vestival@redhat.com
+      - qualifier: failure
+        failure_sequence: 4
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 50a4dd5a-30a7-11e5-95b5-005056bfd2a3
+          action_type: default
+          options: {}
+      Condition:
+      - name: c2640554-3130-11e5-bbb8-005056bfd2a3
+        description: Vulnerable bash Package (ShellShock)
+        modifier: allow
+        expression: !ruby/object:MiqExpression
+          exp:
+            and:
+            - CONTAINS:
+                field: Vm.guest_applications-name
+                value: bash
+            - FIND:
+                search:
+                  "=":
+                    field: Vm.guest_applications-version
+                    value: 4.1.2
+                checkall:
+                  REGULAR EXPRESSION MATCHES:
+                    field: Vm.guest_applications-release
+                    value: 1[5]\.(el6_5.2\b|el6_5.1.sjis.2(?!\.)|el6_4.2)
+          context_type: 
+        towhat: Vm
+        file_mtime: 
+        guid: c2640554-3130-11e5-bbb8-005056bfd2a3
+        filename: 
+        applies_to_exp: 
+        miq_policy_id: 
+        notes: 
+        read_only: 
+    - name: bc031f1a-e249-11e3-9d65-005056b80000
+      description: Heartbleed Vulnerability
+      expression: !ruby/object:MiqExpression
+        exp:
+          INCLUDES:
+            field: Vm-platform
+            value: linux
+        context_type: 
+      towhat: Vm
+      guid: bc031f1a-e249-11e3-9d65-005056b80000
+      created_by: admin
+      updated_by: admin
+      notes: |
+        This are the openssl package versions affected by Heartbleed:
+        openssl-1.0.1e-15.el6
+        openssl-1.0.1e-16.el6_5.1
+        openssl-1.0.1e-16.el6_5.4
+        openssl-1.0.1e-16.el6_5
+
+        Starting with openssl-1.0.1e-16.el6_5.7 hearbleed is fixed.
+      active: true
+      mode: compliance
+      read_only: 
+      MiqPolicyContent:
+      - qualifier: failure
+        failure_sequence: 1
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: log
+          description: Generate log message
+          guid: e800c9aa-d60f-11e3-85b2-001a4ab4f909
+          action_type: default
+          options: {}
+      - qualifier: failure
+        failure_sequence: 2
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: compliance_failed
+          description: Mark as Non-Compliant
+          guid: 339f0cc8-317e-11e3-88e1-005056b80000
+          action_type: default
+          options: {}
+      - qualifier: failure
+        failure_sequence: 3
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: d4ea28d8-f051-11e2-97c5-000c297e26aa
+          description: Send Email to Security Team
+          guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
+          action_type: email
+          options:
+            :from: cloudforms_demo@redhat.com
+            :to: vestival@redhat.com
+      - qualifier: failure
+        failure_sequence: 4
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 50a4dd5a-30a7-11e5-95b5-005056bfd2a3
+          action_type: default
+          options: {}
+      Condition:
+      - name: 20a8dc70-e245-11e3-9d65-005056b80000
+        description: Vulnerable OpenSSL Package (Heartbleed)
+        modifier: allow
+        expression: !ruby/object:MiqExpression
+          exp:
+            and:
+            - CONTAINS:
+                field: Vm.guest_applications-name
+                value: openssl
+            - not:
+                FIND:
+                  search:
+                    "=":
+                      field: Vm.guest_applications-version
+                      value: 1.0.1e
+                  checkall:
+                    REGULAR EXPRESSION MATCHES:
+                      field: Vm.guest_applications-release
+                      value: 1[56]\.(el6\b|el6_5(?!\.)|el6_5.1|el6_5.4)
+          context_type: 
+        towhat: Vm
+        file_mtime: 
+        guid: 20a8dc70-e245-11e3-9d65-005056b80000
+        filename: 
+        applies_to_exp: 
+        miq_policy_id: 
+        notes: 
+        read_only: 
+    - name: 02e07592-0819-11e3-97a7-000c296e94f9
+      description: Permit Root Login Disabled
+      expression: !ruby/object:MiqExpression
+        exp:
+          INCLUDES:
+            field: Vm-platform
+            value: linux
+        context_type: 
+      towhat: Vm
+      guid: 02e07592-0819-11e3-97a7-000c296e94f9
+      created_by: admin
+      updated_by: admin
+      notes: 
+      active: true
+      mode: compliance
+      read_only: 
+      MiqPolicyContent:
+      - qualifier: failure
+        failure_sequence: 1
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: log
+          description: Generate log message
+          guid: e800c9aa-d60f-11e3-85b2-001a4ab4f909
+          action_type: default
+          options: {}
+      - qualifier: failure
+        failure_sequence: 2
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: compliance_failed
+          description: Mark as Non-Compliant
+          guid: 339f0cc8-317e-11e3-88e1-005056b80000
+          action_type: default
+          options: {}
+      - qualifier: failure
+        failure_sequence: 3
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: d4ea28d8-f051-11e2-97c5-000c297e26aa
+          description: Send Email to Security Team
+          guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
+          action_type: email
+          options:
+            :from: cloudforms_demo@redhat.com
+            :to: vestival@redhat.com
+      - qualifier: failure
+        failure_sequence: 4
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: evm_event
+          description: Show EVM Event on Timeline
+          guid: 50a4dd5a-30a7-11e5-95b5-005056bfd2a3
+          action_type: default
+          options: {}
+      Condition:
+      - name: 6e83d780-0819-11e3-97a7-000c296e94f9
+        description: Permit Root Login Disabled
+        modifier: allow
+        expression: !ruby/object:MiqExpression
+          exp:
+            FIND:
+              search:
+                "=":
+                  field: Vm.filesystems-contents_available
+                  value: 'true'
+              checkall:
+                INCLUDES:
+                  field: Vm.filesystems-contents
+                  value: PermitRootLogin no
+          context_type: 
+        towhat: Vm
+        file_mtime: 
+        guid: 6e83d780-0819-11e3-97a7-000c296e94f9
+        filename: 
+        applies_to_exp: 
+        miq_policy_id: 
+        notes: 
+        read_only: 
+    - name: e629c444-df2a-11e5-ac99-001a4aa80101
+      description: DROWN OpenSSL Vulnerability
+      expression: !ruby/object:MiqExpression
+        exp:
+          INCLUDES:
+            field: Vm-os_image_name
+            value: linux
+        context_type: 
+      towhat: Vm
+      guid: e629c444-df2a-11e5-ac99-001a4aa80101
+      created_by: admin
+      updated_by: admin
+      notes: 'This policy validates VM compliance against openssl package versions
+        affected by DROWN cross-protocol attack (CVE-2016-0800)
+
+'
+      active: true
+      mode: compliance
+      read_only: 
+      MiqPolicyContent:
+      - qualifier: success
+        success_sequence: 1
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: log
+          description: Generate log message
+          guid: e800c9aa-d60f-11e3-85b2-001a4ab4f909
+          action_type: default
+          options: {}
+      - qualifier: success
+        success_sequence: 2
+        MiqEventDefinition:
+          name: vm_compliance_check
+          description: VM Compliance Check
+          guid: 42b1bd96-317e-11e3-88e1-005056b80000
+          event_type: Default
+          definition: 
+          default: 
+          enabled: 
+        MiqAction:
+          name: compliance_failed
+          description: Mark as Non-Compliant
+          guid: 339f0cc8-317e-11e3-88e1-005056b80000
+          action_type: default
+          options: {}
+      Condition:
+      - name: 0d6beea8-df56-11e5-ac99-001a4aa80101
+        description: Vulnerable DROWN openssl packages (RHEL5/6/7)
+        modifier: allow
+        expression: !ruby/object:MiqExpression
+          exp:
+            or:
+            - and:
+              - CONTAINS:
+                  field: Vm.guest_applications-name
+                  value: openssl
+              - FIND:
+                  search:
+                    "=":
+                      field: Vm.guest_applications-version
+                      value: 0.9.8b
+                  checkall:
+                    REGULAR EXPRESSION MATCHES:
+                      field: Vm.guest_applications-release
+                      value: 8b-8\.3\.el5|8\.3\.el5_0\.2|10\.el5\b|10\.el5_2\.1
+            - and:
+              - CONTAINS:
+                  field: Vm.guest_applications-name
+                  value: openssl
+              - FIND:
+                  search:
+                    "=":
+                      field: Vm.guest_applications-version
+                      value: 0.9.8e
+                  checkall:
+                    REGULAR EXPRESSION MATCHES:
+                      field: Vm.guest_applications-release
+                      value: 7\.el5\b|7\.el5_3\.2|12\.el5\b|12\.el5_4\.1|12\.el5_4\.6|12\.el5_5\.7|12\.el5_6\.9|12\.el5_6\.10|12\.el5_6\.12|20\.el5\b|20\.el5_7\.1|22\.el5\b|22\.el5_8\.1|22\.el5_8\.3|22\.el5_8\.4|26\.el5_9\.1|26\.el5_9\.2|26\.el5_9\.4|27\.el5_10\.1|27\.el5_10\.3|27\.el5_10\.4|31\.el5_11|32\.el5_11
+            - and:
+              - CONTAINS:
+                  field: Vm.guest_applications-name
+                  value: openssl
+              - FIND:
+                  search:
+                    "=":
+                      field: Vm.guest_applications-version
+                      value: 1.0.0
+                  checkall:
+                    REGULAR EXPRESSION MATCHES:
+                      field: Vm.guest_applications-release
+                      value: 4\.el6\b|4\.el6_0\.1|4\.el6_0\.2|4\.el6_0\.3|10.el6\b|10\.el6_1\.4|10\.el6_1\.5|10\.el6_1\.6|20\.el6\b|20\.el6_2\.1|20\.el6_2\.2|20\.el6_2\.3|20\.el6_2\.4|20\.el6_2\.5|20\.el6_2\.7|25\.el6_3\.1|25\.el6_3\.3|27.el6\b|27\.el6_4\.2|27\.el6_4\.4
+            - and:
+              - CONTAINS:
+                  field: Vm.guest_applications-name
+                  value: openssl
+              - FIND:
+                  search:
+                    "=":
+                      field: Vm.guest_applications-version
+                      value: 1.0.1e
+                  checkall:
+                    REGULAR EXPRESSION MATCHES:
+                      field: Vm.guest_applications-release
+                      value: 15\.el6\b|16\.el6_5\.1\b|16\.el6_5\.4|16\.el6_5\.7|16\.el6_5\.14|16\.el6_5\.15|30\.el6\b|30\.el6_6\.2|30\.el6_6\.4|30\.el6_6\.5|16\.el6_5\b|30\.el6_6\.7|30\.el6_6\.8|30\.el6_6\.9|30\.el6_6\.11|42\.el6\b|42\.el6_7\.1|42\.el6_7\.2|34\.el7\b|34\.el7_0\.3|34\.el7_0\.4|34\.el7_0\.6|34\.el7_0\.7|42.el7\b|42\.el7_1\.4|42\.el7_1\.5|42\.el7_1\.6|42\.el7_1\.8|42\.el7_1\.9|51\.el7_2\.1|51\.el7_2\.2
+          context_type: 
+        towhat: Vm
+        file_mtime: 
+        guid: 0d6beea8-df56-11e5-ac99-001a4aa80101
+        filename: 
+        applies_to_exp: 
+        miq_policy_id: 
+        notes: 
+        read_only: 
