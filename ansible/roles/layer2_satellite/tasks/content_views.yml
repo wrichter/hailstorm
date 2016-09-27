@@ -8,6 +8,11 @@
   when: item.content_view not in current_content_views.stdout_lines
   with_items: "{{ content_config }}"
 
+# - name: define content view filter
+#   command: hammer content-view filter rule create --organization "{{ organization }}" --name "{{ item.content_view }}"'
+#   when: item.content_view not in current_content_views.stdout_lines and item.filter is defined
+#   with_items: "{{ content_config }}"
+
 - name: add repos to content_view
   command: 'hammer content-view add-repository --organization "{{ organization }}" --name "{{ item.0.content_view }}" --product "{{ item.1.product }}" --repository "{{ item.1.repository }}"'
   when: (republish is defined and republish) or item.0.content_view not in current_content_views.stdout_lines
