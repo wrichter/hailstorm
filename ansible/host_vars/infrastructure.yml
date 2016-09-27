@@ -71,3 +71,13 @@ firewalld_rules:
    zone: public
    permanent: true
    immediate: true
+
+
+tdagent_configs:
+ - tag: syslog.messages
+   path: /var/log/messages
+   pos_file: /var/log/td-agent/messages_log.pos
+   format: syslog
+   permissions:
+    - path: /var/log/messages
+      mode: o+r

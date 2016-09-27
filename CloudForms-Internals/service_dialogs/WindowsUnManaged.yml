@@ -81,8 +81,8 @@
           :protected: false
         label: Password
         position: 1
-        validator_type: 
-        validator_rule: 
+        validator_type: regex
+        validator_rule: "(?=^.{8,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*"
         reconfigurable: 
         dynamic: false
         show_refresh_button: 

@@ -8,6 +8,10 @@
        ssh_key = evm[:sshkey]
        script_username = evm[:scriptusername]
        script_domainname = evm[:domainname]
+
+       require 'rubygems'
+       require 'json'
+       script_ldapentry = JSON.parse(evm[:ldapentry])['myhash'] unless evm[:ldapentry].nil?
     %>#cloud-config
 
     cloud_init_modules:
@@ -26,7 +30,12 @@
     users:
     - name: <%=script_username%>
       ssh_authorized_keys:
+    <% if ssh_key != nil && ssh_key != '' %>
       - <%=ssh_key%>
+    <% end %>
+    <% if script_ldapentry != nil %><% (script_ldapentry['ipasshpubkey'] || []).each do |key| %>
+      - <%= key %>
+    <% end %><% end %>
     - name: root
       ssh_authorized_keys:
       - {{ ssh_pub_key_hailstorm }}
@@ -59,6 +68,15 @@
        chkconfig goferd on
        katello-package-upload
 
+    <% if script_ldapentry != nil && script_ldapentry['mail'] != nil && script_ldapentry['mail'][0] != nil  %>
+       sendmail <%= script_ldapentry['mail'][0] %><<EOF
+       Subject: Your managed virtual machine <%= script_hostname %> is ready
+       To: <%= script_ldapentry['mail'][0] %>
+
+       Your managed VM <%= script_hostname %> is ready.
+       .
+       EOF
+    <% end %>
     runcmd:
      - [ cloud-init-per, once, foreman-userdata, /tmp/foreman-userdata.sh ]
     output: {all: '| tee -a /root/install.userdata.log'}

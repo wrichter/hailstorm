@@ -54,7 +54,7 @@ tdagent_configs:
   - tag: httpd.error
     path: /var/log/httpd/error_log
     pos_file: /var/log/td-agent/httpd_error_log.pos
-    format: apache2
+    format: apache_error
     permissions:
       - path: /var/log/httpd
         mode: o+xr
