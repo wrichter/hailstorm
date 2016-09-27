@@ -1,0 +1,64 @@
+
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: Create logging project
+  shell: oadm new-project logging --node-selector=""
+  when: "'logging' not in projects.stdout_lines"
+
+
+- name: Check existing service accounts
+  shell: oc get serviceaccounts -n logging | awk '{ print $1 }'
+  register: logging_sa
+  changed_when: false
+
+- name: Create service accounts
+  shell: oc new-app logging-deployer-account-template -n logging
+  when: "'logging-deployer' not in logging_sa.stdout_lines"
+
+- name: Add oauth permissions to logging sa
+  shell: oadm policy {{ item }}
+  when: "'logging-deployer' not in logging_sa.stdout_lines"
+  with_items:
+    - add-cluster-role-to-user oauth-editor system:serviceaccount:logging:logging-deployer
+    - add-scc-to-user privileged system:serviceaccount:logging:aggregated-logging-fluentd
+    - add-cluster-role-to-user cluster-reader system:serviceaccount:logging:aggregated-logging-fluentd
+
+
+- name: check logging-deployer-template
+  command: oc get template logging-support-template -n logging
+  register: logging_template
+  failed_when: false
+  changed_when: false
+
+- block:
+    - name: create deployer configmap
+      shell: >
+        oc create configmap logging-deployer -n logging
+        --from-literal kibana-hostname=kibana.apps.{{ hailstorm_dns_domain }}
+        --from-literal kibana-ops-hostname=kibana-ops.apps.{{ hailstorm_dns_domain }}
+        --from-literal public-master-url=https://openshift.{{ hailstorm_dns_domain }}:8443/
+        --from-literal es-cluster-size=1
+        --from-literal es-instance-ram=8G
+      ignore_errors: true
+
+    - name: get ose version
+      shell: oc version | awk '/^oc/{ print substr($2,0,4) }'
+      register: version_tag
+      changed_when: false
+
+    - name:  deploy logging-deployer-template
+      command: >
+        oc new-app logging-deployer-template -n logging
+        --param IMAGE_VERSION={{ version_tag.stdout }}
+        --param MODE=install
+
+    - name: Waiting until the logging-support-template template is available before executing next comand
+      command: oc get template logging-support-template -n logging
+      register: logging_template
+      retries: 20
+      delay: 10
+      until: logging_template|success
+  when: logging_template.stdout == ""

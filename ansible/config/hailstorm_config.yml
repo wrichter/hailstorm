@@ -87,7 +87,7 @@ cloudforms_repos:
 ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-ose-3.2-rpms
+  - rhel-7-server-ose-3.3-rpms
 ose3_additional_packages: docker
 #   - rhel-7-server-ose-3.1-rpms
 # ose3_additional_packages: docker-1.8.2
