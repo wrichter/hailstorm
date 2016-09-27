@@ -99,6 +99,10 @@ timezone: Europe/Berlin
 
 
 ipa_user:
+  - username: admin
+    password: "{{ root_password }}"
+    first: Admin
+    last: User
   - username: consumer
     password: "{{ root_password }}"
     first: Consumer

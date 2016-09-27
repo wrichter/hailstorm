@@ -38,7 +38,7 @@ begin
 
   # Raise automation event: request_pending
   @miq_request.pending
-  
+
   # send mail to approver
   to="approver@{{ hailstorm_dns_domain }}"
   user=$evm.root["user"]
@@ -48,9 +48,10 @@ begin
   body="A VM request needs approval."
   owner_name = user["name"]
   body+="</br>Requester: #{owner_name}"
+  body += "<br><br>To view this Request go to: <a href='https://#{appliance}/miq_request/show/#{miq_request.id}'>https://#{appliance}/miq_request/show/#{miq_request.id}</a>"
   body+="</br>Regards,"
   body+="</br>Virtualization Team"
-  
+
   $evm.execute(:send_email, to, from, subject, body)
 
   ###############
