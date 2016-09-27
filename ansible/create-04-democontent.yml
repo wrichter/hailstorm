@@ -43,3 +43,9 @@
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }
     - { role: layerX_openshift_demo_redhatmsa_on_devclient, tags: [ 'layer2', 'dev-client',  'ose3', 'msademo' ], mode: create }
+
+- hosts: rhosp-director
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_rhosp_overcloud_demo_content, tags: [ 'layer2', 'rhosp', 'overcloud', 'democontent' ], mode: create }
