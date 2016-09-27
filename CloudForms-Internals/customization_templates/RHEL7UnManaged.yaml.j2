@@ -85,6 +85,7 @@
     <% if script_ldapentry != nil && script_ldapentry['mail'] != nil && script_ldapentry['mail'][0] != nil  %>
        sendmail <%= script_ldapentry['mail'][0] %><<EOF
        Subject: Your unmanaged virtual machine <%= script_hostname %> is ready
+       To: <%= script_ldapentry['mail'][0] %>
 
        Your unmanaged VM <%= script_hostname %> is ready.
        .
