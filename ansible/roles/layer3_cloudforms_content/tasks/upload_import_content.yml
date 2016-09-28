@@ -4,10 +4,10 @@
     outer_item: "{{ item }}"
 
 - name: check if type is present
-  local_action: stat path={{content_location}}/{{ item.type }}
+  local_action: stat path={{ mktemp_directory }}/{{ item.type }}
   register: stat_item
 - name: check if content directory has contents
-  local_action: find paths={{content_location}}/{{ item.type }}
+  local_action: find paths={{ mktemp_directory }}/{{ item.type }}
   register: type_files
   when: stat_item.stat.exists
 - block:
@@ -18,13 +18,7 @@
       file: name=/tmp/miq_import/{{ item.type }} state=directory
 
     - name: upload contents to CF
-      copy: src={{ content_location }}/{{ item.type }} dest=/tmp/miq_import
-      when: item.apply_template is not defined or item.apply_template != true
-
-    - name: upload contents to CF (applying template)
-      template: src={{ item }} dest=/tmp/miq_import/{{ outer_item.type }}/{{ item | basename | regex_replace('.j2$','') }}
-      when: outer_item.apply_template is defined and outer_item.apply_template
-      with_items: "{{ type_files.files | map(attribute='path') | list }}"
+      copy: src={{ mktemp_directory }}/{{ item.type }} dest=/tmp/miq_import
 
     - name: import contents
       shell: /usr/bin/miqimport {{ item.type }} /tmp/miq_import/{{ item.type }}
@@ -45,11 +39,8 @@
       with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
 
     - name: import contents (individual files)
-      shell: /usr/bin/miqimport {{ item.0 }} "{{ item.1|regex_replace('\s','_') }}"
-      with_nested:
-        -
-          - "{{ outer_item.type }}"
-        -  "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
+      shell: /usr/bin/miqimport {{ outer_item.type }} "{{ item|regex_replace('\s','_') }}"
+      with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
       register: import
       failed_when: "'aborted' in import.stderr"
       when: not content_files|skipped
