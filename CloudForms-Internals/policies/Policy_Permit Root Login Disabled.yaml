@@ -1,0 +1,109 @@
+---
+- MiqPolicy:
+    name: 02e07592-0819-11e3-97a7-000c296e94f9
+    description: Permit Root Login Disabled
+    expression: !ruby/object:MiqExpression
+      exp:
+        INCLUDES:
+          field: Vm-platform
+          value: linux
+      context_type: 
+    towhat: Vm
+    guid: 02e07592-0819-11e3-97a7-000c296e94f9
+    created_by: admin
+    updated_by: admin
+    notes: 
+    active: true
+    mode: compliance
+    read_only: 
+    MiqPolicyContent:
+    - qualifier: failure
+      failure_sequence: 1
+      MiqEventDefinition:
+        name: vm_compliance_check
+        description: VM Compliance Check
+        guid: 42b1bd96-317e-11e3-88e1-005056b80000
+        event_type: Default
+        definition: 
+        default: 
+        enabled: 
+      MiqAction:
+        name: log
+        description: Generate log message
+        guid: e800c9aa-d60f-11e3-85b2-001a4ab4f909
+        action_type: default
+        options: {}
+    - qualifier: failure
+      failure_sequence: 2
+      MiqEventDefinition:
+        name: vm_compliance_check
+        description: VM Compliance Check
+        guid: 42b1bd96-317e-11e3-88e1-005056b80000
+        event_type: Default
+        definition: 
+        default: 
+        enabled: 
+      MiqAction:
+        name: compliance_failed
+        description: Mark as Non-Compliant
+        guid: 339f0cc8-317e-11e3-88e1-005056b80000
+        action_type: default
+        options: {}
+    - qualifier: failure
+      failure_sequence: 3
+      MiqEventDefinition:
+        name: vm_compliance_check
+        description: VM Compliance Check
+        guid: 42b1bd96-317e-11e3-88e1-005056b80000
+        event_type: Default
+        definition: 
+        default: 
+        enabled: 
+      MiqAction:
+        name: d4ea28d8-f051-11e2-97c5-000c297e26aa
+        description: Send Email to Security Team
+        guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
+        action_type: email
+        options:
+          :from: cloudforms_demo@redhat.com
+          :to: vestival@redhat.com
+    - qualifier: failure
+      failure_sequence: 4
+      MiqEventDefinition:
+        name: vm_compliance_check
+        description: VM Compliance Check
+        guid: 42b1bd96-317e-11e3-88e1-005056b80000
+        event_type: Default
+        definition: 
+        default: 
+        enabled: 
+      MiqAction:
+        name: evm_event
+        description: Show EVM Event on Timeline
+        guid: 50a4dd5a-30a7-11e5-95b5-005056bfd2a3
+        action_type: default
+        options: {}
+    Condition:
+    - name: 6e83d780-0819-11e3-97a7-000c296e94f9
+      description: Permit Root Login Disabled
+      modifier: allow
+      expression: !ruby/object:MiqExpression
+        exp:
+          FIND:
+            search:
+              "=":
+                field: Vm.filesystems-contents_available
+                value: 'true'
+            checkall:
+              INCLUDES:
+                field: Vm.filesystems-contents
+                value: PermitRootLogin no
+        context_type: 
+      towhat: Vm
+      file_mtime: 
+      guid: 6e83d780-0819-11e3-97a7-000c296e94f9
+      filename: 
+      applies_to_exp: 
+      miq_policy_id: 
+      notes: 
+      read_only: 
