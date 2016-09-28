@@ -22,6 +22,9 @@
   - name: Create nexus
     shell: "oc new-app -f /tmp/nexus_template.yml -n devops-tools"
 
+  - name: Deploy nexus
+    shell: "oc deploy nexus --latest -n devops-tools"
+
   - name: Wait for nexus become online
     shell: curl "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/"
     register: tstcurl
