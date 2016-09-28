@@ -65,8 +65,8 @@
         guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
         action_type: email
         options:
-          :from: cloudforms_demo@redhat.com
-          :to: vestival@redhat.com
+          :from: cloudforms@{{ hailstorm_dns_domain }}
+          :to: admin@{{ hailstorm_dns_domain }}
     - qualifier: failure
       failure_sequence: 4
       MiqEventDefinition:

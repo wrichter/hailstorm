@@ -4,13 +4,13 @@
     description: Linux Security Check
     set_type: MiqPolicySet
     guid: dd1698b0-e59d-11e3-96d8-001a4ab4f909
-    read_only: 
-    set_data: 
+    read_only:
+    set_data:
     mode: control
-    owner_type: 
-    owner_id: 
-    userid: 
-    group_id: 
+    owner_type:
+    owner_id:
+    userid:
+    group_id:
     MiqPolicy:
     - name: b03a4e74-473e-11e4-b745-005056b3585a
       description: Shell-Shock Vulnerability
@@ -19,7 +19,7 @@
           INCLUDES:
             field: Vm-platform
             value: linux
-        context_type: 
+        context_type:
       towhat: Vm
       guid: b03a4e74-473e-11e4-b745-005056b3585a
       created_by: admin
@@ -33,7 +33,7 @@
         bash-4.1.2-15.el6_4.2
       active: true
       mode: compliance
-      read_only: 
+      read_only:
       MiqPolicyContent:
       - qualifier: failure
         failure_sequence: 1
@@ -42,9 +42,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: log
           description: Generate log message
@@ -58,9 +58,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: compliance_failed
           description: Mark as Non-Compliant
@@ -74,17 +74,17 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: d4ea28d8-f051-11e2-97c5-000c297e26aa
           description: Send Email to Security Team
           guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
           action_type: email
           options:
-            :from: cloudforms_demo@redhat.com
-            :to: vestival@redhat.com
+            :from: cloudforms@{{ hailstorm_dns_domain }}
+            :to: admin@{{ hailstorm_dns_domain }}
       - qualifier: failure
         failure_sequence: 4
         MiqEventDefinition:
@@ -92,9 +92,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: evm_event
           description: Show EVM Event on Timeline
@@ -120,15 +120,15 @@
                   REGULAR EXPRESSION MATCHES:
                     field: Vm.guest_applications-release
                     value: 1[5]\.(el6_5.2\b|el6_5.1.sjis.2(?!\.)|el6_4.2)
-          context_type: 
+          context_type:
         towhat: Vm
-        file_mtime: 
+        file_mtime:
         guid: c2640554-3130-11e5-bbb8-005056bfd2a3
-        filename: 
-        applies_to_exp: 
-        miq_policy_id: 
-        notes: 
-        read_only: 
+        filename:
+        applies_to_exp:
+        miq_policy_id:
+        notes:
+        read_only:
     - name: bc031f1a-e249-11e3-9d65-005056b80000
       description: Heartbleed Vulnerability
       expression: !ruby/object:MiqExpression
@@ -136,7 +136,7 @@
           INCLUDES:
             field: Vm-platform
             value: linux
-        context_type: 
+        context_type:
       towhat: Vm
       guid: bc031f1a-e249-11e3-9d65-005056b80000
       created_by: admin
@@ -151,7 +151,7 @@
         Starting with openssl-1.0.1e-16.el6_5.7 hearbleed is fixed.
       active: true
       mode: compliance
-      read_only: 
+      read_only:
       MiqPolicyContent:
       - qualifier: failure
         failure_sequence: 1
@@ -160,9 +160,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: log
           description: Generate log message
@@ -176,9 +176,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: compliance_failed
           description: Mark as Non-Compliant
@@ -192,17 +192,17 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: d4ea28d8-f051-11e2-97c5-000c297e26aa
           description: Send Email to Security Team
           guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
           action_type: email
           options:
-            :from: cloudforms_demo@redhat.com
-            :to: vestival@redhat.com
+            :from: cloudforms@{{ hailstorm_dns_domain }}
+            :to: admin@{{ hailstorm_dns_domain }}
       - qualifier: failure
         failure_sequence: 4
         MiqEventDefinition:
@@ -210,9 +210,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: evm_event
           description: Show EVM Event on Timeline
@@ -239,15 +239,15 @@
                     REGULAR EXPRESSION MATCHES:
                       field: Vm.guest_applications-release
                       value: 1[56]\.(el6\b|el6_5(?!\.)|el6_5.1|el6_5.4)
-          context_type: 
+          context_type:
         towhat: Vm
-        file_mtime: 
+        file_mtime:
         guid: 20a8dc70-e245-11e3-9d65-005056b80000
-        filename: 
-        applies_to_exp: 
-        miq_policy_id: 
-        notes: 
-        read_only: 
+        filename:
+        applies_to_exp:
+        miq_policy_id:
+        notes:
+        read_only:
     - name: 02e07592-0819-11e3-97a7-000c296e94f9
       description: Permit Root Login Disabled
       expression: !ruby/object:MiqExpression
@@ -255,15 +255,15 @@
           INCLUDES:
             field: Vm-platform
             value: linux
-        context_type: 
+        context_type:
       towhat: Vm
       guid: 02e07592-0819-11e3-97a7-000c296e94f9
       created_by: admin
       updated_by: admin
-      notes: 
+      notes:
       active: true
       mode: compliance
-      read_only: 
+      read_only:
       MiqPolicyContent:
       - qualifier: failure
         failure_sequence: 1
@@ -272,9 +272,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: log
           description: Generate log message
@@ -288,9 +288,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: compliance_failed
           description: Mark as Non-Compliant
@@ -304,17 +304,17 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: d4ea28d8-f051-11e2-97c5-000c297e26aa
           description: Send Email to Security Team
           guid: d4ea28d8-f051-11e2-97c5-000c297e26aa
           action_type: email
           options:
-            :from: cloudforms_demo@redhat.com
-            :to: vestival@redhat.com
+            :from: cloudforms@{{ hailstorm_dns_domain }}
+            :to: admin@{{ hailstorm_dns_domain }}
       - qualifier: failure
         failure_sequence: 4
         MiqEventDefinition:
@@ -322,9 +322,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: evm_event
           description: Show EVM Event on Timeline
@@ -346,15 +346,15 @@
                 INCLUDES:
                   field: Vm.filesystems-contents
                   value: PermitRootLogin no
-          context_type: 
+          context_type:
         towhat: Vm
-        file_mtime: 
+        file_mtime:
         guid: 6e83d780-0819-11e3-97a7-000c296e94f9
-        filename: 
-        applies_to_exp: 
-        miq_policy_id: 
-        notes: 
-        read_only: 
+        filename:
+        applies_to_exp:
+        miq_policy_id:
+        notes:
+        read_only:
     - name: e629c444-df2a-11e5-ac99-001a4aa80101
       description: DROWN OpenSSL Vulnerability
       expression: !ruby/object:MiqExpression
@@ -362,7 +362,7 @@
           INCLUDES:
             field: Vm-os_image_name
             value: linux
-        context_type: 
+        context_type:
       towhat: Vm
       guid: e629c444-df2a-11e5-ac99-001a4aa80101
       created_by: admin
@@ -373,7 +373,7 @@
 '
       active: true
       mode: compliance
-      read_only: 
+      read_only:
       MiqPolicyContent:
       - qualifier: success
         success_sequence: 1
@@ -382,9 +382,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: log
           description: Generate log message
@@ -398,9 +398,9 @@
           description: VM Compliance Check
           guid: 42b1bd96-317e-11e3-88e1-005056b80000
           event_type: Default
-          definition: 
-          default: 
-          enabled: 
+          definition:
+          default:
+          enabled:
         MiqAction:
           name: compliance_failed
           description: Mark as Non-Compliant
@@ -466,12 +466,12 @@
                     REGULAR EXPRESSION MATCHES:
                       field: Vm.guest_applications-release
                       value: 15\.el6\b|16\.el6_5\.1\b|16\.el6_5\.4|16\.el6_5\.7|16\.el6_5\.14|16\.el6_5\.15|30\.el6\b|30\.el6_6\.2|30\.el6_6\.4|30\.el6_6\.5|16\.el6_5\b|30\.el6_6\.7|30\.el6_6\.8|30\.el6_6\.9|30\.el6_6\.11|42\.el6\b|42\.el6_7\.1|42\.el6_7\.2|34\.el7\b|34\.el7_0\.3|34\.el7_0\.4|34\.el7_0\.6|34\.el7_0\.7|42.el7\b|42\.el7_1\.4|42\.el7_1\.5|42\.el7_1\.6|42\.el7_1\.8|42\.el7_1\.9|51\.el7_2\.1|51\.el7_2\.2
-          context_type: 
+          context_type:
         towhat: Vm
-        file_mtime: 
+        file_mtime:
         guid: 0d6beea8-df56-11e5-ac99-001a4aa80101
-        filename: 
-        applies_to_exp: 
-        miq_policy_id: 
-        notes: 
-        read_only: 
+        filename:
+        applies_to_exp:
+        miq_policy_id:
+        notes:
+        read_only:
