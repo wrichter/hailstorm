@@ -1,4 +1,25 @@
 - block:
+    - name: create temp dir
+      local_action: command mktemp -d
+      register: mktemp_directory
+      failed_when: mktemp_directory.stdout == ""
+    #- debug: var=mktemp_directory
+    - name: copy content to temp dir
+      local_action: shell cd {{ content_location }} && cp -r * {{ mktemp_directory.stdout }}
+
+    - name: find jinja2 templates
+      local_action: find paths="{{ mktemp_directory.stdout }}" patterns="*.j2" recurse=yes
+      register: templates
+    #- debug: var=templates
+    - name: apply templates (overwriting existing files if necessary)
+      local_action: template src="{{ item }}" dest="{{ item | regex_replace('.j2$','') }}"
+      with_items: "{{ templates.files | map(attribute='path') | list }}"
+    - name: remove template
+      local_action: file path="{{ item }}" state=absent
+      with_items: "{{ templates.files | map(attribute='path') | list }}"
+
+
+
     - include: upload_cloudforms_content_rake_scripts.yml
       tags: ['rake']
     - include: upload_cloudforms_content_automate.yml
@@ -19,10 +40,13 @@
           import_individual_files: true
         - type: customization_templates
           import_individual_files: true
-          apply_template: true
         - type: reports
         - type: widgets
         - type: alerts
         - type: alertsets
         - type: policies
+
+
+    - name: remove temp dir
+      local_action: file name={{ mktemp_directory.stdout }} state=absent
   when: mode == "create"
