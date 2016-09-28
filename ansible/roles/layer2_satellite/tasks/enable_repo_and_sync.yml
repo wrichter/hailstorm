@@ -1,6 +1,7 @@
 - name: find enabled products
   shell: hammer product list --enabled true --organization "{{ organization }}" | tail -n+3 | awk 'BEGIN { FS = "|" } ; { gsub(/^[ \t]+/, "", $2); gsub(/[ \t]+$/, "", $2); print $2 }'
   register: prods
+  changed_when: false
 
 # "ignore_errors: yes" because hammer throws an error if we try to enable a repo, that is already enabled
 - name: enable repos

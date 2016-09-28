@@ -321,13 +321,13 @@ content_config:
       - product: Red Hat Software Collections for RHEL Server
         repository: "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server"
 
-  # - content_view: "CV-DEMO-RHEL7"
-  #   filter:
-  #   content:
-  #     - product: "Red Hat Enterprise Linux Server"
-  #       repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
-  #     - product: "Red Hat Enterprise Linux Server"
-  #       repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
+  - content_view: "CV-DEMO-RHEL7-SSLFIXESONLY"
+    filter:
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
 
 
 activation_keys_and_host_collections:
@@ -380,13 +380,13 @@ activation_keys_and_host_collections:
     override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-DEMO-RHEL7-MANAGED
-    content_view: CV-OS-RHEL7-SERVER
+    content_view: CV-DEMO-RHEL7-SSLFIXESONLY
     host_collection: DEMO-MANAGED
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-DEMO-RHEL7-UNMANAGED
-    content_view: CV-OS-RHEL7-SERVER
+    content_view: CV-DEMO-RHEL7-SSLFIXESONLY
     host_collection: DEMO-UNMANAGED
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
