@@ -1,7 +1,7 @@
 ---
 - MiqPolicy:
-    name: b03a4e74-473e-11e4-b745-005056b3585a
-    description: Shell-Shock Vulnerability
+    name: 02e07592-0819-11e3-97a7-000c296e94f9
+    description: Permit Root Login Disabled
     expression: !ruby/object:MiqExpression
       exp:
         INCLUDES:
@@ -9,16 +9,10 @@
           value: linux
       context_type: 
     towhat: Vm
-    guid: b03a4e74-473e-11e4-b745-005056b3585a
+    guid: 02e07592-0819-11e3-97a7-000c296e94f9
     created_by: admin
     updated_by: admin
-    notes: |-
-      This policy is based on https://access.redhat.com/articles/1200223.
-      Red Hat Enterprise Linux 6
-      bash-4.1.2-15.el6_5.2
-      bash-4.1.2-15.el6_5.1.sjis.2
-      bash-4.1.2-9.el6_2.2
-      bash-4.1.2-15.el6_4.2
+    notes: 
     active: true
     mode: compliance
     read_only: 
@@ -72,7 +66,7 @@
         action_type: email
         options:
           :from: cloudforms@{{ hailstorm_dns_domain }}
-          :to: admin@{{ hailstorm_dns_domain }}
+          :to: security@{{ hailstorm_dns_domain }}
     - qualifier: failure
       failure_sequence: 4
       MiqEventDefinition:
@@ -90,28 +84,24 @@
         action_type: default
         options: {}
     Condition:
-    - name: c2640554-3130-11e5-bbb8-005056bfd2a3
-      description: Vulnerable bash Package (ShellShock)
+    - name: 6e83d780-0819-11e3-97a7-000c296e94f9
+      description: Permit Root Login Disabled
       modifier: allow
       expression: !ruby/object:MiqExpression
         exp:
-          and:
-          - CONTAINS:
-              field: Vm.guest_applications-name
-              value: bash
-          - FIND:
-              search:
-                "=":
-                  field: Vm.guest_applications-version
-                  value: 4.1.2
-              checkall:
-                REGULAR EXPRESSION MATCHES:
-                  field: Vm.guest_applications-release
-                  value: 1[5]\.(el6_5.2\b|el6_5.1.sjis.2(?!\.)|el6_4.2)
+          FIND:
+            search:
+              "=":
+                field: Vm.filesystems-contents_available
+                value: 'true'
+            checkall:
+              INCLUDES:
+                field: Vm.filesystems-contents
+                value: PermitRootLogin no
         context_type: 
       towhat: Vm
       file_mtime: 
-      guid: c2640554-3130-11e5-bbb8-005056bfd2a3
+      guid: 6e83d780-0819-11e3-97a7-000c296e94f9
       filename: 
       applies_to_exp: 
       miq_policy_id: 

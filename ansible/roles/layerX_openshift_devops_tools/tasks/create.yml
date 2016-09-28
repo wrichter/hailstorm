@@ -26,7 +26,7 @@
     shell: curl "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/"
     register: tstcurl
     changed_when: false
-    until: "'<title>Nexus Repository Manager</title>' in tstcurl.stdout"
+    until: "'<title>Sonatype Nexus</title>' in tstcurl.stdout"
     retries: 360
     delay: 1
 
