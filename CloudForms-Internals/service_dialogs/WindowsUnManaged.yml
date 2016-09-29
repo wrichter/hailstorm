@@ -78,7 +78,7 @@
         values_method: 
         values_method_options: {}
         options:
-          :protected: false
+          :protected: true
         label: Password
         position: 1
         validator_type: regex
