@@ -86,4 +86,13 @@
 
   - name: Add Edit Role to Git User
     shell: "oc policy add-role-to-user edit -z git"
+
+  - name: Wait for git become online
+    shell: curl "http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/"
+    register: tstcurl
+    changed_when: false
+    until: "'Not Found' in tstcurl.stdout"
+    retries: 360
+    delay: 1
+
   when: "'git' not in deploymentconfigs.stdout_lines"
