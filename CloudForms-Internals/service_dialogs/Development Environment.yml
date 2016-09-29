@@ -1,0 +1,247 @@
+---
+- description: Development Environment
+  buttons: submit,cancel
+  label: Development Environment
+  dialog_tabs:
+  - description: 
+    display: edit
+    label: General
+    display_method: 
+    display_method_options: 
+    position: 0
+    dialog_groups:
+    - description: Size / Quota Allocation
+      display: edit
+      label: Size / Quota Allocation
+      display_method: 
+      display_method_options: 
+      position: 0
+      dialog_fields:
+      - name: size
+        description: Size
+        type: DialogFieldDropDownList
+        data_type: string
+        notes: 
+        notes_display: 
+        display: edit
+        display_method: 
+        display_method_options: {}
+        required: true
+        required_method: 
+        required_method_options: {}
+        default_value: 
+        values:
+        - - small
+          - 2000 milliCores OpenShift, 2 vCPUs OpenStack/RHV
+        - - medium
+          - 4000 milliCores OpenShift, 4 vCPUs OpenStack/RHV
+        - - large
+          - 8000 milliCores OpenShift, 8 vCPUs OpenStack/RHV
+        values_method: 
+        values_method_options: {}
+        options:
+          :sort_by: :description
+          :sort_order: :ascending
+        label: Size
+        position: 0
+        validator_type: 
+        validator_rule: 
+        reconfigurable: 
+        dynamic: false
+        show_refresh_button: 
+        load_values_on_init: 
+        read_only: false
+        auto_refresh: 
+        trigger_auto_refresh: 
+        resource_action:
+          action: 
+          resource_type: DialogField
+          ae_namespace: 
+          ae_class: 
+          ae_instance: 
+          ae_message: 
+          ae_attributes: {}
+    - description: OpenShift Configuration
+      display: edit
+      label: OpenShift Configuration
+      display_method: 
+      display_method_options: 
+      position: 1
+      dialog_fields:
+      - name: project
+        description: Project name
+        type: DialogFieldTextBox
+        data_type: string
+        notes: 
+        notes_display: 
+        display: edit
+        display_method: 
+        display_method_options: {}
+        required: false
+        required_method: 
+        required_method_options: {}
+        default_value: demo
+        values: 
+        values_method: 
+        values_method_options: {}
+        options:
+          :protected: false
+        label: Project name
+        position: 0
+        validator_type: 
+        validator_rule: 
+        reconfigurable: 
+        dynamic: false
+        show_refresh_button: 
+        load_values_on_init: 
+        read_only: false
+        auto_refresh: 
+        trigger_auto_refresh: 
+        resource_action:
+          action: 
+          resource_type: DialogField
+          ae_namespace: 
+          ae_class: 
+          ae_instance: 
+          ae_message: 
+          ae_attributes: {}
+      - name: staging
+        description: Staging Environments
+        type: DialogFieldDropDownList
+        data_type: string
+        notes: 
+        notes_display: 
+        display: edit
+        display_method: 
+        display_method_options: {}
+        required: true
+        required_method: 
+        required_method_options: {}
+        default_value: 
+        values:
+        - - 2 Stages (Dev/Prod)
+          - 2 Stages (Dev/Prod)
+        - - 3 Stages (Dev/Test/Prod)
+          - 3 Stages (Dev/Test/Prod)
+        values_method: 
+        values_method_options: {}
+        options:
+          :sort_by: :description
+          :sort_order: :ascending
+        label: Staging Environments
+        position: 1
+        validator_type: 
+        validator_rule: 
+        reconfigurable: 
+        dynamic: false
+        show_refresh_button: 
+        load_values_on_init: 
+        read_only: false
+        auto_refresh: 
+        trigger_auto_refresh: 
+        resource_action:
+          action: 
+          resource_type: DialogField
+          ae_namespace: 
+          ae_class: 
+          ae_instance: 
+          ae_message: 
+          ae_attributes: {}
+    - description: Database Configuration
+      display: edit
+      label: Database Configuration
+      display_method: 
+      display_method_options: 
+      position: 2
+      dialog_fields:
+      - name: database
+        description: Database
+        type: DialogFieldDropDownList
+        data_type: string
+        notes: 
+        notes_display: 
+        display: edit
+        display_method: 
+        display_method_options: {}
+        required: true
+        required_method: 
+        required_method_options: {}
+        default_value: 
+        values:
+        - - Any on OpenShift
+          - Any on OpenShift
+        - - Cassandra on OpenStack
+          - Cassandra on OpenStack
+        - - MongoDB on OpenStack
+          - MongoDB on OpenStack
+        - - MySQL on RHV
+          - MySQL on RHV
+        - - Postgres on RHV
+          - Postgres on RHV
+        values_method: 
+        values_method_options: {}
+        options:
+          :sort_by: :description
+          :sort_order: :ascending
+        label: Database
+        position: 0
+        validator_type: 
+        validator_rule: 
+        reconfigurable: 
+        dynamic: false
+        show_refresh_button: 
+        load_values_on_init: 
+        read_only: false
+        auto_refresh: 
+        trigger_auto_refresh: 
+        resource_action:
+          action: 
+          resource_type: DialogField
+          ae_namespace: 
+          ae_class: 
+          ae_instance: 
+          ae_message: 
+          ae_attributes: {}
+    - description: Certificate
+      display: edit
+      label: Certificate
+      display_method: 
+      display_method_options: 
+      position: 3
+      dialog_fields:
+      - name: certificate
+        description: Public Certificate for ProRequest Public Certificated
+        type: DialogFieldCheckBox
+        data_type: 
+        notes: 
+        notes_display: 
+        display: edit
+        display_method: 
+        display_method_options: {}
+        required: false
+        required_method: 
+        required_method_options: {}
+        default_value: f
+        values: 
+        values_method: 
+        values_method_options: {}
+        options: {}
+        label: Request Public Certificate
+        position: 0
+        validator_type: 
+        validator_rule: 
+        reconfigurable: 
+        dynamic: false
+        show_refresh_button: 
+        load_values_on_init: 
+        read_only: false
+        auto_refresh: 
+        trigger_auto_refresh: 
+        resource_action:
+          action: 
+          resource_type: DialogField
+          ae_namespace: 
+          ae_class: 
+          ae_instance: 
+          ae_message: 
+          ae_attributes: {}
