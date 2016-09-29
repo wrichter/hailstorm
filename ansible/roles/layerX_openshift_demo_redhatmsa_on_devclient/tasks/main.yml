@@ -3,6 +3,8 @@
   when: mode == "create"
 
 - block:
+    - name: login to OpenShift
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/  creates=~/.kube/openshift.{{ hailstorm_dns_domain }}_8443/
     - name: remove redhat-msa project
       shell: oc delete project {{ redhat_msa_project }}
     - name: remove workdirs
@@ -10,4 +12,5 @@
       with_items: "{{ msa_projects }}"
   become: true
   become_user: developer
+  become_method: su
   when: mode == "destroy"
