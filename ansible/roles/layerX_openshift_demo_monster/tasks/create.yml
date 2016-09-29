@@ -56,6 +56,9 @@
 
   - name: Create monster prd template in openshift namespace
     shell: "oc create -f /tmp/monster_template_prod.yml -n openshift"
+
+  - name: Grant Access to Images from demo-dev
+    shell: "oc policy add-role-to-group system:image-puller system:serviceaccounts:demo-prod -n demo-dev"
   when: "'monster-prod' not in templates.stdout_lines"
 
 
