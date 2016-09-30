@@ -9,7 +9,7 @@
   changed_when: false
 
 - name: find existing subscriptions for activation keys
-  shell: hammer --output json activation-key subscriptions --activation-key "{{ item.1.activation_key }}-{{ item.0 }}"  --organization "{{ organization }}"
+  shell: hammer --output json activation-key subscriptions {% if satellite_version==6.1 %}--name{% else %}--activation-key{% endif %} "{{ item.1.activation_key }}-{{ item.0 }}"  --organization "{{ organization }}"
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
     - "{{ activation_keys_and_host_collections }}"
