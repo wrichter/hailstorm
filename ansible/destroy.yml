@@ -213,19 +213,19 @@
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start
-      when: "{{ destroy_satellite==true }}"
+      when: destroy_satellite is defined and destroy_satellite=="true"
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start
-      when: "{{ destroy_satellite==true }}"
+      when: destroy_satellite is defined and destroy_satellite=="true"
     - role: layer2_rhel
       tags: [ 'layer2','satellite', 'rhel'  ]
       mode: destroy
-      when: "{{ destroy_satellite==true }}"
+      when: destroy_satellite is defined and destroy_satellite=="true"
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'vm' ]
       mode: destroy
-      when: "{{ destroy_satellite==true }}"
+      when: destroy_satellite is defined and destroy_satellite=="true"
 
 - hosts: layer1
   gather_facts: false
