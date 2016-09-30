@@ -20,4 +20,5 @@
 
 - block:
     - include: associate_subscriptions_with_ak.yml
+      tags: ['subs']
   when: mode=="create" or mode=="refresh_subscriptions"

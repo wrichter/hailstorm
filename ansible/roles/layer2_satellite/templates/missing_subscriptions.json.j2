@@ -1,7 +1,6 @@
-[{% set comma = false %}{% for item in assigned_subs.results %}
+[{% for item in assigned_subs.results %}
+{% set outerindex = loop.index %}
 {% for sub in subscriptions.stdout | from_json | selectattr('Name','match', item.item.1.activation_key_subscription_regex) | map(attribute='ID') | list | difference ( item.stdout | from_json | map(attribute='ID') | list) | list  %}
-{% if comma %},{% endif %}
-{  "activation_key": "{{ item.item.1.activation_key }}-{{ item.item.0 }}", "subscription_id": "{{ sub }}" }
-{% set comma = true %}
+{% if not (outerindex == 1 and loop.index == 1) %},{% endif %}{ "activation_key": "{{ item.item.1.activation_key }}-{{ item.item.0 }}", "subscription_id": "{{ sub }}" }
 {% endfor %}
 {% endfor %}]

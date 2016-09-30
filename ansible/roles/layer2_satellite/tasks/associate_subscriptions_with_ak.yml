@@ -16,10 +16,10 @@
   register: assigned_subs
   changed_when: false
 
-# - debug: msg="{{ lookup('template','missing_subscriptions.json.j2') }}"
-# - local_action: template src=missing_subscriptions.json.j2 dest=/tmp/test.txt
+# - debug: var=assigned_subs
+- debug: msg="{{ lookup('template','missing_subscriptions.json.j2')  }}"
+- local_action: template src=missing_subscriptions.json.j2 dest=/tmp/test.txt
 
 - name: associate subscription to activation keys
   shell: hammer activation-key add-subscription --organization "{{ organization }}" --name "{{ item.activation_key }}" --subscription-id {{ item.subscription_id }}
   with_items: "{{ lookup('template','missing_subscriptions.json.j2') }}"
-  when: item.dummy is not defined
