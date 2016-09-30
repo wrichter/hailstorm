@@ -24,6 +24,15 @@
 #       prompt: "what is your Red Hat Subscription Manager password?"
 
 
+#### SATELLITE ####
+# refresh subscription to include the "guests of"... subscriptions
+- hosts: satellite
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_satellite, tags: [ 'layer2', 'satellite' ], mode: refresh_subscriptions }
+
+
 #### CLOUDFORMS ####
 
 - hosts: cloudforms

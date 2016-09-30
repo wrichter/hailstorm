@@ -85,7 +85,7 @@ undercloud-admin  ansible_host=192.168.105.41
 
 # layer 3 openstack
 [lookbusy-osp]
-lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-PROD" osp_tenant="demo1" osp_flavor="m1.small" osp_image="RHEL7"
+lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-PROD" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
 
 #### ADDITIONAL GROUPS
 

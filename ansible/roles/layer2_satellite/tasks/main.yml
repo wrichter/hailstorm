@@ -14,4 +14,10 @@
     - include: host-collections.yml
       tags: ['hc']
     - include: activation_keys.yml
+      tags: ['ak']
   when: mode=="create"
+
+
+- block:
+    - include: associate_subscriptions_with_ak.yml
+  when: mode=="create" or mode=="refresh_subscriptions"

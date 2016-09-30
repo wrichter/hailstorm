@@ -1,0 +1,25 @@
+- name: get current lifecycle environments
+  shell: hammer lifecycle-environment list --organization "{{ organization }}" --library false | awk '{ print $3 }' | tail -n+4
+  register: current_lifecycle_environments
+  changed_when: false
+
+- name: get present subscriptions
+  shell: hammer --output json subscription list --organization "{{ organization }}"
+  register: subscriptions
+  changed_when: false
+
+- name: find existing subscriptions for activation keys
+  shell: hammer --output json activation-key subscriptions --activation-key "{{ item.1.activation_key }}-{{ item.0 }}"  --organization "{{ organization }}"
+  with_nested:
+    - "{{ current_lifecycle_environments.stdout_lines }}"
+    - "{{ activation_keys_and_host_collections }}"
+  register: assigned_subs
+  changed_when: false
+
+# - debug: msg="{{ lookup('template','missing_subscriptions.json.j2') }}"
+# - local_action: template src=missing_subscriptions.json.j2 dest=/tmp/test.txt
+
+- name: associate subscription to activation keys
+  shell: hammer activation-key add-subscription --organization "{{ organization }}" --name "{{ item.activation_key }}" --subscription-id {{ item.subscription_id }}
+  with_items: "{{ lookup('template','missing_subscriptions.json.j2') }}"
+  when: item.dummy is not defined
