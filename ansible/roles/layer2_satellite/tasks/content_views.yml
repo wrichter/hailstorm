@@ -20,6 +20,29 @@
     - "{{ content_config }}"
     - content
 
+- name: check existing filters
+  command: hammer --output json content-view filter list --content-view "{{ item.content_view }}" --organization "{{ organization }}"
+  register: existing_filters
+  when: item.filter is defined
+  with_items: "{{ content_config }}"
+  changed_when: false
+
+- name: create filters
+  command: hammer content-view filter create --content-view {{ item.0.item.content_view }} --name "{{ item.1.name }}" --description "{{ item.1.description }}" --inclusion "{{ item.1.include }}" --organization "{{ organization }}" --type {{ item.1.type }} --repositories "{{ item.1.apply_to|join('\",\"') }}"
+  when: not item.0|skipped and item.1.name not in (item.0.stdout | from_json | map(attribute='Name') | list)
+  with_subelements:
+    - "{{ existing_filters.results }}"
+    - item.filter
+  register: new_filters
+
+- debug: msg="{{ lookup('template','missing_filters.json.j2') }}"
+- local_action: template src=missing_filters.json.j2 dest=/tmp/text2.txt
+
+- name: create filter rules
+  command: hammer content-view filter rule create --name "{{ item.name }}" --content-view  {{ item.content_view }} --organization "{{ organization }}" --content-view-filter "{{ item.filtername }}"
+  with_items: "{{ lookup('template','missing_filters.json.j2')  }}"
+
+
 - name: get current lifecycle environments
   shell: hammer lifecycle-environment list --organization "{{ organization }}" --library false | awk '{ print $3 }' | tail -n+4
   register: current_lifecycle_environments

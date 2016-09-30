@@ -323,12 +323,19 @@ content_config:
 
   - content_view: "CV-DEMO-RHEL7-SSLFIXESONLY"
     filter:
+      - name: "SSL only"
+        description: "Only packages whose name contains SSL"
+        include: "true"
+        type: "rpm"
+        rules:
+          - name: "*ssl*"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
-
 
 activation_keys_and_host_collections:
   - activation_key: AK-CV-OS-RHEL6-SERVER

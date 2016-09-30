@@ -1,0 +1,12 @@
+[{% set needscomma = [false] %}
+{% for newfilter in new_filters.results %}{% if not newfilter|skipped %}
+{% for rule in newfilter.item.1.rules %}
+{% if needscomma|last %},{% endif %}
+{
+  "content_view": "{{ newfilter.item.0.item.content_view }}",
+  "filtername": "{{ newfilter.item.1.name }}",
+  "name": "{{ rule.name }}"
+}
+{% if needscomma.append(true) %}{% endif %}
+{% endfor %}
+{% endif %}{% endfor %}]
