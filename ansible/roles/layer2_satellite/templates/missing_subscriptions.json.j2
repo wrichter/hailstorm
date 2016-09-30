@@ -1,6 +1,6 @@
-[{% for item in assigned_subs.results %}
-{% set outerindex = loop.index %}
+[{% set needscomma = [false] %}{% for item in assigned_subs.results %}
 {% for sub in subscriptions.stdout | from_json | selectattr('Name','match', item.item.1.activation_key_subscription_regex) | map(attribute='ID') | list | difference ( item.stdout | from_json | map(attribute='ID') | list) | list  %}
-{% if not (outerindex == 1 and loop.index == 1) %},{% endif %}{ "activation_key": "{{ item.item.1.activation_key }}-{{ item.item.0 }}", "subscription_id": "{{ sub }}" }
+{% if needscomma|last %},{% endif %}{ "activation_key": "{{ item.item.1.activation_key }}-{{ item.item.0 }}", "subscription_id": "{{ sub }}" }
+{% if needscomma.append(true) %}{% endif %}{# this is a kludge but otherwise I cannot modify the variable outside of the inner loops' scope #}
 {% endfor %}
 {% endfor %}]
