@@ -13,12 +13,9 @@
       tags: ['cv']
     - include: host-collections.yml
       tags: ['hc']
-    - include: activation_keys.yml
-      tags: ['ak']
   when: mode=="create"
 
-
 - block:
-    - include: associate_subscriptions_with_ak.yml
-      tags: ['subs']
+    - include: activation_keys.yml
+      tags: ['ak']
   when: mode=="create" or mode=="refresh_subscriptions"
