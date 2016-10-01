@@ -1,7 +1,7 @@
 ---
 # this is to prevent the next step from failing
 - name: remove standard resolver config (if present)
-  line: dest=/etc/resolv.conf line="nameserver {{ infrastructure_address_default_dns }}" state=absent
+  lineinfile: dest=/etc/resolv.conf line="nameserver {{ infrastructure_address_default_dns }}" state=absent
 
 # if the following step fails, check to see if the DNS resolution resolves the server's fqdn to the external IP address (in which case it fails)
 - name: initial configuration of the IPA servers
