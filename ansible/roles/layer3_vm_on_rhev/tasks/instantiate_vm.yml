@@ -109,3 +109,12 @@
   wait_for: host={{ ansible_host }} port=22 timeout=600
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
   when: vm_id.stdout == ""
+
+- name: wait for subscription to finish
+  shell: subscription-manager status | awk '/^Overall Status/{ print $3 }'
+  register: subscription_status
+  until: subscription_status.stdout == 'Current'
+  failed_when: subscription_status.stdout == ''
+  changed_when: false
+  retries: 30
+  delay: 20

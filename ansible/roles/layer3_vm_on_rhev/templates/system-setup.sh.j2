@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #sleep 60
-systemctl stop sshd
+#systemctl stop sshd
 
 {% for nic in vm_nics %}{% if nic.netname == 'services' %}
 echo -e NAME=\"{{nic.dev}}\"\\nONBOOT=yes\\nBOOTPROTO=\"static\"\\nDEVICE={{nic.dev}}\\nIPADDR=\"{{ nic.ip }}\"\\nNETMASK=\"{{ nic.netmask }}\"\\nDNS1=\"{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address')  }}\"\\nGATEWAY=\"{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address')  }}\" >/etc/sysconfig/network-scripts/ifcfg-{{nic.dev}}
@@ -32,6 +32,6 @@ katello-package-upload
 
 -- COMMENTED OUT #}
 
-systemctl start sshd
+#systemctl start sshd
 
 exit 0

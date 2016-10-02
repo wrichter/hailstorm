@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #sleep 60
-systemctl stop sshd
+#systemctl stop sshd
 
 #add subscription manager
 #yum -t -y -e 0 install subscription-manager
@@ -20,6 +20,6 @@ chkconfig goferd on
 #trigger config upload to satellite so it appears at once
 katello-package-upload
 
-systemctl start sshd
+#systemctl start sshd
 
 exit 0
