@@ -1,0 +1,19 @@
+---
+- block:
+    - name: check if epel is installed
+      shell: rpm -q epel-release
+      changed_when: false
+      ignore_errors: true
+      register: epel
+
+    - name: install epel-release
+      command: yum -y localinstall  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+      when: epel|failed
+      
+    - debug: msg="not implemented yet"
+  when: mode=="create"
+
+
+- block:
+    - debug: msg="not implemented yet"
+  when: mode=="destroy"

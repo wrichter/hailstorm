@@ -1,4 +1,5 @@
 - include: create-01-base.yml
+- include: create-02-ansibletower.yml
 - include: create-02-rhev.yml
 - include: create-02-osp.yml
 - include: create-02-ocp.yml

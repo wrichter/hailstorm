@@ -73,6 +73,9 @@ rhosp-control3  ansible_host=192.168.103.36 activation_key="AK-CV-RHOSP-PROD" br
 [dev-client]
 dev-client     ansible_host=192.168.103.37 activation_key="AK-CV-RHOSE3-CLIENT-PROD"
 
+[tower]
+tower          ansible_host=192.168.103.38 activation_key="AK-CV-OS-RHEL7-SERVER-PROD"
+
 [lookbusy-rhev]
 lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" rhev_image="RHEL7" nic_attachments="[ {{ infrastructure_network_services }},{{ infrastructure_network_admin }} ]"
 
@@ -150,6 +153,7 @@ infrastructure
 efk
 lookbusy
 dev-client
+tower
 
 # All layer2 node groups that are installed with RHEL6
 [rhel6:children]
@@ -168,6 +172,7 @@ ipa
 infrastructure
 efk
 dev-client
+tower
 
 # to let it participate in the calculation of ansible_host and vm_nics
 # and the ssh proxy command used to communicate with all layer2/3 hosts
@@ -189,6 +194,7 @@ efk
 rhevm
 lookbusy-rhev
 dev-client
+tower
 
 [lookbusy:children]
 lookbusy-osp
