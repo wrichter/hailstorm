@@ -8,6 +8,14 @@
   lineinfile: dest=/etc/exports line="{{ nfs_ose3_pv_path }}/{{ item }} {{ infrastructure_network_storage.default_gw_host_prefix }}(rw,root_squash,no_wdelay)"
   register: etc_exports
   with_sequence: start=0 end=20 format=pv%02d
+
+# for OSCP 3.3
+- name: create subdirectory for metrics
+  file: state=directory path={{ nfs_ose3_pv_path }}/metrics mode=0777 owner=nfsnobody group=nfsnobody
+- name: create /etc/exports entry for metrics
+  lineinfile: dest=/etc/exports line="{{ nfs_ose3_pv_path }}/metrics {{ infrastructure_network_storage.default_gw_host_prefix }}(rw,root_squash,no_wdelay)"
+  register: etc_exports2
+
 - name: export file systems
   command: exportfs -a
-  when: etc_exports|changed
+  when: etc_exports|changed or etc_exports2|changed

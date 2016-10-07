@@ -20,7 +20,19 @@
 - name: create /etc/ansible/hosts
   template: src=hosts.j2 dest=/etc/ansible/hosts
   register: ansible_hosts
+
 - name: run installer playbook
-  shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+  shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml 2>&1 >~/openshift_install.log
   when: ansible_hosts|changed
+  async: 7200
+  poll: 0
   tags: ['playbook']
+  register: playbook
+
+- name: check on installer playbook completed
+  async_status: jid={{ playbook.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 480
+  delay: 15
+  when: ansible_hosts|changed

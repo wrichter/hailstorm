@@ -1,6 +1,6 @@
 - block:
     - name: login to OpenShift
-      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/ 
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/
 
     - name: check existing projects
       shell: oc get projects | awk '{ print $1 }'
@@ -52,13 +52,15 @@
       tags: git
 
     - name: Compile Java Projects
-      shell: "scl enable rh-maven33 -- mvn -f {{ workdir }}/{{ item.name }}/pom.xml package"
+      shell: "scl enable rh-maven33 -- mvn -f ~/{{ workdir }}/{{ item.name }}/pom.xml package >~/{{item.name}}_compile.log"
       with_items: "{{ msa_projects }}"
       when: "item.project == 'java'"
       tags: compile
+      async: 7200
+      poll: 10
 
     - name: NPM install NodeJS Projects
-      shell: "scl enable rh-nodejs4 -- npm --prefix {{ workdir }}/{{ item.name }} install {{ workdir }}/{{ item.name }}"
+      shell: "scl enable rh-nodejs4 -- npm --prefix ~/{{ workdir }}/{{ item.name }} install {{ workdir }}/{{ item.name }}"
       with_items: "{{ msa_projects }}"
       when: "item.project == 'node'"
       tags: compile

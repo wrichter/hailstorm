@@ -36,6 +36,24 @@ openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_logging_public_url=https://kibana.apps.{{ hailstorm_dns_domain }}
 openshift_master_metrics_public_url=https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics
 
+#new for 3.3
+openshift_hosted_router_selector="region=infra"
+openshift_registry_selector="region=infra"
+#openshift_docker_options="--log-opt max-size=1M --log-opt max-file=3"
+os_sdn_network_plugin_name="redhat/openshift-ovs-multitenant"
+#openshift_docker_additional_registries
+#openshift_docker_insecure_registries
+#openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "names": ["public-master-host.com"]}]
+#openshift_master_overwrite_named_certificates=true
+openshift_hosted_metrics_deploy=true
+openshift_hosted_metrics_storage_kind=nfs
+openshift_hosted_metrics_storage_access_modes=['ReadWriteOnce']
+openshift_hosted_metrics_storage_host={{ infrastructure_address_nfs_server }}
+openshift_hosted_metrics_storage_nfs_directory={{ nfs_ose3_pv_path }}
+openshift_hosted_metrics_storage_volume_name=metrics
+openshift_hosted_metrics_storage_volume_size=10Gi
+
+
 # host group for masters
 [masters]
 {% for master in groups["ose3-master"] %}

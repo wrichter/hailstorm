@@ -34,14 +34,14 @@ test-rhel6      ansible_host=192.168.103.18 activation_key="AK-CV-OS-RHEL6-SERVE
 test-rhel7      ansible_host=192.168.103.19 activation_key="AK-CV-OS-RHEL7-SERVER-TEST"
 
 [ose3-master]
-ose3-master1    ansible_host=192.168.103.20 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-master2    ansible_host=192.168.103.21 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
-ose3-master3    ansible_host=192.168.103.22 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master1    ansible_host=192.168.103.20 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master2    ansible_host=192.168.103.21 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-PROD"
+ose3-master3    ansible_host=192.168.103.22 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-PROD"
 
 [ose3-node]
-ose3-infranode1 ansible_host=192.168.103.23 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
-ose3-node1      ansible_host=192.168.103.25 openshift_node_labels="{'region': 'primary', 'zone': 'east'}"  activation_key="AK-CV-RHOSE3-PROD"
-ose3-node2      ansible_host=192.168.103.26 openshift_node_labels="{'region': 'primary', 'zone': 'west'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-infranode1 ansible_host=192.168.103.23 openshift_node_labels="{'region': 'infra', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-PROD" additional_dns="*.apps"
+ose3-node1      ansible_host=192.168.103.25 openshift_node_labels="{'region': 'primary', 'zone': 'east', 'logging-infra-fluentd': 'true'}"  activation_key="AK-CV-RHOSE3-PROD"
+ose3-node2      ansible_host=192.168.103.26 openshift_node_labels="{'region': 'primary', 'zone': 'west', 'logging-infra-fluentd': 'true'}"  activation_key="AK-CV-RHOSE3-PROD"
 
 [ose3-lb]
 ose3-lb         ansible_host=192.168.103.27 activation_key="AK-CV-OS-RHEL7-SERVER-PROD" additional_dns="openshift"

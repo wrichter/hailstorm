@@ -4,6 +4,8 @@ hailstorm_dns_domain: hailstorm3.coe.muc.redhat.com
 disable_registration_against_satellite: false
 satellite_version: 6.2
 
+openshift_version: 3.3
+
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
 # you need to ensure they are there before running the playbook
