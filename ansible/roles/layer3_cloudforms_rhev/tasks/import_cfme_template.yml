@@ -11,7 +11,7 @@
   delegate_to: rhevm
   changed_when: false
   register: template
-  
+
 - block:
     - name: get export domain UUID
       shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
@@ -47,4 +47,15 @@
              -d "{{ lookup('template', 'import_template.xml.j2') }}" \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ template_import_link.stdout }}"
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+
+    - name: get template name
+      shell: rhevm-shell -E "list templates --parent-storagedomain-name export1" | awk '/^name:.*RedHat_CFME*/ { print $3 }'
+      register: template_name
+      delegate_to: rhevm
+      changed_when: false
+      failed_when: template_name.stdout == ""
+
+    - name: remove template from export domain
+      shell: rhevm-shell -E 'delete template {{ template_name.stdout }} --parent-storagedomain-name export1'
+      delegate_to: rhevm
   when: template.stdout == ''
