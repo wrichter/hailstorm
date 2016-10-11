@@ -7,10 +7,10 @@
       tags: [ 'layer2','dev-client', 'ose3', 'vm' ]
       mode: start
     - role: layerX_openshift_demo_redhatmsa_on_devclient
-      tags: [ 'layer2','dev-client', 'ose3', 'msademo' ]
+      tags: [ 'layer2','dev-client', 'ose3', 'msademo', 'content' ]
       mode: destroy
     - role: layerX_ipa_client
-      tags: [ 'layer2','dev-client', 'ose3', 'ipa-client' ]
+      tags: [ 'layer2','dev-client', 'ose3', 'ipa-client','content' ]
       mode: destroy
     - role: layer2_rhel
       tags: [ 'layer2','dev-client', 'ose3', 'rhel' ]
@@ -65,9 +65,9 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layerX_openshift_demo_monster, tags: ['ose3-demo','ose3-content'], mode: destroy }
-    - { role: layerX_openshift_devops_tools, tags: ['ose3-devops','ose3-content'], mode: destroy }
-    - { role: layerX_openshift_installer, tags: ['ose3-metrics', 'ose3-roles','ose3-content'], mode: destroy }
+    - { role: layerX_openshift_demo_monster, tags: ['ose3-demo','ose3-content', 'content'], mode: destroy }
+    - { role: layerX_openshift_devops_tools, tags: ['ose3-devops','ose3-content','content'], mode: destroy }
+    - { role: layerX_openshift_installer, tags: ['ose3-metrics', 'ose3-roles','ose3-content','content'], mode: destroy }
 
 - hosts: ose3
   gather_facts: false
@@ -111,9 +111,9 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent' ], mode: destroy }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent','content' ], mode: destroy }
     - role: layer2_rhevm_ldap
-      tags: [ 'rhevm-ldap','rhev' ]
+      tags: [ 'rhevm-ldap','rhev', 'content' ]
       mode: destroy
 
 - hosts: rhev
@@ -213,19 +213,19 @@
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start
-      when: destroy_satellite is defined and destroy_satellite=="true"
+      when: destroy_satellite is defined and destroy_satellite==true
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start
-      when: destroy_satellite is defined and destroy_satellite=="true"
+      when: destroy_satellite is defined and destroy_satellite==true
     - role: layer2_rhel
       tags: [ 'layer2','satellite', 'rhel'  ]
       mode: destroy
-      when: destroy_satellite is defined and destroy_satellite=="true"
+      when: destroy_satellite is defined and destroy_satellite==true
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'vm' ]
       mode: destroy
-      when: destroy_satellite is defined and destroy_satellite=="true"
+      when: destroy_satellite is defined and destroy_satellite==true
 
 - hosts: layer1
   gather_facts: false
