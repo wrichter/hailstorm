@@ -21,18 +21,24 @@
   template: src=hosts.j2 dest=/etc/ansible/hosts
   register: ansible_hosts
 
-- name: run installer playbook
-  shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml 2>&1 >~/openshift_install.log
-  when: ansible_hosts|changed
-  async: 7200
-  poll: 0
-  tags: ['playbook']
-  register: playbook
+- block:
+    - name: start IPTables services on installer (to prevent playbook from hanging when it enables the service)
+      service: name=iptables state=started enabled=yes
 
-- name: check on installer playbook completed
-  async_status: jid={{ playbook.ansible_job_id }}
-  register: job_result
-  until: job_result.finished
-  retries: 480
-  delay: 15
+    - name: pause for IPTables to react
+      pause: seconds=15
+
+    - name: run installer playbook
+      shell: ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml 2>&1 >~/openshift_install.log
+      async: 7200
+      poll: 0
+      tags: ['playbook']
+      register: playbook
+
+    - name: check on installer playbook completed
+      async_status: jid={{ playbook.ansible_job_id }}
+      register: job_result
+      until: job_result.finished
+      retries: 480
+      delay: 15
   when: ansible_hosts|changed
