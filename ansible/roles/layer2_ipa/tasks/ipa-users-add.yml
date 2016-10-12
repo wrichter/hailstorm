@@ -31,7 +31,7 @@
   with_items: "{{ ipa_user }}"
 
 - name: check if admin has email set
-  shell: echo "{{ ipa_admin_password }}" | ipa user-show admin | awk '/Email/{ print $3 }'
+  shell: echo "{{ ipa_admin_password }}" | kinit admin 1>/dev/null && ipa user-show admin | awk '/Email/{ print $3 }'
   changed_when: false
   register: admin_email
 
@@ -54,8 +54,8 @@
     - name: add inetOrgPerson to admin account
       shell: ldapmodify -x -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }} -w {{ root_password }} -f /tmp/admin_inetOrgPerson.ldif
       when: "'inetOrgPerson' not in objectClasses.stdout_lines"
-    - name: give IPA 30 seconds pause (otherwise the next step fails)
-      pause: seconds=30
+    # - name: give IPA 30 seconds pause (otherwise the next step fails)
+    #   pause: seconds=30
     - name: set admin email address
-      shell: echo "{{ ipa_admin_password }}" | ipa user-mod admin --email=admin@{{ hailstorm_dns_domain }}
+      shell: echo "{{ ipa_admin_password }}" | kinit admin && ipa user-mod admin --email=admin@{{ hailstorm_dns_domain }}
   when: admin_email.stdout == ""
