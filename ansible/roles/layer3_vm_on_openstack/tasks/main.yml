@@ -10,7 +10,7 @@
    - name: wait for subscription to finish
      shell: subscription-manager status | awk '/^Overall Status/{ print $3 }'
      register: subscription_status
-     until: subscription_status.stdout == 'Current'
+     until: subscription_status.stdout == 'Current' or subscription_status.stdout == 'Insufficient'
      failed_when: subscription_status.stdout == ''
      changed_when: false
      retries: 30
