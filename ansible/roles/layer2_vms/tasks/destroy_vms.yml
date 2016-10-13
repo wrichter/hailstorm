@@ -1,16 +1,27 @@
 ---
-- name: get list of vms
-  virt: command=list_vms
-  register: virt_vms
+# the combination of virt module and delegation seems to get the results confused
+# hence stronger reliance on virsh commands
+
+- block:
+    - name: get list of vms
+      virt: command=list_vms
+      register: virt_vms
+    - name: get list of running vms
+      command: virsh list --name
+      register: running_vms
+      changed_when: false
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+
 - name: delete kickstart files
   file: path={{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg  state=absent
-  when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
+  #when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
   delegate_to: "{{ infrastructure_delegate_nfs_server }}"
+
 - block:
     - name: destroy vms
-      virt: command=destroy name={{ inventory_hostname_short }}
-      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
+      #virt: command=destroy name={{ inventory_hostname_short }}
+      shell: virsh destroy {{ inventory_hostname_short }}
+      when: "{{ inventory_hostname_short in running_vms.stdout_lines }}"
       ignore_errors: true
 
     - name: list VM snapshots
@@ -22,8 +33,9 @@
       with_items: "{{ snapshots.stdout_lines }}"
 
     - name: undefine vms
-      virt: command=undefine name={{ inventory_hostname_short }}
-      #when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
+      #virt: command=undefine name={{ inventory_hostname_short }}
+      command: virsh undefine {{ inventory_hostname_short }}
+      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
       ignore_errors: true
     - name: refresh pool to allow unused images to be deleted
       command: virsh pool-refresh {{ layer1_qcow_storage.poolname }}
