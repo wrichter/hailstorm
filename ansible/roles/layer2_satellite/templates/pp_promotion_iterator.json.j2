@@ -1,0 +1,28 @@
+[{% set needscomma = [false] %}
+{% for lifecycle_environment in lifecycle_environments %}
+{% if lifecycle_environment.date_filter is defined %}
+{% for content in content_config  %}
+
+{% set matching_cv_version = content_view_version_info2.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','equalto',content.content_view)|selectattr('Description','equalto','hailstorm-' + lifecycle_environment.date_filter)|list %}
+{% if matching_cv_version|length > 0 %}
+{% set promoted = [] %}
+{% for key, value in matching_cv_version[0]['Lifecycle Environments'].iteritems() %}
+{% if promoted.append(value['Name']) %}{% endif %}
+{% endfor %}
+
+{% if lifecycle_environment.name not in promoted %}
+{% if needscomma|last %},{% endif %}
+{
+  "id":"{{ matching_cv_version[0]['ID'] }}",
+  "content_view":"{{ matching_cv_version[0]['Content View Name'] }}",
+  "version":"{{ matching_cv_version[0]['Version'] }}",
+  "lifecycle_environment":"{{ lifecycle_environment.name }}"
+}
+{% if needscomma.append(true) %}{% endif %}{# this is a kludge but otherwise I cannot modify the variable outside of the inner loops' scope #}
+{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+]

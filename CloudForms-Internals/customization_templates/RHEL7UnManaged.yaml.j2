@@ -72,7 +72,7 @@
        rpm -ivh http://satellite.<%=script_domainname%>/pub/katello-ca-consumer-latest.noarch.rpm
 
        echo "Registering the System"
-       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.<%=script_domainname%> --activationkey="AK-DEMO-RHEL7-UNMANAGED-TEST"
+       subscription-manager register --org="Default_Organization" --name=<%=script_hostname%>.<%=script_domainname%> --activationkey="AK-DEMO-RHEL7-UNMANAGED-{{ stage }}"
 
        # add the rhel rpms to install katello agent
        # subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ satellite_version }}-rpms

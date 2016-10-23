@@ -11,6 +11,8 @@
       tags: ['lifecycle']
     - include: content_views.yml
       tags: ['cv']
+    - include: publish_and_promote_cv.yml
+      tags: ['publish']
     - include: host-collections.yml
       tags: ['hc']
   when: mode=="create"

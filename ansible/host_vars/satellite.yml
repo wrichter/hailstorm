@@ -201,18 +201,22 @@ product_config:
       - name: Red Hat CloudForms Management Engine 5.6 (RPMs)
 
 lifecycle_environments:
-  - name: 'DEV'
-    prior: 'Library'
-    description: 'Development'
-    label: 'development'
-  - name: 'TEST'
-    prior: 'DEV'
-    description: 'Testing'
-    label: 'testing'
   - name: 'PROD'
     prior: 'TEST'
     description: 'Production'
     label: 'production'
+    date_filter: "2016-10-07"
+  - name: 'TEST'
+    prior: 'DEV'
+    description: 'Testing'
+    label: 'testing'
+    date_filter: "2016-10-07"
+  - name: 'DEV'
+    prior: 'Library'
+    description: 'Development'
+    label: 'development'
+    date_filter: "2016-10-21"
+
 
 content_config:
   - content_view: "CV-OS-RHEL6-SERVER"
@@ -324,11 +328,11 @@ content_config:
   - content_view: "CV-DEMO-RHEL7-SSLFIXESONLY"
     filter:
       - name: "SSL only"
-        description: "Only packages whose name contains SSL"
+        description: "Only SSL fixes"
         include: "true"
-        type: "rpm"
+        type: "erratum"
         rules:
-          - name: "*ssl*"
+          - errata_ids: ["RHSA-2016:1940"]
         apply_to:
           - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:

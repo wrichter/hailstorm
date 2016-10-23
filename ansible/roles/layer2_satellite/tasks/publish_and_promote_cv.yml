@@ -1,0 +1,89 @@
+- name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)
+  command: hammer --output json content-view info --organization "{{ organization }}"  --name "{{ item }}"
+  with_items: "{{ content_config | map(attribute='content_view') | list }}"
+  register: content_view_info
+  changed_when: false
+
+#- debug: msg="{{ lookup('template','pp_content_view_iterator.json.j2') }}"
+
+- name: iterate over all content view versions and retrieve their descriptions (which may contain filter info)
+  command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
+  with_items: "{{ lookup('template','pp_content_view_iterator.json.j2') }}"
+  register: content_view_version_info
+  changed_when: false
+
+#- debug: var=content_view_version_info.results|map(attribute='stdout')|map('from_json')|list
+
+- name: retrieve existing filters
+  command: hammer --output json content-view filter list --content-view "{{ item.content_view }}" --organization "{{ organization }}"
+  register: existing_filters
+  with_items: "{{ content_config }}"
+  changed_when: false
+
+- name: create staging filter
+  command: >
+    hammer content-view filter create
+    --content-view {{ item.item.content_view }}
+    --name "Staging"
+    --description "Staging Filter"
+    --inclusion false
+    --organization "{{ organization }}"
+    --type erratum
+    --repositories "{{ item.item.content|map(attribute="repository")|join('\",\"') }}"
+  when: "'Staging' not in (item.stdout | from_json | map(attribute='Name') | list)"
+  with_items: "{{ existing_filters.results }}"
+
+- name: retrieve existing filter rules
+  command: hammer --output json content-view filter rule list --content-view-filter "Staging" --content-view "{{ item.content_view }}" --organization "{{ organization }}"
+  with_items: "{{ content_config }}"
+  register: existing_filter_rules
+  changed_when: false
+
+- name: create date filter rules
+  command: >
+    hammer --output json content-view filter rule create
+    --organization "{{ organization }}"
+    --content-view  "{{ item.item.content_view }}"
+    --content-view-filter "Staging"
+    --date-type updated
+    --start-date "{{ ansible_date_time.date }}"
+  with_items: "{{ existing_filter_rules.results }}"
+  when: item.stdout|from_json|length == 0
+  register: created_filter_rules
+
+
+# now we can assume that filter & filter rules exist
+# iterate over the hailstorm staging content_config
+#   if the staging content_config is NOT found in the content view version descriptions / filter data
+#      -> adjust filter
+#      -> publish new version
+#      -> reretrieve staging content_config (and promotion status)
+
+# set filter and publish content view for missing dates
+- include: publish_and_promote_cv_publish.yml
+  with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2') }}"
+  register: publish
+
+- name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)
+  command: hammer --output json content-view info --organization "{{ organization }}"  --name "{{ item }}"
+  with_items: "{{ content_config | map(attribute='content_view') | list }}"
+  register: content_view_info2
+  changed_when: false
+
+- name: iterate over all content view versions and retrieve their descriptions (which may contain filter info)
+  command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
+  with_items: "{{ lookup('template','pp_content_view_iterator.json.j2') }}"
+  register: content_view_version_info2
+  changed_when: false
+
+- debug: msg="{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
+
+# if the content_config is NOT already promoted to the respective lifecycle env / staging content_config
+- name: promote specific content config to lifecycle env
+  command: >
+    hammer content-view version promote
+    --organization "{{ organization }}"
+    --id "{{ item.id }}"
+    --to-lifecycle-environment '{{ item.lifecycle_environment }}'
+    --force
+  with_items: "{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"

@@ -30,7 +30,6 @@ disk:
 repos:
   - rhel-7-server-rpms
 packages: bind,dovecot,postfix
-activation_key: AK-CV-OS-RHEL7-SERVER-PROD
 pool_regex: "{{ rhel_subscription_pool_regex }}"
 
 catch_all_user: catchall
