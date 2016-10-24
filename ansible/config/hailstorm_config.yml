@@ -15,13 +15,13 @@ rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
 #   - deploy-ramdisk-ironic-7.3.1-39.tar
 #   - discovery-ramdisk-7.3.1-59.tar
 #   - overcloud-full-7.3.1-59.tar
-rhosp_images:
-  - ironic-python-agent-8.0-20160415.1.tar
-  - overcloud-full-8.0-20160415.1.tar
+# rhosp_images:
+#   - ironic-python-agent-8.0-20160415.1.tar
+#   - overcloud-full-8.0-20160415.1.tar
 ####END RHOSP
 satellite_manifestfile: manifest.zip
-cloudforms_ova_appliance: cfme-rhevm-5.6.2.1-1.x86_64.rhevm.ova
-#cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
+#cloudforms_ova_appliance: cfme-rhevm-5.6.2.1-1.x86_64.rhevm.ova
+cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
 #cloudforms_ova_appliance: manageiq-ovirt-devel.ova

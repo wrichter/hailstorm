@@ -215,7 +215,7 @@ lifecycle_environments:
     prior: 'TEST'
     description: 'Production'
     label: 'production'
-    date_filter: "2016-10-21"
+    date_filter: "2016-09-01"
 
 content_config:
   - content_view: "CV-OS-RHEL6-SERVER"
