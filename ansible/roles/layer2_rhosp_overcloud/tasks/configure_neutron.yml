@@ -28,7 +28,7 @@
         . ~/overcloudrc_v3 &&
         export OS_TENANT_NAME={{ item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-        neutron net-create internal_{{ item }} --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "equalto", item) | list)[0]['ID'] }}
+        neutron net-create internal_{{ item }} --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "match", "$" + item + "^") | list)[0]['ID'] }}
       when: '"internal_{{ item }}" not in networks.stdout | from_json | map(attribute="Name") | list'
       with_items: "{{ osp_projects }}"
 
