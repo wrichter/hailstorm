@@ -17,8 +17,8 @@
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 
-- debug: msg={{ image.stdout | from_json | selectattr("Field","equalto","id")| map(attribute="Value") | list | join(" ") }}
+- debug: msg={{ image.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | list | join(" ") }}
 
 - name: delete image from underlying glance store
-  file: state=absent path={{ nfs_rhosp_glance_path }}/{{ image.stdout | from_json | selectattr("Field","equalto","id")| map(attribute="Value") | list | join(" ")}}
+  file: state=absent path={{ nfs_rhosp_glance_path }}/{{ image.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | list | join(" ")}}
   delegate_to: "{{ infrastructure_delegate_nfs_server }}"

@@ -37,7 +37,7 @@
         . ~/overcloudrc_v3 &&
         export OS_TENANT_NAME={{ item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-        neutron subnet-create --name sub_internal_{{ item }} --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "equalto", item) | list)[0]['ID'] }} --enable_dhcp=True --gateway 172.20.0.1 --dns-nameserver={{ infrastructure_network_guests.dns_server }} internal_{{ item }} 172.20.0.0/16
+        neutron subnet-create --name sub_internal_{{ item }} --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "match", "^" + item + "$") | list)[0]['ID'] }} --enable_dhcp=True --gateway 172.20.0.1 --dns-nameserver={{ infrastructure_network_guests.dns_server }} internal_{{ item }} 172.20.0.0/16
       when: '"internal_{{ item }}" not in networks.stdout | from_json | map(attribute="Name") | list'
       with_items: "{{ osp_projects }}"
 
@@ -56,7 +56,7 @@
         . ~/overcloudrc_v3 &&
         export OS_TENANT_NAME={{ item.item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-        neutron router-create --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "equalto", item.item) | list)[0]['ID'] }} router_internal_{{ item.item }}
+        neutron router-create --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "match", "^" + item.item + "$") | list)[0]['ID'] }} router_internal_{{ item.item }}
       when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
       with_items: "{{ routers.results }}"
 
