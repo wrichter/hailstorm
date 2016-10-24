@@ -18,6 +18,7 @@
   when: mode=="create"
 
 - block:
+    # must happen after CV is promoted into LC envs
     - include: activation_keys.yml
       tags: ['ak']
   when: mode=="create" or mode=="refresh_subscriptions"

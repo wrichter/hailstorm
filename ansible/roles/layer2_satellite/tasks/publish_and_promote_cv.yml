@@ -5,13 +5,11 @@
   changed_when: false
 
 #- debug: msg="{{ lookup('template','pp_content_view_iterator.json.j2') }}"
-
 - name: iterate over all content view versions and retrieve their descriptions (which may contain filter info)
   command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
   with_items: "{{ lookup('template','pp_content_view_iterator.json.j2') }}"
   register: content_view_version_info
   changed_when: false
-
 #- debug: var=content_view_version_info.results|map(attribute='stdout')|map('from_json')|list
 
 - name: retrieve existing filters
@@ -62,6 +60,7 @@
 #      -> reretrieve staging content_config (and promotion status)
 
 # set filter and publish content view for missing dates
+#- debug: msg="{{ lookup('template', 'pp_missingdates_iterator.json.j2') }}"
 - include: publish_and_promote_cv_publish.yml
   with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2') }}"
   register: publish
@@ -74,12 +73,11 @@
 
 - name: iterate over all content view versions and retrieve their descriptions (which may contain filter info)
   command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
-  with_items: "{{ lookup('template','pp_content_view_iterator.json.j2') }}"
+  with_items: "{{ lookup('template','pp_content_view_iterator2.json.j2') }}"
   register: content_view_version_info2
   changed_when: false
 
-- debug: msg="{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
-
+#- debug: msg="{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
 # if the content_config is NOT already promoted to the respective lifecycle env / staging content_config
 - name: promote specific content config to lifecycle env
   command: >
