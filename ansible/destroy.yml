@@ -155,6 +155,23 @@
       tags: [ 'layer2','rhosp', 'vm' ]
       mode: destroy
 
+- hosts: tower
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','tower', 'rhel' ]
+      mode: start
+    - role: layer2_ansibletower
+      tags: [ 'layer2', 'tower' ]
+      mode: destroy
+    - role: layer2_rhel
+      tags: [ 'layer2','tower', 'rhel' ]
+      mode: destroy
+    - role: layer2_vms
+      tags: [ 'layer2','tower', 'vm' ]
+      mode: destroy
+
 - hosts: ipa
   gather_facts: false
   remote_user: root
