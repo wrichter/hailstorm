@@ -201,22 +201,21 @@ product_config:
       - name: Red Hat CloudForms Management Engine 5.6 (RPMs)
 
 lifecycle_environments:
-  - name: 'PROD'
-    prior: 'TEST'
-    description: 'Production'
-    label: 'production'
-    date_filter: "2016-10-07"
-  - name: 'TEST'
-    prior: 'DEV'
-    description: 'Testing'
-    label: 'testing'
-    date_filter: "2016-10-07"
   - name: 'DEV'
     prior: 'Library'
     description: 'Development'
     label: 'development'
     date_filter: "2016-10-21"
-
+  - name: 'TEST'
+    prior: 'DEV'
+    description: 'Testing'
+    label: 'testing'
+    date_filter: "2016-10-07"
+  - name: 'PROD'
+    prior: 'TEST'
+    description: 'Production'
+    label: 'production'
+    date_filter: "2016-10-07"
 
 content_config:
   - content_view: "CV-OS-RHEL6-SERVER"

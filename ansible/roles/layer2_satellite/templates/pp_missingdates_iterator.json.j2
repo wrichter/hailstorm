@@ -1,6 +1,6 @@
 [{% set needscomma = [false] %}
 {% if not created_filter_rules|skipped and not content_view_version_info|skipped %}
-{% for date_filter in lifecycle_environments|map(attribute='date_filter')|unique %}
+{% for date_filter in lifecycle_environments|reverse|map(attribute='date_filter')|unique %}
 {% if date_filter is defined %}
 {% for created_filter_rule_result in created_filter_rules.results %}
 
