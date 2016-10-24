@@ -48,6 +48,9 @@
     # yum module can't do localinstall...
     - name: install katello-ca-consumer-latest
       command: yum -y localinstall http://{{ hostvars['satellite'].vm_nics[0].ip }}/pub/katello-ca-consumer-latest.noarch.rpm  creates=/etc/rhsm/rhsm.conf.kat-backup
+  when: not disable_registration_against_satellite and activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or (subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'))
+
+- block:
     - name: register system using activation key against satellite
       redhat_subscription:
         state: present
@@ -58,7 +61,8 @@
       yum:
         name: katello-agent
         state: present
-  when: not disable_registration_against_satellite and activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or (subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'))
+        enablerepo: "{{ os_variant_dash }}-server-satellite-tools-{{ satellite_version }}-rpms"
+  when: not disable_registration_against_satellite and activation_key is defined
 
 - name: register system using username/pw against RHN
   redhat_subscription:
