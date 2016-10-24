@@ -52,9 +52,6 @@
 - hosts: satellite
   remote_user: root
   gather_facts: false
-  pre_tasks:
-    - setup:
-      tags: [ 'layer2','satellite' ]
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
   #  - { role: layer2_dnat, tags: [ 'layer2', 'satellite', 'dnat' ], mode: create }

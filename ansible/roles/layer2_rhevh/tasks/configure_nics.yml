@@ -104,5 +104,9 @@
   with_items: "{{ unassigned_nic.results }}"
   delegate_to: rhevm
 
+- name: commit nic config
+  shell: rhevm-shell -E 'action host {{ hostname }} commitnetconfig'
+  delegate_to: rhevm
+
 # - name: activate host
 # - name: wait for host to reach the state up

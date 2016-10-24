@@ -39,6 +39,8 @@
   register: existing_filter_rules
   changed_when: false
 
+# run setup to have current date available
+- setup:
 - name: create date filter rules
   command: >
     hammer --output json content-view filter rule create
