@@ -210,12 +210,12 @@ lifecycle_environments:
     prior: 'DEV'
     description: 'Testing'
     label: 'testing'
-    date_filter: "2016-10-07"
+    date_filter: "2016-10-21"
   - name: 'PROD'
     prior: 'TEST'
     description: 'Production'
     label: 'production'
-    date_filter: "2016-10-07"
+    date_filter: "2016-10-21"
 
 content_config:
   - content_view: "CV-OS-RHEL6-SERVER"
