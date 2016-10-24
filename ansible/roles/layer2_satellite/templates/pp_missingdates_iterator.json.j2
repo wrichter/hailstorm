@@ -5,7 +5,7 @@
 {% for created_filter_rule_result in created_filter_rules.results %}
 
 {# if filter does not exist among published CVs #}
-{% if content_view_version_info.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','equalto',created_filter_rule_result.item.item.content_view)|selectattr('Description','equalto','hailstorm-' + date_filter)|list|length == 0 %}
+{% if content_view_version_info.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','match','^' + created_filter_rule_result.item.item.content_view + '$')|selectattr('Description','match','^hailstorm-' + date_filter + '$')|list|length == 0 %}
 
 {% if needscomma|last %},{% endif %}
 {

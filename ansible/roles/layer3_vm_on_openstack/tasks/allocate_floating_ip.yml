@@ -25,7 +25,7 @@
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
-        openstack ip floating add {{ floating_ip.stdout | from_json | selectattr("Field","equalto","ip") | map(attribute="Value") | join(" ") }} {{ inventory_hostname_short }}
+        openstack ip floating add {{ floating_ip.stdout | from_json | selectattr("Field","match","^ip$") | map(attribute="Value") | join(" ") }} {{ inventory_hostname_short }}
       when: ( instance_data.stdout | from_json )[0]["Networks"] | regex_replace('internal_' + osp_tenant + "=\d+\.\d+\.\d+\.\d+,?\s*",'') == ""
 
   become: yes
