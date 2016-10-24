@@ -154,6 +154,7 @@ efk
 lookbusy
 dev-client
 tower
+cloudforms
 
 # All layer2 node groups that are installed with RHEL6
 [rhel6:children]
