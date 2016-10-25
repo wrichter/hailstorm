@@ -1,6 +1,4 @@
 # prereq: the variable ironic_uuids needs to contain an array of ironic UUIDs to be removed from the cluster
-# e.g. invoke the playbook as follows:
-# ansible-playbook -i hosts -e @config/hailstorm_config.yml -e @config/infrastructure_config.yml -e @config/storm3.coe.muc.redhat.com.yml -e "hostnames=[\"overcloud-compute-5\"]" reset.yml
 - block:
     - name: get nova UUIDs for ironic UUIDs
       shell: >

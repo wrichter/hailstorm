@@ -1,4 +1,6 @@
 # prereq: the variable hostnames needs to contain an array of (nova)host names to be removed from the cluster
+# e.g. invoke the playbook as follows:
+# ansible-playbook -i hosts -e @config/hailstorm_config.yml -e @config/infrastructure_config.yml -e @config/storm3.coe.muc.redhat.com.yml -e "hostnames=[\"overcloud-compute-5\"]" reset.yml
 - block:
     - name: ensure that no heat operation is currently in progress
       shell: . ~/stackrc && openstack stack list -f json
