@@ -1,14 +1,14 @@
 - name: copy rhel iso image
   copy:  src=../binary/{{ item }} dest={{ layer1_qcow_storage.path }}/{{ item }} mode=0644
   with_items:
-    - "{{ rhel6_iso_image }}"
-    - "{{ rhel7_iso_image }}"
+    - "{{ current_lifecycle_env.rhel6_iso_image }}"
+    - "{{ current_lifecycle_env.rhel7_iso_image }}"
   when: layer1_binary_dir is not defined
 
 - name: locally copy rhel iso image
   synchronize: mode=pull src={{ layer1_binary_dir }}/{{ item }} dest={{ layer1_qcow_storage.path }}/{{ item }}
   delegate_to: "{{ infrastructure_delegate_local_content_host }}"
   with_items:
-    - "{{ rhel6_iso_image }}"
-    - "{{ rhel7_iso_image }}"
+    - "{{ current_lifecycle_env.rhel6_iso_image }}"
+    - "{{ current_lifecycle_env.rhel7_iso_image }}"
   when: layer1_binary_dir is defined

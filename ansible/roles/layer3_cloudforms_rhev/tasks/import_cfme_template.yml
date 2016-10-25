@@ -24,11 +24,11 @@
       changed_when: false
 
     - name: unpack the virtual appliance directly into the RHEV export domain (from layer1 binary dir)
-      unarchive: copy=no src={{ layer1_binary_dir }}/{{ cloudforms_ova_appliance }} dest="{{ nfs_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
+      unarchive: copy=no src={{ layer1_binary_dir }}/{{ current_lifecycle_env.cloudforms_ova_appliance }} dest="{{ nfs_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
       delegate_to: "{{ infrastructure_delegate_nfs_server }}"
       when: (layer1_binary_dir is defined)
     - name: unpack the virtual appliance directly into the RHEV export domain (from ansible playbook host)
-      unarchive: copy=no src=../binary/{{ cloudforms_ova_appliance }} dest="{{ nfs_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
+      unarchive: copy=no src=../binary/{{ current_lifecycle_env.cloudforms_ova_appliance }} dest="{{ nfs_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
       delegate_to: "{{ infrastructure_delegate_nfs_server }}"
       when: (layer1_binary_dir is not defined)
 

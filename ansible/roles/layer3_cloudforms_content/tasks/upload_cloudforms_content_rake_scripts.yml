@@ -21,8 +21,8 @@
   register: head
   changed_when: false
 - name: revert hailstorm branch to known good version
-  shell: cd /tmp/cfme-rhconsulting-scripts && git reset --hard {{ cfme_rhconsulting_scripts_hash }}
-  when: head.stdout != "{{ cfme_rhconsulting_scripts_hash }}"
+  shell: cd /tmp/cfme-rhconsulting-scripts && git reset --hard {{ current_lifecycle_env.cfme_rhconsulting_scripts_hash }}
+  when: head.stdout != "{{ current_lifecycle_env.cfme_rhconsulting_scripts_hash }}"
 - name: make install
   shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install && make clean
-  when: repo|changed or head.stdout != "{{ cfme_rhconsulting_scripts_hash }}"
+  when: repo|changed or head.stdout != "{{ current_lifecycle_env.cfme_rhconsulting_scripts_hash }}"

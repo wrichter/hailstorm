@@ -6,42 +6,81 @@ hailstorm_ssh_pub_key_file: hailstorm.pub
 hailstorm_ssh_priv_key_file: hailstorm
 #undercloud_ssh_pub_key_file: undercloud.pub
 #undercloud_ssh_priv_key_file: undercloud
-rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
-rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
-####BEGIN RHOSP
-####RHOSP images are now fetched by installing the appropriate director packages - no need to specify them here
-####Theses lines remain as long as the legacy code to upload the director images from the control host or layer1 host remains
-# rhosp_images:
-#   - deploy-ramdisk-ironic-7.3.1-39.tar
-#   - discovery-ramdisk-7.3.1-59.tar
-#   - overcloud-full-7.3.1-59.tar
-# rhosp_images:
-#   - ironic-python-agent-8.0-20160415.1.tar
-#   - overcloud-full-8.0-20160415.1.tar
-####END RHOSP
 satellite_manifestfile: manifest.zip
-#cloudforms_ova_appliance: cfme-rhevm-5.6.2.1-1.x86_64.rhevm.ova
-cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
-#cloudforms_ova_appliance: cfme-rhevm-5.6.0.13-1.x86_64.rhevm.ova
-#cloudforms_ova_appliance: cfme-rhevm-5.5.3.4-1.x86_64.rhevm.ova
-#cloudforms_ova_appliance: manageiq-ovirt-devel.ova
+
+lifecycle_environments:
+  - name: 'DEV'
+    prior: 'Library'
+    description: 'Development'
+    label: 'development'
+    content_view_date_filter: "2016-10-21"
+    errata_for_demo_scenario:
+      - RHSA-2016:1940
+    satellite_version: 6.2
+    openshift_version: 3.3
+    openstack_version: 9
+    cloudforms_ova_appliance: cfme-rhevm-5.6.2.1-1.x86_64.rhevm.ova
+    rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
+    rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+    kvm_images:
+      RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+      CirrOS: cirros-0.3.4-x86_64-disk.img
+      Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+
+  - name: 'TEST'
+    prior: 'DEV'
+    description: 'Testing'
+    label: 'testing'
+    content_view_date_filter: "2016-10-21"
+    errata_for_demo_scenario:
+      - RHSA-2016:1940
+    satellite_version: 6.2
+    openshift_version: 3.3
+    openstack_version: 9
+    cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
+    rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
+    rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+    kvm_images:
+      RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+      CirrOS: cirros-0.3.4-x86_64-disk.img
+      Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+
+  - name: 'PROD'
+    prior: 'TEST'
+    description: 'Production'
+    label: 'production'
+    content_view_date_filter: "2016-09-28"
+    errata_for_demo_scenario:
+      - RHSA-2016:1940
+    satellite_version: 6.2
+    openshift_version: 3.3
+    openstack_version: 9
+    cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
+    rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
+    rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+    kvm_images:
+      RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+      CirrOS: cirros-0.3.4-x86_64-disk.img
+      Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+
+current_lifecycle_env: "{{ (lifecycle_environments|selectattr('name','match','^'+stage+'$')|list)[0] }}"
 
 osp_kvm_images:
-  - image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
-    name: RHEL7
-  - image: cirros-0.3.4-x86_64-disk.img
-    name: CirrOS
-  - image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
-    name: Windows Server 2012
+  - name: RHEL7
+    image: "{{ current_lifecycle_env.kvm_images['RHEL7'] }}"
+  - name: CirrOS
+    image: "{{ current_lifecycle_env.kvm_images['CirrOS'] }}"
+  - name: Windows Server 2012
+    image: "{{ current_lifecycle_env.kvm_images['Windows'] }}"
 
 rhev_templates:
-  - image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
-    name: "RHEL7"
+  - name: RHEL7
+    image: "{{ current_lifecycle_env.kvm_images['RHEL7'] }}"
 
-# RED HAT SUBSCRIPTION POOLS
-#rhel6_subscription_poolid: 8a85f9814f220b7c014f221083430791
-#rhel7_subscription_poolid: 8a85f9814f220b7c014f221083430791
-#satellite_subscription_poolid: 8a85f9814f220b7c014f2211095208d2
+# RED HAT SUBSCRIPTIONS
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
 rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
@@ -50,18 +89,12 @@ ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
 cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Enterprise Linux OpenStack Platform.*)$"
 
 # REPOSITORIES
-# rhosp_undercloud_repos:
-#   - rhel-7-server-rpms
-#   - rhel-7-server-optional-rpms
-#   - rhel-7-server-extras-rpms
-#   - rhel-7-server-openstack-7.0-rpms
-#   - rhel-7-server-openstack-7.0-director-rpms
 rhosp_undercloud_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-openstack-9-rpms
-  - rhel-7-server-openstack-9-director-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-director-rpms
 rhosp_overcloud_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
@@ -69,7 +102,7 @@ rhosp_overcloud_repos:
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
-  - rhel-7-server-satellite-{{ satellite_version }}-rpms
+  - rhel-7-server-satellite-{{ current_lifecycle_env.satellite_version }}-rpms
 rhevm_repos:
   - rhel-6-server-rpms
   - rhel-6-server-supplementary-rpms
@@ -87,14 +120,16 @@ cloudforms_repos:
 ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
-  - rhel-7-server-ose-{{ openshift_version }}-rpms
+  - rhel-7-server-ose-{{ current_lifecycle_env.openshift_version }}-rpms
 ose3_additional_packages: docker
-#   - rhel-7-server-ose-3.1-rpms
-# ose3_additional_packages: docker-1.8.2
+
 tdagent_rpm:
   "7": https://packages.treasuredata.com/2/redhat/7/x86_64/td-agent-2.2.0-0.x86_64.rpm
   "6": https://packages.treasuredata.com/2/redhat/6/x86_64/td-agent-2.2.0-0.x86_64.rpm
 
+epel_rpm: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+
+cfme_rhconsulting_scripts_repo: https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
 
 timezone: Europe/Berlin
 
