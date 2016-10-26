@@ -60,9 +60,9 @@
 #      -> reretrieve staging content_config (and promotion status)
 
 # set filter and publish content view for missing dates
-#- debug: msg="{{ lookup('template', 'pp_missingdates_iterator.json.j2') }}"
+#- debug: msg="{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
 - include: publish_and_promote_cv_publish.yml
-  with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2') }}"
+  with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
   register: publish
 
 - name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)

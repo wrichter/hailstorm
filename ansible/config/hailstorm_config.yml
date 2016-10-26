@@ -13,7 +13,8 @@ lifecycle_environments:
     prior: 'Library'
     description: 'Development'
     label: 'development'
-    content_view_date_filter: "2016-10-21"
+    content_view_date_filter:
+      "*": "2016-10-21"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2
@@ -32,7 +33,8 @@ lifecycle_environments:
     prior: 'DEV'
     description: 'Testing'
     label: 'testing'
-    content_view_date_filter: "2016-10-21"
+    content_view_date_filter:
+      "*": "2016-10-21"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2
@@ -51,7 +53,10 @@ lifecycle_environments:
     prior: 'TEST'
     description: 'Production'
     label: 'production'
-    content_view_date_filter: "2016-09-28"
+    content_view_date_filter:
+      "*": "2016-09-28"
+      "CV-RHOSE3": "2016-10-21"
+      "CV-RHOSE3-CLIENT": "2016-10-21"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2

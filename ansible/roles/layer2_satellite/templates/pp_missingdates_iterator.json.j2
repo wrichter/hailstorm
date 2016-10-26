@@ -1,18 +1,20 @@
 [{% set needscomma = [false] %}
 {% if content_view_version_info.results is defined %}
-{% for content_view_date_filter in lifecycle_environments|reverse|map(attribute='content_view_date_filter')|unique %}
+{% for content_view_date_filter in lifecycle_environments|reverse|map(attribute='content_view_date_filter') %}
 {% if content_view_date_filter is defined %}
 {% for created_filter_rule_result in created_filter_rules.results %}
 
 {# created_filter_rule_result.item is skipped when this template is evaluated to determine includes #}
 {% if not created_filter_rule_result.item|skipped %}
 
+{% if content_view_date_filter[created_filter_rule_result.item.item.content_view] is defined %}{% set date_filter = content_view_date_filter[created_filter_rule_result.item.item.content_view] %}{% else %}{% set date_filter = content_view_date_filter['*'] %}{% endif %}
+
 {# if filter does not exist among published CVs #}
-{% if content_view_version_info.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','match','^' + created_filter_rule_result.item.item.content_view + '$')|selectattr('Description','match','^hailstorm-' + content_view_date_filter + '$')|list|length == 0 %}
+{% if content_view_version_info.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','match','^' + created_filter_rule_result.item.item.content_view + '$')|selectattr('Description','match','^hailstorm-' + date_filter + '$')|list|length == 0 %}
 
 {% if needscomma|last %},{% endif %}
 {
-  "content_view_date_filter":"{{ content_view_date_filter }}",
+  "content_view_date_filter":"{{ date_filter }}",
   "content_view":"{{ created_filter_rule_result.item.item.content_view }}",
   "filter_rule_id":"{% if created_filter_rule_result|skipped %}{{ (created_filter_rule_result.item.stdout|from_json)[0]['Rule ID'] }}{% else %}{{ (created_filter_rule_result.stdout|from_json)['id'] }}{% endif %}"
 }
