@@ -1,0 +1,17 @@
+[primary]
+localhost ansible_connection=local
+
+[secondary]
+
+[database]
+
+[all:vars]
+admin_password='{{ root_password }}'
+redis_password='{{ root_password }}'
+
+pg_host=''
+pg_port=''
+
+pg_database='awx'
+pg_username='awx'
+pg_password='{{ root_password }}'

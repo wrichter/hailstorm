@@ -7,6 +7,7 @@ hailstorm_ssh_priv_key_file: hailstorm
 #undercloud_ssh_pub_key_file: undercloud.pub
 #undercloud_ssh_priv_key_file: undercloud
 satellite_manifestfile: manifest.zip
+tower_license_key_file: tower_license.json
 
 lifecycle_environments:
   - name: 'DEV'
@@ -28,6 +29,7 @@ lifecycle_environments:
       CirrOS: cirros-0.3.4-x86_64-disk.img
       Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+    ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.2.tar.gz
 
   - name: 'TEST'
     prior: 'DEV'
@@ -48,6 +50,7 @@ lifecycle_environments:
       CirrOS: cirros-0.3.4-x86_64-disk.img
       Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+    ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.2.tar.gz
 
   - name: 'PROD'
     prior: 'TEST'
@@ -70,6 +73,7 @@ lifecycle_environments:
       CirrOS: cirros-0.3.4-x86_64-disk.img
       Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+    ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.2.tar.gz
 
 current_lifecycle_env: "{{ (lifecycle_environments|selectattr('name','match','^'+stage+'$')|list)[0] }}"
 
