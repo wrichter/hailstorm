@@ -33,6 +33,7 @@
   roles:
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
+    - { role: layerX_openshift_demo_amq, tags: [layer2, 'ose3', 'ose3-demo-amq'], mode: create }
 
 - hosts: dev-client
   remote_user: root
