@@ -5,7 +5,7 @@
 
 {% if lifecycle_environment.content_view_date_filter[content.content_view] is defined %}{% set date_filter = lifecycle_environment.content_view_date_filter[content.content_view] %}{% else %}{% set date_filter = lifecycle_environment.content_view_date_filter['*'] %}{% endif %}
 
-{% set matching_cv_version = content_view_version_info2.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','match','^' + content.content_view + '$')|selectattr('Description','match','^hailstorm-' + date_filter + '$')|list %}
+{% set matching_cv_version = content_view_version_info2.results|map(attribute='stdout')|map('from_json')|selectattr('Content View Name','match','^' + content.content_view + '$')|selectattr('Description')|selectattr('Description','match','^hailstorm-' + date_filter + '$')|list %}
 {% if matching_cv_version|length > 0 %}
 {% set promoted = [] %}
 {% for key, value in matching_cv_version[0]['Lifecycle Environments'].iteritems() %}
