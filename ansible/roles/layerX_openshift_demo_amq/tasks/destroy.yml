@@ -1,0 +1,15 @@
+- name: delete project demo-dev
+  shell: oc delete project demo-dev -n demo-dev
+  ignore_errors: true
+
+- name: delete project demo-prod
+  shell: oc delete project demo-prod -n demo-prod
+  ignore_errors: true
+
+- name: delete template demo-dev
+  shell: oc delete template monster-dev  -n openshift
+  ignore_errors: true
+
+- name: delete template demo-prod
+  shell: oc delete template monster-prod  -n openshift
+  ignore_errors: true

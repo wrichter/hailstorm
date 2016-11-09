@@ -1,0 +1,68 @@
+# Create AMQ Demo project
+# Author: Daniel Fröhlich
+# See: https://access.redhat.com/documentation/en/red-hat-xpaas/0/paged/red-hat-xpaas-a-mq-image/chapter-5-tutorials
+
+# Step 1: Create project
+- name: Delete demo-amq project
+  shell: oc delete namespace demo-amq --ignore-not-found
+
+- name: Create demo-amq project
+  shell: "oadm new-project demo-amq --admin='developer' --description='A-MQ Demo Project'"
+  register: result
+  until: result.stderr.find("project demo-amq already exists") == -1 and result.stderr.find("Operation cannot be fulfilled on namespaces") == -1
+  retries: 30
+  delay: 1
+
+
+# Step 2: Create service account:
+- name: Delete amq-service-account
+  shell: oc delete serviceaccount amq-service-account -n demo-amq --ignore-not-found
+
+- name: Create amq-service-account
+  shell: oc create serviceaccount amq-service-account -n demo-amq
+
+# Step 3: Add the view role to the service account.
+- name: Add view role to amq-service-account
+  shell: oc policy add-role-to-user view system:serviceaccount:demo-amq:amq-service-account
+
+# Step 4-6: Create keystore for broker:
+- name: Install openjdk
+  yum: name=java-1.8.0-openjdk-headless.x86_64 state=latest
+
+
+- name: Generate broker cert
+  shell: rm -f broker.ks;keytool -genkey -alias broker -keyalg RSA -keystore broker.ks -storepass keystore -keypass keystore -dname CN=AMQDemoBroker
+- name: Export broker cert
+  shell: rm -f broker_cert;keytool -export -alias broker -keystore broker.ks -file broker_cert -storepass keystore
+- name: Generate client cert
+  shell: rm -f client.ks;keytool -genkey -alias client -keyalg RSA -keystore client.ks -storepass keystore -keypass keystore -dname CN=AMQDemoClient
+- name: Import broker cert to client cert
+  shell: rm -f client.ts;keytool -import -alias broker -keystore client.ts -file broker_cert -storepass keystore -noprompt
+- name: Delete amq-app-secret
+  shell: oc delete secret amq-app-secret --ignore-not-found -n demo-amq
+- name: Create amq-app-secret
+  shell: oc secrets new amq-app-secret broker.ks -n demo-amq
+- name: Link secret to service account
+  shell: oc secrets link amq-service-account amq-app-secret -n demo-amq
+
+
+# Aaaaaand action:
+- name: Deploying AMQ
+  shell: oc new-app --template=amq62-persistent-ssl -n demo-amq -p AMQ_SPLIT=true -p MQ_PROTOCOL=openwire -p MQ_USERNAME=admin -p MQ_PASSWORD=admin -p MQ_QUEUES=testQueue -p MQ_TOPICS=testTopic -p AMQ_STORAGE_USAGE_LIMIT=2gb -p AMQ_TRUSTSTORE=broker.ks -p AMQ_TRUSTSTORE_PASSWORD=keystore -p AMQ_KEYSTORE_PASSWORD=keystore
+
+# Dirty workaround because we can't set comma separated variable in new-app command before:
+- name: Add protocols
+  shell: oc env dc/broker-amq AMQ_TRANSPORTS=openwire,mqtt,amqp,stomp -n demo-amq
+
+# Expose protocols:
+- name: Expose amqp-ssl
+  shell: oc create route passthrough --service broker-amq-amqp-ssl -n demo-amq
+
+- name: Expose mqtt-ssl
+  shell: oc create route passthrough --service broker-amq-mqtt-ssl -n demo-amq
+
+- name: Expose stomp-ssl
+  shell: oc create route passthrough --service broker-amq-stomp-ssl -n demo-amq
+
+- name: Expose tcp-ssl
+  shell: oc create route passthrough --service broker-amq-tcp-ssl -n demo-amq
