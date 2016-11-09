@@ -60,6 +60,8 @@
 #      -> reretrieve staging content_config (and promotion status)
 
 # set filter and publish content view for missing dates
+#- debug: var=created_filter_rule_result
+#- debug: var=content_view_version_info
 #- debug: msg="{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
 - include: publish_and_promote_cv_publish.yml
   with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
