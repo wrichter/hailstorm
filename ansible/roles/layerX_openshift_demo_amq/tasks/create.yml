@@ -28,6 +28,8 @@
 # Step 4-6: Create keystore for broker:
 - name: Install openjdk
   yum: name=java-1.8.0-openjdk-headless.x86_64 state=latest
+
+
 - name: Generate broker cert
   shell: rm -f broker.ks;keytool -genkey -alias broker -keyalg RSA -keystore broker.ks -storepass keystore -keypass keystore -dname CN=AMQDemoBroker
 - name: Export broker cert
@@ -36,10 +38,12 @@
   shell: rm -f client.ks;keytool -genkey -alias client -keyalg RSA -keystore client.ks -storepass keystore -keypass keystore -dname CN=AMQDemoClient
 - name: Import broker cert to client cert
   shell: rm -f client.ts;keytool -import -alias broker -keystore client.ts -file broker_cert -storepass keystore -noprompt
+- name: Delete amq-app-secret
+  shell: oc delete secret amq-app-secret --ignore-not-found -n demo-amq
 - name: Create amq-app-secret
-  shell: oc secrets new amq-app-secret broker.ks
+  shell: oc secrets new amq-app-secret broker.ks -n demo-amq
 - name: Link secret to service account
-  shell: oc secrets link amq-service-account amq-app-secret
+  shell: oc secrets link amq-service-account amq-app-secret -n demo-amq
 
 
 # Aaaaaand action:
@@ -48,17 +52,17 @@
 
 # Dirty workaround because we can't set comma separated variable in new-app command before:
 - name: Add protocols
-  shell: oc env dc/broker-amq AMQ_TRANSPORTS=openwire,mqtt,amqp,stomp
+  shell: oc env dc/broker-amq AMQ_TRANSPORTS=openwire,mqtt,amqp,stomp -n demo-amq
 
 # Expose protocols:
 - name: Expose amqp-ssl
-  shell: oc create route passthrough --service broker-amq-amqp-ssl
+  shell: oc create route passthrough --service broker-amq-amqp-ssl -n demo-amq
 
 - name: Expose mqtt-ssl
-  shell: oc create route passthrough --service broker-amq-mqtt-ssl
+  shell: oc create route passthrough --service broker-amq-mqtt-ssl -n demo-amq
 
 - name: Expose stomp-ssl
-  shell: oc create route passthrough --service broker-amq-stomp-ssl
+  shell: oc create route passthrough --service broker-amq-stomp-ssl -n demo-amq
 
 - name: Expose tcp-ssl
-  shell: oc create route passthrough --service broker-amq-tcp-ssl
+  shell: oc create route passthrough --service broker-amq-tcp-ssl -n demo-amq
