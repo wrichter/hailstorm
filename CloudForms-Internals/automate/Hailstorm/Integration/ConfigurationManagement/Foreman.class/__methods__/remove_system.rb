@@ -56,15 +56,18 @@ begin
 	@foreman_password = $evm.object['foreman_password']
 
 	katello_url = "https://#{@foreman_host}/katello/api/v2/"
+  satellite_api_url = "https://#{@foreman_host}/api/"
 
 	systems = get_json(katello_url+"systems")
   uuid = {}
+  host_id = {}
   hostExists = false
   systems['results'].each do |system|
   	if system['name'].include? host
-  		$evm.log("info","Host ID #{system['id']}")
+  		$evm.log("info","Host ID #{system['host_id']}")
   		$evm.log("info","Host UUID #{system['uuid']}")
   		uuid = system['uuid'].to_s
+      host_id = system['host_id'].to_s
   		hostExists = true
       break
   	end
@@ -75,7 +78,8 @@ begin
     exit MIQ_OK
   end
 
-  uri=katello_url+"systems/"+uuid+"/"
+  #uri=katello_url+"systems/"+uuid+"/"
+  uri=satellite_api_url+"hosts/" + host_id
 
   @headers = {
   	:content_type => 'application/json',
