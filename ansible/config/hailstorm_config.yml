@@ -60,6 +60,7 @@ lifecycle_environments:
       "*": "2016-09-28"
       "CV-RHOSE3": "2016-10-21"
       "CV-RHOSE3-CLIENT": "2016-10-21"
+      "CV-RHOSP": "2016-09-16"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2

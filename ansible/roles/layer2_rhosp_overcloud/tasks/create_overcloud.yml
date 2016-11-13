@@ -49,7 +49,17 @@
       shell: >
         . ~/stackrc &&
         {{ lookup('template','deploy-overcloud.j2') }}
-      tags: ['deploy-overcloud']
+      tags: ['deploy']
+    #   async: 7200
+    #   poll: 0
+    #   register: deploy_overcloud
+    #
+    # - name: check on overcloud deploy completed
+    #   async_status: jid={{ deploy_overcloud.ansible_job_id }}
+    #   register: job_result
+    #   until: job_result.finished
+    #   retries: 480
+    #   delay: 15
 
   when: stack.stdout == ""
   become: yes
