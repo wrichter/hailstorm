@@ -26,4 +26,4 @@ resources:
       name: ExtraDeployments
       servers:  {get_param: servers}
       config: {get_resource: ExtraConfig}
-      actions: ['CREATE'] # Only do this on CREATE
+      actions: ['CREATE', 'UPDATE'] 
