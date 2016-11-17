@@ -52,7 +52,7 @@ efk             ansible_host=192.168.103.28 activation_key="AK-CV-RHOSP-{{ stage
 
 # the Infrastructure server (DNS, SMTP/IMAP)
 [infrastructure]
-infrastructure  ansible_host=192.168.103.29 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+infrastructure  ansible_host=192.168.103.29 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" additional_dns="imap,smtp"
 
 # The single system where osp-director will be installed to
 [rhosp-director]
