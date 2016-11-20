@@ -1,33 +1,33 @@
 ---
 - description: management_status
-  icon: 
+  icon:
   read_only: false
   syntax: string
   single_value: true
   example_text: management_status
   parent_id: 0
   show: true
-  default: 
+  default:
   perf_by_tag: true
   name: management_status
   entries:
-  - description: unmanaged
-    icon: 
+  - description: self_managed
+    icon:
     read_only: false
     syntax: string
     single_value: false
-    example_text: 
+    example_text:
     show: true
-    default: 
-    perf_by_tag: 
-    name: unmanaged
-  - description: managed
-    icon: 
+    default:
+    perf_by_tag:
+    name: self_managed
+  - description: centrally_managed
+    icon:
     read_only: false
     syntax: string
     single_value: false
-    example_text: 
+    example_text:
     show: true
-    default: 
-    perf_by_tag: 
-    name: managed
+    default:
+    perf_by_tag:
+    name: centrally_managed

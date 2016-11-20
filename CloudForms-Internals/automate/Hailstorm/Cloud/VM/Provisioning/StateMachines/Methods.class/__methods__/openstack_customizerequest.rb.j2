@@ -43,13 +43,13 @@ prov.set_option(:domainname,domainname)
 
 
 @servicename=prov.get_option(:name)
-$evm.log("info","Looking for Unmanaged as part of the service name: #{@servicename}")
-if "#{@servicename}".match("UnManaged")
-   $evm.log("info","Setting management_status tag to unmanaged")
-   prov.add_tag("management_status","unmanaged")
+$evm.log("info","Looking for self-managed as part of the service name: #{@servicename}")
+if "#{@servicename}".match("self-managed")
+   $evm.log("info","Setting management_status tag to self_managed")
+   prov.add_tag("management_status","self_managed")
 else
-   $evm.log("info","Setting management_status tag to managed")
-   prov.add_tag("management_status","managed")
+   $evm.log("info","Setting management_status tag to centrally_managed")
+   prov.add_tag("management_status","centrally_managed")
 end
 
 # BEGIN WOLFRAM LDAP INTEGRATION
