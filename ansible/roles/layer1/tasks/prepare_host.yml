@@ -26,7 +26,7 @@
 
 - name: disable & stop NetworkManager
   service: name=NetworkManager state=stopped enabled=no
-- name: mask firewalld
+- name: mask NetworkManager
   shell: systemctl status NetworkManager | grep masked || systemctl mask NetworkManager
   register: mask_nm
   changed_when: "'Created symlink' in mask_nm.stdout"
