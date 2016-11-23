@@ -84,10 +84,11 @@
 
     <% if script_ldapentry != nil && script_ldapentry['mail'] != nil && script_ldapentry['mail'][0] != nil  %>
        sendmail <%= script_ldapentry['mail'][0] %><<EOF
-       Subject: Your unmanaged virtual machine <%= script_hostname %> is ready
+       Subject: Your self-managed virtual machine <%= script_hostname %> is ready
        To: <%= script_ldapentry['mail'][0] %>
+       From: cloudforms@<%=script_domainname%>
 
-       Your unmanaged VM <%= script_hostname %> is ready.
+       Your self-managed VM <%= script_hostname %> is ready.
        .
        EOF
     <% end %>
