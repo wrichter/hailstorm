@@ -1,5 +1,5 @@
 - name: copy rhel iso image
-  copy:  src=../binary/{{ item }} dest={{ layer1_qcow_storage.path }}/{{ item }} mode=0644
+  copy:  src=binary/{{ item }} dest={{ layer1_qcow_storage.path }}/{{ item }} mode=0644
   with_items:
     - "{{ current_lifecycle_env.rhel6_iso_image }}"
     - "{{ current_lifecycle_env.rhel7_iso_image }}"

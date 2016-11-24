@@ -11,7 +11,7 @@
 # # VARIANT 1 - copy images from control host (disabled via false in when clause)
 # - block:
 #   - name: unpack rhosp images
-#     unarchive: src=../binary/{{ image }} dest={{ image_path }}
+#     unarchive: src=binary/{{ image }} dest={{ image_path }}
 #     become: yes
 #     become_user: "{{ rhosp_stack_user }}"
 #     with_items: "{{ rhosp_images }}"
