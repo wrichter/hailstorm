@@ -15,15 +15,15 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2016-10-21"
+      "*": "2016-11-22"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2
     openshift_version: 3.3
     openstack_version: 9
-    cloudforms_ova_appliance: cfme-rhevm-5.6.2.1-1.x86_64.rhevm.ova
+    cloudforms_ova_appliance: cfme-rhevm-5.6.2.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
-    rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+    rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
     kvm_images:
       RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
       CirrOS: cirros-0.3.4-x86_64-disk.img
@@ -177,6 +177,10 @@ ipa_user:
     first: cfme
     last: binduser
     password: "{{ root_password }}"
+  - username: tower-bind-user
+    first: tower
+    last: binduser
+    password: "{{ root_password }}"
 
 
 ipa_group:
@@ -194,6 +198,7 @@ ipa_group:
       - rhev-bind-user
       - ose-bind-user
       - osp-bind-user
+      - tower-bind-user
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=6
   - groupname: demo-consumer
     members:

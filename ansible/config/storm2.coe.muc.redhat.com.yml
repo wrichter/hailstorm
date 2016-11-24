@@ -2,7 +2,7 @@ layer1_ansible_host: storm2.coe.muc.redhat.com
 hailstorm_dns_domain: hailstorm2.coe.muc.redhat.com
 
 disable_registration_against_satellite: false
-stage: PROD
+stage: DEV
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
@@ -217,6 +217,9 @@ external_network_config:
             proto: tcp
           - from_port: 443
             to_port: 443
+            proto: tcp
+          - from_port: 22
+            to_port: 22
             proto: tcp
   guest_network_bridging:
     layer1_dev: em2

@@ -222,6 +222,9 @@ external_network_config:
           - from_port: 443
             to_port: 443
             proto: tcp
+          - from_port: 22
+            to_port: 22
+            proto: tcp
   guest_network_bridging:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
