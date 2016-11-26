@@ -1,0 +1,31 @@
+- debug: 'msg="{{ url }}: {{ name }}"'
+#- debug: var=body
+
+- name: get resources
+  uri:
+    url: "https://localhost/{{ url }}"
+    method: "GET"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+  register: resource
+
+- name: add resource
+  uri:
+    url: "https://localhost/{{ url }}"
+    method: "POST"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+    body_format: json
+    body: "{{ body|to_json|from_json }}"
+    status_code: 201
+  when: resource.json.results|selectattr('name','match','^{{ name }}$')|list|length == 0
+  register: resource2
+  changed_when: true
+
+# - debug: msg={{ (resource.json.results + resource2|skipped|ternary([],[resource2.json])) }}
+# - debug: msg={{ (resource.json.results + resource2|skipped|ternary([],[resource2.json]))|selectattr('name','match','^' + name + '$')|list }}
+- set_fact:
+    "{{ var }}": "{{ ( (resource.json.results + resource2|skipped|ternary([],[resource2.json]))|selectattr('name','match','^' + name + '$')|list) [0] }}"
+  when: var is defined

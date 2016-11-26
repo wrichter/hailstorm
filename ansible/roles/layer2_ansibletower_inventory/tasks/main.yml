@@ -1,0 +1,51 @@
+---
+- block:
+    - include: get_or_add.yml
+      vars:
+        url: "/api/v1/organizations"
+        name: "Default"
+        var: "organization"
+
+    - include: get_or_add.yml
+      vars:
+        url: "/api/v1/inventories/"
+        name: "Hailstorm"
+        body: "{{ lookup('template','inventory.json.j2') }}"
+        var: "inventory"
+
+    - include: get_or_add.yml
+      vars:
+        url: "/api/v1/credentials/"
+        name: "{{ groupname }}"
+        body: "{{ lookup('template','credentials.json.j2') }}"
+        var: "credential"
+
+    - include: get_or_add.yml
+      vars:
+        url: "{{ inventory.related.groups }}"
+        name: "{{ groupname }}"
+        body: "{{ lookup('template','groups.json.j2') }}"
+        var: "group"
+
+    - name: get inventory source
+      uri:
+        url: "https://localhost/{{ group.related.inventory_source }}"
+        method: "GET"
+        user: "admin"
+        password: "{{ root_password }}"
+        validate_certs: no
+      register: inventory_source
+
+    - name: adapt inventory source
+      uri:
+        url: "https://localhost{{ group.related.inventory_source }}"
+        method: "PATCH"
+        user: "admin"
+        password: "{{ root_password }}"
+        validate_certs: no
+        body_format: json
+        body: "{{ lookup('template','inventory_source.json.j2') }}"
+      changed_when: true
+      when: inventory_source.json.credential != credential.id
+
+  when: mode=="create"

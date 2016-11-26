@@ -70,3 +70,12 @@
     - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'efk', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create }
+
+
+- hosts: tower
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_ansibletower_inventory, tags: [ 'layer2', 'tower', 'tower-cloudforms' ], mode: create, kind: "cloudforms", groupname: "CloudForms", credentials: {"username":"admin", "password":"{{ root_password }}", "url":"https://cloudforms.{{ hailstorm_dns_domain }}"} }
+    - { role: layer2_ansibletower_inventory, tags: [ 'layer2', 'tower', 'tower-openstack' ], mode: create, kind: "openstack", groupname: "OpenStack Demo-VMs", credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-vms", "domain": "hailstorm"} }
+    - { role: layer2_ansibletower_inventory, tags: [ 'layer2', 'tower', 'tower-openstack' ], mode: create, kind: "openstack", groupname: "OpenStack Infra-VMs", credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-infra", "domain": "hailstorm"} }
