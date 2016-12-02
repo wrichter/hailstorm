@@ -1,0 +1,29 @@
+---
+- block:
+    - include: roles/common/tasks/get_or_add.yml
+      vars:
+        url: "/api/v1/organizations"
+        name: "Default"
+        var: "organization"
+
+    - include: roles/common/tasks/get_or_add.yml
+      vars:
+        url: "/api/v1/inventories/"
+        name: "{{ inventoryname }}"
+        body: "{{ lookup('template','inventory.json.j2') }}"
+        var: "inventory"
+
+    - include: roles/common/tasks/get_or_add.yml
+      vars:
+        url: "{{ inventory.related.hosts }}"
+        name: "{{ item }}"
+        body: "{{ lookup('template','host.json.j2') }}"
+      with_items: "{{ groups['layer2'] }}"
+
+    - include: roles/common/tasks/get_or_add.yml
+      vars:
+        url: "/api/v1/credentials/"
+        name: "Hailstorm L2 SSH"
+        body: "{{ lookup('template','machine_credential.json.j2') }}"
+        var: "credential"
+  when: mode=="create"

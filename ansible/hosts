@@ -90,6 +90,12 @@ undercloud-admin  ansible_host=192.168.105.41
 [lookbusy-osp]
 lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
 
+[ansible-jump-host]
+ansible-jump-demo-vms  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-vms" osp_flavor="m1.small" osp_image="RHEL7"
+#ansible-jump-demo-infra  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
+
+
+
 #### ADDITIONAL GROUPS
 
 # which system will host virt-who -> this should not be satellite since virt-who reports to subscription-manager which reports to RHN (which doesn't know the Default Organization) on satellite
@@ -155,6 +161,7 @@ lookbusy
 dev-client
 tower
 cloudforms
+ansible-jump-host
 
 # All layer2 node groups that are installed with RHEL6
 [rhel6:children]

@@ -1,0 +1,10 @@
+{
+  "type":"ManageIQ::Providers::AnsibleTower::ConfigurationManager",
+  "name":"Ansible Tower",
+  "uri":"https://{{ hostvars[tower].hostname }}",
+  "hostname":"{{ item.ip }}",
+  "credentials" : {
+    "userid"    : "cfme-bind-user",
+    "password"  : "redhat01"
+  }
+}
