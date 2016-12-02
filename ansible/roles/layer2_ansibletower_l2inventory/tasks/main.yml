@@ -23,7 +23,7 @@
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "/api/v1/credentials/"
-        name: "Hailstorm L2 SSH"
+        name: "{{ inventoryname }} SSH"
         body: "{{ lookup('template','machine_credential.json.j2') }}"
         var: "credential"
   when: mode=="create"

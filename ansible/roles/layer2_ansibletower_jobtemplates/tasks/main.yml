@@ -43,7 +43,7 @@
         var: "credential"
 
     - name: find top level playbooks
-      find: paths="{{ projects_dir }}/{{ project_dir }}" patterns="*.yml" recurse=no
+      find: paths={{ projects_dir }}/{{ project_dir }} patterns="*.yml" recurse=no
       register: playbooks
 
     - include: roles/common/tasks/get_or_add.yml

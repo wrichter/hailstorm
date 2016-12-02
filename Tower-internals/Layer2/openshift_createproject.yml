@@ -1,0 +1,8 @@
+- name: Hello World Sample
+  hosts: all
+  vars:
+    namespace: "changeme"
+  tasks:
+    - name: Hello Message
+      debug:
+        msg: "Hello World!"
