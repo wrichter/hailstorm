@@ -1,4 +1,7 @@
 - block:
+    - name: remove project directory
+      file: path="{{ projects_dir }}/{{ project_dir }}" state=absent
+
     - name: create project directory
       file: path="{{ projects_dir }}/{{ project_dir }}" state=directory group=awx owner=awx
 
@@ -43,8 +46,12 @@
         var: "credential"
 
     - name: find top level playbooks
-      find: paths={{ projects_dir }}/{{ project_dir }} patterns="*.yml" recurse=no
+      local_action: find paths={{ content_location }} patterns="*.yml" recurse=no
       register: playbooks
+
+    - name: find top level extra variables descriptions
+      local_action: find paths={{ content_location }} patterns="*.extravars" recurse=no
+      register: extravars
 
     - include: roles/common/tasks/get_or_add.yml
       vars:

@@ -11,7 +11,7 @@
     "forks": 0,
     "limit": "",
     "verbosity": 0,
-    "extra_vars": "",
+    "extra_vars": "{% if extravars.files is defined and extravars.files|selectattr('path','match','^' + item)|list|length == 1 %}{{ lookup('file', extravars.files|selectattr('path','match','^' + item)|map(attribute='path')|join(' '))|regex_replace('\n','\\n')|regex_replace('"','\"') }}{% endif %}",
     "job_tags": "",
     "force_handlers": false,
     "skip_tags": "",
