@@ -1,0 +1,28 @@
+## used to create resources in Ansible Tower
+
+- debug: 'msg="{{ url }}: {{ name }}"'
+#- debug: var=body
+
+- name: get resources
+  uri:
+    url: "https://localhost/{{ url }}?page_size=100"
+    method: "GET"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+  register: resource
+
+# - debug: var=resource
+#- debug: msg="{{ resource.json.results|selectattr('name','match','^' + name + '$')|list }}"
+
+- name: delete resource
+  uri:
+    url: "https://localhost{{ (resource.json.results|selectattr('name','match','^' + name + '$')|list)[0].url }}"
+    method: "DELETE"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+    status_code: 201,204
+  when: resource.json.results|selectattr('name','match','^{{ name }}$')|list|length > 0
+  register: resource2
+  changed_when: true

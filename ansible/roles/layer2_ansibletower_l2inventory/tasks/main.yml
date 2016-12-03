@@ -13,12 +13,23 @@
         body: "{{ lookup('template','inventory.json.j2') }}"
         var: "inventory"
 
-    - include: roles/common/tasks/get_or_add.yml
+    - include: get_or_add_multiple.yml
       vars:
         url: "{{ inventory.related.hosts }}"
-        name: "{{ item }}"
-        body: "{{ lookup('template','host.json.j2') }}"
-      with_items: "{{ groups['layer2'] }}"
+        items: "{{ lookup('template','hosts_items.json.j2') }}"
+      #  name: "{{ item }}"
+      #   body: "{{ lookup('template','host.json.j2') }}"
+      # with_items: "{{ groups['layer2'] }}"
+
+    - debug: msg="{{ lookup('template','groups_items.json.j2') }}"
+
+    - include: get_or_add_multiple.yml
+      vars:
+        url: "{{ inventory.related.groups }}"
+        items: "{{ lookup('template','groups_items.json.j2') }}"
+      #  name: "{{ item }}"
+      #   body: "{{ lookup('template','host.json.j2') }}"
+      # with_items: "{{ groups['layer2'] }}"
 
     - include: roles/common/tasks/get_or_add.yml
       vars:
@@ -27,3 +38,10 @@
         body: "{{ lookup('template','machine_credential.json.j2') }}"
         var: "credential"
   when: mode=="create"
+
+- block:
+    - include: roles/common/tasks/get_and_delete.yml
+      vars:
+        url: "/api/v1/inventories/"
+        name: "{{ inventoryname }}"
+  when: mode=="destroy"

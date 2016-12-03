@@ -162,6 +162,14 @@
     - role: layer2_vms
       tags: [ 'layer2','tower', 'rhel' ]
       mode: start
+    - role: layer2_ansibletower_l3inventory
+      tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l3' ]
+      mode: destroy
+      inventoryname: "Hailstorm L3"
+    - role: layer2_ansibletower_l2inventory
+      tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l2' ]
+      mode: destroy
+      inventoryname: "Hailstorm L2"
     - role: layer2_ansibletower
       tags: [ 'layer2', 'tower' ]
       mode: destroy
