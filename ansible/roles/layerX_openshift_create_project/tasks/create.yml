@@ -1,0 +1,28 @@
+# --- Create project:
+- name: check existing projects
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+
+- name: define projectname
+  shell: /usr/bin/uuidgen | /usr/bin/cut -d- -f1 | /usr/bin/sed -e 's/^/cf-/'
+  register: name
+
+- set_fact:
+    oce_projectname: "{{ name.stdout }}"
+    oce_projectdescription: "project created via cloudforms" 
+
+- name: Create project
+  shell: "oadm new-project {{ oce_projectname }} --admin='developer' --description='{{ oce_projectdescription }}'"
+  when: "'{{ oce_projectname }}' not in projects.stdout_lines"
+
+- name: Reseting project to empty state
+  shell: "oc delete all --all -n {{ oce_projectname }}" 
+  when: "'{{ oce_projectname }}' in projects.stdout_lines"
+
+- name: create hana service and endpoint
+  shell: echo '{{ lookup('template', './ose3-service.yml.j2' )  }}' | oc create -f - -n "{{ oce_projectname }}"
+
+#service -> mit ext. IP (Hana-DB) als Endpunkt 
+#echo .... | oc create secret -f -
+

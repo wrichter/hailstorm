@@ -145,6 +145,20 @@ product_config:
       - name: "Red Hat Enterprise Linux 6 Server (Kickstart)"
         releasever: "6.7"
       - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} (for RHEL 6 Server) (RPMs)"
+   # for SAP HANA usecase
+  - product: "RHEL for SAP HANA - Extended Update Support"
+    basearch: x86_64
+    repos:
+      - name: "RHEL for SAP HANA (for RHEL 7 Server) Extended Update Support (RPMs)"
+        releasever: 7.2
+   # for SAP HANA usecase
+  - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+    basearch: x86_64
+    repos:
+      - name: "Red Hat Enterprise Linux 7 Server - Extended Update Support (RPMs)"
+        releasever: 7.2
+      - name: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
+        releasever: 7.2
   - product: Red Hat OpenStack
     basearch: x86_64
     repos:
@@ -223,6 +237,16 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
+
+  # for HANA
+  - content_view: "CV-OS-RHEL7.2-EUS-SAP"
+    content:
+      - product: "RHEL for SAP HANA - Extended Update Support"
+        repository: "RHEL for SAP HANA (for RHEL 7 Server) Extended Update Support (RPMs)"
+      - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+        repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support (RPMs)"
+      - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+        repository: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
 
   - content_view: "CV-RHEV-MANAGER"
     content:
