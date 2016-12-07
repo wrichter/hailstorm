@@ -23,6 +23,27 @@
 - name: create hana service and endpoint
   shell: echo '{{ lookup('template', './ose3-service.yml.j2' )  }}' | oc create -f - -n "{{ oce_projectname }}"
 
-#service -> mit ext. IP (Hana-DB) als Endpunkt 
-#echo .... | oc create secret -f -
+- set_fact:
+    oce_secret_name: "hana-secret"
+    oce_projectdescription: "project created via cloudforms" 
+    oce_username: "{{ oce_username }}"
+    oce_password: "{{ oce_password }}"
 
+- name: copy secret file
+  template: 
+    src: ./ose3-secrets.yml.j2 
+    dest: /root/ose3-secrets.txt
+    owner: root
+    group: root
+    mode: 0600
+
+- name: create secret
+  shell: oc create -f /root/ose3-secrets.txt -n "{{ oce_projectname }}"
+
+- name: remove secret file
+  file: 
+    path: /root/ose3-secrets.txt
+    state: absent
+
+- name: debug
+  debug: msg="OpenShift Project {{ oce_projectname }} created"

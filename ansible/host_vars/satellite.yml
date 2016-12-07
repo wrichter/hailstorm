@@ -242,11 +242,11 @@ content_config:
   - content_view: "CV-OS-RHEL7.2-EUS-SAP"
     content:
       - product: "RHEL for SAP HANA - Extended Update Support"
-        repository: "RHEL for SAP HANA (for RHEL 7 Server) Extended Update Support (RPMs)"
+        repository: "RHEL for SAP HANA for RHEL 7 Server Extended Update Support RPMs x86_64 7.2"
       - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-        repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support (RPMs)"
+        repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support RPMs x86_64 7.2"
       - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-        repository: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
 
   - content_view: "CV-RHEV-MANAGER"
     content:
@@ -355,6 +355,12 @@ activation_keys_and_host_collections:
 
   - activation_key: AK-CV-OS-RHEL7-SERVER
     content_view: "CV-OS-RHEL7-SERVER"
+    host_collection: "RHEL7"
+    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+
+  - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
+    content_view: "CV-OS-RHEL7.2-EUS-SAP"
     host_collection: "RHEL7"
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
