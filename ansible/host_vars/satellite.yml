@@ -362,7 +362,7 @@ activation_keys_and_host_collections:
   - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
     content_view: "CV-OS-RHEL7.2-EUS-SAP"
     host_collection: "RHEL7"
-    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+    activation_key_subscription_regex: "{{ sap_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHEV-MANAGER
