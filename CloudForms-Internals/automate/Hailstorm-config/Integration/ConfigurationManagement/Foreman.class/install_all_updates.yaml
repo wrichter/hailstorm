@@ -5,7 +5,7 @@ object:
   attributes:
     display_name: install_all_updates
     name: install_all_updates
-    inherits:
+    inherits: 
     description: install_all_updates
   fields:
   - execute:
