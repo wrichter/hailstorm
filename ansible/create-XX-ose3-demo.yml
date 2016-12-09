@@ -1,0 +1,6 @@
+---
+- hosts: ose3-installer
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layerX_openshift_create_project, tags: [ 'layer2', 'ose3', 'ose3-project' ], mode: create }
