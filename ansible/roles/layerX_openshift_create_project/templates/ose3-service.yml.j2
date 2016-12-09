@@ -1,0 +1,36 @@
+ {
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "hana"
+    },
+    "spec": {
+        "ports": [
+            {
+                "protocol": "TCP",
+                "port": {{port}},
+                "targetPort": {{dbport}}
+            }
+        ]
+    }
+}
+{
+    "kind": "Endpoints",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "hana"
+    },
+    "subsets": [
+        {
+            "addresses": [
+                { "ip": "{{ dbip }}" }
+            ],
+            "ports": [
+                { "port": {{dbport}}  }
+            ]
+        }
+    ]
+}
+
+
+
