@@ -204,6 +204,16 @@ product_config:
     basearch: x86_64
     repos:
       - name: Red Hat CloudForms Management Engine 5.6 (RPMs)
+  - product: Red Hat Ceph Storage MON
+    basearch: x86_64
+    repos:
+      - name: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+  - product: Red Hat Ceph Storage OSD
+    basearch: x86_64
+    repos:
+      - name: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
 
 content_config:
   - content_view: "CV-OS-RHEL6-SERVER"
@@ -321,6 +331,17 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+
+  - content_view: "CV-OS-CEPH"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+      - product: Red Hat Ceph Storage MON
+        repository: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
+      - product: Red Hat Ceph Storage OSD
+        repository: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
 
 activation_keys_and_host_collections:
   - activation_key: AK-CV-OS-RHEL6-SERVER
