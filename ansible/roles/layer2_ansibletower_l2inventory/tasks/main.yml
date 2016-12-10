@@ -34,7 +34,7 @@
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "/api/v1/credentials/"
-        name: "{{ inventoryname }} SSH"
+        name: "{{ credentialname }}"
         body: "{{ lookup('template','machine_credential.json.j2') }}"
         var: "credential"
   when: mode=="create"

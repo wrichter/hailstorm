@@ -25,8 +25,8 @@ nfs_ose3_pv_path: /var/hailstorm/ose3-pv
 
 layer2_rhev_manager_mem: 16384
 layer2_rhev_manager_cpu: 4
-layer2_rhev_hypervisor_mem: 32768
-layer2_rhev_hypervisor_cpu: 8
+layer2_rhev_hypervisor_mem: 65536
+layer2_rhev_hypervisor_cpu: 16
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4

@@ -1,0 +1,5 @@
+---
+name: Deploy_Postgres
+credential: Hailstorm L3 SSH
+playbook: deploy_postgres.yml
+extra_vars: "{ \"serviceid\": \"changeme\" }"

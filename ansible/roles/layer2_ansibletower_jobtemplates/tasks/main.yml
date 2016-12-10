@@ -11,7 +11,7 @@
       failed_when: mktemp.stdout == ""
 
     - name: create playbook archive
-      local_action: "shell cd {{ content_location }} && tar czf {{ mktemp.stdout }}.tgz ."
+      local_action: "shell cd {{ content_location }}/project && tar czf {{ mktemp.stdout }}.tgz ."
 
     - name: unzip archive on tower
       unarchive: src="{{ mktemp.stdout }}.tgz" dest="{{ projects_dir }}/{{ project_dir }}" owner=awx group=awx
@@ -39,25 +39,32 @@
         name: "{{ inventoryname }}"
         var: "inventory"
 
-    - include: roles/common/tasks/get_or_add.yml
-      vars:
-        url: "/api/v1/credentials/"
-        name: "{{ inventoryname }} SSH"
-        var: "credential"
+    # - include: roles/common/tasks/get_or_add.yml
+    #   vars:
+    #     url: "/api/v1/credentials/"
+    #     name: "{{ inventoryname }} SSH"
+    #     var: "credential"
 
-    - name: find top level playbooks
-      local_action: find paths={{ content_location }} patterns="*.yml" recurse=no
-      register: playbooks
+    - name: get credentials
+      uri:
+        url: "https://localhost/api/v1/credentials/?page_size=100"
+        method: "GET"
+        user: "admin"
+        password: "{{ root_password }}"
+        validate_certs: no
+      register: credentials
 
-    - name: find top level extra variables descriptions
-      local_action: find paths={{ content_location }} patterns="*.extravars" recurse=no
-      register: extravars
+    - name: find jobtemplates
+      local_action: find paths={{ content_location }}/jobtemplates recurse=no
+      register: jobtemplates
+
+    - debug: msg={{ lookup('template','job_template.json.j2')|combine(lookup('template', item)|from_yaml)|combine(lookup('template','credential_id.json.j2')) }}
+      with_items: "{% if jobtemplates.files is defined %}{{ jobtemplates.files|map(attribute='path')|list }}{% endif %}"
 
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "/api/v1/job_templates/"
-        name: "{{ item|basename }}"
-        body: "{{ lookup('template','job_template.json.j2') }}"
-      with_items: "{% if playbooks.files is defined %}{{ playbooks.files|map(attribute='path')|list }}{% endif %}"
-
+        name: "{{ (lookup('template', item)|from_yaml).name }}"
+        body: "{{ lookup('template','job_template.json.j2')|combine(lookup('template', item)|from_yaml)|combine(lookup('template','credential_id.json.j2')) }}"
+      with_items: "{% if jobtemplates.files is defined %}{{ jobtemplates.files|map(attribute='path')|list }}{% endif %}"
   when: mode=="create"
