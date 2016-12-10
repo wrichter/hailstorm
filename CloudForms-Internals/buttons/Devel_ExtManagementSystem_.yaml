@@ -6,27 +6,6 @@
   read_only: 
   mode: 
   custom_buttons:
-  - description: Object Walker
-    applies_to_class: ExtManagementSystem
-    applies_to_exp: 
-    options:
-      :button_image: 1
-      :display: true
-    userid: admin
-    wait_for_complete: 
-    name: ObjectWalker
-    visibility:
-      :roles:
-      - _ALL_
-    applies_to_id: 
-    resource_actions:
-      action: 
-      ae_namespace: SYSTEM
-      ae_class: PROCESS
-      ae_instance: Request
-      ae_message: 
-      ae_attributes:
-        request: object_walker
   - description: InspectMe
     applies_to_class: ExtManagementSystem
     applies_to_exp: 
@@ -49,6 +28,27 @@
       ae_attributes:
         request: InspectMe
       dialog_label: RHEL7Managed
+  - description: Object Walker
+    applies_to_class: ExtManagementSystem
+    applies_to_exp: 
+    options:
+      :button_image: 1
+      :display: true
+    userid: admin
+    wait_for_complete: 
+    name: ObjectWalker
+    visibility:
+      :roles:
+      - _ALL_
+    applies_to_id: 
+    resource_actions:
+      action: 
+      ae_namespace: SYSTEM
+      ae_class: PROCESS
+      ae_instance: Request
+      ae_message: 
+      ae_attributes:
+        request: object_walker
   set_data:
     :button_order:
     - InspectMe

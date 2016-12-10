@@ -6,15 +6,15 @@
   read_only: 
   mode: 
   custom_buttons:
-  - description: Install all available Updates
+  - description: Add a new disk to instance
     applies_to_class: Vm
     applies_to_exp: 
     options:
-      :button_image: 14
+      :button_image: 6
       :display: true
     userid: admin
     wait_for_complete: 
-    name: Install all Updates
+    name: Add Disk
     visibility:
       :roles:
       - _ALL_
@@ -26,8 +26,29 @@
       ae_instance: Request
       ae_message: 
       ae_attributes:
-        request: install_all_updates
-      dialog_label: Confirmation
+        request: add_new_disk_to_instance
+      dialog_label: Add Disk
+  - description: Allocate Floating IP
+    applies_to_class: Vm
+    applies_to_exp: 
+    options:
+      :button_image: 1
+      :display: true
+    userid: admin
+    wait_for_complete: 
+    name: Allocate IP
+    visibility:
+      :roles:
+      - _ALL_
+    applies_to_id: 
+    resource_actions:
+      action: 
+      ae_namespace: SYSTEM
+      ae_class: PROCESS
+      ae_instance: Request
+      ae_message: 
+      ae_attributes:
+        request: assign_floating_ip
   - description: Assign next available IP
     applies_to_class: Vm
     applies_to_exp: 
@@ -50,15 +71,15 @@
       ae_attributes:
         request: assign_floating_ip
       dialog_label: Confirmation Floating IP
-  - description: Allocate Floating IP
+  - description: Install all available Updates
     applies_to_class: Vm
     applies_to_exp: 
     options:
-      :button_image: 1
+      :button_image: 14
       :display: true
     userid: admin
     wait_for_complete: 
-    name: Allocate IP
+    name: Install all Updates
     visibility:
       :roles:
       - _ALL_
@@ -70,11 +91,13 @@
       ae_instance: Request
       ae_message: 
       ae_attributes:
-        request: assign_floating_ip
+        request: install_all_updates
+      dialog_label: Confirmation
   set_data:
     :button_order:
     - Add Floating IP
     - Install all Updates
+    - Add Disk
     :button_image: 9
     :display: true
     :group_index: 1
