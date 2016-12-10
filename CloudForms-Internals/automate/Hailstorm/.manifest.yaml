@@ -13723,11 +13723,11 @@ Hailstorm/Cloud/VM/Provisioning/StateMachines/VMProvision_VM.class/template.yaml
     zone: *2
     time: *2792
   updated_on: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &2793 2016-12-07 12:42:12.032068000 Z
+    utc: &2793 2016-12-10 08:31:32.936394000 Z
     zone: *2
     time: *2793
-  size: 638
-  sha1: nmK8Z0C6NVuey0x5rIWH/AnXjvc=
+  size: 644
+  sha1: C5jJKj4129gRywt2qvA03Qu0Wm4=
 Hailstorm/Cloud/VM/Operations/__namespace__.yaml:
   created_on: !ruby/object:ActiveSupport::TimeWithZone
     utc: &2794 2016-11-24 08:23:14.107908000 Z

@@ -17,4 +17,4 @@ object:
   - ChooseAnsibleJobTemplate:
       value: "/Integration/RedHat/Methods/wolfram_chooseAnsibleJob"
   - RunAnsibleJob:
-      value: "/ConfigurationManagement/AnsibleTower/Operations/JobTemplate/dummy_osp"
+      value: "/ConfigurationManagement/AnsibleTower/Operations/JobTemplate/Deploy_Postgres"
