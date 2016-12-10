@@ -55,5 +55,4 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_ansibletower_jobtemplates, tags: [ 'layer2', 'tower', 'tower-content' ], mode: create, content_location: "../Tower-internals/Layer2", project_dir: "HailstormL2", inventoryname: "Hailstorm L2" }
-    - { role: layer2_ansibletower_jobtemplates, tags: [ 'layer2', 'tower', 'tower-content' ], mode: create, content_location: "../Tower-internals/Layer3", project_dir: "HailstormL3", inventoryname: "Hailstorm L3" }
+    - { role: layer2_ansibletower_jobtemplates, tags: [ 'layer2', 'tower', 'tower-content' ], mode: create, content_location: "../Tower-internals", project_dir: "Hailstorm", inventoryname: "Hailstorm" }

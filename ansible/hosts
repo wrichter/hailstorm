@@ -79,6 +79,12 @@ tower          ansible_host=192.168.103.38 activation_key="AK-CV-OS-RHEL7-SERVER
 [lookbusy-rhev]
 lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" rhev_image="RHEL7" nic_attachments="[ {{ infrastructure_network_services }},{{ infrastructure_network_admin }} ]"
 
+[ceph]
+ceph1 ansible_host=192.168.103.2 activation_key="AK-CV-RHOSP-{{ stage }}"
+ceph2 ansible_host=192.168.103.3 activation_key="AK-CV-RHOSP-{{ stage }}"
+ceph3 ansible_host=192.168.103.4 activation_key="AK-CV-RHOSP-{{ stage }}"
+ceph4 ansible_host=192.168.103.5 activation_key="AK-CV-RHOSP-{{ stage }}"
+
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
@@ -93,8 +99,6 @@ lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="d
 [ansible-jump-host]
 ansible-jump-demo-vms  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-vms" osp_flavor="m1.small" osp_image="RHEL7"
 #ansible-jump-demo-infra  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
-
-
 
 #### ADDITIONAL GROUPS
 

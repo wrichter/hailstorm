@@ -165,7 +165,11 @@
     - role: layer2_ansibletower_l3inventory
       tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l3' ]
       mode: destroy
-      inventoryname: "Hailstorm L3"
+      inventoryname: "Hailstorm L3 OSP"
+    - role: layer2_ansibletower_l3inventory
+      tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l3' ]
+      mode: destroy
+      inventoryname: "Hailstorm L3 RHEV"
     - role: layer2_ansibletower_l2inventory
       tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l2' ]
       mode: destroy

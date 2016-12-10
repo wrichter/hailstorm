@@ -1,0 +1,5 @@
+---
+name: Deploy_HANA
+credential: Hailstorm L3 SSH
+playbook: deploy_hana.yml
+extra_vars: "{ \"serviceid\": \"changeme\" }"
