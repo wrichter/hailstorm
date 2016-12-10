@@ -78,3 +78,10 @@
   gather_facts: false
   roles:
     - { role: layerX_openshift_lb, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-lb' ], mode: create }
+
+
+- hosts: ose3-master
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layerX_openshift_enablepipelines, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-pipelines' ], mode: create }

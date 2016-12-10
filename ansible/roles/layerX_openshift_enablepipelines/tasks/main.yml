@@ -1,0 +1,36 @@
+- block:
+    - name: create tech-preview dir
+      file: path="/etc/origin/tech-preview" state=directory
+
+    - name: create pipelines config
+      template: src=pipelines.js dest=/etc/origin/tech-preview/pipelines.js
+
+    - name: adjust master config with pipelineconfig
+      blockinfile:
+        dest: /etc/origin/master/master-config.yaml
+        insertafter: "^apiVersion:"
+        block: "jenkinsPipelineConfig:\n  autoProvisionEnabled: true\n  templateNamespace: openshift\n  templateName: jenkins-ephemeral\n  serviceName: jenkins"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK 1"
+      register: block1
+
+    - name: adjust master config with pipelineconfig
+      blockinfile:
+        dest: /etc/origin/master/master-config.yaml
+        insertafter: "^assetConfig:"
+        block: "  extensionScripts:\n    - /etc/origin/tech-preview/pipelines.js"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK 2"
+      register: block2
+
+    - name: restart machine
+      shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      when: block1|changed or block2|changed
+
+    - name: waiting for server to come back
+      wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
+      become: false
+      when: block1|changed or block2|changed
+      delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+  when: mode=="create"
