@@ -1,0 +1,17 @@
+---
+- name: get existing sync plans
+  command: hammer --output=json sync-plan list --organization "Default Organization"
+  register: sync_plans
+
+- name: create sync plan
+  command: hammer --output=json sync-plan create --name "Hailstorm" --enabled true --interval daily --sync-date {{ ansible_date_time.date }} --organization "Default Organization"
+  register: sync_plan
+  when: sync_plans.stdout|from_json|selectattr('Name','match','^Hailstorm$')|list|length == 0
+
+- name: get products
+  command: hammer --output=json product list --organization "Default Organization"
+  register: products
+
+- name: associate product with sync plan
+  command: hammer --output=json product set-sync-plan --organization "Default Organization"  --id {{ item }} --sync-plan-id {% if sync_plan|skipped %}{{ (sync_plans.stdout|from_json|selectattr('Name','match','^Hailstorm$')|first).ID }}{% else %}{{ (sync_plan.stdout|from_json).id }}{% endif %}
+  with_items: "{{ products.stdout|from_json|byvaluegreaterthan('Repositories',0)|map(attribute='ID')|list }}"

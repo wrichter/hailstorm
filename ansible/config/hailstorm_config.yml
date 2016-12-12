@@ -15,7 +15,7 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2016-11-22"
+      "*": "2016-12-11"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2

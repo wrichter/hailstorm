@@ -15,6 +15,8 @@
       tags: ['publish']
     - include: host-collections.yml
       tags: ['hc']
+    - include: sync_plan.yml
+      tags: ['sp']
   when: mode=="create"
 
 - block:

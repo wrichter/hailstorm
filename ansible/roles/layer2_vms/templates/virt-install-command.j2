@@ -13,7 +13,7 @@ virt-install  --name {{ inventory_hostname_short }}
             {#  --cpu host,+vmx #}{# cannot handle large VMs and is slower #}
               --cpu host-passthrough,+vmx
               --disk size={{ disk.size }},path={{ layer1_qcow_storage.path }}/{{ disk.path }},format={{ disk.format }},bus=virtio
-            {% if extra_disk_device is defined }--disk path={{ extra_disk_device }},bus=virtio{% endif %}
+            {% if extra_disk_device is defined %}--disk path={{ extra_disk_device }},bus=virtio{% endif %}
               --graphics {% if graphics is defined %}{{ graphics }} {% else %}none{% endif %}
             {% if skip_install is defined and skip_install == true %}
               --print-xml
