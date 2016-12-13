@@ -24,7 +24,7 @@ items:
         serviceAccountName: git
         containers:
         - name: git
-          image: openshift/origin-gitserver:latest
+          image: openshift/origin-gitserver:v1.3.2
           ports:
           - containerPort: 8080
           readinessProbe:
