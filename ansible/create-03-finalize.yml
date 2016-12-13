@@ -46,6 +46,7 @@
     - { role: layer2_rhel, tags: [ 'layer3', 'cf', 'rhel'], mode: create }
     - { role: layer2_tdagent, tags: [ 'layer3', 'cf', 'tdagent'], mode: create }
     - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'cfme-osp-provider' ], mode: create }
+    - { role: layer3_cloudforms_tower, tags: [ 'layer3', 'cf', 'cfme-tower-provider' ], mode: create }
 
 - hosts: ose3-installer
   remote_user: root
