@@ -273,50 +273,10 @@ object:
       max_time: 
   - field:
       aetype: state
-      name: ChooseAnsibleJobTemplate
-      display_name: 
-      datatype: string
-      priority: 14
-      owner: 
-      default_value: 
-      substitute: true
-      message: create
-      visibility: 
-      collect: 
-      scope: 
-      description: 
-      condition: 
-      on_entry: 
-      on_exit: 
-      on_error: 
-      max_retries: 
-      max_time: 
-  - field:
-      aetype: state
-      name: RunAnsibleJob
-      display_name: 
-      datatype: string
-      priority: 15
-      owner: 
-      default_value: 
-      substitute: true
-      message: create
-      visibility: 
-      collect: 
-      scope: 
-      description: 
-      condition: 
-      on_entry: 
-      on_exit: 
-      on_error: 
-      max_retries: 
-      max_time: 
-  - field:
-      aetype: state
       name: EmailOwner
       display_name: 
       datatype: string
-      priority: 16
+      priority: 14
       owner: 
       default_value: "/Cloud/VM/Provisioning/Email/MiqProvision_Complete?event=vm_provisioned"
       substitute: true
@@ -336,7 +296,7 @@ object:
       name: Finished
       display_name: 
       datatype: string
-      priority: 17
+      priority: 16
       owner: 
       default_value: "/System/CommonMethods/StateMachineMethods/vm_provision_finished"
       substitute: true

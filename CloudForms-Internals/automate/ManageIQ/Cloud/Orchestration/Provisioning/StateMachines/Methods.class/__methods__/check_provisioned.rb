@@ -12,9 +12,8 @@ def refresh_provider(service)
 end
 
 def refresh_may_have_completed?(service)
-  stack = service.orchestration_stack
-  refreshed_stack = $evm.vmdb(:orchestration_stack).find_by(:name => stack.name, :ems_ref => stack.ems_ref)
-  refreshed_stack && refreshed_stack.status != 'CREATE_IN_PROGRESS'
+  provider = service.orchestration_manager
+  provider.last_refresh_date.to_i > $evm.get_state_var('provider_last_refresh')
 end
 
 def check_deployed(service)

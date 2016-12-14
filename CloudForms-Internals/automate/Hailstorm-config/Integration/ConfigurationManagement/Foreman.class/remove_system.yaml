@@ -5,7 +5,7 @@ object:
   attributes:
     display_name: remove_system
     name: remove_system
-    inherits: 
+    inherits:
     description: remove_system
   fields:
   - execute:

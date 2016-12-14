@@ -18,7 +18,7 @@ object:
       datatype: string
       priority: 1
       owner: 
-      default_value: 5.6.2.2
+      default_value: 5.6.1.2
       substitute: true
       message: create
       visibility: 

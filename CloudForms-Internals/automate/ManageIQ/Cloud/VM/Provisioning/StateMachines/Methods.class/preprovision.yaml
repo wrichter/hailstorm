@@ -12,5 +12,3 @@ object:
       value: amazon_PreProvision
   - openstack_meth1:
       value: openstack_PreProvision
-  - azure_meth1:
-      value: PreProvision
