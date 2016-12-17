@@ -1,0 +1,12 @@
+---
+#Satellite 6.2.5 requires the hostname to be resolvable in order for subscription to succeed.
+#This is why we set the host name for IPA (which provides DNS to all the other systems)
+- block:
+    - name: set sat6.2.5 workaround /etc/hosts entry
+      lineinfile: dest=/etc/hosts line="{{ vm_nics[0].ip }} {{ hostname }} {{ inventory_hostname_short }}"
+  when: mode == "create"
+
+- block:
+    - name: remove sat6.2.5 workaround /etc/hosts entry
+      lineinfile: dest=/etc/hosts line="{{ vm_nics[0].ip }} {{ hostname }} {{ inventory_hostname_short }}" state=absent
+  when: mode == "destroy"

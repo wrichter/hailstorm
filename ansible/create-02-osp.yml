@@ -46,8 +46,8 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
 

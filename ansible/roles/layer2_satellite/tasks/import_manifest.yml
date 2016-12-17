@@ -12,4 +12,4 @@
 
 - name: refresh manifest
   command: 'hammer subscription refresh-manifest --organization "{{ organization }}"'
-  when: not manifest|changed
+#  when: not manifest|changed

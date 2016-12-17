@@ -12,7 +12,7 @@ systemctl restart network
 
 echo -e {{ root_password }}\\n{{ root_password }} | passwd root
 
-{# -- COMMENTED OUT
+{# -- COMMENTED OUT - subscription is done explicitly by ansible
 #add subscription manager
 #yum -t -y -e 0 install subscription-manager
 rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
@@ -22,7 +22,7 @@ subscription-manager register --org="{{ hostvars['satellite'].organization_id }
 
 # add the rhel rpms to install katello agent
 # not required here since this is already configured via Satellite Activation Key
-# subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms
+# subscription-manager repos --enable=rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms
 
 echo "Installing Katello Agent"
 yum -t -y -e 0 install katello-agent

@@ -31,7 +31,7 @@ disk:
 pool_regex: "{{ satellite_subscription_pool_regex }}"
 repos: "{{ satellite_repos }}"
 
-packages: "{% if current_lifecycle_env.satellite_version != '6.1' %}satellite,{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng"
+packages: "{% if current_lifecycle_env.satellite_version[0:3] != '6.1' %}satellite-{{ current_lifecycle_env.satellite_version }},{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng"
 
 tdagent_configs:
   - tag: syslog.messages
@@ -135,16 +135,16 @@ product_config:
       - name: "Red Hat Enterprise Linux 7 Server - Extras (RPMs)"
       - name: "Red Hat Enterprise Linux 7 Server - Optional (RPMs)"
         releasever: 7Server
-      - name: "Red Hat Enterprise Linux 7 Server (Kickstart)"
-        releasever: "7.2"
-      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} (for RHEL 7 Server) (RPMs)"
+      # - name: "Red Hat Enterprise Linux 7 Server (Kickstart)"
+      #   releasever: "7.2"
+      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 7 Server) (RPMs)"
       - name: "Red Hat Enterprise Linux 6 Server (RPMs)"
         releasever: 6Server
       - name: "Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)"
         releasever: 6Server
-      - name: "Red Hat Enterprise Linux 6 Server (Kickstart)"
-        releasever: "6.7"
-      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} (for RHEL 6 Server) (RPMs)"
+      # - name: "Red Hat Enterprise Linux 6 Server (Kickstart)"
+      #   releasever: "6.7"
+      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 6 Server) (RPMs)"
    # for SAP HANA usecase
   - product: "RHEL for SAP HANA - Extended Update Support"
     basearch: x86_64
@@ -230,19 +230,19 @@ product_config:
         releasever: 7Server
 
 content_config:
-  - content_view: "CV-OS-RHEL6-SERVER"
-    content:
-      - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
-      - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 6 Server RPMs x86_64"
+  # - content_view: "CV-OS-RHEL6-SERVER"
+  #   content:
+  #     - product: "Red Hat Enterprise Linux Server"
+  #       repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
+  #     - product: "Red Hat Enterprise Linux Server"
+  #       repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 6 Server RPMs x86_64"
 
   - content_view: "CV-OS-RHEL7-SERVER"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
@@ -256,7 +256,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server - Extended Update Support"
         repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support RPMs x86_64 7.2"
       - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
 
   - content_view: "CV-RHEV-MANAGER"
     content:
@@ -265,7 +265,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 6 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 6 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 6 Server - Supplementary RPMs x86_64 6Server"
       - product: "JBoss Enterprise Application Platform"
@@ -276,7 +276,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Virtualization"
         repository: "Red Hat Enterprise Virtualization Management Agents for RHEL 7 RPMs x86_64 7Server"
 
@@ -291,7 +291,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
@@ -306,7 +306,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
 
@@ -319,7 +319,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: Red Hat Software Collections for RHEL Server
@@ -330,7 +330,7 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
@@ -354,82 +354,82 @@ content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
 
-  - content_view: "CV-OS-CEPH"
+  - content_view: "CV-CEPH"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
       - product: Red Hat Ceph Storage MON
         repository: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
       - product: Red Hat Ceph Storage OSD
         repository: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
 
 activation_keys_and_host_collections:
-  - activation_key: AK-CV-OS-RHEL6-SERVER
-    content_view: "CV-OS-RHEL6-SERVER"
-    host_collection: "RHEL6"
-    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+  # - activation_key: AK-CV-OS-RHEL6-SERVER
+  #   content_view: "CV-OS-RHEL6-SERVER"
+  #   host_collection: "RHEL6"
+  #   activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+  #   override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-OS-RHEL7-SERVER
     content_view: "CV-OS-RHEL7-SERVER"
     host_collection: "RHEL7"
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
     content_view: "CV-OS-RHEL7.2-EUS-SAP"
     host_collection: "RHEL7"
     activation_key_subscription_regex: "{{ sap_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-RHEV-MANAGER
     content_view: "CV-RHEV-MANAGER"
     host_collection: "RHEVM"
     activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
-    override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-RHEV-HYPERVISOR
     content_view: "CV-RHEV-HYPERVISOR"
     host_collection: "RHEVH"
     activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-RHOSP
     content_view: "CV-RHOSP"
     host_collection: "RHOSP"
     activation_key_subscription_regex: "{{ rhosp_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-RHOSE3-CLIENT
     content_view: "CV-RHOSE3-CLIENT"
     host_collection: "RHOSE3"
     activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-RHOSE3
     content_view: "CV-RHOSE3"
     host_collection: "RHOSE3"
     activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-CV-CLOUDFORMS
     content_view: "CV-CLOUDFORMS"
     host_collection: "CLOUDFORMS"
     activation_key_subscription_regex: "{{ cloudforms_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-DEMO-RHEL7-MANAGED
     content_view: CV-DEMO-RHEL7-SSLFIXESONLY
     host_collection: DEMO-MANAGED
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
 
   - activation_key: AK-DEMO-RHEL7-UNMANAGED
     content_view: CV-DEMO-RHEL7-SSLFIXESONLY
     host_collection: DEMO-UNMANAGED
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"

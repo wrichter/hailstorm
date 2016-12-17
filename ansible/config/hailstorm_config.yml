@@ -18,7 +18,7 @@ lifecycle_environments:
       "*": "2016-12-11"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: 6.2
+    satellite_version: 6.2.4
     openshift_version: 3.3
     openstack_version: 9
     cloudforms_ova_appliance: cfme-rhevm-5.6.2.2-1.x86_64.rhevm.ova
@@ -39,7 +39,7 @@ lifecycle_environments:
       "*": "2016-10-21"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: 6.2
+    satellite_version: 6.2.4
     openshift_version: 3.3
     openstack_version: 9
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
@@ -63,7 +63,7 @@ lifecycle_environments:
       "CV-RHOSP": "2016-09-12"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: 6.2
+    satellite_version: 6.2.4
     openshift_version: 3.3
     openstack_version: 9
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
@@ -113,7 +113,7 @@ rhosp_overcloud_repos:
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
-  - rhel-7-server-satellite-{{ current_lifecycle_env.satellite_version }}-rpms
+  - rhel-7-server-satellite-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms
 rhevm_repos:
   - rhel-6-server-rpms
   - rhel-6-server-supplementary-rpms
