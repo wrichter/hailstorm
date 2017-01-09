@@ -28,4 +28,5 @@
   with_items:
     - "sed -i 's,.*pxe/ipxe_timeout.*,,' /usr/share/instack-undercloud/puppet-stack-config/puppet-stack-config.pp"
     - "sed -i 's,.*ipxe_timeout.*,,' /usr/share/instack-undercloud/puppet-stack-config/puppet-stack-config.yaml.template"
-# https://bugzilla.redhat.com/show_bug.cgi?id=1343649
+  when: current_lifecycle_env.openstack_version < 10
+  # https://bugzilla.redhat.com/show_bug.cgi?id=1343649

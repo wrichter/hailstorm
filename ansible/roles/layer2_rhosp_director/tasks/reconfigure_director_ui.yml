@@ -1,0 +1,6 @@
+- name: get tenant id
+  shell: . ~/stackrc && openstack project show admin -f json
+  register: tenant
+- name: create ui config
+  template: src=tripleo_ui_config.js.j2 dest=/var/www/openstack-tripleo-ui/dist/tripleo_ui_config.js
+  

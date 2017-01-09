@@ -97,8 +97,9 @@
 #   remote_user: root
 #   gather_facts: false
 #   roles:
-#     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-    #- { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+#     - { role: layer2_vms, tags: [ 'layer2', 'test-rhel', 'vm' ], mode: create }
+#    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'test-rhel', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+#    - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'test-rhel', 'tdagent' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
 
 
 #### Infrastructure (DNS, SMTP/IMAP) ####

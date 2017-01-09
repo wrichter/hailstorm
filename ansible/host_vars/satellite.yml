@@ -178,7 +178,7 @@ product_config:
       #   releasever: 7Server
       # - name: Red Hat OpenStack Platform 9 Operational Tools for RHEL 7 (RPMs)
       #   releasever: 7Server
-      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} director for RHEL 7 (RPMs)
+      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} {% if current_lifecycle_env.openstack_version < 10 %}director{% else %}Developer Tools{% endif %} for RHEL 7 (RPMs)
         releasever: 7Server
       - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} for RHEL 7 (RPMs)
         releasever: 7Server

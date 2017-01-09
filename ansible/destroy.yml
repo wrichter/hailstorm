@@ -1,4 +1,18 @@
 ---
+# - hosts: test-rhel
+#   gather_facts: false
+#   remote_user: root
+#   roles:
+#     - role: layer2_vms
+#       tags: [ 'layer2', 'test-rhel', 'vm' ]
+#       mode: start
+#     - role: layer2_rhel
+#       tags: [ 'layer2', 'test-rhel', 'rhel' ]
+#       mode: destroy
+#     - role: layer2_vms
+#       tags: [ 'layer2', 'test-rhel', 'vm' ]
+#       mode: destroy
+
 - hosts: dev-client
   gather_facts: false
   remote_user: root

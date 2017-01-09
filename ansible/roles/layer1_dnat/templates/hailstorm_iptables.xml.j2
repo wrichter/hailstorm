@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hs:iptables xmlns:hs="https://github.com/wrichter/hailstorm">
-  {% set network = infrastructure_network_services %}
-  {% set ip = [] %}
+  {% for network in infrastructure_networks %}
   <network name="{{ network.netname }}">
   {% for mapping in external_network_config.services_network_dnat.mapping %}
-  {% if mapping.expose_machine is defined %}
+  {% if mapping.expose_machine is defined and network.netname == mapping.via_network %}
+
   {% for nic in hostvars[mapping.expose_machine].vm_nics %}
   {% if nic.netname == network.netname %}
-  {# next line is a hack to allow the modification of a global variable: http://stackoverflow.com/questions/4870346/can-a-jinja-variables-scope-extend-beyond-in-an-inner-block #}
-  {% set _ = ip.append(nic.ip) %}
-  {% endif %}
-  {% endfor %}
-  {% else %}
-  {% set _ = ip.append(mapping.expose_ip) %}
-  {% endif %}
+
   {% for port in mapping.ports %}
-  <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ ip[-1] }}:{{ port.to_port }}</rule>
-  <rule>FORWARD -t filter -o {{ network.bridge }} -p {{ port.proto }} -d {{ ip[-1] }} --dport {{ port.to_port }} -j ACCEPT</rule>
+  <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ nic.ip }}:{{ port.to_port }}</rule>
+  <rule>FORWARD -t filter -o {{ network.bridge }} -p {{ port.proto }} -d {{ nic.ip }} --dport {{ port.to_port }} -j ACCEPT</rule>
   {% endfor %}
+
+  {% endif %}
+
   {% endfor %}
+  {% endif %}
+  {% endfor %}
+
   </network>
+  {% endfor %}
 </hs:iptables>

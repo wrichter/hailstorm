@@ -60,6 +60,7 @@ external_network_config:
     mapping:
       - expose_machine: satellite
         on_host_prefix: 10.32.105.10/32
+        via_network: services
         ports:
           - from_port: 80
             to_port: 80
@@ -92,6 +93,7 @@ external_network_config:
             proto: tcp
       - expose_machine: ipa
         on_host_prefix: 10.32.105.11/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -104,6 +106,7 @@ external_network_config:
             proto: tcp
       - expose_machine: infrastructure
         on_host_prefix: 10.32.105.12/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -128,6 +131,7 @@ external_network_config:
             proto: tcp
       - expose_machine: rhevm
         on_host_prefix: 10.32.105.13/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -143,6 +147,7 @@ external_network_config:
             proto: tcp
       - expose_machine: cloudforms
         on_host_prefix: 10.32.105.14/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -155,6 +160,7 @@ external_network_config:
             proto: tcp
       - expose_machine: ose3-lb
         on_host_prefix: 10.32.105.15/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -170,6 +176,7 @@ external_network_config:
             proto: tcp
       - expose_machine: ose3-infranode1
         on_host_prefix: 10.32.105.16/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -182,6 +189,7 @@ external_network_config:
             proto: tcp
       - expose_machine: efk
         on_host_prefix: 10.32.105.17/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -197,12 +205,46 @@ external_network_config:
             proto: tcp
       - expose_machine: rhosp-director
         on_host_prefix: 10.32.105.18/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
             proto: tcp
+      - expose_machine: undercloud-public
+        on_host_prefix: 10.32.105.18/32
+        via_network: rhosp_provisioning
+        ports:
+          # webui
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          # keystone
+          - from_port: 13000
+            to_port: 13000
+            proto: tcp
+          # heat
+          - from_port: 13004
+            to_port: 13004
+            proto: tcp
+          # ironic
+          - from_port: 13385
+            to_port: 13385
+            proto: tcp
+          # mistral
+          - from_port: 13989
+            to_port: 13989
+            proto: tcp
+          # swift
+          - from_port: 13808
+            to_port: 13808
+            proto: tcp
+          # zaqar-websocket
+          - from_port: 9000
+            to_port: 9000
+            proto: tcp
       - expose_machine: openstack
         on_host_prefix: 10.32.105.19/32
+        via_network: services
         ports:
           - from_port: 80
             to_port: 80
@@ -215,6 +257,7 @@ external_network_config:
             proto: tcp
       - expose_machine: tower
         on_host_prefix: 10.32.105.9/32
+        via_network: services    
         ports:
           - from_port: 80
             to_port: 80

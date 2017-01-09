@@ -15,12 +15,12 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2016-12-11"
+      "*": "2016-12-20"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: 6.2.4
+    satellite_version: 6.2.5
     openshift_version: 3.3
-    openstack_version: 9
+    openstack_version: 10
     cloudforms_ova_appliance: cfme-rhevm-5.6.2.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso

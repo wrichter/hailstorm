@@ -10,26 +10,29 @@
   when: undercloud_conf.changed
 
 # tweak timeouts
-- name: read nova_rpc_response_timeout
-  command: openstack-config --get /etc/nova/nova.conf DEFAULT rpc_response_timeout
-  register: nova_rpc_response_timeout
-  changed_when: False
-- name: read ironic_rpc_response_timeout
-  command: openstack-config --get /etc/ironic/ironic.conf DEFAULT rpc_response_timeout
-  register: ironic_rpc_response_timeout
-  changed_when: False
-- name: adapt nova_rpc_response_timeout
-  command: openstack-config --set /etc/nova/nova.conf DEFAULT rpc_response_timeout {{ nova_rpc_timeout }}
-  when: nova_rpc_response_timeout.stdout | int != nova_rpc_timeout
-- name: adapt ironic_rpc_response_timeout
-  command: openstack-config --set /etc/ironic/ironic.conf DEFAULT rpc_response_timeout {{ ironic_rpc_timeout }}
-  when: ironic_rpc_response_timeout.stdout | int != ironic_rpc_timeout
-- name: restart nova
-  command: openstack-service restart nova
-  when: nova_rpc_response_timeout.stdout | int != nova_rpc_timeout
-- name: restart ironic
-  command: openstack-service restart ironic
-  when: ironic_rpc_response_timeout.stdout | int != ironic_rpc_timeout
+- block:
+    - name: read nova_rpc_response_timeout
+      command: openstack-config --get /etc/nova/nova.conf DEFAULT rpc_response_timeout
+      register: nova_rpc_response_timeout
+      changed_when: False
+    - name: read ironic_rpc_response_timeout
+      command: openstack-config --get /etc/ironic/ironic.conf DEFAULT rpc_response_timeout
+      register: ironic_rpc_response_timeout
+      changed_when: False
+    - name: adapt nova_rpc_response_timeout
+      command: openstack-config --set /etc/nova/nova.conf DEFAULT rpc_response_timeout {{ nova_rpc_timeout }}
+      when: nova_rpc_response_timeout.stdout | int != nova_rpc_timeout
+    - name: adapt ironic_rpc_response_timeout
+      command: openstack-config --set /etc/ironic/ironic.conf DEFAULT rpc_response_timeout {{ ironic_rpc_timeout }}
+      when: ironic_rpc_response_timeout.stdout | int != ironic_rpc_timeout
+    - name: restart nova
+      command: openstack-service restart nova
+      when: nova_rpc_response_timeout.stdout | int != nova_rpc_timeout
+    - name: restart ironic
+      command: openstack-service restart ironic
+      when: ironic_rpc_response_timeout.stdout | int != ironic_rpc_timeout
+  when: current_lifecycle_env.openstack_version < 10
+
 
 # install bootif fix - see https://bugzilla.redhat.com/show_bug.cgi?id=1234601
 - name: create bootif-fix command

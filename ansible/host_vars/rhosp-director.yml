@@ -38,7 +38,7 @@ name_service_via: "{{ infrastructure_network_services }}"
 pool_regex: "{{ rhosp_subscription_pool_regex }}"
 repos: "{{ rhosp_undercloud_repos }}"
 
-packages: python-rdomanager-oscplugin,python-dracclient,rhosp-director-images,rhosp-director-images-ipa
+packages: python-tripleoclient,python-rdomanager-oscplugin,python-dracclient,rhosp-director-images,rhosp-director-images-ipa
 disable_services:
   - NetworkManager
 

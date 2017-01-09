@@ -10,4 +10,7 @@ network_cidr = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}0/24
 network_gateway = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}1
 discovery_iprange = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 31 }},{{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 50 }}
 store_events = true
+
+enable_ui = true
+generate_service_certificate = true
 [auth]

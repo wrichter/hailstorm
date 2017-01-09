@@ -5,6 +5,7 @@
       tags: ['install_undercloud']
     - include: import_images_to_undercloud_glance.yml
       tags: ['install_undercloud']
+    - include: reconfigure_director_ui.yml
   when: mode=="create"
 
 # - block:
