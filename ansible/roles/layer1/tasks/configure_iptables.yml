@@ -12,11 +12,14 @@
   when: ipt_change|changed
 
 - name: ensure that IPTables are not applied to libvirt bridge devices (RHEL 7.2)
-  sysctl: name="{{ item }}" value=1 sysctl_set=yes state=present reload=yes
+  lineinfile: dest=/etc/sysctl.conf line="{{ item }}" create=yes state=present
   with_items:
     - "net.bridge.bridge-nf-call-arptables = 0"
     - "net.bridge.bridge-nf-call-ip6tables = 0"
     - "net.bridge.bridge-nf-call-iptables = 0"
+- name: reload kernel params (RHEL 7.2)
+  command: sysctl -p
+  ignore_errors: true
 
 - name: ensure that bridge module is loaded early in the boot process (to ensure sysctl is applied)
   lineinfile: dest=/etc/rc.d/rc.local line="s bridge; sysctl -p"
