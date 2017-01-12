@@ -1,12 +1,7 @@
-- name: check if epel is installed
-  shell: rpm -q epel-release
-  changed_when: false
-  ignore_errors: true
-  register: epel
-
 - name: install epel-release
-  command: yum -y localinstall {{ epel_rpm }}
-  when: epel|failed
+  yum:
+    name: epel-release
+    state: present
 
 - name: check if installer dir exists
   stat: path={{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }}

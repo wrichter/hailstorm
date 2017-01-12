@@ -39,15 +39,10 @@
       when: kibana|changed
 
 ## install curator
-    - name: check if epel is installed
-      shell: rpm -q epel-release
-      changed_when: false
-      ignore_errors: true
-      register: epel
-
     - name: install epel-release
-      command: yum -y localinstall {{ epel_rpm }}
-      when: epel|failed
+      yum:
+        name: epel-release
+        state: present
 
     - name: install python-pip
       yum: name=python-pip state=latest
