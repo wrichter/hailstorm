@@ -37,19 +37,18 @@
       tags: ['register']
   when: mode=="destroy"
 
-# Below block is not working with ansible-2.2.0.0
-# - block:
-#     - include: scale_down_via_hostname.yml
-#       vars:
-#         templates:
-#           - network-isolation-environment.yaml
-#           - extra-config-post-deployment-environment.yaml
-#           - extra-config-post-deployment.yaml
-#           - ceilometer-config-environment.yaml
-#           - storage-environment.yaml
-#           - firstboot-config-environment.yaml
-#           - firstboot-config.yaml
-#           - firstboot-config-rootsshkey.sh
-#           - rhel-registration-environment.yaml
-#           - timezone-environment.yaml
-#   when: mode=="reset"
+- block:
+    - include: scale_down_via_hostname.yml
+      vars:
+        templates:
+          - network-isolation-environment.yaml
+          - extra-config-post-deployment-environment.yaml
+          - extra-config-post-deployment.yaml
+          - ceilometer-config-environment.yaml
+          - storage-environment.yaml
+          - firstboot-config-environment.yaml
+          - firstboot-config.yaml
+          - firstboot-config-rootsshkey.sh
+          - rhel-registration-environment.yaml
+          - timezone-environment.yaml
+  when: mode=="reset"
