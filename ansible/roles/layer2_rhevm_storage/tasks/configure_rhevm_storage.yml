@@ -8,7 +8,7 @@
   register: storage_domain
   changed_when: false
 
-- debug: var=storage_domain
+#- debug: var=storage_domain
 
 - name: wait for a rhevh host which is up
   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
@@ -38,7 +38,7 @@
   failed_when: dc_storage_domain_link.stdout == ''
   changed_when: false
 
-- debug: var=dc_storage_domain_link
+#- debug: var=dc_storage_domain_link
 
 - name: check if storage domain is already attached to data_center
   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
@@ -49,7 +49,7 @@
   changed_when: false
   register: dc_storage_domain
 
-- debug: var=dc_storage_domain
+#- debug: var=dc_storage_domain
 
 - name: attach storage domain to data center
   shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
@@ -59,4 +59,4 @@
   with_items: "{{ dc_storage_domain.results }}"
   register: res
 
-- debug: var=res
+#- debug: var=res
