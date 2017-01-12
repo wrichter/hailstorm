@@ -36,6 +36,7 @@
     <% if script_ldapentry != nil %><% (script_ldapentry['ipasshpubkey'] || []).each do |key| %>
       - <%= key %>
     <% end %><% end %>
+      - {{ ssh_pub_key_hailstorm }}
     - name: root
       ssh_authorized_keys:
       - {{ ssh_pub_key_hailstorm }}
