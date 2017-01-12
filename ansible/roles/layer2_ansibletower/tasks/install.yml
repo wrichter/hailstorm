@@ -1,6 +1,6 @@
 - name: install epel-release
   yum:
-    name: epel-release
+    name: "{{ epel_rpm }}"
     state: present
 
 - name: check if installer dir exists

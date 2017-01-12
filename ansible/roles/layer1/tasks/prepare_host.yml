@@ -52,6 +52,6 @@
   ignore_errors: true
   when: prereqs|changed or nested_virt|changed
 - name: waiting for server to come back
-  local_action: wait_for host={{ ansible_host }} port=22 delay=30 timeout=600
+  local_action: wait_for host={{ ansible_host }} port=22 delay=30 timeout=1200
   become: false
   when: prereqs|changed or nested_virt|changed
