@@ -99,7 +99,7 @@
     (vm_in_export_domain.stdout|from_yaml).vm[0] is defined
 
 - name: wait for VM to unlock
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
          xmllint --xpath "//vm[name='{{ item.image | regex_replace('.qcow2','') }}']/status/state/text()" - || true
   changed_when: false

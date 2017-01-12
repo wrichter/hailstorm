@@ -1,6 +1,6 @@
 # many invocations are delegated to layer1 host since rhel6 xmllint doesn't know about xpath
 - name: check if storage domain already exists
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ vm_nics[0].ip }}/api/storagedomains" | \
          xmllint --xpath "/storage_domains/storage_domain[name='{{ item.domainname }}']" - || true
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -11,7 +11,7 @@
 #- debug: var=storage_domain
 
 - name: wait for a rhevh host which is up
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ vm_nics[0].ip }}/api/hosts" | \
          xmllint --xpath "/hosts/host[status/state/text() = 'up'][1]/name/text()" - || true
   register: rhevh_up
@@ -22,14 +22,14 @@
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 
 - name: add NFS storage domain
-  shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          -d "{{ lookup('template', 'storage_domain.xml.j2') }}" \
          "https://{{ vm_nics[0].ip }}/api/storagedomains"
   when: item.stdout == ''
   with_items: "{{ storage_domain.results }}"
 
 - name: get data center storage domain link
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ vm_nics[0].ip }}/api/datacenters" | \
          xmllint --xpath "//data_center[name='Default']/link[@rel='storagedomains']/@href" - | \
          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -41,7 +41,7 @@
 #- debug: var=dc_storage_domain_link
 
 - name: check if storage domain is already attached to data_center
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ vm_nics[0].ip }}{{ dc_storage_domain_link.stdout }}" | \
          xmllint --xpath "//storage_domain[name='{{ item.item.domainname }}']" - || true
   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
@@ -52,7 +52,7 @@
 #- debug: var=dc_storage_domain
 
 - name: attach storage domain to data center
-  shell: curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          -d "<storage_domain><name>{{ item.item.item.domainname }}</name></storage_domain>" \
          "https://{{ vm_nics[0].ip }}{{ dc_storage_domain_link.stdout }}"
   when: item.stdout == ''
