@@ -41,7 +41,7 @@
 ## install curator
     - name: install epel-release
       yum:
-        name: epel-release
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         state: present
 
     - name: install python-pip
