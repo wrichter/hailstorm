@@ -8,7 +8,7 @@
   delegate_to: rhevm
 
 - name: wait for VM to shut down
-  shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
          xmllint --xpath "//vm[name='{{ inventory_hostname_short }}']/status/state/text()" - || true
   changed_when: false
