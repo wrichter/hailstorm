@@ -1,5 +1,5 @@
 - name: read provided ssh keys
-  local_action: shell cat ../keys/{{ item }}.pub || true
+  local_action: shell cat keys/{{ item }}.pub || true
   with_items: "{{ ipa_user | map(attribute='username') | list }}"
   changed_when: false
   register: key

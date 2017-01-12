@@ -22,6 +22,7 @@
       private: no
     - name: "rhsm_password"
       prompt: "what is your Red Hat Subscription Manager password?"
+      private: yes
 
 - hosts: layer1
   remote_user: root
