@@ -33,9 +33,9 @@
     {% for repo in enable_repos %}--enable="{{ repo }}" {% endfor %}
   when: repos is defined and (disable_repos|length > 0 or enable_repos|length > 0)
 
-# - name: enable repos
-#   shell: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
-#   when: repos is defined
+- name: enable repos
+  shell: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
+  when: repos is defined
 - name: upgrade packages
   yum: name=* state=latest
   # OpenShift requires older  version of Docker, ensure that a failure doesn't stop the process
