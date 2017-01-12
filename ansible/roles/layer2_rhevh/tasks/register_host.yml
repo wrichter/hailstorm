@@ -16,26 +16,26 @@
 #   register: host_state1
 # - debug: var=host_state1
 # - name: get host status
-#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
 #          xmllint --xpath "/hosts/host[name='{{ hostname }}']" - || true
 #   register: host_state1
 #   changed_when: false
 # - block:
 #     - name: get cluster id
-#       shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell:  curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #               "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/clusters" | \
 #               xmllint --xpath "/clusters/cluster/@id" - | \
 #               awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
 #       changed_when: false
 #       register: cluster_id
 #     - name: register host
-#       shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell:  curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #               -d "{{ lookup('template', 'host.xml.j2') }}" \
 #               "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts"
 #   when: host_state1.stdout == ''
 # - name: wait for host to leave state "Installing"
-#   shell: curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
 #          xmllint --xpath "/hosts/host[name='{{ hostname }}']/status/state/text()" - || true
 #   register: host_state
@@ -55,7 +55,7 @@
 #- block:
 #    - name: get cluster id
 #      #shell: "{{ lookup('template','curl_get_cluster_id.j2') }}"
-#      shell:  curl -XGET {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#      shell:  curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/clusters" | \
 #              xmllint --xpath "/clusters/cluster/@id" - | \
 #              awk 'match($0, /.*id="(.*)"/, m) { print m[1]  }'
@@ -63,7 +63,7 @@
 #      register: cluster_id
 #   - name: register host
 #      #shell:  "{{ lookup('template','curl_post_host.j2') }}"
-#      shell:  curl -XPOST {{ lookup('template','../common/templates/rhev_curl_xml_params.j2') | trim }} \
+#      shell:  curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              -d "{{ lookup('template', 'host.xml.j2') }}" \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts"
 #  when: host_state.stdout == 'install_failed'
