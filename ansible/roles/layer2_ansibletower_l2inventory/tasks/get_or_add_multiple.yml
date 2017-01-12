@@ -1,0 +1,49 @@
+## used to create resources in Ansible Tower
+
+- debug: 'msg="{{ url }}: multiple items"'
+#- debug: var=body
+
+- name: get resources
+  uri:
+    url: "https://localhost/{{ url }}?page_size=100"
+    method: "GET"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+  register: resource
+
+# - debug: var=resource
+# - debug: msg="{{ resource.json.results|selectattr('name','match','^' + name + '$')|list }}"
+
+- name: add resource
+  uri:
+    url: "https://localhost/{{ url }}"
+    method: "POST"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+    body_format: json
+    body: "{{ item.body }}"
+    status_code: "{{ status_code is defined|ternary(status_code,201) }}"
+  when: resource.json.results|selectattr('name','match','^{{ item.name }}$')|list|length == 0
+  with_items: "{{ items }}"
+  changed_when: true
+  register: resources
+
+- debug: var=resources
+
+- name: post to related
+  uri:
+    url: "https://localhost/{{ item.0.json.related[item.0.item.post_to_related.url_variable] }}"
+    method: "POST"
+    user: "admin"
+    password: "{{ root_password }}"
+    validate_certs: no
+    body_format: json
+    body: "{{ item.1 }}"
+    status_code: 201,204
+  when: not item.0|skipped
+  with_subelements:
+    - "{{ resources.results }}"
+    - item.post_to_related.bodies
+  changed_when: true

@@ -11,11 +11,16 @@
       tags: ['lifecycle']
     - include: content_views.yml
       tags: ['cv']
+    - include: publish_and_promote_cv.yml
+      tags: ['publish']
     - include: host-collections.yml
       tags: ['hc']
+    - include: sync_plan.yml
+      tags: ['sp']
   when: mode=="create"
 
 - block:
+    # must happen after CV is promoted into LC envs
     - include: activation_keys.yml
       tags: ['ak']
   when: mode=="create" or mode=="refresh_subscriptions"

@@ -35,3 +35,6 @@ disk:
 pool_regex: "{{ rhel_subscription_pool_regex }}"
 repos:
   - rhel-7-server-rpms
+  - rhel-7-server-extras-rpms
+
+projects_dir: /var/lib/awx/projects

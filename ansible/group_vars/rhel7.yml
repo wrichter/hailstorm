@@ -1,6 +1,7 @@
-rhel_iso_img: "{{ rhel7_iso_image }}"
+rhel_iso_img: "{{ current_lifecycle_env.rhel7_iso_image }}"
 os_type: linux
 os_variant: rhel7
+os_variant_dash: rhel-7
 fstype: xfs
 selinux_mode: enforcing
 ntp_client: chrony

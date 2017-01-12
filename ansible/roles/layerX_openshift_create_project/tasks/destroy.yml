@@ -1,0 +1,4 @@
+# --- Remove project:
+- name: delete project 
+  shell: oc delete project {{ oce_projectname }} -n {{ oce_projectname }}
+  ignore_errors: true

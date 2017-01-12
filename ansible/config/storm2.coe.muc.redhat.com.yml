@@ -2,9 +2,7 @@ layer1_ansible_host: storm2.coe.muc.redhat.com
 hailstorm_dns_domain: hailstorm2.coe.muc.redhat.com
 
 disable_registration_against_satellite: false
-satellite_version: 6.1
-openshift_version: 3.2
-
+stage: DEV
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
@@ -27,8 +25,8 @@ nfs_ose3_pv_path: /var/hailstorm/ose3-pv
 
 layer2_rhev_manager_mem: 16384
 layer2_rhev_manager_cpu: 4
-layer2_rhev_hypervisor_mem: 32768
-layer2_rhev_hypervisor_cpu: 8
+layer2_rhev_hypervisor_mem: 65536
+layer2_rhev_hypervisor_cpu: 16
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4
@@ -210,6 +208,18 @@ external_network_config:
             proto: tcp
           - from_port: 6080
             to_port: 6080
+            proto: tcp
+      - expose_machine: tower
+        on_host_prefix: 10.32.105.8/32
+        ports:
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 22
+            to_port: 22
             proto: tcp
   guest_network_bridging:
     layer1_dev: em2

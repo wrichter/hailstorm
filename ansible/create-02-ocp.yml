@@ -44,8 +44,8 @@
   #     tags: [ 'layer2', 'rhev' ]
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'ose3', 'vm' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'ose3', 'rhel' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'ose3', 'rhel' ], mode: create }
     - { role: layerX_openshift_all, tags: [ 'layer2', 'ose3', 'ose3-installprep' ], mode: create }
 
 - hosts: ose3-common
@@ -78,3 +78,10 @@
   gather_facts: false
   roles:
     - { role: layerX_openshift_lb, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-lb' ], mode: create }
+
+
+- hosts: ose3-master
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layerX_openshift_enablepipelines, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-pipelines' ], mode: create }

@@ -1,4 +1,6 @@
 # prereq: the variable hostnames needs to contain an array of (nova)host names to be removed from the cluster
+# e.g. invoke the playbook as follows:
+# ansible-playbook -i hosts -e @config/hailstorm_config.yml -e @config/infrastructure_config.yml -e @config/storm3.coe.muc.redhat.com.yml -e "hostnames=[\"overcloud-compute-5\"]" reset.yml
 - block:
     - name: ensure that no heat operation is currently in progress
       shell: . ~/stackrc && openstack stack list -f json
@@ -27,21 +29,21 @@
       shell: >
         . ~/overcloudrc_v3 &&
         nova service-disable {{ item }}.localdomain nova-compute
-      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
 
     - name: evacuate node
       shell: >
         . ~/overcloudrc_v3 &&
         nova host-evacuate-live {{ item }}.localdomain
-      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
 
     - name: wait until node is empty
       shell: >
         . ~/overcloudrc_v3 &&
         openstack server list --all-projects -f json --host {{ item }}.localdomain
-      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
       register: server_on_host
       until: server_on_host.stdout | from_json | length == 0
@@ -57,7 +59,7 @@
         --templates
         -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml
         {% for template in templates %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }} {% endif %}{% endfor %}
-        {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","equalto", item) | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
+        {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$") | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
 
     - name: wait for heat update to complete
       shell: . ~/stackrc && openstack stack list -f json
@@ -77,7 +79,7 @@
       register: nova_service_ids
       failed_when: nova_service_ids.stdout==""
       changed_when: false
-      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
 
     #- debug: var=nova_service_ids
@@ -100,8 +102,8 @@
     - name: remove neutron agent
       shell: >
         . ~/overcloudrc_v3 &&
-        neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","equalto", "neutron-openvswitch-agent") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
-      when: nova_uuids.stdout | from_json | selectattr("Name","equalto", item ) | list | length > 0
+        neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","match", "^neutron-openvswitch-agent$") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
     #
     #   register: rem_neutron

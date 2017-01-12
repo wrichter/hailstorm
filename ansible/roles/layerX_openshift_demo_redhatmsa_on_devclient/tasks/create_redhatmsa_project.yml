@@ -93,7 +93,7 @@
       register: routes
       changed_when: false
 
-    # - debug: msg={{ (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','aloha' ) | list | length }}
+    # - debug: msg={{ (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^aloha$' ) | list | length }}
     # - debug: var=dcs.stdout|from_yaml
     # - debug: var=templates.stdout|from_yaml
 
@@ -103,12 +103,12 @@
       with_items: "{{ msa_projects }}"
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+      when: (bcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^' + item.name + '$') | list | length == 0
 
     - name: Build OpenShift images
       shell: "oc start-build -n {{ redhat_msa_project }} {{ item.name }} --from-dir={{ workdir }}/{{ item.name }} --follow"
       with_items: "{{ msa_projects }}"
-      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^' + item.name + '$') | list | length == 0
 
     - name: Create OpenShift applications from previously created images
       shell: "oc new-app -n {{ redhat_msa_project }} {{ item.name }} -l app={{ item.name }}{{ (item.hystrix == True) | ternary(',hystrix.enabled=true','') }}"
@@ -116,7 +116,7 @@
       with_items: "{{ msa_projects }}"
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^' + item.name + '$') | list | length == 0
 
     - name: Expose OpenShift applications
       shell: "oc expose service -n {{ redhat_msa_project }} {{ item.name }}"
@@ -124,7 +124,7 @@
       with_items: "{{ msa_projects }}"
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto',item.name) | list | length == 0
+      when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^' + item.name + '$') | list | length == 0
 
     - name: Define Frontend domain
       shell: "oc env -n {{ redhat_msa_project }} dc/frontend OS_SUBDOMAIN=apps.{{ hailstorm_dns_domain }}"
@@ -145,28 +145,28 @@
 
     - name: Instantiate Kubeflix template (hystrix-dashboard)
       shell: oc create -n {{ redhat_msa_project }} -f http://central.maven.org/maven2/io/fabric8/kubeflix/packages/kubeflix/1.0.17/kubeflix-1.0.17-kubernetes.yml
-      when: (templates.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','kubeflix') | list | length == 0
+      when: (templates.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^kubeflix$') | list | length == 0
 
     - name: Instantiate Kubeflix application
       shell: oc new-app -n {{ redhat_msa_project }} kubeflix
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','hystrix-dashboard') | list | length == 0
+      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^hystrix-dashboard$') | list | length == 0
 
     - name: Expose hystrix-dashboard service
       shell: oc expose -n {{ redhat_msa_project }} service hystrix-dashboard --hostname=hystrix-dashboard-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }}
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (routes.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','hystrix-dashboard') | list | length == 0
+      when: (routes.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^hystrix-dashboard$') | list | length == 0
 
     - name: Add admin role to turbine service account
       shell:  oc policy -n {{ redhat_msa_project }} add-role-to-user admin system:serviceaccount:{{ redhat_msa_project }}:turbine
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','hystrix-dashboard') | list | length == 0
+      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^hystrix-dashboard$') | list | length == 0
 
     - name: Install Kubernetes Zipkin
       shell: >
@@ -175,7 +175,7 @@
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','equalto','zipkin-query') | list | length == 0
+      when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^zipkin-query$') | list | length == 0
 
   become: true
   become_user: developer

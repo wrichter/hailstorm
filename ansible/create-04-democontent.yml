@@ -9,8 +9,8 @@
   gather_facts: false
   roles:
     - { role: layer3_vm_on_rhev, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'vm'], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev', 'rhel'], mode: create }
     - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-rhev' ], mode: create }
 
 - hosts: lookbusy-osp
@@ -20,6 +20,12 @@
     - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'vm'], mode: create }
     - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'rhel'], mode: create }
     - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp' ], mode: create }
+
+- hosts: rhosp-director
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_rhosp_overcloud_demo_content, tags: [ 'layer2', 'rhosp', 'overcloud', 'democontent' ], mode: create }
 
 - hosts: cloudforms
   remote_user: root
@@ -33,19 +39,20 @@
   roles:
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
+    - { role: layerX_openshift_demo_amq, tags: [layer2, 'ose3', 'ose3-demo-amq'], mode: create }
 
 - hosts: dev-client
   remote_user: root
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'dev-client', 'ose3', 'vm' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
     - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }
     - { role: layerX_openshift_demo_redhatmsa_on_devclient, tags: [ 'layer2', 'dev-client',  'ose3', 'msademo' ], mode: create }
 
-- hosts: rhosp-director
+- hosts: tower
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_rhosp_overcloud_demo_content, tags: [ 'layer2', 'rhosp', 'overcloud', 'democontent' ], mode: create }
+    - { role: layer2_ansibletower_jobtemplates, tags: [ 'layer2', 'tower', 'tower-content' ], mode: create, content_location: "../Tower-internals", project_dir: "Hailstorm", inventoryname: "Hailstorm" }

@@ -7,7 +7,7 @@
       tags: ["ose3-pv"]
     - include: deploy_containers.yml
       tags: ["ose3-infracontainer"]
-    - include: deploy_logging_{{ openshift_version }}.yml
+    - include: deploy_logging_{{ current_lifecycle_env.openshift_version }}.yml
       tags: ["ose3-logging"]
     - include: deploy_metrics.yml
       tags: ["ose3-metrics"]

@@ -1,0 +1,5 @@
+- name: Deploy HANA (Dummy)
+  hosts: all
+  remote_user: root
+  tasks:
+    - debug: "msg=\"Service ID: {{ serviceid|default('not set') }}\""

@@ -49,7 +49,17 @@
       shell: >
         . ~/stackrc &&
         {{ lookup('template','deploy-overcloud.j2') }}
-      tags: ['deploy-overcloud']
+      tags: ['deploy']
+    #   async: 7200
+    #   poll: 0
+    #   register: deploy_overcloud
+    #
+    # - name: check on overcloud deploy completed
+    #   async_status: jid={{ deploy_overcloud.ansible_job_id }}
+    #   register: job_result
+    #   until: job_result.finished
+    #   retries: 480
+    #   delay: 15
 
   when: stack.stdout == ""
   become: yes
@@ -58,10 +68,10 @@
 - name: wait for stack creation to complete
   shell: . ~/stackrc && openstack stack list -f json
   register: stacklist
-  until: ( stacklist.stdout | from_json )[0]['Stack Status'] != "CREATE_IN_PROGRESS"
+  until: "'IN_PROGRESS' not in ( stacklist.stdout | from_json )[0]['Stack Status']"
   retries: 720
   delay: 60
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] == "CREATE_FAILED"
+  failed_when: "'FAILED' in ( stacklist.stdout | from_json )[0]['Stack Status']"
   changed_when: false

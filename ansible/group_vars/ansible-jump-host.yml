@@ -1,0 +1,1 @@
+pool_regex: "{{ rhel_subscription_pool_regex }}"

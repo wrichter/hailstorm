@@ -1,0 +1,10 @@
+{
+  "type":"ManageIQ::Providers::AnsibleTower::Provider",
+  "name":"Ansible Tower",
+  "url":"https://{{ hostvars['tower'].hostname }}",
+  {# "verify_ssl": "off", #}
+  "credentials" : {
+    "userid"    : "admin",
+    "password"  : "{{ root_password }}"
+  }
+}

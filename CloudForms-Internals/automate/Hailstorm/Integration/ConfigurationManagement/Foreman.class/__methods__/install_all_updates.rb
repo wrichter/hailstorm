@@ -57,16 +57,19 @@ begin
 
 	url = "https://#{@foreman_host}/api/v2/"
 	katello_url = "https://#{@foreman_host}/katello/api/v2/"
+  satellite_api_url = "https://#{@foreman_host}/api/"
 
   systems = get_json(katello_url+"systems")
   uuid = {}
+  host_id = {}
   hostExists = false
   systems['results'].each do |system|
 		$evm.log("info","Current Name: #{system["name"]} comparing to #{host}")
   	if system['name'].include? host
-  		$evm.log("info","Host ID #{system['id']}")
+  		$evm.log("info","Host ID #{system['host_id']}")
   		$evm.log("info","Host UUID #{system['uuid']}")
   		uuid = system['uuid'].to_s
+      host_id = system['host_id'].to_s
   		hostExists = true
       break
   	end
@@ -77,7 +80,8 @@ begin
     exit MIQ_OK
   end
 
-  erratas = get_json(katello_url+"systems/"+uuid+"/errata")
+  #erratas = get_json(katello_url+"systems/"+uuid+"/errata")
+  erratas = get_json(satellite_api_url+"hosts/" + host_id + "/errata")
   errata_list = Array.new
   erratas['results'].each do |errata|
   	errata_id = errata['errata_id']
@@ -89,7 +93,8 @@ begin
   	$evm.log("info","No erratas found for host #{host}")
   end
 
-  errata_result = put_json(katello_url+"systems/"+uuid+"/errata/apply", JSON.generate({"errata_ids"=>errata_list}))
+  #errata_result = put_json(katello_url+"systems/"+uuid+"/errata/apply", JSON.generate({"errata_ids"=>errata_list}))
+  errata_result = put_json(satellite_api_url+"hosts/"+host_id+ "/errata/apply", JSON.generate({"errata_ids"=>errata_list}))
 
   #
   # Exit method

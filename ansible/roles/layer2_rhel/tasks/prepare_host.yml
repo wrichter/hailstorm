@@ -8,15 +8,40 @@
 #   command: 'subscription-manager attach --pool={{ poolid }}'
 #   when: subscription_list.stdout is not defined or poolid != subscription_list.stdout | regex_replace('Pool ID:\\s+(\\S*).*', '\\1')
 
-- name: enable repos
-  shell: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
+- name: get current enabled repos
+  shell: >
+    subscription-manager repos |
+    awk 'BEGIN { print "repos:" } /^Enabled:/ { print "  - repo: \"" f "\"\n    enabled: \"" $2 "\"" } /Repo ID:/{ f=$3 }'
+  register: current_repos
+  changed_when: false
   when: repos is defined
+
+#- debug: msg="{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','1')|map(attribute='repo')|list }}"
+
+- name: store repo info as fact
+  set_fact:
+    disable_repos: "{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','1')|map(attribute='repo')|list|difference(repos) }}"
+    enable_repos: "{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','0')|map(attribute='repo')|list|intersect(repos) }}"
+  when: repos is defined
+# - debug: var=disable_repos
+# - debug: var=enable_repos
+
+- name: disable repos
+  shell: >
+    subscription-manager repos
+    {% for repo in disable_repos %}--disable="{{ repo }}" {% endfor %}
+    {% for repo in enable_repos %}--enable="{{ repo }}" {% endfor %}
+  when: repos is defined and (disable_repos|length > 0 or enable_repos|length > 0)
+
+# - name: enable repos
+#   shell: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
+#   when: repos is defined
 - name: upgrade packages
   yum: name=* state=latest
   # OpenShift requires older  version of Docker, ensure that a failure doesn't stop the process
   failed_when: false
 - name: install all prerequisites
-  yum: name="{{ packages }}" state=latest
+  yum: name="{{ packages }}" state=present
   register: prerequisites
   when: not (packages is undefined or packages is none or packages | trim == '')
 # next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383

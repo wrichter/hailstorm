@@ -13,12 +13,13 @@
         ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ osp_kvm_images[0].image }} |
         openstack image create --public --disk-format qcow2 -f json this_image_will_not_work
       when: image.stdout == ''
-      register: image
+      register: image2
   become: yes
   become_user: "{{ rhosp_stack_user }}"
 
-- debug: msg={{ image.stdout | from_json | selectattr("Field","equalto","id")| map(attribute="Value") | list | join(" ") }}
+#- debug: msg={{ image.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | list | join(" ") }}
 
 - name: delete image from underlying glance store
-  file: state=absent path={{ nfs_rhosp_glance_path }}/{{ image.stdout | from_json | selectattr("Field","equalto","id")| map(attribute="Value") | list | join(" ")}}
+  file: state=absent path={{ nfs_rhosp_glance_path }}/{{ image2.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | list | join(" ")}}
   delegate_to: "{{ infrastructure_delegate_nfs_server }}"
+  when: image2.stdout is defined and image2.stdout != ''

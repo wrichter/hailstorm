@@ -23,6 +23,9 @@
 #   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 #   when: ovirtmgmt_url.stdout != ''
 
+- name: give rhevm some time to gather its wits
+  pause: seconds=30
+  
 - name: find ovirtmgmt network
   shell: rhevm-shell -E 'show network --parent-datacenter-name Default ovirtmgmt' | awk '/^id/ { print $3 }'
   failed_when: false

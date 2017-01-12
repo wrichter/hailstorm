@@ -9,3 +9,7 @@
 - name: upload manifest
   command: 'hammer subscription upload --organization "{{ organization }}" --file /root/{{ satellite_manifestfile }}'
   when: manifest|changed
+
+- name: refresh manifest
+  command: 'hammer subscription refresh-manifest --organization "{{ organization }}"'
+#  when: not manifest|changed

@@ -1,0 +1,21 @@
+[{% set needscomma = [false] %}
+{% for group in groups.keys()| difference(['all']) %}
+{% if needscomma|last %},{% endif %}
+{
+  "name":"{{ group }}",
+  "body": {
+      "name": "{{ group }}",
+      "description": "",
+      "variables": ""
+  },
+  "post_to_related": {
+    "url_variable": "hosts",
+    "bodies": [{% set needscomma2 = [false] %}{% for host in groups[group] %}
+    {% if needscomma2|last %},{% endif %}
+    { "name": "{{ host }}" }
+    {% if needscomma2.append(true) %}{% endif %}{% endfor %}]
+  }
+
+}
+{% if needscomma.append(true) %}{% endif %}
+{% endfor %}]

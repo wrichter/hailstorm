@@ -1,0 +1,64 @@
+- name: Deploy HANA (Dummy)
+  hosts: all
+  tasks:
+    - debug: "msg=\"Service ID: {{ serviceid|default('not set') }}\""
+
+    - block:
+        - name: wait for subscription to finish
+          shell: subscription-manager status | awk '/^Overall Status/{ print $3 }' || sleep 600
+          register: subscription_status
+          until: subscription_status.stdout == 'Current' or subscription_status.stdout == 'Insufficient'
+          failed_when: subscription_status.stdout == ''
+          changed_when: false
+          retries: 30
+          delay: 20
+
+        - name: install postgres
+          yum: name=postgresql-server,python-psycopg2 state=latest
+
+        - name: init postgres db
+          shell: postgresql-setup initdb creates=/var/lib/pgsql/data
+
+        - name: configure postgres connection
+          lineinfile: dest=/var/lib/pgsql/data/pg_hba.conf line="{{item.line}}" regexp="{{item.regexp}}"
+          with_items:
+            - line: "host    all             all             127.0.0.1/32            md5"
+              regexp: "^host.*all.*all.*127.0.0.1/32"
+            - line: "host    all             all             ::1/128                 md5"
+              regexp: "^host.*all.*all.*::1/128"
+
+        - name: start postgres server
+          service: name=postgresql state=restarted enabled=yes
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: create random password
+      command: mktemp --dry-run
+      register: mktemp
+
+    - name: store pw as fact
+      set_fact:
+        password: "{{ mktemp.stdout|basename }}"
+
+    - block:
+        - name: set postgres user pw
+          postgresql_user: name=postgres password="{{ password }}"
+        - name: create db
+          postgresql_db: name=test login_user=postgres
+      become_user: postgres
+      become: true
+      become_method: sudo
+
+    - command: curl -k -u admin:redhat01 -XPOST -d'{"version":"1.1", "uri_parts":{"namespace":"Hailstorm/Integration/RedHat","class":"Methods","instance":"wolfram_callbackTest"},"parameters":{"serviceid":"{{ serviceid }}","dbuser":"postgres","dbpassword":"{{ password }}"},"requester":{"auto_approve":"true"}}' https://cloudforms.hailstorm2.coe.muc.redhat.com/api/automation_requests
+      when: serviceid is defined
+      register: request
+
+#    - debug: msg="{{ request.stdout|from_json }}"
+
+    - command: curl -k -u admin:redhat01 -XGET https://cloudforms.hailstorm2.coe.muc.redhat.com/api/automation_requests/{{ (request.stdout|from_json).results[0].id }}
+      register: request_results
+      until: (request_results.stdout|from_json).request_state == "finished"
+      changed_when: false
+      retries: 30
+      delay: 20

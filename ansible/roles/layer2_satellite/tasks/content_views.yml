@@ -35,33 +35,32 @@
     - item.filter
   register: new_filters
 
-- debug: msg="{{ lookup('template','missing_filters.json.j2') }}"
-- local_action: template src=missing_filters.json.j2 dest=/tmp/text2.txt
+# - debug: msg="{{ lookup('template','missing_filters.json.j2') }}"
+# - local_action: template src=missing_filters.json.j2 dest=/tmp/text2.txt
 
 - name: create filter rules
-  command: hammer content-view filter rule create --name "{{ item.name }}" --content-view  {{ item.content_view }} --organization "{{ organization }}" --content-view-filter "{{ item.filtername }}"
+  command: hammer content-view filter rule create {% if item.name is defined %}--name "{{ item.name }}"{% endif %} {% if item.errata_ids is defined %}--errata-ids "{{ item.errata_ids|join(',') }}"{% endif %} --content-view  {{ item.content_view }} --organization "{{ organization }}" --content-view-filter "{{ item.filtername }}"
   with_items: "{{ lookup('template','missing_filters.json.j2')  }}"
 
-
-- name: get current lifecycle environments
-  shell: hammer lifecycle-environment list --organization "{{ organization }}" --library false | awk '{ print $3 }' | tail -n+4
-  register: current_lifecycle_environments
-  changed_when: false
-
-- name: publish content_view
-  command: 'hammer content-view publish --organization "{{ organization }}" --name "{{ item.content_view }}"'
-  when: (republish is defined and republish) or item.content_view not in current_content_views.stdout_lines
-  with_items: "{{ content_config }}"
-
-- name: get latest version id of content_view
-  shell: hammer content-view version list --organization "{{ organization }}" --content-view "{{ item.content_view }}" | grep Library
-  register: cv_id
-  changed_when: false
-  with_items: "{{ content_config }}"
-
-- name: promote latest version of content_view to all lifecycle environments
-  command: hammer content-view version promote --id '{{ item.1.stdout.split(' ')[0] }}' --organization "{{ organization }}" --to-lifecycle-environment '{{ item.0.name }}'
-  when: (republish is defined and republish) or item.0.name not in item.1.stdout
-  with_nested:
-    - "{{ lifecycle_environments }}"
-    - "{{ cv_id.results }}"
+# - name: get current lifecycle environments
+#   shell: hammer lifecycle-environment list --organization "{{ organization }}" --library false | awk '{ print $3 }' | tail -n+4
+#   register: current_lifecycle_environments
+#   changed_when: false
+#
+# - name: publish content_view
+#   command: 'hammer content-view publish --organization "{{ organization }}" --name "{{ item.content_view }}"'
+#   when: (republish is defined and republish) or item.content_view not in current_content_views.stdout_lines
+#   with_items: "{{ content_config }}"
+#
+# - name: get latest version id of content_view
+#   shell: hammer content-view version list --organization "{{ organization }}" --content-view "{{ item.content_view }}" | grep Library
+#   register: cv_id
+#   changed_when: false
+#   with_items: "{{ content_config }}"
+#
+# - name: promote latest version of content_view to all lifecycle environments
+#   command: hammer content-view version promote --id '{{ item.1.stdout.split(' ')[0] }}' --organization "{{ organization }}" --to-lifecycle-environment '{{ item.0.name }}'
+#   when: (republish is defined and republish) or item.0.name not in item.1.stdout
+#   with_nested:
+#     - "{{ lifecycle_environments }}"
+#     - "{{ cv_id.results }}"

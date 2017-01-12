@@ -1,0 +1,29 @@
+{# https://bugzilla.redhat.com/show_bug.cgi?id=1355750 #}
+{
+  "type":"ManageIQ::Providers::OpenshiftEnterprise::ContainerManager",
+  "name":"openshift.{{ hailstorm_dns_domain }}",
+  "connection_configurations" : [
+    {
+      "endpoint": {
+        "role": "default",
+        "hostname":"openshift.{{ hailstorm_dns_domain }}",
+        "port":"8443"
+      },
+      "authentication": {
+        "role": "bearer",
+        "auth_key": "{{ hostvars[groups['ose3-installer'][0]].ose_cmfe_token }}"
+      }
+    },
+    {
+      "endpoint": {
+        "role": "hawkular",
+        "hostname": "hawkular-metrics.apps.{{ hailstorm_dns_domain }}",
+        "port": "443"
+      },
+      "authentication": {
+        "role": "hawkular",
+        "auth_key": "{{ hostvars[groups['ose3-installer'][0]].ose_cmfe_token }}"
+      }
+    }
+  ]
+}

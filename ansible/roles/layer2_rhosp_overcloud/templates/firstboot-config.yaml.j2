@@ -6,7 +6,7 @@ resources:
     properties:
       parts:
 {% for template in templates %}{% if template | match('^firstboot.*\.sh$') %}
-        - config: {{ template | replace('-', '_') | replace('.sh','') }}
+        - config: {get_resource: {{ template | replace('-', '_') | replace('.sh','') }}}
 {% endif %}{% endfor %}
 
   repo_config:

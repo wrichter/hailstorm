@@ -46,6 +46,7 @@
     - { role: layer2_rhel, tags: [ 'layer3', 'cf', 'rhel'], mode: create }
     - { role: layer2_tdagent, tags: [ 'layer3', 'cf', 'tdagent'], mode: create }
     - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'cfme-osp-provider' ], mode: create }
+    - { role: layer3_cloudforms_tower, tags: [ 'layer3', 'cf', 'cfme-tower-provider' ], mode: create }
 
 - hosts: ose3-installer
   remote_user: root
@@ -67,6 +68,24 @@
   gather_facts: false
   roles:
     - { role: layer2_vms, tags: [ 'layer2', 'efk', 'vm' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'efk', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
     - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create }
+
+#### TOWER ####
+
+- hosts: ansible-jump-host
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'vm', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-openstack', 'vm'], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'tower', 'rhel', 'tower-inventory-l3', 'tower-inventory-l3-openstack', 'rhel'], mode: create }
+
+
+- hosts: tower
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_ansibletower_l3inventory, tags: [ 'layer2', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-cloudforms' ], mode: create, kind: "cloudforms", inventoryname: "Hailstorm", groupname: "CloudForms", credentialname: "Hailstorm L3 SSH", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"https://cloudforms.{{ hailstorm_dns_domain }}"} }
+    - { role: layer2_ansibletower_l3inventory, tags: [ 'layer2', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-openstack' ], mode: create, kind: "openstack", inventoryname: "Hailstorm", groupname: "OpenStack", credentialname: "Hailstorm L3 SSH", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-vms", "domain": "hailstorm"}, "jumphost": "{{ hostvars['ansible-jump-demo-vms'].ansible_host }}" }
+#    - { role: layer2_ansibletower_inventory, tags: [ 'layer2', 'tower', 'tower-openstack' ], mode: create, kind: "openstack", inventoryname: "Hailstorm L3", groupname: "OpenStack Infra-VMs", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-infra", "domain": "hailstorm"}, "jumphost": "{{ hostvars['ansible-jump-demo-infra'].ansible_host }}" }

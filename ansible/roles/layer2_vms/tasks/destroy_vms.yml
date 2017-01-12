@@ -30,7 +30,7 @@
       changed_when: false
     - name: delete VM snapshots
       command: virsh snapshot-delete "{{ inventory_hostname_short }}" "{{ item }}"
-      with_items: "{{ snapshots.stdout_lines }}"
+      with_items: "{% if not snapshots|skipped %}{{ snapshots.stdout_lines }}{% endif %}"
 
     - name: undefine vms
       #virt: command=undefine name={{ inventory_hostname_short }}

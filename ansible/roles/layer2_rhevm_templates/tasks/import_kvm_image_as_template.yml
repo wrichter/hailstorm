@@ -5,7 +5,7 @@
   register: template
   changed_when: false
 
-- debug: var=template
+#- debug: var=template
 
 - name: check existing VM
   shell: >
@@ -15,7 +15,7 @@
   changed_when: false
   when: (template.stdout|from_yaml).template[0] is not defined
 
-- debug: var=vm
+#- debug: var=vm
 
 # - name: find storagedomain id
 #   shell: rhevm-shell -E 'list storagedomains' | awk '/^name.*export1/ { print f } { f=$3 }'
@@ -32,7 +32,7 @@
   changed_when: false
   when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined
 
-- debug: var=vm_in_export_domain
+#- debug: var=vm_in_export_domain
 
 - block:
     - name: ensure that layer1 root has an ssh key set
@@ -63,7 +63,7 @@
       delegate_to: "{{ groups['rhevh'][0] }}"
       register: v2v
 
-    - debug: var=v2v
+#    - debug: var=v2v
 
     - name: remove image
       file: path=/tmp/{{ item.image }} state=absent
@@ -120,7 +120,7 @@
     (vm.stdout|from_yaml).vm[0] is defined
   register: created_template
 
-- debug: var=created_template
+# - debug: var=created_template
 
 - name: get VM disk ID
   shell: >
@@ -131,7 +131,7 @@
   failed_when: disk_id.stdout == ""
   when: (vm.stdout|from_yaml).vm[0] is defined
 
-- debug: var=disk_id
+# - debug: var=disk_id
 
 - name: wait for disk to unlock
   shell: >
