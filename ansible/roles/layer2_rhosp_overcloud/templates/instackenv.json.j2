@@ -1,6 +1,6 @@
 {
   "ssh-user": "{{ rhosp_stack_user }}",
-  "ssh-key": "{{ ssh_priv_key_undercloud.replace('\n','\\n') }}",
+  "ssh-key": "{{ ssh_priv_key_undercloud.replace('\n','\\n').replace('\r','') }}",
   "power_manager": "nova.virt.baremetal.virtual_power_driver.VirtualPowerManager",
   "host-ip": "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}",
   "arch": "x86_64",
@@ -9,7 +9,7 @@
     {
       {# "pm_addr": "{{ infrastructure_network_admin.gw_ip }}", #}
       "pm_addr": "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}",
-      "pm_password": "{{ ssh_priv_key_undercloud.replace('\n','\\n') }}",
+      "pm_password": "{{ ssh_priv_key_undercloud.replace('\n','\\n').replace('\r','') }}",
       "pm_type": "pxe_ssh",
       "mac": [
         "{{ hostvars[node].vm_nics[0].mac }}"
