@@ -5,3 +5,7 @@
 - block:
     - include: terminate_vm.yml
   when: mode=="destroy"
+
+- block:
+    - include: start.yml
+  when: mode=="start"

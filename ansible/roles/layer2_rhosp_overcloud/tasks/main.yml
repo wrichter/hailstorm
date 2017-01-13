@@ -39,6 +39,7 @@
 
 - block:
     - include: scale_down_via_hostname.yml
+      static: no
       vars:
         templates:
           - network-isolation-environment.yaml

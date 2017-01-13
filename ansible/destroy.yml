@@ -9,12 +9,15 @@
     - role: layerX_openshift_demo_redhatmsa_on_devclient
       tags: [ 'layer2','dev-client', 'ose3', 'msademo', 'content' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layerX_ipa_client
       tags: [ 'layer2','dev-client', 'ose3', 'ipa-client','content' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_rhel
       tags: [ 'layer2','dev-client', 'ose3', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','dev-client', 'ose3', 'vm' ]
       mode: destroy
@@ -29,9 +32,12 @@
     - role: layer2_rhel
       tags: [ 'layer3','lookbusy-rhev','lookbusy', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer3_vm_on_rhev
       tags: [ 'layer3','lookbusy-rhev','lookbusy', 'vm' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
+
 
 - hosts: lookbusy-osp
   gather_facts: false
@@ -43,9 +49,12 @@
     - role: layer2_rhel
       tags: [ 'layer3','lookbusy-osp','lookbusy', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer3_vm_on_openstack
       tags: [ 'layer3','lookbusy-osp','lookbusy', 'vm' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
+
 
 - hosts: efk
   gather_facts: false
@@ -57,17 +66,11 @@
     - role: layer2_rhel
       tags: [ 'layer2','efk', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','efk', 'vm' ]
       mode: destroy
 
-- hosts: ose3-installer
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layerX_openshift_demo_monster, tags: ['ose3-demo','ose3-content', 'content'], mode: destroy }
-    - { role: layerX_openshift_devops_tools, tags: ['ose3-devops','ose3-content','content'], mode: destroy }
-    - { role: layerX_openshift_installer, tags: ['ose3-metrics', 'ose3-roles','ose3-content','content'], mode: destroy }
 
 - hosts: ose3
   gather_facts: false
@@ -76,22 +79,32 @@
     - role: layer2_vms
       tags: [ 'layer2','ose3', 'rhel' ]
       mode: start
-    - role: layer2_rhel
-      tags: [ 'layer2','ose3', 'rhel' ]
-      mode: destroy
 
-# - hosts: ose3-installer
-#   gather_facts: false
-#   remote_user: root
-#   roles:
-#     - role: layerX_openshift_installer
-#       tags: [ 'layer2','ose3', 'ose3-metrics' ]
-#       mode: destroy
+- hosts: ose3-installer
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layerX_openshift_demo_monster
+      tags: ['ose3-demo','ose3-content', 'content']
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layerX_openshift_devops_tools
+      tags: ['ose3-devops','ose3-content','content']
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layerX_openshift_installer
+      tags: ['ose3-metrics', 'ose3-roles','ose3-content','content']
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
 
 - hosts: ose3
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer2_rhel
+      tags: [ 'layer2','ose3', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','ose3', 'vm' ]
       mode: destroy
@@ -100,20 +113,12 @@
   gather_facts: false
   remote_user: root
   roles:
+
     - role: layer2_rhel
       tags: [ 'layer3', 'cf', 'rhel']
       mode: destroy
     - role: layer3_cloudforms_rhev
       tags: [ 'layer3', 'cf' ]
-      mode: destroy
-
-- hosts: rhevm
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer2_tdagent, tags: [ 'layer2', 'rhev', 'tdagent','content' ], mode: destroy }
-    - role: layer2_rhevm_ldap
-      tags: [ 'rhevm-ldap','rhev', 'content' ]
       mode: destroy
 
 - hosts: rhev
@@ -123,9 +128,28 @@
     - role: layer2_vms
       tags: [ 'layer2','rhev', 'rhel' ]
       mode: start
+
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_tdagent
+      tags: [ 'layer2', 'rhev', 'tdagent','content' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_rhevm_ldap
+      tags: [ 'rhevm-ldap','rhev', 'content' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+
+- hosts: rhev
+  gather_facts: false
+  remote_user: root
+  roles:
     - role: layer2_rhel
       tags: [ 'layer2','rhev', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','rhev', 'vm' ]
       mode: destroy
@@ -146,6 +170,7 @@
     - role: layer2_rhel
       tags: [ 'layer2','rhosp', 'rhel'  ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
 
 - hosts: rhosp-all
   gather_facts: false
@@ -180,6 +205,7 @@
     - role: layer2_rhel
       tags: [ 'layer2','tower', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','tower', 'vm' ]
       mode: destroy
@@ -197,6 +223,7 @@
     - role: layer2_rhel
       tags: [ 'layer2','ipa', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','ipa', 'vm' ]
       mode: destroy
@@ -215,25 +242,25 @@
     - role: layer2_rhel
       tags: [ 'layer2','infrastructure', 'rhel' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','infrastructure', 'vm' ]
       mode: destroy
 
-
-# - hosts: test-rhel
-#   gather_facts: false
-#   remote_user: root
-#   roles:
-#     - role: layer2_vms
-#       tags: [ 'layer2',  "test-rhel", 'rhel' ]
-#       mode: start
-#     - role: layer2_rhel
-#       tags: [ 'layer2', 'rhel', 'test-rhel'  ]
-#       mode: destroy
-#     - role: layer2_vms
-#       tags: [ 'layer2', 'vm', 'test-rhel' ]
-#       mode: destroy
-
+- hosts: test-rhel
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2',  "test-rhel", 'rhel' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer2', 'rhel', 'test-rhel'  ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_vms
+      tags: [ 'layer2', 'vm', 'test-rhel' ]
+      mode: destroy
 
 - hosts: satellite
   gather_facts: false

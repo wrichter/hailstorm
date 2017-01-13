@@ -22,3 +22,8 @@
     - include: remove_floating_ip.yml
     - include: terminate_vm.yml
   when: mode=="destroy"
+
+
+- set_fact:
+    vm_exists: true
+    #TODO - create a "start" mode which starts the VM and sets this fact
