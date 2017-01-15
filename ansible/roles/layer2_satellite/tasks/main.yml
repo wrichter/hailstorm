@@ -13,6 +13,7 @@
       tags: ['cv']
     - include: publish_and_promote_cv.yml
       tags: ['publish']
+      static: no
     - include: host-collections.yml
       tags: ['hc']
     - include: sync_plan.yml
