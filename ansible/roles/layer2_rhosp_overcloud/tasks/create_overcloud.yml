@@ -48,7 +48,7 @@
     - name: deploy overcloud (even more coffee!)
       shell: >
         . ~/stackrc &&
-        {{ lookup('template','deploy-overcloud.j2') }}
+        {{ lookup('template','deploy-overcloud.j2') }} 2>&1 >~/deploy_overcloud.log
       tags: ['deploy']
     #   async: 7200
     #   poll: 0

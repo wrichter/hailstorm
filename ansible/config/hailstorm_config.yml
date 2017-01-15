@@ -21,6 +21,7 @@ lifecycle_environments:
     satellite_version: 6.2.5
     openshift_version: 3.3
     openstack_version: 10
+    cloudforms_version: 5.6
     cloudforms_ova_appliance: cfme-rhevm-5.6.2.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
@@ -42,6 +43,7 @@ lifecycle_environments:
     satellite_version: 6.2.4
     openshift_version: 3.3
     openstack_version: 9
+    cloudforms_version: 5.6
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
@@ -66,6 +68,7 @@ lifecycle_environments:
     satellite_version: 6.2.4
     openshift_version: 3.3
     openstack_version: 9
+    cloudforms_version: 5.6
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
@@ -109,7 +112,7 @@ rhosp_undercloud_repos:
 rhosp_overcloud_repos:
   - rhel-7-server-rpms
   - rhel-7-server-optional-rpms
-  - rhel-7-server-openstack-9-optools-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-optools-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
@@ -127,7 +130,7 @@ ipa_repos:
 cloudforms_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
-  - cf-me-5.6-for-rhel-7-rpms
+  - cf-me-{{ current_lifecycle_env.cloudforms_version }}-for-rhel-7-rpms
 ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms

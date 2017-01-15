@@ -3,7 +3,7 @@ set -x
 
 function nova_compute_control {
   # set keystone auth version
-  sudo openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_version v3
+  sudo crudini --set /etc/nova/nova.conf keystone_authtoken auth_version v3
 
   # install optools fluentd
   yum install -y fluentd rubygem-fluent-plugin-add
@@ -46,7 +46,7 @@ function nova_compute {
 
 function cinder_control {
   sudo sed -i "s;:5000/v2;:5000/v3;g" /etc/cinder/cinder.conf
-  sudo openstack-config --set /etc/cinder/cinder.conf keystone_authtoken auth_version v3
+  sudo crudini --set /etc/cinder/cinder.conf keystone_authtoken auth_version v3
   sudo systemctl restart openstack-cinder-api
   sudo systemctl restart openstack-cinder-volume
 }
@@ -71,9 +71,9 @@ EOF
     sudo mkdir /etc/keystone/domains/ &&
     sudo chown keystone:keystone /etc/keystone/domains/;
   fi
-  sudo openstack-config --set /etc/keystone/keystone.conf identity domain_specific_drivers_enabled true
-  sudo openstack-config --set /etc/keystone/keystone.conf identity domain_config_dir /etc/keystone/domains
-  sudo openstack-config --set /etc/keystone/keystone.conf assignment driver keystone.assignment.backends.sql.Assignment
+  sudo crudini --set /etc/keystone/keystone.conf identity domain_specific_drivers_enabled true
+  sudo crudini --set /etc/keystone/keystone.conf identity domain_config_dir /etc/keystone/domains
+  sudo crudini --set /etc/keystone/keystone.conf assignment driver keystone.assignment.backends.sql.Assignment
 
   if [ ! -d /etc/openstack-dashboard/local_settings.d ]; then
   # Liberty & before
