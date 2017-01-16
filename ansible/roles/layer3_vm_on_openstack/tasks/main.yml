@@ -1,8 +1,9 @@
 - name: check if openstack is reachable
-  shell: curl -k https://{{ hostvars['openstack'].vm_nics[0].ip }}/ || true
+  shell: curl -k http://{{ hostvars['openstack'].vm_nics[0].ip }}/ || true
   register: openstack_response
   changed_when: false
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+
 - block:
     - block:
        - include: instantiate_vm.yml
