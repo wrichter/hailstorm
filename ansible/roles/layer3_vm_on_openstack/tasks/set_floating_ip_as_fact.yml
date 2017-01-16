@@ -11,7 +11,12 @@
   become_user: "{{ hostvars['rhosp-director'].rhosp_stack_user }}"
   delegate_to: rhosp-director
 
+- name: save vm existence as fact
+  set_fact:
+    vm_exists: "{{ instance_data.stdout|from_json|list|length > 0 }}"
+
 - name: save floating IP as fact ansible_host
   set_fact:
     ansible_host: "{{ (instance_data.stdout|from_json)[0]['Networks']|regex_replace('internal_'+osp_tenant+'=\\d+\\.\\d+\\.\\d+\\.\\d+,?\\s*','') }}"
     ansible_ssh_common_args: "-i ./binary/{{ hailstorm_ssh_priv_key_file }} -o StrictHostKeyChecking=no"
+  when: vm_exists
