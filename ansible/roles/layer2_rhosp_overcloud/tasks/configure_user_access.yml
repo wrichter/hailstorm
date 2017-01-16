@@ -7,7 +7,8 @@
       changed_when: false
       failed_when: role_ids.stdout == ""
 
-    - set_fact:
+    - name: store role ids as fact
+      set_fact:
         admin_role_id: "{{ role_ids.stdout|from_json|selectattr('Name','match','^admin$')|map(attribute='ID')|first }}"
         member_role_id: "{{ role_ids.stdout|from_json|selectattr('Name','match','^_member_$')|map(attribute='ID')|first }}"
 
@@ -22,13 +23,10 @@
     - name: get existing role assignments for projects
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role assignment list --project {{ item.ID }} -f json
+        openstack role assignment list --project {{ project_ids.stdout|from_json|selectattr('Name','match','^' + item + '$')|map(attribute='ID')|first }} -f json
       register: role_assignments_proj
-      with_items: "{{ project_ids.stdout|from_json }}"
+      with_items: "{{ osp_projects }}"
       changed_when: false
-
-    - set_fact:
-        role_assignment_proj_parsed: "{{ role_assignments_proj.results|map(attribute='stdout')|map('from_json')|list }}"
 
     - name: get existing role assignments for domain
       shell: >
@@ -49,7 +47,7 @@
     - name: assign admin role for projects to default domain admin
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ default_dom_admin_user.stdout }} --project {{ item.item.ID }} {{ admin_role_id }}
+        openstack role add --user {{ default_dom_admin_user.stdout }} --project {{ item.item }} {{ admin_role_id }}
       when: (item.stdout|from_json|selectattr('User','match','^' + default_dom_admin_user.stdout + '$')|selectattr('Role','match','^' + admin_role_id + '$')|list|length) == 0
       with_items: "{{ role_assignments_proj.results }}"
 
@@ -66,24 +64,32 @@
         . ~/overcloudrc_v3 &&
         openstack role add --user {{ item.ID }} --domain {{ osp_domain_name }} {{ admin_role_id }}
       when: item.Name in osp_admin_user and item.ID not in role_assignments_dom.stdout_lines
-      with_items: "{{ dom_user_ids.stdout|from_json }}"
+      with_items: "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
 
     - name: assign admin users to projects
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ item.0.ID }} --project {{ item.1.item.ID }} {{ admin_role_id }}
+        openstack role add --user {{ item.0.ID }} --project {{ item.1.item }} {{ admin_role_id }}
       when: item.0.Name in osp_admin_user and (item.1.stdout|from_json|selectattr('User','match','^' + item.0.ID + '$')|selectattr('Role','match','^' + admin_role_id + '$')|list|length == 0)
+      # when: >
+      #   role_assignments_proj|flatten|
+      #   selectattr('User','match','^' + dom_user_ids.stdout|from_json|selectattr('Name','match','^' + item.1 + '$')|map(attribute='ID')|first +'$' )|
+      #   selectattr('Role','match','^' + admin_role_id + '$')|
+      #   selectattr('Project','match','^' + project_ids.stdout|from_json|selectattr('Name','match','^' + item.1 + '$') + '$')|
+      #   list|length == 0
       with_nested:
-        - "{{ dom_user_ids.stdout|from_json }}"
+        - "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
         - "{{ role_assignments_proj.results }}"
+      #- "{{ osp_admin_user }}"
+      #- "{{ osp_projects }}"
 
     - name: assign member users to projects
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ item.0.ID }} --project {{ item.1.item.ID }} {{ member_role_id }}
+        openstack role add --user {{ item.0.ID }} --project {{ item.1.item }} {{ member_role_id }}
       when: item.0.Name in osp_member_user and (item.1.stdout|from_json|selectattr('User','match','^' + item.0.ID + '$')|selectattr('Role','match','^' + member_role_id + '$')|list|length == 0)
       with_nested:
-        - "{{ dom_user_ids.stdout|from_json }}"
+        - "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
         - "{{ role_assignments_proj.results }}"
   become: yes
   become_user: "{{ rhosp_stack_user }}"

@@ -6,6 +6,7 @@
     - include: import_images_to_undercloud_glance.yml
       tags: ['install_undercloud']
     - include: reconfigure_director_ui.yml
+      when: current_lifecycle_env.openstack_version >= 10 
   when: mode=="create"
 
 # - block:
