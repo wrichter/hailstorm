@@ -19,7 +19,12 @@
 
 #- debug: msg={{ image.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | list | join(" ") }}
 
+- name: determine image uuid
+  set_fact:
+    image_uuid: '{% if current_lifecycle_env.openstack_version < 10 %}{{ image2.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | first }}{% else %}{{ (image2.stdout | from_json).id }}{% endif %}'
+  when: image2.stdout is defined and image2.stdout != ''
+
 - name: delete image from underlying glance store
-  file: state=absent path={{ nfs_rhosp_glance_path }}/{{ image2.stdout | from_json | selectattr("Field","match","^id$")| map(attribute="Value") | list | join(" ")}}
+  file: state=absent path={{ nfs_rhosp_glance_path }}/{{ image_uuid }}
   delegate_to: "{{ infrastructure_delegate_nfs_server }}"
   when: image2.stdout is defined and image2.stdout != ''
