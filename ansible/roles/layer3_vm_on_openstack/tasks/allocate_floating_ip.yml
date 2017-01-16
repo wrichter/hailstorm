@@ -17,15 +17,19 @@
         OS_TENANT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack ip floating create {{ infrastructure_network_guests.netname }} -f json
-      register: floating_ip
+      register: floating_ip_results
       when: ( instance_data.stdout | from_json )[0]['Networks'] | regex_replace('internal_' + osp_tenant + "=\d+\.\d+\.\d+\.\d+,?\s*",'') == ""
+
+    - name: determine floating IP
+      set_fact:
+        floating_ip: '{% if current_lifecycle_env.openstack_version < 10 %}{{ floating_ip_results.stdout | from_json | selectattr("Field","match","^ip$") | map(attribute="Value") | first }}{% else %}{{ (floating_ip_results.stdout | from_json).floating_ip_address }}{% endif %}'
 
     - name: associate floating IP
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
-        openstack ip floating add {{ floating_ip.stdout | from_json | selectattr("Field","match","^ip$") | map(attribute="Value") | join(" ") }} {{ inventory_hostname_short }}
+        openstack ip floating add {{ floating_ip }} {{ inventory_hostname_short }}
       when: ( instance_data.stdout | from_json )[0]["Networks"] | regex_replace('internal_' + osp_tenant + "=\d+\.\d+\.\d+\.\d+,?\s*",'') == ""
 
   become: yes
