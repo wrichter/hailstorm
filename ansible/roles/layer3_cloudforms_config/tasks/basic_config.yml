@@ -47,5 +47,5 @@
     creates=/etc/sssd/sssd.conf
 
 - name: set internal admin password
-  command: rails r "User.find_by_userid('admin').update_attributes(:password => '{{ root_password }}')"
+  shell: cd /var/www/miq/vmdb && rails r "User.find_by_userid('admin').update_attributes(:password => '{{ root_password }}')"
   #https://access.redhat.com/solutions/801103
