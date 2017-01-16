@@ -49,3 +49,52 @@ nova_rpc_timeout: 600
 
 # will be populated during runtime
 os_auth: {}
+
+
+default_overcloud_flavors: [
+  {
+    "ID": "1",
+    "Disk": 1,
+    "Is Public": true,
+    "VCPUs": 1,
+    "Ephemeral": 0,
+    "RAM": 512,
+    "Name": "m1.tiny"
+  },
+  {
+    "ID": "2",
+    "Disk": 20,
+    "Is Public": true,
+    "VCPUs": 1,
+    "Ephemeral": 0,
+    "RAM": 2048,
+    "Name": "m1.small"
+  },
+  {
+    "ID": "3",
+    "Disk": 40,
+    "Is Public": true,
+    "VCPUs": 2,
+    "Ephemeral": 0,
+    "RAM": 4096,
+    "Name": "m1.medium"
+  },
+  {
+    "ID": "4",
+    "Disk": 80,
+    "Is Public": true,
+    "VCPUs": 4,
+    "Ephemeral": 0,
+    "RAM": 8192,
+    "Name": "m1.large"
+  },
+  {
+    "ID": "5",
+    "Disk": 160,
+    "Is Public": true,
+    "VCPUs": 8,
+    "Ephemeral": 0,
+    "RAM": 16384,
+    "Name": "m1.xlarge"
+  }
+]

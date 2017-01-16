@@ -28,6 +28,8 @@
       tags: ['overcloud-config-security']
     - include: configure_images.yml
       tags: ['overcloud-config-images']
+    - include: create_flavors.yml
+      tags: ['overcloud-create-flavors']
   when: mode=="create"
 
 - block:
