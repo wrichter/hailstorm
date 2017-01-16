@@ -23,6 +23,7 @@
     - name: Create service accounts
       shell: oc new-app logging-deployer-account-template -n logging
       when: "'logging-deployer' not in logging_sa.stdout_lines"
+      ignore_errors: true
 
     - name: Add oauth permissions to logging sa
       shell: oadm policy {{ item }}
@@ -55,7 +56,7 @@
         --from-literal curator-nodeselector="region=infra"
 
     - name: get ose version
-      shell: oc version | awk '/^oc/{ print substr($2,0,4) }'
+      shell: oc version | awk '/^oc/{ print substr($2,2,5) }'
       register: version_tag
       changed_when: false
 
@@ -64,7 +65,7 @@
         oc new-app logging-deployer-template -n logging
         --param IMAGE_PREFIX=registry.access.redhat.com/openshift3/
         --param MODE=install
-        --param IMAGE_VERSION=3.3.0
+        --param IMAGE_VERSION={{ version_tag.stdout }}
 
     - name: Wait for logging-deployer to complete
       shell: oc get pod -l "app=logging-deployer-template" -n logging
