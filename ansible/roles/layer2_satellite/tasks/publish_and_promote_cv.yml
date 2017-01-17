@@ -1,6 +1,6 @@
 - name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)
   command: hammer --output json content-view info --organization "{{ organization }}"  --name "{{ item }}"
-  with_items: "{{ content_config | map(attribute='content_view') | list }}"
+  with_items: "{{ satellite_content_config | map(attribute='content_view') | list }}"
   register: content_view_info
   changed_when: false
 
@@ -15,7 +15,7 @@
 - name: retrieve existing filters
   command: hammer --output json content-view filter list --content-view "{{ item.content_view }}" --organization "{{ organization }}"
   register: existing_filters
-  with_items: "{{ content_config }}"
+  with_items: "{{ satellite_content_config }}"
   changed_when: false
 
 - name: create staging filter
@@ -33,7 +33,7 @@
 
 - name: retrieve existing filter rules
   command: hammer --output json content-view filter rule list --content-view-filter "Staging" --content-view "{{ item.content_view }}" --organization "{{ organization }}"
-  with_items: "{{ content_config }}"
+  with_items: "{{ satellite_content_config }}"
   register: existing_filter_rules
   changed_when: false
 
@@ -53,11 +53,11 @@
 
 
 # now we can assume that filter & filter rules exist
-# iterate over the hailstorm staging content_config
-#   if the staging content_config is NOT found in the content view version descriptions / filter data
+# iterate over the hailstorm staging satellite_content_config
+#   if the staging satellite_content_config is NOT found in the content view version descriptions / filter data
 #      -> adjust filter
 #      -> publish new version
-#      -> reretrieve staging content_config (and promotion status)
+#      -> reretrieve staging satellite_content_config (and promotion status)
 
 # set filter and publish content view for missing dates
 #- debug: var=created_filter_rule_result
@@ -69,7 +69,7 @@
 
 - name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)
   command: hammer --output json content-view info --organization "{{ organization }}"  --name "{{ item }}"
-  with_items: "{{ content_config | map(attribute='content_view') | list }}"
+  with_items: "{{ satellite_content_config | map(attribute='content_view') | list }}"
   register: content_view_info2
   changed_when: false
 
@@ -80,7 +80,7 @@
   changed_when: false
 
 #- debug: msg="{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
-# if the content_config is NOT already promoted to the respective lifecycle env / staging content_config
+# if the satellite_content_config is NOT already promoted to the respective lifecycle env / staging satellite_content_config
 - name: promote specific content config to lifecycle env
   command: >
     hammer content-view version promote

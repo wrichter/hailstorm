@@ -6,25 +6,25 @@
 - name: create content view
   command: 'hammer content-view create --organization "{{ organization }}" --name "{{ item.content_view }}"'
   when: item.content_view not in current_content_views.stdout_lines
-  with_items: "{{ content_config }}"
+  with_items: "{{ satellite_content_config }}"
 
 # - name: define content view filter
 #   command: hammer content-view filter rule create --organization "{{ organization }}" --name "{{ item.content_view }}"'
 #   when: item.content_view not in current_content_views.stdout_lines and item.filter is defined
-#   with_items: "{{ content_config }}"
+#   with_items: "{{ satellite_content_config }}"
 
 - name: add repos to content_view
   command: 'hammer content-view add-repository --organization "{{ organization }}" --name "{{ item.0.content_view }}" --product "{{ item.1.product }}" --repository "{{ item.1.repository }}"'
   when: (republish is defined and republish) or item.0.content_view not in current_content_views.stdout_lines
   with_subelements:
-    - "{{ content_config }}"
+    - "{{ satellite_content_config }}"
     - content
 
 - name: check existing filters
   command: hammer --output json content-view filter list --content-view "{{ item.content_view }}" --organization "{{ organization }}"
   register: existing_filters
   when: item.filter is defined
-  with_items: "{{ content_config }}"
+  with_items: "{{ satellite_content_config }}"
   changed_when: false
 
 - name: create filters
@@ -50,13 +50,13 @@
 # - name: publish content_view
 #   command: 'hammer content-view publish --organization "{{ organization }}" --name "{{ item.content_view }}"'
 #   when: (republish is defined and republish) or item.content_view not in current_content_views.stdout_lines
-#   with_items: "{{ content_config }}"
+#   with_items: "{{ satellite_content_config }}"
 #
 # - name: get latest version id of content_view
 #   shell: hammer content-view version list --organization "{{ organization }}" --content-view "{{ item.content_view }}" | grep Library
 #   register: cv_id
 #   changed_when: false
-#   with_items: "{{ content_config }}"
+#   with_items: "{{ satellite_content_config }}"
 #
 # - name: promote latest version of content_view to all lifecycle environments
 #   command: hammer content-view version promote --id '{{ item.1.stdout.split(' ')[0] }}' --organization "{{ organization }}" --to-lifecycle-environment '{{ item.0.name }}'

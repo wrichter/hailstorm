@@ -152,8 +152,316 @@ epel_rpm: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
 cfme_rhconsulting_scripts_repo: https://github.com/rhtconsulting/cfme-rhconsulting-scripts.git
 
-timezone: Europe/Berlin
 
+satellite_product_config:
+  - product: "Red Hat Enterprise Linux Server"
+    basearch: x86_64
+    repos:
+      - name: "Red Hat Enterprise Linux 7 Server (RPMs)"
+        releasever: 7Server
+      - name: "Red Hat Enterprise Linux 7 Server - Extras (RPMs)"
+      - name: "Red Hat Enterprise Linux 7 Server - Optional (RPMs)"
+        releasever: 7Server
+      - name: "Red Hat Enterprise Linux 7 Server - RH Common (RPMs)"
+        releasever: 7Server
+      # - name: "Red Hat Enterprise Linux 7 Server (Kickstart)"
+      #   releasever: "7.2"
+      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 7 Server) (RPMs)"
+      - name: "Red Hat Enterprise Linux 6 Server (RPMs)"
+        releasever: 6Server
+      - name: "Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)"
+        releasever: 6Server
+      # - name: "Red Hat Enterprise Linux 6 Server (Kickstart)"
+      #   releasever: "6.7"
+      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 6 Server) (RPMs)"
+   # for SAP HANA usecase
+  - product: "RHEL for SAP HANA - Extended Update Support"
+    basearch: x86_64
+    repos:
+      - name: "RHEL for SAP HANA (for RHEL 7 Server) Extended Update Support (RPMs)"
+        releasever: 7.2
+   # for SAP HANA usecase
+  - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+    basearch: x86_64
+    repos:
+      - name: "Red Hat Enterprise Linux 7 Server - Extended Update Support (RPMs)"
+        releasever: 7.2
+      - name: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
+        releasever: 7.2
+  - product: "Red Hat Enterprise Linux High Availability for RHEL Server"
+    basearch: x86_64
+    repos:
+      - name: "Red Hat Enterprise Linux High Availability (for RHEL 7 Server) (RPMs)"
+        releasever: 7Server
+  - product: Red Hat OpenStack
+    basearch: x86_64
+    repos:
+      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} {% if current_lifecycle_env.openstack_version < 10 %}director{% else %}Developer Tools{% endif %} for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} Operational Tools for RHEL 7 (RPMs)
+        releasever: 7Server
+#need manifest WITH satellite
+#  - product: Red Hat Satellite
+#    basearch: x86_64
+#    repos:
+#      - name: Red Hat Satellite 6.1 (for RHEL 7 Server) (RPMs)
+#        releasever: 7Server
+  - product: Red Hat Software Collections for RHEL Server
+    basearch: x86_64
+    repos:
+      - name: Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server
+        releasever: 7Server
+  - product: Red Hat OpenShift Container Platform
+    basearch: x86_64
+    repos:
+      - name: Red Hat OpenShift Enterprise 3.2 (RPMs)
+      - name: Red Hat OpenShift Container Platform 3.3 (RPMs)
+  - product: Red Hat Enterprise Virtualization
+    basearch: x86_64
+    repos:
+      - name: Red Hat Enterprise Virtualization Management Agents for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat Enterprise Virtualization Manager 3.6 (RPMs)
+      - name: Red Hat Virtualization 4 Management Agents for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat Virtualization Manager 4.0 (RHEL 7 Server) (RPMs)
+  - product: JBoss Enterprise Application Platform
+    basearch: x86_64
+    repos:
+      - name: JBoss Enterprise Application Platform 6 (RHEL 6 Server) (RPMs)
+        releasever: 6Server
+  - product: Red Hat CloudForms
+    basearch: x86_64
+    repos:
+      - name: Red Hat CloudForms Management Engine 5.6 (RPMs)
+      - name: Red Hat CloudForms Management Engine 5.7 (RPMs)
+  - product: Red Hat Ceph Storage MON
+    basearch: x86_64
+    repos:
+      - name: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+  - product: Red Hat Ceph Storage OSD
+    basearch: x86_64
+    repos:
+      - name: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+
+satellite_content_config:
+  - content_view: "CV-OS-RHEL6-SERVER"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 6 Server RPMs x86_64"
+
+  - content_view: "CV-OS-RHEL7-SERVER"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
+
+  # for HANA
+  - content_view: "CV-OS-RHEL7.2-EUS-SAP"
+    content:
+      - product: "RHEL for SAP HANA - Extended Update Support"
+        repository: "RHEL for SAP HANA for RHEL 7 Server Extended Update Support RPMs x86_64 7.2"
+      - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+        repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support RPMs x86_64 7.2"
+      - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
+
+  - content_view: "CV-RHEV-MANAGER"
+    content:
+      - product: "Red Hat Enterprise Virtualization"
+        repository: "Red Hat Enterprise Virtualization Manager 3.6 RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 6 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 6 Server - Supplementary RPMs x86_64 6Server"
+      - product: "JBoss Enterprise Application Platform"
+        repository: "JBoss Enterprise Application Platform 6 RHEL 6 Server RPMs x86_64 6Server"
+
+  - content_view: "CV-RHEV-HYPERVISOR"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Virtualization"
+        repository: "Red Hat Enterprise Virtualization Management Agents for RHEL 7 RPMs x86_64 7Server"
+
+  - content_view: "CV-RHOSP"
+    content:
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} {% if current_lifecycle_env.openstack_version < 10 %}director{% else %}Developer Tools{% endif %} for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} Operational Tools for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux High Availability for RHEL Server"
+        repository: "Red Hat Enterprise Linux High Availability for RHEL 7 Server RPMs x86_64 7Server"
+
+  - content_view: "CV-RHOSE3"
+    content:
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+
+  - content_view: "CV-RHOSE3-CLIENT"
+    content:
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+      - product: Red Hat Software Collections for RHEL Server
+        repository: "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server"
+
+  - content_view: "CV-CLOUDFORMS"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
+      - product: "Red Hat CloudForms"
+        repository: "Red Hat CloudForms Management Engine 5.6 RPMs x86_64"
+      - product: "Red Hat CloudForms"
+        repository: "Red Hat CloudForms Management Engine 5.7 RPMs x86_64"
+      - product: Red Hat Software Collections for RHEL Server
+        repository: "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server"
+
+  - content_view: "CV-DEMO-RHEL7-SSLFIXESONLY"
+    filter:
+      - name: "SSL only"
+        description: "Only SSL fixes"
+        include: "true"
+        type: "erratum"
+        rules:
+          - errata_ids: "{{ current_lifecycle_env.errata_for_demo_scenario }}"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+
+  - content_view: "CV-CEPH"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+      - product: Red Hat Ceph Storage MON
+        repository: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
+      - product: Red Hat Ceph Storage OSD
+        repository: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
+
+satellite_activation_keys_and_host_collections:
+  # - activation_key: AK-CV-OS-RHEL6-SERVER
+  #   content_view: "CV-OS-RHEL6-SERVER"
+  #   host_collection: "RHEL6"
+  #   activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+  #   override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-OS-RHEL7-SERVER
+    content_view: "CV-OS-RHEL7-SERVER"
+    host_collection: "RHEL7"
+    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
+    content_view: "CV-OS-RHEL7.2-EUS-SAP"
+    host_collection: "RHEL7"
+    activation_key_subscription_regex: "{{ sap_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-RHEV-MANAGER
+    content_view: "CV-RHEV-MANAGER"
+    host_collection: "RHEVM"
+    activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
+    override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-RHEV-HYPERVISOR
+    content_view: "CV-RHEV-HYPERVISOR"
+    host_collection: "RHEVH"
+    activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-RHOSP
+    content_view: "CV-RHOSP"
+    host_collection: "RHOSP"
+    activation_key_subscription_regex: "{{ rhosp_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-RHOSE3-CLIENT
+    content_view: "CV-RHOSE3-CLIENT"
+    host_collection: "RHOSE3"
+    activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-RHOSE3
+    content_view: "CV-RHOSE3"
+    host_collection: "RHOSE3"
+    activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-CV-CLOUDFORMS
+    content_view: "CV-CLOUDFORMS"
+    host_collection: "CLOUDFORMS"
+    activation_key_subscription_regex: "{{ cloudforms_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-DEMO-RHEL7-MANAGED
+    content_view: CV-DEMO-RHEL7-SSLFIXESONLY
+    host_collection: DEMO-MANAGED
+    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+  - activation_key: AK-DEMO-RHEL7-UNMANAGED
+    content_view: CV-DEMO-RHEL7-SSLFIXESONLY
+    host_collection: DEMO-UNMANAGED
+    activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+
+
+
+timezone: Europe/Berlin
 
 ipa_user:
   - username: admin

@@ -1,7 +1,7 @@
 [{% set needscomma = [false] %}
 {% for lifecycle_environment in lifecycle_environments %}
 {% if lifecycle_environment.content_view_date_filter is defined %}
-{% for content in content_config  %}
+{% for content in satellite_content_config  %}
 
 {% if lifecycle_environment.content_view_date_filter[content.content_view] is defined %}{% set date_filter = lifecycle_environment.content_view_date_filter[content.content_view] %}{% else %}{% set date_filter = lifecycle_environment.content_view_date_filter['*'] %}{% endif %}
 
