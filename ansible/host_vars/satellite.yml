@@ -3,7 +3,7 @@ mem: "{{ layer2_satellite_mem }}"
 vcpu: "{{ layer2_satellite_cpu }}"
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 200
+  size: 250
   format: qcow2
   # partition_table:
   #   lvmpv: 199500
@@ -135,6 +135,8 @@ product_config:
       - name: "Red Hat Enterprise Linux 7 Server - Extras (RPMs)"
       - name: "Red Hat Enterprise Linux 7 Server - Optional (RPMs)"
         releasever: 7Server
+      - name: "Red Hat Enterprise Linux 7 Server - RH Common (RPMs)"
+        releasever: 7Server
       # - name: "Red Hat Enterprise Linux 7 Server (Kickstart)"
       #   releasever: "7.2"
       - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 7 Server) (RPMs)"
@@ -159,6 +161,11 @@ product_config:
         releasever: 7.2
       - name: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
         releasever: 7.2
+  - product: "Red Hat Enterprise Linux High Availability for RHEL Server"
+    basearch: x86_64
+    repos:
+      - name: "Red Hat Enterprise Linux High Availability (for RHEL 7 Server) (RPMs)"
+        releasever: 7Server
   - product: Red Hat OpenStack
     basearch: x86_64
     repos:
@@ -283,7 +290,7 @@ content_config:
   - content_view: "CV-RHOSP"
     content:
       - product: "Red Hat OpenStack"
-        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} director for RHEL 7 RPMs x86_64 7Server"
+        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} {% if current_lifecycle_env.openstack_version < 10 %}director{% else %}Developer Tools{% endif %} for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat OpenStack"
         repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat OpenStack"
@@ -296,6 +303,10 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux High Availability for RHEL Server"
+        repository: "Red Hat Enterprise Linux High Availability for RHEL 7 Server RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSE3"
     content:
@@ -337,6 +348,8 @@ content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
       - product: "Red Hat CloudForms"
         repository: "Red Hat CloudForms Management Engine 5.6 RPMs x86_64"
+      - product: "Red Hat CloudForms"
+        repository: "Red Hat CloudForms Management Engine 5.7 RPMs x86_64"
       - product: Red Hat Software Collections for RHEL Server
         repository: "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server"
 

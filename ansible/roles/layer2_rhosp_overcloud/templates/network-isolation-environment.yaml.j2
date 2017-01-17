@@ -16,7 +16,7 @@ resource_registry:
 parameter_defaults:
   PublicVirtualFixedIPs: [{'ip_address':'{{ hostvars['openstack'].vm_nics[0].ip }}'}]
   CloudName: {{ hostvars['openstack'].hostname }}
-  CloudDomain: {{ hailstorm_dns_domain }}
+  #CloudDomain: {{ hailstorm_dns_domain }}
 
   # Internal API used for private OpenStack Traffic
   InternalApiNetCidr: 172.17.1.0/24

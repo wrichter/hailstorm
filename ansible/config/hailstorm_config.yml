@@ -15,7 +15,7 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2016-12-20"
+      "*": "2017-01-16"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2.5
@@ -114,8 +114,12 @@ rhosp_undercloud_repos:
   - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-director-rpms
 rhosp_overcloud_repos:
   - rhel-7-server-rpms
+  - rhel-7-server-extras-rpms
   - rhel-7-server-optional-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-rpms
   - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-optools-rpms
+  - rhel-7-server-rh-common-rpms
+  - rhel-ha-for-rhel-7-server-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
