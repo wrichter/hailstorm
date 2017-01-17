@@ -29,6 +29,7 @@
       with_items:
         - deploy-overcloud
         - virsh-names
+        - scale-down
 
     - name: Create templates directory
       file: path=~/templates state=directory

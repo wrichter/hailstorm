@@ -54,11 +54,7 @@
     - name: scale down nodes
       shell: >
         . ~/stackrc &&
-        openstack overcloud node delete
-        --stack overcloud
-        --templates
-        -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml
-        {% for template in templates %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }} {% endif %}{% endfor %}
+        {{ lookup('template','deploy-overcloud.j2') }}
         {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$") | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
 
     - name: wait for heat update to complete

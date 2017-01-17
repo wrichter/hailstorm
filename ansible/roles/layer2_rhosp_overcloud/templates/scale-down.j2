@@ -1,0 +1,7 @@
+openstack overcloud node delete \
+--stack overcloud \
+--templates \
+-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
+{% for template in templates %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }}{% if not loop.last %} \{% endif %}
+
+{% endif %}{% endfor %}
