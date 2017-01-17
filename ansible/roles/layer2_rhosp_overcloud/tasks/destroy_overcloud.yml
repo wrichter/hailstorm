@@ -5,5 +5,6 @@
   become_user: "{{ rhosp_stack_user }}"
   register: stack
   until: stack.stdout == ""
+  failed_when: "'FAILED' in stack.stdout"
   retries: 30
   delay: 60
