@@ -15,8 +15,6 @@ resource_registry:
 
 parameter_defaults:
   PublicVirtualFixedIPs: [{'ip_address':'{{ hostvars['openstack'].vm_nics[0].ip }}'}]
-  CloudName: {{ hostvars['openstack'].hostname }}
-  #CloudDomain: {{ hailstorm_dns_domain }}
 
   # Internal API used for private OpenStack Traffic
   InternalApiNetCidr: 172.17.1.0/24
@@ -58,9 +56,6 @@ parameter_defaults:
 
   # Generally the IP of the Undercloud
   EC2MetadataIp: {{ vm_nics[0].ip }}
-
-  # Define the DNS servers (maximum 2) for the overcloud nodes
-  DnsServers: [{% if ipa_available|success %}'{{ hostvars['ipa'].vm_nics[0].ip }}',{% endif %}'{{ infrastructure_address_default_dns }}']
 
   NeutronExternalNetworkBridge: "''"
   NeutronBridgeMappings: "datacentre:br-services,guests:br-guests"

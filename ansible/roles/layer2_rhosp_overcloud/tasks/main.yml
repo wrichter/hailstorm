@@ -18,6 +18,7 @@
           - timezone-environment.yaml
           - hostname-map-environment.yaml
           - schedulerhints-environment.yaml
+          - dns-config-environment.yaml
     - include: adapt_to_keystone_v3.yml
       tags: ['overcloud-config-keystone']
     - include: configure_tenants.yml
@@ -49,6 +50,7 @@
           - network-isolation-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
+          - extra-config-post-deployment-all.sh
           - ceilometer-config-environment.yaml
           - storage-environment.yaml
           - firstboot-config-environment.yaml
@@ -58,4 +60,5 @@
           - timezone-environment.yaml
           - hostname-map-environment.yaml
           - schedulerhints-environment.yaml
+          - dns-config-environment.yaml
   when: mode=="reset"
