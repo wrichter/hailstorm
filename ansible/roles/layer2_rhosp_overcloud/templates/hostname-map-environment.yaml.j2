@@ -1,0 +1,9 @@
+{% if current_lifecycle_env.osp_controlled_node_placement %}{# hostname map only makes sense for controlled placement #}
+parameter_defaults:
+  HostnameMap:
+    {% for controller in groups['rhosp-control'] %}
+    overcloud-controller-{{ loop.index0 }}: {{hostvars[controller].inventory_hostname_short}}
+    {% endfor %}{% for compute in groups['rhosp-compute'] %}
+    overcloud-compute-{{ loop.index0 }}: {{hostvars[compute].inventory_hostname_short}}
+    {% endfor %}
+{% endif %}

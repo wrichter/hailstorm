@@ -16,6 +16,8 @@
           - firstboot-config-rootsshkey.sh
           - rhel-registration-environment.yaml
           - timezone-environment.yaml
+          - hostname-map-environment.yaml
+          - schedulerhints-environment.yaml
     - include: adapt_to_keystone_v3.yml
       tags: ['overcloud-config-keystone']
     - include: configure_tenants.yml
@@ -54,4 +56,6 @@
           - firstboot-config-rootsshkey.sh
           - rhel-registration-environment.yaml
           - timezone-environment.yaml
+          - hostname-map-environment.yaml
+          - schedulerhints-environment.yaml
   when: mode=="reset"

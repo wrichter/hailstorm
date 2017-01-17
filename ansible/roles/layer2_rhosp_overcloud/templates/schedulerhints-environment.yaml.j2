@@ -1,0 +1,7 @@
+{% if current_lifecycle_env.osp_controlled_node_placement %}
+parameter_defaults:
+    ControllerSchedulerHints:
+        'capabilities:node': 'control-%index%'
+    NovaComputeSchedulerHints:
+        'capabilities:node': 'compute-%index%'
+{% endif %}

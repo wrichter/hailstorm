@@ -1,7 +1,12 @@
 openstack overcloud deploy \
 --templates /usr/share/openstack-tripleo-heat-templates \
+{% if current_lifecycle_env.osp_controlled_node_placement %}
+--control-flavor baremetal \
+--compute-flavor baremetal \
+{% else %}
 --control-flavor control \
 --compute-flavor compute \
+{% endif %}
 --control-scale {{ groups['rhosp-control']|length }} \
 --compute-scale {{ groups['rhosp-compute']|length - 1 }} \
 --neutron-tunnel-types vxlan \

@@ -5,9 +5,8 @@
   "host-ip": "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}",
   "arch": "x86_64",
   "nodes": [
-    {% for node in groups['rhosp-undercloud'] %}
+    {% for node in groups['rhosp-control'] %}
     {
-      {# "pm_addr": "{{ infrastructure_network_admin.gw_ip }}", #}
       "pm_addr": "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}",
       "pm_password": "{{ ssh_priv_key_undercloud.replace('\n','\\n').replace('\r','') }}",
       "pm_type": "pxe_ssh",
@@ -18,7 +17,24 @@
       "memory": "{{ hostvars[node].mem }}",
       "disk": "{{ hostvars[node].disk.size }}",
       "arch": "x86_64",
-      "pm_user": "{{ rhosp_stack_user }}"
+      "pm_user": "{{ rhosp_stack_user }}",
+      "capabilities": "{% if current_lifecycle_env.osp_controlled_node_placement %}node:control-{{ loop.index0 }},profile:baremetal{% else %}profile:control{% endif %},boot_option:local"
+    },
+    {% endfor %}
+    {% for node in groups['rhosp-compute'] %}
+    {
+      "pm_addr": "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}",
+      "pm_password": "{{ ssh_priv_key_undercloud.replace('\n','\\n').replace('\r','') }}",
+      "pm_type": "pxe_ssh",
+      "mac": [
+        "{{ hostvars[node].vm_nics[0].mac }}"
+      ],
+      "cpu": " {{ hostvars[node].vcpu }}",
+      "memory": "{{ hostvars[node].mem }}",
+      "disk": "{{ hostvars[node].disk.size }}",
+      "arch": "x86_64",
+      "pm_user": "{{ rhosp_stack_user }}",
+      "capabilities": "{% if current_lifecycle_env.osp_controlled_node_placement %}node:compute-{{ loop.index0 }},profile:baremetal{% else %}profile:compute{% endif %},boot_option:local"
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ]
