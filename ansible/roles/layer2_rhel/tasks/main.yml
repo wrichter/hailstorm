@@ -1,12 +1,18 @@
 - block:
     - include: configure_sshd.yml
+      tags: ['rhel-sshd']
     - include: subscribe_system.yml
+      tags: ['rhel-subscribe']
     - include: prepare_host.yml
+      tags: ['rhel-prepare']
     - include: configure_firewalld_rules.yml
+      tags: ['rhel-firewalld']
     - include: chrony_config.yml
       when: ntp_client == 'chrony'
+      tags: ['rhel-ntp']
     - include: ntp_config.yml
       when: ntp_client == 'ntp'
+      tags: ['rhel-ntp']
   when: mode=="create"
 
 - block:
