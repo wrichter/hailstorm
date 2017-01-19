@@ -1,0 +1,17 @@
+- name: fix metrics public URL
+  lineinfile:
+    line: "  metricsPublicURL: https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics"
+    regexp: "^  metricsPublicURL: .*"
+    dest: /etc/origin/master/master-config.yaml
+  register: master
+- name: reboot server
+  shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: master|changed
+- name: waiting for server to come back
+  wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+  # https://github.com/ansible/ansible/issues/11705
+  when: master|changed

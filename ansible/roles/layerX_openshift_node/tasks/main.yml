@@ -1,7 +1,12 @@
 - block:
+    - name: unexclude atomic-openshift and docker
+      shell: atomic-openshift-excluder unexclude
+      when: current_lifecycle_env.openshift_version >= 3.4
+    - name: install docker
+      yum: name={{ ose3_additional_packages }} state=present
     - name: change docker options
       lineinfile: dest=/etc/sysconfig/docker line="OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'" state=present regexp="^OPTIONS=.*$"
-    #TODO: change docker storage config if necessary
+#TODO: change docker storage config if necessary
     - name: configure docker storage
       shell: docker-storage-setup && touch /.docker-storage-is-setup  creates=/.docker-storage-is-setup
     - name: ensure docker is running
@@ -11,4 +16,6 @@
       with_items:
         - virt_use_nfs
         - virt_sandbox_use_nfs
+    - name: remove DNS2 config from ifcfg-eth0
+      lineinfile: regexp="^DNS2=.*" state=absent dest=/etc/sysconfig/network-scripts/ifcfg-eth0
   when: mode=="create"

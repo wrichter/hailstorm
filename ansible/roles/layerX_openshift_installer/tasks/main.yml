@@ -9,8 +9,12 @@
       tags: ["ose3-pv"]
     - include: deploy_containers.yml
       tags: ["ose3-infracontainer"]
-    - include: deploy_logging_{{ current_lifecycle_env.openshift_version }}.yml
+    - include: deploy_logging_3.2.yml
       tags: ["ose3-logging"]
+      when: current_lifecycle_env.openshift_version == '3.2'
+    - include: deploy_logging_3.3.yml
+      tags: ["ose3-logging"]
+      when: current_lifecycle_env.openshift_version != '3.2'
     - include: deploy_metrics.yml
       tags: ["ose3-metrics"]
   when: mode=="create"

@@ -16,14 +16,18 @@ lifecycle_environments:
     label: 'development'
     content_view_date_filter:
       "*": "2017-01-16"
+      "CV-RHOSE3": "2017-01-18"
+      "CV-RHOSE3-CLIENT": "2017-01-18"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2.5
-    openshift_version: 3.3
-    openstack_version: 10
-    osp_controlled_node_placement: false
-    cloudforms_version: 5.7
-    cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
+    openshift_version: 3.4
+    openstack_version: 9
+    osp_controlled_node_placement: true
+    #cloudforms_version: 5.7
+    #cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
+    cloudforms_version: 5.6
+    cloudforms_ova_appliance: cfme-rhevm-5.6.2.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
     kvm_images:
@@ -118,8 +122,8 @@ rhosp_overcloud_repos:
   - rhel-7-server-optional-rpms
   - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-rpms
   - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-optools-rpms
-  - rhel-7-server-rh-common-rpms
-  - rhel-ha-for-rhel-7-server-rpms
+  # - rhel-7-server-rh-common-rpms
+  # - rhel-ha-for-rhel-7-server-rpms
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
@@ -216,8 +220,7 @@ satellite_product_config:
   - product: Red Hat OpenShift Container Platform
     basearch: x86_64
     repos:
-      - name: Red Hat OpenShift Enterprise 3.2 (RPMs)
-      - name: Red Hat OpenShift Container Platform 3.3 (RPMs)
+      - name: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} (RPMs)"
   - product: Red Hat Enterprise Virtualization
     basearch: x86_64
     repos:
@@ -323,9 +326,7 @@ satellite_content_config:
   - content_view: "CV-RHOSE3"
     content:
       - product: "Red Hat OpenShift Container Platform"
-        repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
-      - product: "Red Hat OpenShift Container Platform"
-        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
+        repository: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
@@ -336,9 +337,7 @@ satellite_content_config:
   - content_view: "CV-RHOSE3-CLIENT"
     content:
       - product: "Red Hat OpenShift Container Platform"
-        repository: "Red Hat OpenShift Enterprise 3.2 RPMs x86_64"
-      - product: "Red Hat OpenShift Container Platform"
-        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
+        repository: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
