@@ -53,7 +53,7 @@
     - name: restart keystone on controller
       shell: >
         . ~/stackrc &&
-        for ip in `nova list | awk '/controller/ { print substr($12,10) }'`; do
+        for ip in `nova list | awk '/control/ { print substr($12,10) }'`; do
         ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart openstack-keystone;
         ssh -o StrictHostKeyChecking=no heat-admin@$ip sudo systemctl condrestart httpd;
         done

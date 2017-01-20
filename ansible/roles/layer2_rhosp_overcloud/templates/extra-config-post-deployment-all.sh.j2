@@ -125,7 +125,7 @@ EOF
 }
 {% endif %}
 
-hostname | grep -q compute && {% if ipa_available|success %}nova_compute_control && {% endif %} nova_compute
-{% if ipa_available|success %}      hostname | grep -q control && keystone_control && nova_compute_control && cinder_control && nova_control && sudo systemctl restart httpd{% endif %}
+hostname | grep -q compute && ({% if ipa_available|success %}nova_compute_control ; {% endif %} nova_compute)
+{% if ipa_available|success %}      hostname | grep -q control && (keystone_control ; nova_compute_control ; cinder_control ; nova_control ; sudo systemctl restart httpd){% endif %}
 
 exit 0

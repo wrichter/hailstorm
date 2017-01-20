@@ -54,8 +54,9 @@
     - name: scale down nodes
       shell: >
         . ~/stackrc &&
-        {{ lookup('template','deploy-overcloud.j2') }}
+        {{ lookup('template','scale-down.j2') | trim }} \
         {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$") | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
+      tags: ['scale']
 
     - name: wait for heat update to complete
       shell: . ~/stackrc && openstack stack list -f json
@@ -71,7 +72,7 @@
     - name: get nova service IDs
       shell: >
         . ~/overcloudrc_v3 &&
-        nova service-list --binary nova-compute | awk '/{{ item }}\.localdomain.*disabled/ { print $2 }'
+        nova service-list --binary nova-compute | awk '/{{ item }}.*disabled/ { print $2 }'
       register: nova_service_ids
       failed_when: nova_service_ids.stdout==""
       changed_when: false
@@ -96,11 +97,16 @@
       changed_when: false
 
     - name: remove neutron agent
+      # shell: >
+      #   . ~/overcloudrc_v3 &&
+      #   neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","match", "^neutron-openvswitch-agent$") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
+      # when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
+      # with_items: "{{ hostnames }}"
       shell: >
         . ~/overcloudrc_v3 &&
-        neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","match", "^neutron-openvswitch-agent$") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
-      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
-      with_items: "{{ hostnames }}"
+        neutron agent-delete {{ item.id }}
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item.host|regexp_replace('\..*','') + "$" ) | list | length > 0
+      with_items: "{{ neutron_agent_uuids.stdout|from_json|selectattr('host','match','^' + hostnames|from_json|join('|') )|list }}"
     #
     #   register: rem_neutron
     # - debug: var=rem_neutron
