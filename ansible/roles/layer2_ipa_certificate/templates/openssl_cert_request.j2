@@ -1,0 +1,43 @@
+# OpenSSL configuration to generate a new key with signing requst for a x509v3
+# multidomain certificate
+#
+# openssl req -config bla.cnf -new | tee csr.pem
+# or
+# openssl req -config bla.cnf -new -out csr.pem
+[ req ]
+default_bits       = 4096
+default_md         = sha512
+default_keyfile    = {{ certhostname }}.key
+prompt             = no
+encrypt_key        = no
+
+# base request
+distinguished_name = req_distinguished_name
+
+{#
+# extensions
+req_extensions     = v3_req
+#}
+
+# distinguished_name
+[ req_distinguished_name ]
+{#countryName            = ""                       # C=
+stateOrProvinceName    = ""                       # ST=
+localityName           = ""                       # L=
+postalCode             = ""                       # L/postalcode=
+streetAddress          = ""                       # L/street=
+#}organizationName       = "{{ hailstorm_dns_domain|upper }}"        # O=
+{#organizationalUnitName = "IT Department"          # OU=
+#}commonName             = "{{ certhostname }}"            # CN=
+emailAddress           = "webmaster@{{ hailstorm_dns_domain }}"  # CN/emailAddress=
+
+{#
+# req_extensions
+[ v3_req ]
+# The subject alternative name extension allows various literal values to be
+# included in the configuration file
+# http://www.openssl.org/docs/apps/x509v3_config.html
+subjectAltName  = DNS:www.example.com,DNS:www2.example.com # multidomain certificate
+#}
+
+# vim:ft=config

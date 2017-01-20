@@ -3,10 +3,10 @@
 # must also be used.
 parameter_defaults:
   SSLCertificate: |
-    The contents of your certificate go here
+    {{ ssl_cert|indent(4) }}
   SSLIntermediateCertificate: ''
   SSLKey: |
-    The contents of the private key go here
+    {{ ssl_key|indent(4) }}
 
 resource_registry:
-  OS::TripleO::NodeTLSData: ../puppet/extraconfig/tls/tls-cert-inject.yaml
+  OS::TripleO::NodeTLSData: /usr/share/openstack-tripleo-heat-templates/puppet/extraconfig/tls/tls-cert-inject.yaml

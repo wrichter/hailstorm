@@ -1,6 +1,6 @@
 parameter_defaults:
   SSLRootCertificate: |
     {{ certificate.results[1].stdout|indent(4) }}
-    
+
 resource_registry:
-  OS::TripleO::NodeTLSCAData: ../puppet/extraconfig/tls/ca-inject.yaml
+  OS::TripleO::NodeTLSCAData: /usr/share/openstack-tripleo-heat-templates/puppet/extraconfig/tls/ca-inject.yaml

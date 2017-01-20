@@ -1,12 +1,7 @@
 #!/bin/bash
+set -x
+
 mkdir /root/.ssh
 cat  << xxEOFxx >> /root/.ssh/authorized_keys
 {{ ssh_pub_key_hailstorm }}
 xxEOFxx
-
-# satellite 6.2.5 needs to be able to resolve the hostname (overcloud-....localdomain)
-# for subscription to succeed
-# however setting the value in /etc/hosts messes up the subsequent steps
-echo "$(ip addr show dev eth0 | awk '/inet /{ print $2 }' | cut -d'/' -f1) $(hostname) $(hostname -s)" >>/etc/hosts
-yum -y localinstall http://{{ hostvars['satellite'].vm_nics[0].ip }}/pub/katello-ca-consumer-latest.noarch.rpm
-sed -i s/^$(ip addr show dev eth0 | awk '/inet /{ print $2 }' | cut -d'/' -f1).*\$// /etc/hosts
