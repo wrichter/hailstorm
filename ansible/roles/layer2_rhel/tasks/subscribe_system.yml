@@ -48,9 +48,10 @@
       with_items:
         - "{{ hostvars['satellite'].vm_nics[0].ip }} satellite {{ hostvars['satellite'].hostname }}"
 
-    # yum module can't do localinstall...
     - name: install katello-ca-consumer-latest
-      command: yum -y localinstall http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm  creates=/etc/rhsm/rhsm.conf.kat-backup
+      # yum module can't do localinstall...
+      #command: yum -y localinstall http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm  creates=/etc/rhsm/rhsm.conf.kat-backup
+      yum: state=present name=http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
 
   when: not disable_registration_against_satellite and activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or (subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'))
 

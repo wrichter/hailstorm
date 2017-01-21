@@ -1,29 +1,4 @@
 ---
-# - hosts: all
-#   remote_user: root
-#   gather_facts: false
-#   tasks:
-#     - set_fact:
-#         rhsm_username: "{{ rhsm_username }}"
-#         rhsm_password: "{{ rhsm_password }}"
-#       tags:
-#         - always
-#     - debug: var=vm_nics
-#       tags:
-#         - always
-#     # - debug: msg={{ vm_nics }}
-#     #   tags:
-#     #     - always
-#
-#   vars_prompt:
-#     - name: "rhsm_username"
-#       prompt: "what is your Red Hat Subscription Manager username?"
-#       default: "wrichter"
-#       private: no
-#     - name: "rhsm_password"
-#       prompt: "what is your Red Hat Subscription Manager password?"
-
-#### OpenShift 3 ####
 
 - hosts: layer1
   remote_user: root
@@ -58,20 +33,10 @@
   remote_user: root
   gather_facts: false
   roles:
+    # - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles'], mode: create, certcn: 'openshift.{{ hailstorm_dns_domain }}', factprefix: openshift }
+    # - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles'], mode: create, certcn: 'hawkular-metrics.apps.{{ hailstorm_dns_domain }}', factprefix: hawkular }
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles' ], mode: create }
-#    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'ose3', 'cfme-ose3-provider'], mode: create }
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
-#     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo'], mode: create }
-#
-# - hosts: dev-client
-#   remote_user: root
-#   gather_facts: false
-#   roles:
-#     - { role: layer2_vms, tags: [ 'layer2', 'dev-client', 'ose3', 'vm' ], mode: create }
-#     - { role: layer2_rhel, tags: [ 'layer2', 'dev-client',  'ose3', 'rhel' ], mode: create }
-#     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'dev-client',  'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-#     - { role: layerX_ipa_client, tags: [ 'layer2', 'dev-client',  'ose3', 'ipa-client' ], mode: create }
-#     - { role: layerX_openshift_demo_redhatmsa_on_devclient, tags: [ 'layer2', 'dev-client',  'ose3', 'msademo' ], mode: create }
 
 - hosts: ose3-lb
   remote_user: root
@@ -79,10 +44,9 @@
   roles:
     - { role: layerX_openshift_lb, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-lb' ], mode: create }
 
-
 - hosts: ose3-master
   remote_user: root
   gather_facts: false
   roles:
     - { role: layerX_openshift_enablepipelines, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-pipelines' ], mode: create, when: current_lifecycle_env.openshift_version == '3.3' }
-    - { role: layerX_openshift_fix_metrics_url_bug, tags: [ 'layer2', 'ose3', 'ose3-install'], mode: create }
+    - { role: layerX_openshift_fix_metrics_url_bug, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-fixmetricsurl'], mode: create }

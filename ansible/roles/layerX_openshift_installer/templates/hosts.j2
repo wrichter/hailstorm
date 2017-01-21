@@ -35,6 +35,9 @@ openshift_master_cluster_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_logging_public_url=https://kibana.apps.{{ hailstorm_dns_domain }}
 openshift_master_metrics_public_url=https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics
+{% if openshift_key is defined %}
+#openshift_master_named_certificates=[{"certfile": "/root/certificates/openshift.crt", "keyfile": "/root/certificates/openshift.key"}]
+{% endif %}
 
 #new for 3.3
 openshift_hosted_router_selector="region=infra"
