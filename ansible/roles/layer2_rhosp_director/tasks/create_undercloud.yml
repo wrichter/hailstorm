@@ -9,6 +9,26 @@
   become_user: "{{ rhosp_stack_user }}"
   when: undercloud_conf.changed
 
+- name: ensure that provisioning network route has default route configured
+  lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-br-ctlplane line="GATEWAY=\"{{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix|ipaddr('address') }}\""
+  register: ifcfg_br_ctlplane
+# restarting the network is not enough as it causes the host to lose some IP adresses
+# - name: restart network
+#   service: state=restarted name=network
+#   when: ifcfg_br_ctlplane|changed
+- name: restart machine
+  shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: ifcfg_br_ctlplane|changed
+- name: waiting for server to come back
+  wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
+  become: false
+  when: ifcfg_br_ctlplane|changed
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+
+
 # tweak timeouts
 - block:
     - name: read nova_rpc_response_timeout

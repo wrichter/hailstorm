@@ -11,6 +11,14 @@ network_gateway = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}1
 discovery_iprange = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 31 }},{{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 50 }}
 store_events = true
 
+{% if current_lifecycle_env.openstack_version >= 10 %}
 enable_ui = true
+{% if ssl_key is defined and ssl_cert is defined %}
+undercloud_service_certificate = /etc/pki/instack-certs/undercloud.pem
+{% else %}
 generate_service_certificate = true
+{% endif %}
+{% endif %}
+
 [auth]
+undercloud_admin_password = {{ root_password }}

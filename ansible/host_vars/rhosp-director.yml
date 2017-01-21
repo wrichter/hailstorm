@@ -32,7 +32,7 @@ nic_attachments:
   - "{{ infrastructure_network_rhosp_provisioning }}"
   - "{{ infrastructure_network_services }}"
   - "{{ infrastructure_network_admin }}"
-default_route_via: "{{ infrastructure_network_services }}"
+default_route_via: "{{ infrastructure_network_rhosp_provisioning }}"
 name_service_via: "{{ infrastructure_network_services }}"
 
 pool_regex: "{{ rhosp_subscription_pool_regex }}"

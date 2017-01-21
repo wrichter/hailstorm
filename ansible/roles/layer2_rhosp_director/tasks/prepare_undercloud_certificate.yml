@@ -1,0 +1,20 @@
+- name: create /etc/pki/instack-certs directory
+  file: path=/etc/pki/instack-certs state=directory
+- name: create undercloud.pem
+  template: src=undercloud.pem.j2 dest=/etc/pki/instack-certs/undercloud.pem
+  register: undercloud_pem
+- name: set selinux context for instack-certs
+  shell: semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
+  when: undercloud_pem|changed
+- name: more selinux fun
+  shell: restorecon -R /etc/pki/instack-certs
+  when: undercloud_pem|changed
+
+- name: create ca-trust anchors directory
+  file: path=/etc/pki/ca-trust/source/anchors/ state=directory
+- name: create CA certificate
+  template: src=ca.crt.pem.j2 dest=/etc/pki/ca-trust/source/anchors/ca.crt.pem
+  register: ca_cert
+- name: update ca trust
+  shell: update-ca-trust extract
+  when: ca_cert|changed

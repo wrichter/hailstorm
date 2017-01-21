@@ -1,12 +1,14 @@
 - block:
     - include: prepare_host.yml
+    - include: prepare_undercloud_certificate.yml
+      when: ssl_key is defined and ssl_cert is defined
     - include: create_stack_user.yml
     - include: create_undercloud.yml
       tags: ['install_undercloud']
     - include: import_images_to_undercloud_glance.yml
       tags: ['install_undercloud']
     - include: reconfigure_director_ui.yml
-      when: current_lifecycle_env.openstack_version >= 10 
+      when: current_lifecycle_env.openstack_version >= 10
   when: mode=="create"
 
 # - block:

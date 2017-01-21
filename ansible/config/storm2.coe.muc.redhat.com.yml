@@ -48,6 +48,11 @@ layer2_ose3lb_cpu: 2
 layer2_devclient_mem: 2048
 layer2_devclient_cpu: 2
 
+# if a property http_proxy is defined, satellite will be configured to sync via http_proxy
+http_proxy:
+  proxyname: proxy.coe.muc.redhat.com
+  port: 3128
+  protocol: https
 
 external_network_config:
   services_network_dnat:
@@ -55,6 +60,7 @@ external_network_config:
     mapping:
       - expose_machine: satellite
         on_host_prefix: 10.32.105.20/32
+        via_network: services
         ports:
           - from_port: 80
             to_port: 80
@@ -85,9 +91,9 @@ external_network_config:
           - from_port: 9090
             to_port: 9090
             proto: tcp
-
       - expose_machine: ipa
         on_host_prefix: 10.32.105.21/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -100,6 +106,7 @@ external_network_config:
             proto: tcp
       - expose_machine: infrastructure
         on_host_prefix: 10.32.105.22/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -124,6 +131,7 @@ external_network_config:
             proto: tcp
       - expose_machine: rhevm
         on_host_prefix: 10.32.105.23/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -139,6 +147,7 @@ external_network_config:
             proto: tcp
       - expose_machine: cloudforms
         on_host_prefix: 10.32.105.24/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -151,6 +160,7 @@ external_network_config:
             proto: tcp
       - expose_machine: ose3-lb
         on_host_prefix: 10.32.105.25/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -166,6 +176,7 @@ external_network_config:
             proto: tcp
       - expose_machine: ose3-infranode1
         on_host_prefix: 10.32.105.26/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -178,6 +189,7 @@ external_network_config:
             proto: tcp
       - expose_machine: efk
         on_host_prefix: 10.32.105.27/32
+        via_network: services
         ports:
           - from_port: 22
             to_port: 22
@@ -193,12 +205,42 @@ external_network_config:
             proto: tcp
       - expose_machine: rhosp-director
         on_host_prefix: 10.32.105.28/32
+        via_network: rhosp_provisioning
         ports:
           - from_port: 22
             to_port: 22
             proto: tcp
+          # webui
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          # keystone
+          - from_port: 13000
+            to_port: 13000
+            proto: tcp
+          # heat
+          - from_port: 13004
+            to_port: 13004
+            proto: tcp
+          # ironic
+          - from_port: 13385
+            to_port: 13385
+            proto: tcp
+          # mistral
+          - from_port: 13989
+            to_port: 13989
+            proto: tcp
+          # swift
+          - from_port: 13808
+            to_port: 13808
+            proto: tcp
+          # zaqar-websocket
+          - from_port: 9000
+            to_port: 9000
+            proto: tcp
       - expose_machine: openstack
         on_host_prefix: 10.32.105.29/32
+        via_network: services
         ports:
           - from_port: 80
             to_port: 80
@@ -211,6 +253,7 @@ external_network_config:
             proto: tcp
       - expose_machine: tower
         on_host_prefix: 10.32.105.8/32
+        via_network: services
         ports:
           - from_port: 80
             to_port: 80
@@ -254,9 +297,3 @@ external_network_config:
         guests:
           mac: "52:54:00:48:02:06"
           ip:
-
-# if a property http_proxy is defined, satellite will be configured to sync via http_proxy
-http_proxy:
-  proxyname: proxy.coe.muc.redhat.com
-  port: 3128
-  protocol: https
