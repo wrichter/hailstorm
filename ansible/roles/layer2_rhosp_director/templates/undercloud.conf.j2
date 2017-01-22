@@ -1,4 +1,5 @@
 [DEFAULT]
+#undercloud_hostname=director.{{ hailstorm_dns_domain }}
 local_ip = {{ vm_nics[0].ip }}/24
 local_interface = {{ vm_nics[0].dev }}
 undercloud_public_vip = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 10 }}

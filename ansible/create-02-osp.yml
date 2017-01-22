@@ -1,30 +1,4 @@
 ---
-# - hosts: all
-#   remote_user: root
-#   gather_facts: false
-#   tasks:
-#     - set_fact:
-#         rhsm_username: "{{ rhsm_username }}"
-#         rhsm_password: "{{ rhsm_password }}"
-#       tags:
-#         - always
-#     - debug: var=vm_nics
-#       tags:
-#         - always
-#     # - debug: msg={{ vm_nics }}
-#     #   tags:
-#     #     - always
-#
-#   vars_prompt:
-#     - name: "rhsm_username"
-#       prompt: "what is your Red Hat Subscription Manager username?"
-#       default: "wrichter"
-#       private: no
-#     - name: "rhsm_password"
-#       prompt: "what is your Red Hat Subscription Manager password?"
-
-#### OPENSTACK ####
-
 - hosts: layer1
   remote_user: root
   gather_facts: false
@@ -48,7 +22,7 @@
   roles:
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhosp', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_rhel, tags: [ 'layer2', 'rhosp', 'rhel'], mode: create }
-    #- { role: layer2_ipa_certificate, tags: ['layer2', 'rhosp', 'undercloud', 'undercloud-cert'], mode: create, certcn: '{{ hostname }}' }
+    #- { role: layer2_ipa_certificate, tags: ['layer2', 'rhosp', 'undercloud', 'undercloud-cert'], mode: create, certcn: 'director.{{ hailstorm_dns_domain }}', when: "current_lifecycle_env.openstack_version >= 10" }
     - { role: layer2_rhosp_director, tags: ['layer2', 'rhosp', 'undercloud' ], mode: create }
     #- { role: layer2_ipa_certificate, tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-cert'], mode: create, certcn: 'openstack.{{ hailstorm_dns_domain }}' }
     - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }

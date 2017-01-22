@@ -4,7 +4,7 @@
 },{% for item in groups.all %}
 {% if hostvars[item].vm_nics is defined %}
 {% for _nic in hostvars[item].vm_nics %}
-{% if _nic.netname is defined and _nic.netname == 'services' and _nic.ip is defined %}
+{% if _nic.netname is defined and hostvars[item].default_route_via is defined and _nic.netname == hostvars[item].default_route_via.netname and _nic.ip is defined %}
 
 {
   "name" :  "{{ hostvars[item].inventory_hostname_short }}",
