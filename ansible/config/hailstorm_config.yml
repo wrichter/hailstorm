@@ -16,8 +16,8 @@ lifecycle_environments:
     label: 'development'
     content_view_date_filter:
       "*": "2017-01-16"
-      "CV-RHOSE3": "2017-01-18"
-      "CV-RHOSE3-CLIENT": "2017-01-18"
+      "CV-RHOSE3": "2017-01-21"
+      "CV-RHOSE3-CLIENT": "2017-01-21"
     errata_for_demo_scenario:
       - RHSA-2016:1940
     satellite_version: 6.2.5
