@@ -210,6 +210,10 @@ external_network_config:
           - from_port: 22
             to_port: 22
             proto: tcp
+      - expose_machine: undercloud-public
+        on_host_prefix: 10.32.105.18/32
+        via_network: rhosp_provisioning
+        ports:
           # webui
           - from_port: 443
             to_port: 443
