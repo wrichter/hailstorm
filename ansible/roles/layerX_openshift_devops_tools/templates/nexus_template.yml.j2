@@ -23,7 +23,7 @@ objects:
           name: ${APPLICATION_NAME}
       spec:
         containers:
-        - image: sonatype/nexus:2.13.0-01
+        - image: sonatype/nexus:2.14.2
           imagePullPolicy: Always
           name: ${APPLICATION_NAME}
           volumeMounts:
@@ -40,7 +40,7 @@ objects:
         - ${APPLICATION_NAME}
         from:
           kind: ImageStreamTag
-          name: ${APPLICATION_NAME}:2.13.0-01
+          name: ${APPLICATION_NAME}:2.14.2
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -60,7 +60,7 @@ objects:
       protocol: TCP
       targetPort: 8081
     selector:
-      deploymentconfig: ${APPLICATION_NAME}
+      name: ${APPLICATION_NAME}
 - apiVersion: v1
   kind: Route
   metadata:

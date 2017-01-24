@@ -45,7 +45,7 @@ objects:
         env:
         -
           name: MAVEN_MIRROR_URL
-          value: 'http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/content/groups/main/'
+          value: 'http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/nexus/content/groups/main/'
     triggers:
     - generic:
         secret: secret
