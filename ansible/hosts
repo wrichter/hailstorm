@@ -80,10 +80,11 @@ tower          ansible_host=192.168.103.38 activation_key="AK-CV-OS-RHEL7-SERVER
 lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" rhev_image="RHEL7" nic_attachments="[ {{ infrastructure_network_services }},{{ infrastructure_network_admin }} ]"
 
 [ceph]
-ceph1 ansible_host=192.168.103.2 activation_key="AK-CV-RHOSP-{{ stage }}"
-ceph2 ansible_host=192.168.103.3 activation_key="AK-CV-RHOSP-{{ stage }}"
-ceph3 ansible_host=192.168.103.4 activation_key="AK-CV-RHOSP-{{ stage }}"
-ceph4 ansible_host=192.168.103.5 activation_key="AK-CV-RHOSP-{{ stage }}"
+#will be filled in dynamically via layer2_ceph_inventory role
+#ceph1 ansible_host=192.168.103.2 activation_key="AK-CV-CEPH-{{ stage }}"
+#ceph2 ansible_host=192.168.103.3 activation_key="AK-CV-CEPH-{{ stage }}"
+#ceph3 ansible_host=192.168.103.4 activation_key="AK-CV-CEPH-{{ stage }}"
+#ceph4 ansible_host=192.168.103.5 activation_key="AK-CV-CEPH-{{ stage }}"
 
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)

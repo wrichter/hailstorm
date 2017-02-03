@@ -12,6 +12,12 @@ layer1_qcow_storage:
   poolname: 'sata'
   path: /var/hailstorm/images
 
+layer1_ceph_devices:
+  - /dev/nvme0n1
+  - /dev/nvme1n1
+  - /dev/nvme2n1
+  - /dev/nvme3n1
+
 nfs_kickstart_folder: /var/hailstorm/kickstart
 nfs_rhev_data_domain_path: /var/hailstorm/rhev-data1
 nfs_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
@@ -47,6 +53,9 @@ layer2_ose3lb_cpu: 2
 
 layer2_devclient_mem: 2048
 layer2_devclient_cpu: 2
+
+layer2_ceph_mem: 4096
+layer2_ceph_cpu: 2
 
 # if a property http_proxy is defined, satellite will be configured to sync via http_proxy
 http_proxy:

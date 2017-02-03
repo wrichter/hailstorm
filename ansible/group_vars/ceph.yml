@@ -1,0 +1,30 @@
+---
+mem: "{{ layer2_ceph_mem }}"
+vcpu: "{{ layer2_ceph_cpu }}"
+
+disk:
+  path: "{{ inventory_hostname_short }}.qcow2"
+  size: 30
+  format: qcow2
+
+  physvols:
+    boot: 500
+    rhel: 29500
+  logvols:
+    - name: swap
+      fstype: swap
+      mountpoint: swap
+      size: 2048
+    - name: root
+      fstype: "{{ fstype }}"
+      mountpoint: /
+      size: 10000
+    - name: home
+      fstype: "{{ fstype }}"
+      mountpoint: /home
+      size: 2048
+
+repos:
+  - rhel-7-server-rpms
+
+pool_regex: "{{ ceph_subscription_pool_regex }}"

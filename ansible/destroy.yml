@@ -91,7 +91,7 @@
   remote_user: root
   roles:
     - role: layer2_vms
-      tags: [ 'layer2','ose3', 'rhel' ]
+      tags: [ 'layer2','ose3', 'rhel','ose3-devops' ]
       mode: start
 
 - hosts: ose3-installer
@@ -223,6 +223,29 @@
     - role: layer2_vms
       tags: [ 'layer2','tower', 'vm' ]
       mode: destroy
+
+
+#### CEPH
+- hosts: layer1
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_ceph_inventory, tags: [ 'layer2', 'ceph' ] }
+- hosts: ceph
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','ceph', 'rhel' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer2','ceph', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_vms
+      tags: [ 'layer2','ceph', 'vm' ]
+      mode: destroy
+
 
 - hosts: ipa
   gather_facts: false
