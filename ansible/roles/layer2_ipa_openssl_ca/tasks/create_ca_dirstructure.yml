@@ -1,0 +1,22 @@
+- name: create CA directories
+  file: state=directory path={{ item.name }} mode={{ item.mode }}
+  with_items:
+    - name: "{{ ca_dir }}"
+      mode: 755
+    - name: "{{ ca_dir }}/private"
+      mode: 700
+    - name: "{{ ca_dir }}/certs"
+      mode: 755
+    - name: "{{ ca_dir }}/crl"
+      mode: 755
+    - name: "{{ ca_dir }}/csr"
+      mode: 755
+    - name: "{{ ca_dir }}/newcerts"
+      mode: 755
+
+- name: create serial file
+  shell: echo 1000 >{{ ca_dir }}/serial  creates={{ ca_dir }}/serial
+- name: create certificate index
+  shell: touch {{ ca_dir }}/index.txt creates={{ ca_dir }}/index.txt
+- name: create certificate index attrs file
+  template: src=index.txt.attr.j2 dest={{ ca_dir }}/index.txt.attr

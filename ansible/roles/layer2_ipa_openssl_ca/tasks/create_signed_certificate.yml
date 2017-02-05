@@ -1,0 +1,38 @@
+- name: create OpenSSL config file
+  template: src=openssl.cnf.j2 dest={{ ca_dir }}/{{ basefilename }}.cnf
+
+- name: create key
+  shell: >
+    cd {{ ca_dir }} &&
+    openssl genrsa -out private/{{ basefilename }}.key.pem {{ key_bitsize }}
+    creates={{ ca_dir }}/private/{{ basefilename }}.key.pem
+- name: set key mode
+  file: state=file path={{ ca_dir }}/private/{{ basefilename }}.key.pem mode="400"
+
+- name: create csr
+  shell: >
+    cd {{ ca_dir }} &&
+    openssl req
+    -config {{ basefilename }}.cnf
+    -key private/{{ basefilename }}.key.pem
+    -new
+    -sha256
+    -out csr/{{ basefilename }}.csr.pem
+    creates={{ ca_dir }}/csr/{{ basefilename }}.csr.pem
+
+- name: sign csr
+  shell: >
+    cd {{ signing_ca_dir|default(ca_dir) }} &&
+    openssl ca
+    -config ca.cnf
+    -extensions {{ extension }}
+    -days {{ days }}
+    -notext
+    -md sha256
+    -batch
+    -in {{ ca_dir }}/csr/{{ basefilename }}.csr.pem
+    -out {{ ca_dir }}/certs/{{ basefilename }}.cert.pem
+    creates={{ ca_dir }}/certs/{{ basefilename }}.cert.pem
+
+- name: set cert mode
+  file: state=file path={{ ca_dir }}/certs/{{ basefilename }}.cert.pem mode="444"

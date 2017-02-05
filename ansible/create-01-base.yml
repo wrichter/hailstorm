@@ -69,6 +69,7 @@
     - { role: layer2_ipa_etc_hosts, tags: [ 'layer2', 'ipa', 'rhel' ], mode: destroy }
     - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
     - { role: layer2_tdagent, tags: [ 'layer2', 'ipa', 'tdagent'], mode: create }
+    #- { role: layer2_ipa_openssl_ca, tags: [ 'layer2', 'ipa', 'ca' ], mode: create }
 
 #### SATELLITE (again) ####
 

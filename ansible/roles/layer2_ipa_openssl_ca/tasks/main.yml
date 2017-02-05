@@ -1,0 +1,50 @@
+#https://jamielinux.com/docs/openssl-certificate-authority/create-the-root-pair.html
+
+- block:
+    - include: create_ca_dirstructure.yml
+      vars:
+        ca_dir: /root/openssl_ca
+    - include: create_selfsigned_certificate.yml
+      vars:
+        ca_dir: /root/openssl_ca
+        ca_policy: policy_strict
+        cert_cn: "{{ hailstorm_dns_domain }} Root CA"
+        key_bitsize: 4096
+        basefilename: ca
+
+    - include: create_ca_dirstructure.yml
+      vars:
+        ca_dir: /root/openssl_ca/intermediate
+    - include: create_signed_certificate.yml
+      vars:
+        ca_dir: /root/openssl_ca/intermediate
+        cert_cn: "{{ hailstorm_dns_domain }} Intermediate CA"
+        key_bitsize: 4096
+        basefilename: ca
+        signing_ca_dir: /root/openssl_ca
+        extension: v3_intermediate_ca
+        days: 3650
+  when: mode=="create"
+
+- block:
+    # caller should set cert_cn and cert_san
+    - include: create_signed_certificate.yml
+      vars:
+        ca_dir: /root/openssl_ca/intermediate
+        key_bitsize: 2048
+        basefilename: "{{ cert_cn }}"
+        extension: server_cert
+        days: 730
+    - name: get cert + key
+      shell: cat {{ item }}
+      with_items:
+        - "/root/openssl_ca/intermediate/certs/{{ cert_cn }}.cert.pem"
+        - "/root/openssl_ca/intermediate/private/{{ cert_cn }}.key.pem"
+        - "/root/openssl_ca/intermediate/certs/ca.cert.pem"
+        - "/root/openssl_ca/certs/ca.cert.pem"
+      register: keydata
+      changed_when: false
+    - name: set cert + key as facts
+      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}\n{{ keydata.results[2].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[3].stdout }}"}
+  delegate_to: ipa
+  when: mode=="servercert"
