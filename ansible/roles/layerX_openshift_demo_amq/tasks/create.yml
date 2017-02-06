@@ -23,7 +23,7 @@
 
 # Step 3: Add the view role to the service account.
 - name: Add view role to amq-service-account
-  shell: oc policy add-role-to-user view system:serviceaccount:demo-amq:amq-service-account
+  shell: oc policy add-role-to-user view system:serviceaccount:demo-amq:amq-service-account -n demo-amq
 
 # Step 4-6: Create keystore for broker:
 - name: Install openjdk
