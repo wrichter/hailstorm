@@ -27,6 +27,7 @@ disk:
       mountpoint: /home
       size: 2048
 
+hostname_override: director
 
 nic_attachments:
   - "{{ infrastructure_network_rhosp_provisioning }}"

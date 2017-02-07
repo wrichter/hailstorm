@@ -12,6 +12,17 @@
 - name: ensure that provisioning network route has default route configured
   lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-br-ctlplane line="GATEWAY=\"{{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix|ipaddr('address') }}\""
   register: ifcfg_br_ctlplane
+
+- block:
+    - name: ensure that additional IP is configured
+      lineinfile: state=present regexp="^IPADDR.*={{ hostvars['undercloud-public'].vm_nics[0].ip }}" line="IPADDR1={{  hostvars['undercloud-public'].vm_nics[0].ip }}" dest="/etc/sysconfig/network-scripts/ifcfg-br-ctlplane"
+      register: ifcfg_br_ctlplane2
+    - name: ensure that prefix is set to /32
+      lineinfile: state=present regexp="^PREFIX1" line="PREFIX1=32" dest=/etc/sysconfig/network-scripts/ifcfg-br-ctlplane
+    - name: change /etc/hosts entry to undercloud-public ip
+      lineinfile: state=present regexp=".*{{ hostname }} {{ hostname_short }}" line="{{ hostvars['undercloud-public'].vm_nics[0].ip }} {{ hostname }} {{ hostname_short }}" dest=/etc/hosts
+  when: current_lifecycle_env.openstack_version >= 10
+
 # restarting the network is not enough as it causes the host to lose some IP adresses
 # - name: restart network
 #   service: state=restarted name=network
@@ -21,11 +32,11 @@
   async: 1
   poll: 0
   ignore_errors: true
-  when: ifcfg_br_ctlplane|changed
+  when: ifcfg_br_ctlplane|changed or ifcfg_br_ctlplane2|changed
 - name: waiting for server to come back
   wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
   become: false
-  when: ifcfg_br_ctlplane|changed
+  when: ifcfg_br_ctlplane|changed or ifcfg_br_ctlplane2|changed
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
 
 

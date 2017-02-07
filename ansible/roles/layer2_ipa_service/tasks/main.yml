@@ -1,0 +1,24 @@
+# provide host (default: hostname) and service name
+
+- block:
+    - name: check host exists in IPA DB
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ host|default(hostname) }} | awk '/Host name:/{ print $3 }'
+      changed_when: false
+      failed_when: false
+      register: existing_host
+    - name: create host in IPA DB
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-add {{ host|default(hostname) }}
+      when: existing_host.stdout == ""
+
+    - name: get principal for host
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find {{ service }}/{{ host|default(hostname) }} | grep {{ host|default(hostname) }}
+      register: existing_principal
+      changed_when: false
+      failed_when: false
+
+    - name: create principal for host
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service }}/{{ host|default(hostname) }}
+      when: existing_principal.stdout == ""
+
+  when: mode=="create"
+  delegate_to: ipa
