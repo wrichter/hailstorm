@@ -15,7 +15,7 @@
       when: ipa_available|success
 
     - name: change auth url
-      replace: dest=~/overcloudrc_v3 regexp="5000/v2.0" replace="5000/v3"
+      replace: dest=~/overcloudrc_v3 regexp="/v2.0" replace="/v3"
       when: ipa_available|success
 
     - name: create hailstorm domain overcloudrc

@@ -15,15 +15,14 @@
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
           - firstboot-config-fixsatellitebug.sh
-          - firstboot-config-fixrhosp10bug.sh
           - rhel-registration-environment.yaml
           - timezone-environment.yaml
           - hostname-map-environment.yaml
           - schedulerhints-environment.yaml
           - dns-config-environment.yaml
-          # - tls-enable-environment.yaml
-          # - tls-endpoints-public-dns.yaml
-          # - tls-inject-trust-anchor-environment.yaml
+          - tls-enable-environment.yaml
+          - tls-endpoints-public-dns-environment.yaml
+          - tls-inject-trust-anchor-environment.yaml
     - include: adapt_to_keystone_v3.yml
       tags: ['overcloud-config-keystone']
     - include: configure_tenants.yml
@@ -62,13 +61,12 @@
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
           - firstboot-config-fixsatellitebug.sh
-          - firstboot-config-fixrhosp10bug.sh
           - rhel-registration-environment.yaml
           - timezone-environment.yaml
           - hostname-map-environment.yaml
           - schedulerhints-environment.yaml
           - dns-config-environment.yaml
-          # - tls-enable-environment.yaml
-          # - tls-endpoints-public-dns.yaml
-          # - tls-inject-trust-anchor-environment.yaml
+          - tls-enable-environment.yaml
+          - tls-endpoints-public-dns-environment.yaml
+          - tls-inject-trust-anchor-environment.yaml
   when: mode=="reset"

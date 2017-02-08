@@ -46,8 +46,13 @@
     - role: layer2_rhosp_director
       tags: ['layer2', 'rhosp', 'undercloud' ]
       mode: create
-    #- { role: layer2_ipa_certificate, tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-cert'], mode: create, certcn: 'openstack.{{ hailstorm_dns_domain }}' }
-    - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: create }
+    - role: layer2_ipa_certificate
+      tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-cert']
+      mode: create
+      certcn: 'openstack.{{ hailstorm_dns_domain }}'
+    - role: layer2_rhosp_overcloud
+      tags: ['layer2', 'rhosp', 'overcloud']
+      mode: create
 
 
 

@@ -22,7 +22,7 @@ lifecycle_environments:
       - RHSA-2016:1940
     satellite_version: 6.2.5
     openshift_version: 3.4
-    openstack_version: 9
+    openstack_version: 10
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
     osp_controlled_node_placement: false
     #cloudforms_version: 5.7
@@ -252,6 +252,18 @@ satellite_product_config:
     basearch: x86_64
     repos:
       - name: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+  - product: Red Hat Storage Console
+    basearch: x86_64
+    repos:
+      - name: Red Hat Storage Console Installer for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+      - name: Red Hat Storage Console Main for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+  - product: Red Hat Storage Console Node
+    basearch: x86_64
+    repos:
+      - name: Red Hat Storage Console Agent for Red Hat Enterprise Linux 7 Server (RPMs)
         releasever: 7Server
 
 satellite_content_config:
