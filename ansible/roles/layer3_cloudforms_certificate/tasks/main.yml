@@ -1,0 +1,20 @@
+- block:
+    - name: create certificate files
+      copy: content="{{ item.value }}" dest="/var/www/miq/vmdb/certs/{{ item.name }}" mode="400"
+      with_items:
+        - name: cloudforms.key
+          value: "{{ ssl_key }}"
+        - name: cloudforms.crt
+          value: "{{ ssl_cert }}"
+
+    - name: change httpd config
+      lineinfile: line="{{ item.line }}" regexp="{{ item.regexp }}" dest="/etc/httpd/conf.d/manageiq-https-application.conf"
+      with_items:
+        - line: "SSLCertificateFile /var/www/miq/vmdb/certs/cloudforms.crt"
+          regexp: "^SSLCertificateFile.*$"
+        - line: "SSLCertificateKeyFile /var/www/miq/vmdb/certs/cloudforms.key"
+          regexp: "^SSLCertificateKeyFile.*$"
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+  when: ssl_key is defined and ssl_cert is defined
