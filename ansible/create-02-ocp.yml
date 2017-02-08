@@ -22,6 +22,9 @@
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'ose3', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_rhel, tags: [ 'layer2', 'ose3', 'rhel' ], mode: create }
     - { role: layerX_openshift_all, tags: [ 'layer2', 'ose3', 'ose3-installprep' ], mode: create }
+    # - role: layerX_ipa_client
+    #   tags: [ 'layer2', 'ose3',  'ipa-client']
+    #   mode: create
 
 - hosts: ose3-common
   remote_user: root
@@ -33,7 +36,7 @@
   remote_user: root
   gather_facts: false
   roles:
-    # - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles'], mode: create, certcn: 'openshift.{{ hailstorm_dns_domain }}', factprefix: openshift }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-roles'], mode: create, certcn: 'openshift.{{ hailstorm_dns_domain }}', factprefix: openshift }
     # - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles'], mode: create, certcn: 'hawkular-metrics.apps.{{ hailstorm_dns_domain }}', factprefix: hawkular }
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles' ], mode: create }
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }

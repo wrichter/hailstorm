@@ -35,18 +35,19 @@ openshift_master_cluster_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_logging_public_url=https://kibana.apps.{{ hailstorm_dns_domain }}
 openshift_master_metrics_public_url=https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics
+
 {% if openshift_key is defined %}
-#openshift_master_named_certificates=[{"certfile": "/root/certificates/openshift.crt", "keyfile": "/root/certificates/openshift.key"}]
+#openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "names": ["public-master-host.com"]}]
+openshift_master_named_certificates=[{"certfile": "/root/openshift.crt", "keyfile": "/root/openshift.key", "cafile": "/root/openshift-ca.crt"}]
+openshift_master_overwrite_named_certificates=true
 {% endif %}
 
-#new for 3.3
 openshift_hosted_router_selector="region=infra"
 openshift_registry_selector="region=infra"
 #openshift_docker_options="--log-opt max-size=1M --log-opt max-file=3"
 os_sdn_network_plugin_name="redhat/openshift-ovs-multitenant"
 #openshift_docker_additional_registries
 #openshift_docker_insecure_registries
-#openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "names": ["public-master-host.com"]}]
 #openshift_master_overwrite_named_certificates=true
 openshift_hosted_metrics_deploy=true
 openshift_hosted_metrics_storage_kind=nfs
