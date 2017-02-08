@@ -1,6 +1,6 @@
 - block:
     - name: check host exists in IPA DB
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ certcn }} | awk '/Host name:/{ print $3 }'
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ certcn|default(hostname) }} | awk '/Host name:/{ print $3 }'
       changed_when: false
       failed_when: false
       register: existing_host
@@ -9,13 +9,13 @@
       when: existing_host.stdout == ""
 
     - name: get principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find HTTP/{{ certcn }} | grep {{ certcn }}
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find {{ service|default('HTTP') }}/{{ certcn|default(hostname) }} | grep {{ certcn|default(hostname) }}
       register: existing_principal
       changed_when: false
       failed_when: false
 
     - name: create principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add HTTP/{{ certcn }}
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service|default('HTTP') }}/{{ certcn|default(hostname) }}
       when: existing_principal.stdout == ""
 
     - name: create certificate directory
@@ -44,21 +44,21 @@
     #   register: csr
 
     - name: create openssl config file
-      template: src=openssl_cert_request.j2 dest=~/certificates/{{certcn}}.cnf
+      template: src=openssl_cert_request.j2 dest=~/certificates/{{ certcn|default(hostname) }}.cnf
       register: openssl_conf
 
     - block:
         - name: create CSR
           shell: >
             cd ~/certificates &&
-            openssl req -config {{certcn}}.cnf -new -out {{ certcn }}.csr
+            openssl req -config {{ certcn|default(hostname) }}.cnf -new -out {{ certcn|default(hostname) }}.csr
 
         - name: process CSR
           shell: >
             cd ~/certificates &&
             echo "{{ hostvars['ipa'].ipa_admin_password }}" |
             kinit admin 1>/dev/null &&
-            ipa cert-request --principal=HTTP/{{ certcn }} {{ certcn }}.csr
+            ipa cert-request --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
       when: openssl_conf|changed
 
     - name: retrieve last issued cert in PEM format
@@ -66,15 +66,15 @@
         cd ~/certificates &&
         echo "{{ hostvars['ipa'].ipa_admin_password }}" |
         kinit admin 1>/dev/null &&
-        ipa cert-show $(ipa cert-find --subject={{ certcn }} | awk '/Serial number:/ { serial=$3 } END { print serial }') --raw |
+        ipa cert-show $(ipa cert-find --subject={{ certcn|default(hostname) }} | awk '/Serial number:/ { serial=$3 } END { print serial }') --raw |
         awk 'BEGIN { print "-----BEGIN CERTIFICATE-----" } /^  certificate: / { line = $2 } !/^  certificate: / { line=$1 } /^  serial|^  owner:/ { line="" } { if (line!="") print line } END { print "-----END CERTIFICATE-----" }'
-        > {{ certcn }}.crt creates=~/certificates/{{ certcn }}.crt
+        > {{ certcn|default(hostname) }}.crt creates=~/certificates/{{ certcn|default(hostname) }}.crt
 
     - name: get cert + key
       shell: cat {{ item }}
       with_items:
-        - "~/certificates/{{ certcn }}.crt"
-        - "~/certificates/{{ certcn }}.key"
+        - "~/certificates/{{ certcn|default(hostname) }}.crt"
+        - "~/certificates/{{ certcn|default(hostname) }}.key"
         - "/etc/ipa/ca.crt"
       register: keydata
       changed_when: false
