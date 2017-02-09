@@ -21,3 +21,5 @@
     - { role: layer2_rhel, tags: [ 'layer2', 'tower', 'rhel' ], mode: create }
     - { role: layer2_ansibletower, tags: [ 'layer2', 'tower', 'tower-install' ], mode: create }
     - { role: layer2_ansibletower_l2inventory, tags: [ 'layer2', 'tower', 'tower-layer2' ], mode: create, inventoryname: "Hailstorm", credentialname: "Hailstorm L2 SSH" }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'tower',  'tower-certificate'], mode: create }
+    - { role: layer2_ansibletower_certificate, tags: ['layer2', 'tower',  'tower-certificate'], mode: create }
