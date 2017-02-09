@@ -11,3 +11,5 @@
   become_user: "{{ rhosp_stack_user }}"
 - name: Add user to sudoers file
   lineinfile: dest=/etc/sudoers.d/{{ rhosp_stack_user }} state=present create=yes regexp="{{ rhosp_stack_user }}  .*" line="{{ rhosp_stack_user }}  ALL=(ALL) NOPASSWD:ALL"
+- name: Add hailstorm pubkey to stack user
+  authorized_key: user={{ rhosp_stack_user }} key={{ ssh_pub_key_hailstorm }}
