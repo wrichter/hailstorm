@@ -1,0 +1,4 @@
+- block:
+    - name: patch route
+      shell: oc patch route {{ route }} -n {{ namespace }} -p '{"spec":{"tls":{"key":"{{ ssl_key|regex_replace('\n','\\n')|regex_replace('\r','') }}","certificate":"{{ ssl_cert|regex_replace('\n','\\n')|regex_replace('\r','') }}","caCertificate":"{{ ssl_cacert|regex_replace('\n','\\n')|regex_replace('\r','') }}"}}}'
+  when: ssl_key is defined and ssl_cert is defined
