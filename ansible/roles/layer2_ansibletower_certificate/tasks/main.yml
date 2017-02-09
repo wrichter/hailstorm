@@ -1,0 +1,12 @@
+- block:
+    - name: create certificate files
+      copy: content="{{ item.value }}" dest="{{ item.name }}" mode="400"
+      with_items:
+        - name: /etc/tower/tower.key
+          value: "{{ ssl_key }}"
+        - name: /etc/tower/tower.cert
+          value: "{{ ssl_cert }}"
+
+    - name: restart tower
+      shell: ansible-tower-service restart
+  when: ssl_key is defined and ssl_cert is defined
