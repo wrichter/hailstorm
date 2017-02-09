@@ -1,4 +1,8 @@
 #!/bin/bash
+
+## NOTE: the same approach has been copied into rhel-registration-sh.j2,
+# so when the customized rhel-registration script is used, this is no longer necessary
+
 set -x
 # satellite 6.2.5 needs to be able to resolve the hostname (overcloud-....localdomain)
 # for subscription to succeed https://bugzilla.redhat.com/show_bug.cgi?id=1405614

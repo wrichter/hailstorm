@@ -14,8 +14,10 @@
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
-          - firstboot-config-fixsatellitebug.sh
+          #- firstboot-config-fixsatellitebug.sh
           - rhel-registration-environment.yaml
+          - rhel-registration.yaml
+          - rhel-registration.sh
           - timezone-environment.yaml
           - hostname-map-environment.yaml
           - schedulerhints-environment.yaml
@@ -60,8 +62,10 @@
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
-          - firstboot-config-fixsatellitebug.sh
+          #- firstboot-config-fixsatellitebug.sh
           - rhel-registration-environment.yaml
+          - rhel-registration.yaml
+          - rhel-registration.sh
           - timezone-environment.yaml
           - hostname-map-environment.yaml
           - schedulerhints-environment.yaml
