@@ -1,7 +1,8 @@
 - name: add ceph hosts to inventory
+  changed_when: false
   add_host:
     name: "ceph{{ item.0 }}"
-    groups: ceph,accessible_via_admin_network,rhel7
+    groups: ceph,accessible_via_admin_network,rhel7{% if item.0 == 0%},ceph-installer,storage-console{% endif %}
     ansible_host: "192.168.103.{{ 2 + item.0 }}"
     activation_key: "AK-CV-CEPH-{{ stage }}"
     nic_attachments:

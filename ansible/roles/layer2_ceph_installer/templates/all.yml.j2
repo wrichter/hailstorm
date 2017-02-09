@@ -1,0 +1,15 @@
+fetch_directory: ~/ceph-ansible-keys
+ceph_stable_rh_storage: true
+ceph_stable_rh_storage_cdn_install: true
+cluster: ceph
+generate_fsid: true
+
+journal_size: 1024
+monitor_interface: eth2
+
+public_network: {{ infrastructure_network_storage.default_gw_host_prefix }}
+osd_mkfs_type: xfs
+osd_mkfs_options_xfs: -f -i size=2048
+radosgw_frontend: civetweb
+radosgw_civetweb_port: 8080
+radosgw_keystone: false

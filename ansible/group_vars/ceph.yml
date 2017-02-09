@@ -26,5 +26,14 @@ disk:
 
 repos:
   - rhel-7-server-rpms
+  - rhel-7-server-rhceph-2-mon-rpms
+  - rhel-7-server-rhceph-2-osd-rpms
+  - rhel-7-server-rhceph-2-tools-rpms
+  - rhel-7-server-rhscon-2-agent-rpms
+  - rhel-7-server-rhscon-2-main-rpms
+  - rhel-7-server-rhscon-2-installer-rpms
+
+disable_services:
+  - firewalld
 
 pool_regex: "{{ ceph_subscription_pool_regex }}"
