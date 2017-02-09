@@ -34,12 +34,10 @@ function nova_compute {
   sudo /bin/bash -c "grep -q /var/lib/nova/instances /etc/fstab || echo '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_nova_path }}	/var/lib/nova/instances	nfs4	defaults,auto,_netdev 0 0' >>/etc/fstab"
   sudo mount -a
 
-  {% if current_lifecycle_env.openstack_version < 10 %}
   #workaround https://access.redhat.com/solutions/2777871
   #sudo chcon -R --reference=/var/lib/nova /var/lib/nova/instances
   sudo setenforce 0
   sudo sed -i "s/^SELINUX=.*$/SELINUX=permissive/" /etc/selinux/config
-  {% endif %}
 
   # restart compute service
   sudo systemctl restart openstack-nova-compute
