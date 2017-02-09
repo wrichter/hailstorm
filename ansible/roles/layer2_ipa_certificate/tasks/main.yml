@@ -1,22 +1,27 @@
 - block:
     - name: check host exists in IPA DB
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ certcn|default(hostname) }} | awk '/Host name:/{ print $3 }'
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ item }} | awk '/Host name:/{ print $3 }'
       changed_when: false
       failed_when: false
+      with_items: "['{{ certcn|default(hostname) }}']{% if cert_san is defined %}+{{ cert_san }}{% endif %}"
       register: existing_host
+
     - name: create host in IPA DB
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-add {{ certcn }}
-      when: existing_host.stdout == ""
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-add {{ item.item }}
+      when: item.stdout == ""
+      with_items: "{{ existing_host.results }}"
 
     - name: get principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find {{ service|default('HTTP') }}/{{ certcn|default(hostname) }} | grep {{ certcn|default(hostname) }}
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find {{ service|default('HTTP') }}/{{ item.item }} | grep {{ item.item }}
       register: existing_principal
       changed_when: false
       failed_when: false
+      with_items: "{{ existing_host.results }}"
 
     - name: create principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service|default('HTTP') }}/{{ certcn|default(hostname) }}
-      when: existing_principal.stdout == ""
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service|default('HTTP') }}/{{ item.item.item }}
+      when: item.stdout == ""
+      with_items: "{{ existing_principal.results }}"
 
     - name: create certificate directory
       file: state=directory path=~/certificates
