@@ -1,0 +1,10 @@
+---
+- hosts: laptop
+  gather_facts: false
+  roles:
+    - role: laptop_prepare_demo
+      demo: short
+      tags: ['short']
+    - role: layerX_openshift_demo_monster
+      mode: reset
+      tags: ['short']

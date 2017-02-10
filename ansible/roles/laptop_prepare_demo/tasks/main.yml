@@ -1,0 +1,14 @@
+- block:
+    - name: create ~/git directory
+      file: state=directory path="~/git"
+    - name: remove existing ticketmonster repo
+      file: state=absent path="~/git/ose3-ticket-monster"
+    - name: clone ticketmonster repo
+      git: repo=http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git dest=~/git/ose3-ticket-monster
+    - name: log in to openshift
+      shell: oc login https://openshift.{{ hailstorm_dns_domain }}:8443 --username=developer --password={{ root_password }}
+    - name: change repo remote URL
+      shell: cd ~/git/ose3-ticket-monster && git remote set-url origin http://developer:$(oc whoami -t)/git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
+    # - name: remove floating IP ranges from ~/.ssh/known_hosts
+    #   shell:
+  when: demo=="short"

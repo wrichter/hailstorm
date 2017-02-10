@@ -6,7 +6,7 @@
 
 - name: Create demo-dev project
   shell: "oadm new-project demo-dev --admin='developer' --description='ticket monster developers stage'"
-  when: "'demo-dev' not in projects.stdout_lines"
+  when: mode=="create" and "'demo-dev' not in projects.stdout_lines"
 
 - name: Reseting demo-dev project to empty state
   shell: oc delete all --all -n demo-dev
@@ -14,7 +14,7 @@
 
 - name: Create demo-prod project
   shell: "oadm new-project demo-prod --admin='developer' --description='ticket monster production stage'"
-  when: "'demo-prod' not in projects.stdout_lines"
+  when: mode=="create" and "'demo-prod' not in projects.stdout_lines"
 
 - name: Reseting demo-prod project to empty state
   shell: oc delete all --all -n demo-prod
@@ -32,7 +32,9 @@
 
   - name: Create monster dev template in openshift namespace
     shell: "oc create -f /tmp/monster_template_dev.yml -n openshift"
+  when: "'monster-dev' not in templates.stdout_lines"
 
+- block:
 # Do one sample deployment to ensure docker images and maven dependencies
 # are downloaded:
   - name: Doing sample deployment of monster-dev app
@@ -48,7 +50,7 @@
 
   - name: Removing sample deployment of monster-dev app
     shell: "oc delete all -l MonsterDevInitialDeploymentTest -n demo-dev"
-  when: "'monster-dev' not in templates.stdout_lines"
+  when: mode=="reset" or 'monster-dev' not in templates.stdout_lines
 
 - block:
   - name: Prepare Monster Prod Template
@@ -75,3 +77,4 @@
 
   - name: Create git hook for monster
     shell: oc rsync /tmp/hooks/ {{ gitPod.stdout }}:/var/lib/git/ose3-ticket-monster.git/hooks  -n devops-tools --strategy=tar
+  when: mode=="create"
