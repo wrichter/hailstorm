@@ -27,11 +27,12 @@ lifecycle_environments:
     openstack_version: 10
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
     osp_controlled_node_placement: false
-    #cloudforms_version: 5.7
-    #cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
-    cloudforms_version: 5.6
-    #cloudforms_ova_appliance: cfme-rhevm-5.6.2.2-1.x86_64.rhevm.ova
-    cloudforms_ova_appliance: cfme-rhevm-5.6.3.3-1.x86_64.rhevm.ova
+    osp_use_tls: true
+    osp_use_ceph: true
+    cloudforms_version: 5.7
+    cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
+    # cloudforms_version: 5.6
+    # cloudforms_ova_appliance: cfme-rhevm-5.6.3.3-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
     kvm_images:
@@ -53,6 +54,8 @@ lifecycle_environments:
     openshift_version: 3.3
     openstack_version: 9
     osp_controlled_node_placement: false
+    osp_use_tls: false
+    osp_use_ceph: false
     cloudforms_version: 5.6
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
@@ -79,6 +82,8 @@ lifecycle_environments:
     openshift_version: 3.3
     openstack_version: 9
     osp_controlled_node_placement: false
+    osp_use_tls: false
+    osp_use_ceph: false
     cloudforms_version: 5.6
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso

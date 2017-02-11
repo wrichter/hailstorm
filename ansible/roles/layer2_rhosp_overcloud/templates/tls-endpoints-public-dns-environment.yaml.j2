@@ -1,3 +1,4 @@
+{% if current_lifecycle_env.osp_use_tls %}
 # Use this environment when deploying an SSL-enabled overcloud where the public
 # endpoint is a DNS name.
 parameter_defaults:
@@ -53,3 +54,4 @@ parameter_defaults:
     SwiftAdmin: {protocol: 'http', port: '8080', host: 'IP_ADDRESS'}
     SwiftInternal: {protocol: 'http', port: '8080', host: 'IP_ADDRESS'}
     SwiftPublic: {protocol: 'https', port: '13808', host: 'CLOUDNAME'}
+{% endif %}

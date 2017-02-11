@@ -9,6 +9,8 @@
     - role: layer1_rhosp
       tags: [ 'rhosp', layer1 ]
       mode: create
+    - role: layer1_ceph_inventory
+      tags: [ 'layer2', 'ceph', 'overcloud', 'overcloud-ceph' ]
 
 - hosts: rhosp-all
   remote_user: root
@@ -50,6 +52,13 @@
       tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-cert']
       mode: create
       certcn: 'openstack.{{ hailstorm_dns_domain }}'
+      when: current_lifecycle_env.osp_use_tls
+
+    - role: layer2_ceph_openstackconfig
+      tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-ceph']
+      mode: create
+      when: current_lifecycle_env.osp_use_ceph
+
     - role: layer2_rhosp_overcloud
       tags: ['layer2', 'rhosp', 'overcloud']
       mode: create

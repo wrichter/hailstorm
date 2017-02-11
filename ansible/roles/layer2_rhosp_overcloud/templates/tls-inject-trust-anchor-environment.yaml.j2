@@ -1,6 +1,8 @@
+{% if current_lifecycle_env.osp_use_tls %}
 parameter_defaults:
   SSLRootCertificate: |
     {{ certificate.results[1].stdout|indent(4) }}
 
 resource_registry:
   OS::TripleO::NodeTLSCAData: /usr/share/openstack-tripleo-heat-templates/puppet/extraconfig/tls/ca-inject.yaml
+{% endif %}

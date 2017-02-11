@@ -1,3 +1,4 @@
+{% if current_lifecycle_env.osp_use_tls %}
 # Use this environment to pass in certificates for SSL deployments.
 # For these values to take effect, one of the tls-endpoints-*.yaml environments
 # must also be used.
@@ -10,3 +11,4 @@ parameter_defaults:
 
 resource_registry:
   OS::TripleO::NodeTLSData: /usr/share/openstack-tripleo-heat-templates/puppet/extraconfig/tls/tls-cert-inject.yaml
+{% endif %}

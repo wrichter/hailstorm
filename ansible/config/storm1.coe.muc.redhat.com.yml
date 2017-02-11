@@ -36,7 +36,7 @@ layer2_rhev_hypervisor_cpu: 8
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4
-layer2_rhosp_control_mem: 8192
+layer2_rhosp_control_mem: 16384
 layer2_rhosp_control_cpu: 4
 layer2_rhosp_compute_mem: 32768
 layer2_rhosp_compute_cpu: 8
@@ -261,8 +261,13 @@ external_network_config:
           - from_port: 443
             to_port: 443
             proto: tcp
+          # novnc proxy
           - from_port: 6080
             to_port: 6080
+            proto: tcp
+          # novnc proxy TLS
+          - from_port: 13080
+            to_port: 13080
             proto: tcp
       - expose_machine: tower
         on_host_prefix: 10.32.105.9/32

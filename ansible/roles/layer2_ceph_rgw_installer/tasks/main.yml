@@ -1,0 +1,14 @@
+- name: check if s3user already exists
+  shell: radosgw-admin user info --uid="s3user" || true
+  register: s3user
+  changed_when: false
+  
+- name: create s3user
+  shell: radosgw-admin user create --uid="s3user" --display-name="S3user"
+  when: "s3user.stderr == 'could not fetch user info: no user info saved'"
+  register: s3user2
+
+- set_fact:
+    s3user: "{% if s3user2|skipped %}{{ s3user.stdout|from_json  }}{% else %}{{ s3user2.stdout|from_json }}{% endif %}"
+
+- debug: var=s3user

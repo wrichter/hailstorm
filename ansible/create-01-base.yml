@@ -37,7 +37,7 @@
     - role: layer1_dnat
       tags: [ 'layer1', 'dnat' ]
       mode: create
-    - role: layer2_ceph_inventory
+    - role: layer1_ceph_inventory
       tags: [ 'layer2', 'ceph', 'ipa' ]
 
 #### SATELLITE ####
@@ -130,4 +130,10 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_ceph_installer, tags: [ 'layer2', 'ceph', 'ceph-install' ], mode: create }
+    - { role: layer2_ceph_installer, tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-installer' ], mode: create }
+
+- hosts: ceph-rgws-installer
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_ceph_rgw_installer, tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-rgws' ], mode: create }

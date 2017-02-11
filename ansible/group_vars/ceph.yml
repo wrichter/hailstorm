@@ -37,3 +37,12 @@ disable_services:
   - firewalld
 
 pool_regex: "{{ ceph_subscription_pool_regex }}"
+
+nic_attachments:
+  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_admin }}"
+  - "{{ infrastructure_network_storage }}"
+default_route_via: "{{ infrastructure_network_services }}"
+name_service_via: "{{ infrastructure_network_services }}"
+ksdevice: eth1
+ntp_client: ntpd

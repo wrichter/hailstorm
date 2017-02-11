@@ -230,7 +230,7 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_ceph_inventory, tags: [ 'layer2', 'ceph' ] }
+    - { role: layer1_ceph_inventory, tags: [ 'layer2', 'ceph' ] }
 - hosts: ceph
   gather_facts: false
   remote_user: root
@@ -244,25 +244,6 @@
       when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2','ceph', 'vm' ]
-      mode: destroy
-
-
-- hosts: ipa
-  gather_facts: false
-  remote_user: root
-  roles:
-    - role: layer2_vms
-      tags: [ 'layer2','ipa', 'rhel' ]
-      mode: start
-    - role: layer2_ipa
-      tags: [ 'layer2', 'ipa' ]
-      mode: destroy
-    - role: layer2_rhel
-      tags: [ 'layer2','ipa', 'rhel' ]
-      mode: destroy
-      when: vm_exists is defined and vm_exists == true
-    - role: layer2_vms
-      tags: [ 'layer2','ipa', 'vm' ]
       mode: destroy
 
 
@@ -297,6 +278,24 @@
       when: vm_exists is defined and vm_exists == true
     - role: layer2_vms
       tags: [ 'layer2', 'vm', 'test-rhel' ]
+      mode: destroy
+
+- hosts: ipa
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','ipa', 'rhel' ]
+      mode: start
+    - role: layer2_ipa
+      tags: [ 'layer2', 'ipa' ]
+      mode: destroy
+    - role: layer2_rhel
+      tags: [ 'layer2','ipa', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_vms
+      tags: [ 'layer2','ipa', 'vm' ]
       mode: destroy
 
 - hosts: satellite

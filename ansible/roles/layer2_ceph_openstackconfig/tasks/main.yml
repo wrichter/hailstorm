@@ -1,0 +1,48 @@
+- block:
+    - name: get osd pool stats
+      command: ceph osd pool stats -f json
+      register: ceph_osd_pool_stats
+      changed_when: false
+
+    - name: create osd pools
+      command: ceph osd pool create {{ item.name }} {{ item.pgnum }}
+      when: ceph_osd_pool_stats.stdout|from_json|selectattr('pool_name','match','^' + item.name + '$')|list|length == 0
+      with_items:
+        - name: backups
+          pgnum: 100
+        - name: volumes
+          pgnum: 100
+        - name: vms
+          pgnum: 100
+        - name: images
+          pgnum: 100
+        - name: metrics
+          pgnum: 100
+
+    - name: get auth list
+      command: ceph auth list -f json
+      register: ceph_auth_list
+      changed_when: false
+
+    - name: create openstack user
+      command: ceph auth add client.openstack mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=volumes, allow rwx pool=vms, allow rwx pool=images, allow rwx pool=backups, allow rwx pool=metrics'
+      when: (ceph_auth_list.stdout|from_json).auth_dump|selectattr('entity','match','^client.openstack$')|list|length == 0
+
+    - name: get auth list (again)
+      command: ceph auth list -f json
+      register: ceph_auth_list
+      changed_when: false
+
+    - name: get ceph fsid
+      command: ceph -s -f json
+      register: ceph_health
+      changed_when: false
+
+  delegate_to: ceph0
+
+- set_fact:
+    ceph_fsid: "{{ (ceph_health.stdout|from_json).fsid }}"
+    ceph_clientkey: "{{ ((ceph_auth_list.stdout|from_json).auth_dump|selectattr('entity','match','^client.openstack$')|first).key }}"
+
+- debug: var=ceph_fsid
+- debug: var=ceph_clientkey

@@ -10,7 +10,7 @@
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh
           - ceilometer-config-environment.yaml
-          - storage-environment.yaml
+          - "{% if current_lifecycle_env.osp_use_ceph %}storage-ceph-environment.yaml{% else %}storage-nfs-environment.yaml{% endif %}"
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
@@ -58,7 +58,7 @@
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh
           - ceilometer-config-environment.yaml
-          - storage-environment.yaml
+          - storage-nfs-environment.yaml
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
