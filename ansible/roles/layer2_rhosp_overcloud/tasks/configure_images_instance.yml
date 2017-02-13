@@ -1,0 +1,29 @@
+- name: uncompress compressed KVM images
+  shell: zcat /tmp/binary/{{ item.image }} >/tmp/{{ item.image|regex_replace('.gz$','') }} creates=/tmp/{{ item.image|regex_replace('.gz$','') }}
+  when: item.name not in images.stdout | from_json | map(attribute="Name") | list and item.image | search('\.gz$')
+
+- name: convert qcow images to raw
+  shell: >
+    qemu-img convert -O raw {% if item.image | search('\.gz$') %}/tmp/{{ item.image|regex_replace('.gz$','') }}{% else %}/tmp/binary/{{ item.image }}{% endif %} /tmp/{{ item.image }}.raw creates=/tmp/{{ item.image }}.raw
+  when: current_lifecycle_env.osp_use_ceph and item.name not in images.stdout | from_json | map(attribute="Name") | list
+
+- name: load images into glance
+  shell: >
+    . ~/overcloudrc_v3 &&
+    openstack image create
+    --public
+    --disk-format {% if current_lifecycle_env.osp_use_ceph %}raw --file /tmp/{{ item.image }}.raw{% else %}qcow2 --file /tmp/binary/{{ item.image }}{% endif %}
+    {% if current_lifecycle_env.osp_use_ceph %}
+    --property hw_scsi_model=virtio-scsi {# add the virtio-scsi controller and get better performance and support for discard operation #}
+    --property hw_disk_bus=scsi {# connect every cinder block devices to that controller #}
+    --property hw_qemu_guest_agent=yes {# enable the QEMU guest agent #}
+    --property os_require_quiesce=yes {# send fs-freeze/thaw calls through the QEMU guest agent #}
+    {% endif %}
+    "{{ item.name }}"
+  when: item.name not in images.stdout | from_json | map(attribute="Name") | list
+
+- name: remove uncompressed images
+  file: state=absent path=/tmp/{{ item.image|regex_replace('.gz$','') }}
+
+- name: remove raw images
+  file: state=absent path=/tmp/{{ item.image }}.raw

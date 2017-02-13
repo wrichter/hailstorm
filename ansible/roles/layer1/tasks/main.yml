@@ -18,6 +18,13 @@
     - include: configure_iptables.yml
       tags: ['layer1','layer1-iptables']
     - include: prepare_user_with_kvm_access.yml
+    # export the binary dir via NFS
+    - include: roles/common/tasks/prepare_nfs_export.yml
+      vars:
+        items:
+          - path: "{{ layer1_binary_dir }}"
+        export_params: "(ro)"
+      tags: ['layer1','layer1-nfs-binary']
   when: mode=='create'
 
 - block:

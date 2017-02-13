@@ -1,3 +1,6 @@
+- name: mount /tmp/binary
+  mount: state=mounted fstype=nfs name=/tmp/binary src="{{ infrastructure_address_nfs_server }}:{{ layer1_binary_dir }}"
+
 - block:
     - name: get image list (default project)
       shell: >
@@ -6,27 +9,53 @@
       register: images
       changed_when: false
 
-    # - name: load CirrOS image (default project)
+    - include: configure_images_instance.yml
+      with_items: "{{ osp_kvm_images }}"
+
+    # - name: uncompress compressed KVM images
+    #   shell: zcat /tmp/binary/{{ item.image }} >/tmp/{{ item.image|regex_replace('.gz$','') }} creates=/tmp/{{ item.image|regex_replace('.gz$','') }}
+    #   when: item.name not in images.stdout | from_json | map(attribute="Name") | list and item.image | search('\.gz$')
+    #   with_items: "{{ osp_kvm_images }}"
+    #
+    # - name: convert qcow images to raw
+    #   shell: >
+    #     qemu-img convert -O raw {% if item.image | search('\.gz$') %}/tmp/{{ item.image|regex_replace('.gz$','') }}{% else %}/tmp/binary/{{ item.image }}{% endif %} /tmp/{{ item.image }}.raw creates=/tmp/{{ item.image }}.raw
+    #   when: current_lifecycle_env.osp_use_ceph and item.name not in images.stdout | from_json | map(attribute="Name") | list
+    #   with_items: "{{ osp_kvm_images }}"
+    #
+    # - name: load images into glance
     #   shell: >
     #     . ~/overcloudrc_v3 &&
-    #     curl http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img |
-    #     openstack image create --public --disk-format qcow2 CirrOS
-    #   when: '"CirrOS" not in images.stdout_lines'
+    #     openstack image create --public --disk-format {% if current_lifecycle_env.osp_use_ceph %}raw --file /tmp/{{ item.image }}.raw{% else %}qcow2 --file /tmp/binary/{{ item.image }}{% endif %} {{ item.name }}
+    #   when: item.name not in images.stdout | from_json | map(attribute="Name") | list
+    #   with_items: "{{ osp_kvm_images }}"
+    #
+    # - name: remove uncompressed images
+    #   file: state=absent path=/tmp/{{ item.image|regex_replace('.gz$','') }}
+    #   with_items: "{{ osp_kvm_images }}"
+    #
+    # - name: remove raw images
+    #   file: state=absent path=/tmp/{{ item.image }}.raw
+    #   with_items: "{{ osp_kvm_images }}"
 
-    - name: load uncompressed KVM images (from layer1 host binary dir)
-      shell: >
-        . ~/overcloudrc_v3 &&
-        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ item.image }} |
-        openstack image create --public --disk-format qcow2 {{ item.name }}
-      when: item.name not in images.stdout | from_json | map(attribute="Name") | list and not item.image | search('\.gz$')
-      with_items: "{{ osp_kvm_images }}"
-
-    - name: load compressed KVM images (from layer1 host binary dir)
-      shell: >
-        . ~/overcloudrc_v3 &&
-        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} zcat {{ layer1_binary_dir }}/{{ item.image }} |
-        openstack image create --public --disk-format qcow2 "{{ item.name }}"
-      when: item.name not in images.stdout | from_json | map(attribute="Name") | list and item.image | search('\.gz$')
-      with_items: "{{ osp_kvm_images }}"
+    # - name: load uncompressed KVM images (from layer1 host binary dir) directly into glance
+    #   shell: >
+    #     . ~/overcloudrc_v3 &&
+    #    ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ item.image }} |
+    #    openstack image create --public --disk-format qcow2 {{ item.name }}
+    #   when: item.name not in images.stdout | from_json | map(attribute="Name") | list and not item.image | search('\.gz$')
+    #   with_items: "{{ osp_kvm_images }}"
+    #
+    #
+    # - name: load compressed KVM images (from layer1 host binary dir)
+    #   shell: >
+    #     . ~/overcloudrc_v3 &&
+    #     ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} zcat {{ layer1_binary_dir }}/{{ item.image }} |
+    #     openstack image create --public --disk-format qcow2 "{{ item.name }}"
+    #   when: item.name not in images.stdout | from_json | map(attribute="Name") | list and item.image | search('\.gz$')
+    #   with_items: "{{ osp_kvm_images }}"
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+
+- name: umount /tmp/binary
+  mount: state=unmounted fstype=nfs name=/tmp/binary src="{{ infrastructure_address_nfs_server }}:{{ layer1_binary_dir }}"
