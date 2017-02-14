@@ -89,7 +89,7 @@ lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVE
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
-openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]"
+openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]" default_route_via="{{ infrastructure_network_services }}"
 undercloud-public ansible_host=192.168.105.40 nic_attachments="[ {{ infrastructure_network_rhosp_provisioning }} ]" default_route_via={{infrastructure_network_rhosp_provisioning}} additional_dns="director"
 undercloud-admin  ansible_host=192.168.105.41 nic_attachments="[ {{ infrastructure_network_rhosp_provisioning }} ]"
 
