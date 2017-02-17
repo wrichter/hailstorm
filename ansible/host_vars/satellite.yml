@@ -7,7 +7,7 @@ disk:
   format: qcow2
   physvols:
     boot: 500
-    rhel: 199500
+    rhel: 249500
   logvols:
     - name: swap
       fstype: swap
@@ -16,7 +16,7 @@ disk:
     - name: root
       fstype: "{{ fstype }}"
       mountpoint: /
-      size: 190000
+      size: 240000
     - name: home
       fstype: "{{ fstype }}"
       mountpoint: /home
