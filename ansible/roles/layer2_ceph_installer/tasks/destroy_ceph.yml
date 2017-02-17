@@ -1,0 +1,13 @@
+- name: run purge-cluster playbook
+  shell: cd /usr/share/ceph-ansible/ && ansible-playbook purge-cluster.yml --extra-vars="ireallymeanit=yes"
+  async: 7200
+  poll: 0
+  tags: ['playbook']
+  register: playbook
+
+- name: check on purge-cluster playbook completed
+  async_status: jid={{ playbook.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 480
+  delay: 15

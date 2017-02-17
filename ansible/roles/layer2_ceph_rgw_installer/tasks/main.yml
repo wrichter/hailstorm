@@ -2,7 +2,7 @@
   shell: radosgw-admin user info --uid="s3user" || true
   register: s3user
   changed_when: false
-  
+
 - name: create s3user
   shell: radosgw-admin user create --uid="s3user" --display-name="S3user"
   when: "s3user.stderr == 'could not fetch user info: no user info saved'"
@@ -12,3 +12,7 @@
     s3user: "{% if s3user2|skipped %}{{ s3user.stdout|from_json  }}{% else %}{{ s3user2.stdout|from_json }}{% endif %}"
 
 - debug: var=s3user
+
+- name: create swift subuser
+  shell: radosgw-admin subuser create --uid=s3user --subuser=s3user:swift --access=full
+  when: s3user.subusers|selectattr('id','match','s3user:swift')|list|length == 0

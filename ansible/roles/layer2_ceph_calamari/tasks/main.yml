@@ -1,0 +1,8 @@
+- name: install calamari-server
+  yum: name=calamari-server state=latest
+
+- name: reset calamari
+  shell: calamari-ctl clear --yes-i-am-sure creates=/.calamari_is_configured
+
+- name: initialize calamari
+  shell: calamari-ctl initialize --admin-username admin --admin-password {{ root_password }} --admin-email admin@{{ hailstorm_dns_domain }} && touch /.calamari_is_configured   creates=/.calamari_is_configured

@@ -1,0 +1,20 @@
+- name: intall storage console
+  yum: state=latest name=rhscon-core,rhscon-ceph,rhscon-ui
+
+# - name: skyring-setup
+#   shell: |
+#     skyring-setup <<EOF
+#     no
+#     {{ hostname }}
+#     N
+#     EOF
+
+- name: create TLS cert
+  copy: content="{{ item.content }}" dest="{{ item.dest }}" mode="{{ item.mode }}"
+  with_items:
+    - dest: /etc/pki/tls/skyring.crt
+      content: "{{ ssl_cert }}"
+      mode: 644
+    - dest: /etc/pki/tls/private/skyring.key
+      content: "{{ ssl_key }}"
+      mode: 600

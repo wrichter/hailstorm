@@ -82,7 +82,14 @@
   roles:
    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
    - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'tdagent' ], mode: create }
+#   - { role: layer2_ipa_certificate, tags: ['layer2', 'satellite', 'satellite_cert'], mode: create }
+#   - { role: layer2_satellite_certificate, tags: ['layer2', 'satellite', 'satellite_cert'], mode: create }
 
+# - hosts: ipa
+#   remote_user: root
+#   gather_facts: false
+#   roles:
+#     - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'satellite_cert' ], mode: refreshcert }
 
 # - hosts: test-rhel
 #   remote_user: root
@@ -132,8 +139,24 @@
   roles:
     - { role: layer2_ceph_installer, tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-installer' ], mode: create }
 
+- hosts: ceph-calamari
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_ceph_calamari, tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-calamari' ], mode: create }
+
 - hosts: ceph-rgws-installer
   remote_user: root
   gather_facts: false
   roles:
     - { role: layer2_ceph_rgw_installer, tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-rgws' ], mode: create }
+
+- hosts: storage-console
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'storage-console', 'vm' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'storage-console', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'storage-console', 'rhel' ], mode: create }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'storage-console', 'cert' ], mode: create }
+    - { role: layer2_storageconsole, tags: [ 'layer2', 'storage-console', 'storage-console-install' ], mode: create }
