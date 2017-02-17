@@ -38,8 +38,11 @@
 #   when: repos is defined
 - name: upgrade packages
   yum: name=* state=latest
-  # OpenShift requires older  version of Docker, ensure that a failure doesn't stop the process
-  failed_when: false
+  # don't ignore errors anymore
+  # was - OpenShift requires older  version of Docker, ensure that a failure doesn't stop the process
+  #failed_when: false
+  # seems like the SSH connection dies when packages are upgraded... let's try async+polling
+  async: 600
 - name: install all prerequisites
   yum: name="{{ packages }}" state=present
   register: prerequisites
