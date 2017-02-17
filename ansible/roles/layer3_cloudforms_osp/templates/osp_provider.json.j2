@@ -1,11 +1,11 @@
 {
   "type":"{{ item.type }}",
   "name":"{{ item.name }}",
-  "port":"5000",
-  "hostname":"{{ item.ip }}",
+  "port":"{% if current_lifecycle_env.osp_use_tls %}13000{% else %}5000{% endif %}",
+  "hostname":"{% if current_lifecycle_env.osp_use_tls %}{{ item.host }}{% else %}{{ item.ip }}{% endif %}",
   "api_version" : "{{ item.api_version }}",
   {% if item.api_version == "v3" %}"uid_ems" : "{{ item.domain_id }}",{% endif %}
-  "security_protocol":"non-ssl",
+  "security_protocol":"{% if current_lifecycle_env.osp_use_tls %}ssl{% else %}non-ssl{% endif %}",
   "credentials" : {% if item.metrics_username is not defined %}{
     "userid"    : "{{ item.admin_name }}",
     "password"  : "{{ item.admin_password }}"

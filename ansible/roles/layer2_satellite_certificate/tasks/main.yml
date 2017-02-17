@@ -1,0 +1,28 @@
+- block:
+  - name: create sat_cert directory
+    file: state=directory path=~/sat_cert
+
+  - name: create certificate files
+    copy: content={{ item.content }} dest=~/sat_cert/{{ item.name }}
+    with_items:
+      - name: satellite.key
+        content: "{{ ssl_key }}"
+      - name: satellite.crt
+        content: "{{ ssl_cert }}"
+      - name: satellite.csr
+        content: "{{ ssl_certreq }}"
+      - name: ca_cert.crt
+        content: "{{ ssl_cacert }}"
+
+  - name: install satellite certificate
+    shell: >
+      satellite-installer
+      --scenario satellite
+      --certs-server-cert /root/sat_cert/satellite.crt
+      --certs-server-cert-req /root/sat_cert/satellite.csr
+      --certs-server-key /root/sat_cert/satellite.key
+      --certs-server-ca-cert /root/sat_cert/ca_cert.crt
+      --certs-update-server
+      --certs-update-server-ca
+
+  when: mode=="create"

@@ -81,10 +81,11 @@
         - "~/certificates/{{ certcn|default(hostname) }}.crt"
         - "~/certificates/{{ certcn|default(hostname) }}.key"
         - "/etc/ipa/ca.crt"
+        - "~/certificates/{{ certcn|default(hostname) }}.csr"
       register: keydata
       changed_when: false
 
     - name: set cert + key as facts
-      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[2].stdout }}"}
+      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[2].stdout }}","{{ factprefix|default('ssl') }}_certreq":"{{ keydata.results[3].stdout }}"}
   when: mode=="create"
   delegate_to: ipa
