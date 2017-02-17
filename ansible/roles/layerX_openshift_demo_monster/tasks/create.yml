@@ -1,12 +1,12 @@
 # --- Create necessary projects demo-dev and demo-prod for user developer:
-- name: check existing projects
+- name: check existing projectsX
   shell: oc get projects | awk '{ print $1 }'
   register: projects
   changed_when: false
 
 - name: Create demo-dev project
   shell: "oadm new-project demo-dev --admin='developer' --description='ticket monster developers stage'"
-  when: mode=="create" and "'demo-dev' not in projects.stdout_lines"
+  when: mode=="create" and 'demo-dev' not in projects.stdout_lines
 
 - name: Reseting demo-dev project to empty state
   shell: oc delete all --all -n demo-dev
@@ -14,7 +14,7 @@
 
 - name: Create demo-prod project
   shell: "oadm new-project demo-prod --admin='developer' --description='ticket monster production stage'"
-  when: mode=="create" and "'demo-prod' not in projects.stdout_lines"
+  when: mode=="create" and 'demo-prod' not in projects.stdout_lines
 
 - name: Reseting demo-prod project to empty state
   shell: oc delete all --all -n demo-prod
@@ -78,3 +78,16 @@
   - name: Create git hook for monster
     shell: oc rsync /tmp/hooks/ {{ gitPod.stdout }}:/var/lib/git/ose3-ticket-monster.git/hooks  -n devops-tools --strategy=tar
   when: mode=="create"
+
+# Create BuildPipeline in devops-tools to promote monster from demo-dev to demo-prod
+- name: Grant devops-Jenkins access to demo-dev
+  shell: oc policy add-role-to-user edit system:serviceaccount:devops-tools:jenkins -n demo-dev
+- name: Grant devops-Jenkins access to demo-prod
+  shell: oc policy add-role-to-user edit system:serviceaccount:devops-tools:jenkins -n demo-prod
+- name: Prepare pipeline yaml
+  template: src=monster_pipeline_devops.yml.j2 dest=/tmp/monster_pipeline_devops.yml
+- name: Delete monster pipeline in devops project
+  shell: "oc delete buildconfig demo-monster-pipeline -n devops-tools"
+  ignore_errors: true
+- name: Create monster pipeline in devops project
+  shell: "oc create -f /tmp/monster_pipeline_devops.yml -n devops-tools"
