@@ -74,7 +74,9 @@
     - { role: layer2_vms, tags: [ 'layer2', 'efk', 'vm' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'efk', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer2_rhel, tags: [ 'layer2', 'efk', 'rhel'], mode: create }
-    - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create }
+    - { role: layer2_efk_rhosp_optools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create, when: "current_lifecycle_env.openstack_version < 10" }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'efk', 'efk-certificate'], mode: create, when: "current_lifecycle_env.openstack_version >= 10" }
+    - { role: layer2_efk_centos_opstools, tags: [ 'layer2', 'efk', 'efk-install'], mode: create, when: "current_lifecycle_env.openstack_version >= 10" }
 
 #### TOWER ####
 
