@@ -82,6 +82,9 @@
   register: neutron_uuid
   become: yes
   become_user: "{{ rhosp_stack_user }}"
+  retries: 30
+  delay: 20
+  until: "'503 Service Unavailable' not in neutron_uuid.stderr"
 - name: configure DNS for provisioning network
   shell: . ~/stackrc && neutron subnet-update "{{ neutron_uuid.stdout }}" --dns-nameserver {{ infrastructure_address_default_dns }}
   become: yes
