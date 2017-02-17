@@ -103,3 +103,22 @@
     delay: 1
 
   when: "'git' not in deploymentconfigs.stdout_lines"
+
+# --- Create sonar:
+- block:
+  - name: Prepare sonar dockerfile
+    template: src=sonar_Dockerfile.j2 dest=/tmp/Dockerfile
+
+  - name: Create sonar binary build to work around root requirement
+    shell: "oc new-build --binary --name=sonar -lsonar=true -n devops-tools"
+
+  - name: Build sonar with our dockerfile
+    shell: "oc start-build sonar --from-file=/tmp/Dockerfile -F -n devops-tools"
+
+  - name:  Create sonar app from our image stream
+    shell: "oc new-app --image-stream=sonar -lsonar=true -n devops-tools"
+
+  - name: Expose sonar service
+    shell: "oc expose service sonar -lsonar=true -n devops-tools"
+
+  when: "'sonar' not in deploymentconfigs.stdout_lines"
