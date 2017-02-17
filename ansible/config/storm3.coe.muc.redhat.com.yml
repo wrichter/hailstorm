@@ -2,7 +2,7 @@ layer1_ansible_host: storm3.coe.muc.redhat.com
 hailstorm_dns_domain: hailstorm3.coe.muc.redhat.com
 
 disable_registration_against_satellite: false
-stage: PROD
+stage: TEST
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
@@ -30,7 +30,8 @@ layer2_rhev_hypervisor_cpu: 8
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4
-layer2_rhosp_control_mem: 8192
+layer2_rhosp_control_mem: 16384
+#layer2_rhosp_control_mem: 8192
 layer2_rhosp_control_cpu: 4
 layer2_rhosp_compute_mem: 32768
 layer2_rhosp_compute_cpu: 8
@@ -47,6 +48,9 @@ layer2_ose3lb_cpu: 2
 
 layer2_devclient_mem: 2048
 layer2_devclient_cpu: 2
+
+layer2_ceph_mem: 4096
+layer2_ceph_cpu: 2
 
 # if a property http_proxy is defined, satellite will be configured to sync via http_proxy
 http_proxy:
@@ -211,7 +215,7 @@ external_network_config:
             to_port: 22
             proto: tcp
       - expose_machine: undercloud-public
-        on_host_prefix: 10.32.105.18/32
+        on_host_prefix: 10.32.105.38/32
         via_network: rhosp_provisioning
         ports:
           # webui
@@ -252,8 +256,13 @@ external_network_config:
           - from_port: 443
             to_port: 443
             proto: tcp
+          # novnc proxy
           - from_port: 6080
             to_port: 6080
+            proto: tcp
+          # novnc proxy TLS
+          - from_port: 13080
+            to_port: 13080
             proto: tcp
       - expose_machine: tower
         on_host_prefix: 10.32.105.7/32
