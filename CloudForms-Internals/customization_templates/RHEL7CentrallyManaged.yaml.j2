@@ -1,6 +1,6 @@
 ---
-- name: RHEL7Managed
-  description: RHEL7Managed
+- name: RHEL7CentrallyManaged
+  description: RHEL7CentrallyManaged
   script: |
     <%
        evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
