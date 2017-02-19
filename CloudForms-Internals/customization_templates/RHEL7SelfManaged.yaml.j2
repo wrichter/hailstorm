@@ -82,6 +82,10 @@
        chkconfig goferd on
        katello-package-upload
 
+       # ensure that OpenSSH does not do reverse lookups to speed up login process
+       echo "UseDNS no" >> /etc/ssh/sshd_config
+       systemctl restart sshd
+
     <% if script_ldapentry != nil && script_ldapentry['mail'] != nil && script_ldapentry['mail'][0] != nil  %>
        sendmail <%= script_ldapentry['mail'][0] %><<EOF
        Subject: Your self-managed virtual machine <%= script_hostname %> is ready
