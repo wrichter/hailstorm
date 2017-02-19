@@ -46,6 +46,7 @@
 - name: install all prerequisites
   yum: name="{{ packages }}" state=present
   register: prerequisites
+  async: 600
   when: not (packages is undefined or packages is none or packages | trim == '')
 # next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383
 - name: enable services
