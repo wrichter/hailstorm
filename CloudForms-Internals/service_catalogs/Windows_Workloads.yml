@@ -1,10 +1,10 @@
 ---
 - Windows Workloads:
     name: Windows Workloads
-    description: 
+    description: Windows Workloads
     template:
-    - name: Windows 2012R2 UnManaged
-      description: Windows 2012R2 UnManaged
+    - name: Windows centrally managed
+      description: withOUT Administrator access
       type: 
       display: true
       service_type: atomic
@@ -20,18 +20,11 @@
         ae_instance: CatalogItemInitialization
         ae_message: 
         ae_attributes: {}
-        dialog_label: WindowsUnManaged
-      - action: Retirement
-        ae_namespace: Service/Retirement/StateMachines
-        ae_class: ServiceRetirement
-        ae_instance: Default
-        ae_message: 
-        ae_attributes: {}
-        dialog_label: WindowsUnManaged
+        dialog_label: WindowsCentrallyManaged
       custom_buttons: []
       custom_button_sets: []
-    - name: Windows 2012R2 Managed
-      description: Windows 2012R2 Managed
+    - name: Windows self-managed
+      description: with Adminstrator access
       type: 
       display: true
       service_type: atomic
@@ -47,13 +40,6 @@
         ae_instance: CatalogItemInitialization
         ae_message: 
         ae_attributes: {}
-        dialog_label: WindowsManaged
-      - action: Retirement
-        ae_namespace: Service/Retirement/StateMachines
-        ae_class: ServiceRetirement
-        ae_instance: Default
-        ae_message: 
-        ae_attributes: {}
-        dialog_label: WindowsManaged
+        dialog_label: WindowsSelfManaged
       custom_buttons: []
       custom_button_sets: []
