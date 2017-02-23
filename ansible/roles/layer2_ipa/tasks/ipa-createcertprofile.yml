@@ -1,0 +1,43 @@
+# this creates a profile to create wildcard certs as described in
+# http://blog-ftweedal.rhcloud.com/2017/02/wildcard-certificates-in-freeipa/
+
+- name: find existing cert profiles
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa certprofile-find | awk '/Profile ID:/{ print $3 }'
+  changed_when: false
+  register: existing_cert_profiles
+
+- block:
+    - name: retrieve caIPAserviceCert cert profile
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa certprofile-show caIPAserviceCert --out=/tmp/wildcard.cfg
+      changed_when: false
+
+    - name: adjust cert profile policy
+      lineinfile: line={{ item.line }} regexp={{ item.regexp }} dest="/tmp/wildcard.cfg"
+      with_items:
+        - line: "policyset.serverCertSet.1.default.params.name=CN=*.$request.req_subject_name.cn$, O={{ hailstorm_dns_domain|upper }}"
+          regexp: "policyset.serverCertSet.1.default.params.name=CN.*"
+        - line: "profileId=wildcard"
+          regexp: "profileId=caIPAserviceCert"
+
+    - name: import wildcard cert profile
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa certprofile-import wildcard --file /tmp/wildcard.cfg --desc 'Wildcard certificates'  --store 1
+  when: "'wildcard' not in existing_cert_profiles.stdout_lines"
+
+
+- name: find existing ca acls profiles
+  shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-find | awk '/ACL name:/{ print $3 }'
+  changed_when: false
+  register: existing_caacls
+
+- block:
+    - name: ipa caacl-add wildcard-hosts
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add wildcard-hosts
+    - name: ipa caacl-add-ca wildcard-hosts --cas ipa
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-ca wildcard-hosts --cas ipa
+    - name: ipa caacl-add-profile wildcard-hosts --certprofiles wildcard
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-profile wildcard-hosts --certprofiles wildcard
+    - name: ipa host-add apps.hailstorm1.coe.muc.redhat.com
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa host-add apps.{{ hailstorm_dns_domain }}
+    - name: ipa caacl-add-host wildcard-hosts --hosts apps....
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-host wildcard-hosts --hosts apps.{{ hailstorm_dns_domain }}
+  when: "'wildcard-hosts' not in existing_caacls.stdout_lines"

@@ -15,4 +15,6 @@
       tags: ['ipa-groups']
     - include: ipa-users-add-ssh-keys.yml
       tags: ['ipa-ssh']
+    - include: ipa-createcertprofile.yml
+      tags: ['ipa-certprofile']
   when: mode=="create"

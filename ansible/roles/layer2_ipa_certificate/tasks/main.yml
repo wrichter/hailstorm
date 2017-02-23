@@ -63,7 +63,7 @@
             cd ~/certificates &&
             echo "{{ hostvars['ipa'].ipa_admin_password }}" |
             kinit admin 1>/dev/null &&
-            ipa cert-request --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
+            ipa cert-request {% if wildcard is defined and wildcard %}--profile wildcard{% endif %} --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
       when: openssl_conf|changed
 
     - name: retrieve last issued cert in PEM format
