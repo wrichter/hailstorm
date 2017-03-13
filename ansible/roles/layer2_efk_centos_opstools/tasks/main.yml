@@ -18,7 +18,7 @@
         name: "{{ epel_rpm }}"
         state: present
     - name: install additional packages
-      yum: name=ansible,git,python-urllib3,python-requests,python-pip state=latest
+      yum: name=ansible,git,python-urllib3,python-requests,python-pip,python-netaddr state=latest
     - name: disable epel
       shell: sed -i "s/enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
     - name: clone opstools repo
