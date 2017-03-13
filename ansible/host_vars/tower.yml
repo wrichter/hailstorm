@@ -29,7 +29,7 @@ disk:
     - name: var
       fstype: "{{ fstype }}"
       mountpoint: /var
-      size: 10000
+      size: 12000
 
 
 pool_regex: "{{ rhel_subscription_pool_regex }}"
