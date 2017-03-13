@@ -36,6 +36,11 @@
 # - name: enable repos
 #   shell: 'subscription-manager repos --disable="*" {% for repo in repos %} --enable="{{repo}}" {% endfor %}'
 #   when: repos is defined
+
+- name: check if initial upgrade has happened
+  stat: path=/.initial_upgrade_complete
+  register: upgrade_complete
+
 - name: upgrade packages
   yum: name=* state=latest
   # don't ignore errors anymore
@@ -43,11 +48,37 @@
   #failed_when: false
   # seems like the SSH connection dies when packages are upgraded... let's try async+polling
   async: 600
+  poll: 0
+  when: not upgrade_complete.stat.exists
+  register: upgrade_packages
+- name: poll for upgrade packages complete
+  async_status: jid={{ upgrade_packages.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 60
+  delay: 10
+  when: not upgrade_complete.stat.exists
+
+- name: note that initial upgrade has happened
+  file: path=/.initial_upgrade_complete state=touch
+  when: not upgrade_complete.stat.exists
+
+#- debug: msg={{packages.split(',')}}
 - name: install all prerequisites
   yum: name="{{ packages }}" state=present
   register: prerequisites
   async: 600
+  poll: 0
   when: not (packages is undefined or packages is none or packages | trim == '')
+  #with_items: "{% if packages is defined %}{{packages.split(',')}}{% else %}[]{% endif %}"
+- name: poll for install prereqs complete
+  async_status: jid={{ prerequisites.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 60
+  delay: 10
+  when: not prerequisites|skipped
+
 # next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383
 - name: enable services
   service: name={{ item }} enabled=yes state=started
