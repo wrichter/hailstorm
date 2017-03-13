@@ -10,6 +10,10 @@
   command: 'hammer subscription upload --organization "{{ organization }}" --file /root/{{ satellite_manifestfile }}'
   when: manifest|changed
 
+- name: refresh manifest to warm up satellite (work around the fact that the first attempt times out)
+  command: 'hammer subscription refresh-manifest --organization "{{ organization }}"'
+  when: manifest|changed
+
 - name: refresh manifest
   command: 'hammer subscription refresh-manifest --organization "{{ organization }}"'
 #  when: not manifest|changed
