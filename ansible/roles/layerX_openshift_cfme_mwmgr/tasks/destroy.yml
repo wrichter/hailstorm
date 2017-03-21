@@ -1,0 +1,3 @@
+- name: delete project cf-mw-mgr
+  shell: oc delete project cf-mw-mgr -n cf-mw-mgr
+  ignore_errors: true
