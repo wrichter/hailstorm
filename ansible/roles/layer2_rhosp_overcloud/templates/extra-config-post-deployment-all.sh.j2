@@ -5,6 +5,7 @@ function nova_compute_control {
   # set keystone auth version
   sudo crudini --set /etc/nova/nova.conf keystone_authtoken auth_version v3
 
+  {% if current_lifecycle_env.openstack_version <= 10 %}
   # install optools fluentd
   yum install -y fluentd rubygem-fluent-plugin-add
   for user in {keystone,nova,neutron,cinder,glance}; do usermod -a -G $user fluentd; done
@@ -17,6 +18,7 @@ EOF
 
   systemctl restart fluentd
   systemctl enable fluentd
+  {% endif %}
 }
 
 function nova_control {

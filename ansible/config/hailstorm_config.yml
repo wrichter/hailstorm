@@ -15,14 +15,10 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2017-01-16"
-      "CV-RHOSE3": "2017-01-21"
-      "CV-RHOSE3-CLIENT": "2017-01-21"
-      "CV-CEPH": "2017-02-07"
-      "CV-CLOUDFORMS": "2017-02-07"
+      "*": "2017-03-12"
     errata_for_demo_scenario:
-      - RHSA-2016:1940
-    satellite_version: 6.2.5
+      - RHSA-2017:0286
+    satellite_version: 6.2
     openshift_version: 3.4
     openstack_version: 10
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
@@ -36,10 +32,10 @@ lifecycle_environments:
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
     kvm_images:
-      RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+      RHEL7: rhel-guest-image-7.3-35.x86_64.qcow2
       CirrOS: cirros-0.3.4-x86_64-disk.img
       Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
-    cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
+    cfme_rhconsulting_scripts_hash: d28acf658d14b321d5e220d99cf5a8e3fb941c26
     ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.3.tar.gz
 
   - name: 'TEST'
@@ -47,25 +43,30 @@ lifecycle_environments:
     description: 'Testing'
     label: 'testing'
     content_view_date_filter:
-      "*": "2016-10-21"
+      "*": "2017-01-16"
+      "CV-RHOSE3": "2017-01-21"
+      "CV-RHOSE3-CLIENT": "2017-01-21"
+      "CV-CEPH": "2017-02-07"
+      "CV-CLOUDFORMS": "2017-02-07"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: 6.2.4
-    openshift_version: 3.3
-    openstack_version: 9
+    satellite_version: 6.2
+    openshift_version: 3.4
+    openstack_version: 10
+    # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
     osp_controlled_node_placement: false
     osp_use_tls: false
     osp_use_ceph: false
-    cloudforms_version: 5.6
-    cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
+    cloudforms_version: 5.7
+    cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
-    rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
+    rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
     kvm_images:
       RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
       CirrOS: cirros-0.3.4-x86_64-disk.img
       Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
-    ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.2.tar.gz
+    ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.3.tar.gz
 
   - name: 'PROD'
     prior: 'TEST'
@@ -78,7 +79,7 @@ lifecycle_environments:
       "CV-RHOSP": "2016-09-12"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: 6.2.4
+    satellite_version: 6.2
     openshift_version: 3.3
     openstack_version: 9
     osp_controlled_node_placement: false
@@ -233,7 +234,7 @@ satellite_product_config:
     basearch: x86_64
     repos:
       - name: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} (RPMs)"
-  - product: Red Hat Enterprise Virtualization
+  - product: Red Hat Virtualization
     basearch: x86_64
     repos:
       - name: Red Hat Enterprise Virtualization Management Agents for RHEL 7 (RPMs)
@@ -306,7 +307,7 @@ satellite_content_config:
 
   - content_view: "CV-RHEV-MANAGER"
     content:
-      - product: "Red Hat Enterprise Virtualization"
+      - product: "Red Hat Virtualization"
         repository: "Red Hat Enterprise Virtualization Manager 3.6 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
@@ -323,7 +324,7 @@ satellite_content_config:
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
-      - product: "Red Hat Enterprise Virtualization"
+      - product: "Red Hat Virtualization"
         repository: "Red Hat Enterprise Virtualization Management Agents for RHEL 7 RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSP"

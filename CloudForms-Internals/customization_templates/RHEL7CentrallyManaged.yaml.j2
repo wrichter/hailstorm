@@ -1,6 +1,6 @@
 ---
-- name: RHEL7Managed
-  description: RHEL7Managed
+- name: RHEL7CentrallyManaged
+  description: RHEL7CentrallyManaged
   script: |
     <%
        evm[:hostname] = evm[:vm_target_hostname] if evm[:hostname].blank?
@@ -68,6 +68,10 @@
        yum -t -y -e 0 install katello-agent
        chkconfig goferd on
        katello-package-upload
+
+       # ensure that OpenSSH does not do reverse lookups to speed up login process
+       echo "UseDNS no" >> /etc/ssh/sshd_config
+       systemctl restart sshd
 
     <% if script_ldapentry != nil && script_ldapentry['mail'] != nil && script_ldapentry['mail'][0] != nil  %>
        sendmail <%= script_ldapentry['mail'][0] %><<EOF

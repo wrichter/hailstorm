@@ -43,7 +43,8 @@
     - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, certcn: 'hawkular-metrics.apps.{{ hailstorm_dns_domain }}' }
     - { role: layerX_openshift_route_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, route: "hawkular-metrics", namespace: "openshift-infra" }
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
-
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create, certcn: 'apps.{{ hailstorm_dns_domain }}', wildcard: true, factprefix: wildcard }
+    - { role: layerX_openshift_router_wildcardcertificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create }
 
 - hosts: ose3-lb
   remote_user: root

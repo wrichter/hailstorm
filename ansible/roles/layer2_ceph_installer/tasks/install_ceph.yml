@@ -1,0 +1,49 @@
+- name: install ceph-ansible
+  yum: name=ceph-ansible state=latest
+
+- name: create /etc/ansible/hosts file
+  template: src=hosts.j2 dest=/etc/ansible/hosts
+  register: ansible_hosts
+
+- name: find host ssh key
+  command: ssh-keyscan -t ecdsa "{{ hostvars[item].hostname }}"
+  register: ssh_key
+  failed_when: ssh_key.stdout == ''
+  changed_when: false
+  with_items: "{{ groups['ceph'] }}"
+
+- name: add ssh key to known_hosts
+  lineinfile: dest=.ssh/known_hosts line={{ item.1 }} create=yes
+  with_subelements:
+    - "{{ ssh_key.results }}"
+    - stdout_lines
+
+- name: create ceph-ansible-keys directory
+  file: state=directory path=~/ceph-ansible-keys
+
+- name: create ansible installation configs
+  template: src={{ item }}.j2 dest=/usr/share/ceph-ansible/group_vars/{{ item }}
+  with_items:
+    - all.yml
+    - mons.yml
+    - osds.yml
+    - rgws.yml
+
+- name: create ansible site.yml
+  command: cp /usr/share/ceph-ansible/site.yml.sample /usr/share/ceph-ansible/site.yml creates=/usr/share/ceph-ansible/site.yml
+
+- block:
+    - name: run installer playbook
+      shell: cd /usr/share/ceph-ansible/ && ansible-playbook site.yml 2>&1 >~/ceph_install.log
+      async: 7200
+      poll: 0
+      tags: ['playbook']
+      register: playbook
+
+    - name: check on installer playbook completed
+      async_status: jid={{ playbook.ansible_job_id }}
+      register: job_result
+      until: job_result.finished
+      retries: 480
+      delay: 15
+  when: ansible_hosts|changed

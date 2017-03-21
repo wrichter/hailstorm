@@ -31,34 +31,34 @@ disk:
 pool_regex: "{{ rhosp_subscription_pool_regex }}"
 repos:
   - rhel-7-server-rpms
-  - rhel-7-server-optional-rpms
-  - rhel-7-server-openstack-9-optools-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-optools-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
 
-packages: elasticsearch,fluentd,rubygem-fluent-plugin-elasticsearch,kibana,httpd
+#packages: elasticsearch,fluentd,rubygem-fluent-plugin-elasticsearch,kibana,httpd
+#
+# enable_services:
+#   - elasticsearch
+#   - fluentd
+#   - httpd
 
-enable_services:
-  - elasticsearch
-  - fluentd
-  - httpd
-
-firewalld_rules:
- - fluentd:
-   port: 4000
-   protocol: tcp
-   state: enabled
-   zone: public
-   permanent: true
- - http:
-   port: 80
-   protocol: tcp
-   state: enabled
-   zone: public
-   permanent: true
- - elasticsearch:
-   port: 9200
-   protocol: tcp
-   state: enabled
-   zone: public
-   permanent: true
+# firewalld_rules:
+#  - fluentd:
+#    port: 4000
+#    protocol: tcp
+#    state: enabled
+#    zone: public
+#    permanent: true
+#  - http:
+#    port: 80
+#    protocol: tcp
+#    state: enabled
+#    zone: public
+#    permanent: true
+#  - elasticsearch:
+#    port: 9200
+#    protocol: tcp
+#    state: enabled
+#    zone: public
+#    permanent: true

@@ -1,10 +1,10 @@
 ---
 - Linux Workloads:
     name: Linux Workloads
-    description: 
+    description: Linux Workloads
     template:
-    - name: RHEL 7 Managed
-      description: RHEL 7 Managed
+    - name: RHEL7 centrally managed
+      description: withOUT root access
       type: 
       display: true
       service_type: atomic
@@ -20,18 +20,18 @@
         ae_instance: CatalogItemInitialization
         ae_message: 
         ae_attributes: {}
-        dialog_label: RHEL7Managed
+        dialog_label: RHEL7CentrallyManaged
       - action: Retirement
         ae_namespace: Service/Retirement/StateMachines
         ae_class: ServiceRetirement
         ae_instance: Default
         ae_message: 
         ae_attributes: {}
-        dialog_label: RHEL7Managed
+        dialog_label: RHEL7CentrallyManaged
       custom_buttons: []
       custom_button_sets: []
-    - name: RHEL 7 UnManaged
-      description: RHEL 7 UnManaged
+    - name: RHEL7 self-managed
+      description: with root access
       type: 
       display: true
       service_type: atomic
@@ -47,13 +47,13 @@
         ae_instance: CatalogItemInitialization
         ae_message: 
         ae_attributes: {}
-        dialog_label: RHEL7UnManaged
+        dialog_label: RHEL7SelfManaged
       - action: Retirement
         ae_namespace: Service/Retirement/StateMachines
         ae_class: ServiceRetirement
         ae_instance: Default
         ae_message: 
         ae_attributes: {}
-        dialog_label: RHEL7UnManaged
+        dialog_label: RHEL7SelfManaged
       custom_buttons: []
       custom_button_sets: []

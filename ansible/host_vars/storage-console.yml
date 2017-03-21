@@ -1,6 +1,6 @@
 ---
-mem: "{{ layer2_ceph_mem }}"
-vcpu: "{{ layer2_ceph_cpu }}"
+mem: 4096
+vcpu: 2
 
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
@@ -26,10 +26,10 @@ disk:
 
 repos:
   - rhel-7-server-rpms
-  - rhel-7-server-rhceph-2-mon-rpms
-  - rhel-7-server-rhceph-2-osd-rpms
-  - rhel-7-server-rhceph-2-tools-rpms
-  - rhel-7-server-rhscon-2-agent-rpms
+  # - rhel-7-server-rhceph-2-mon-rpms
+  # - rhel-7-server-rhceph-2-osd-rpms
+  # - rhel-7-server-rhceph-2-tools-rpms
+  # - rhel-7-server-rhscon-2-agent-rpms
   - rhel-7-server-rhscon-2-main-rpms
   - rhel-7-server-rhscon-2-installer-rpms
 
@@ -37,14 +37,3 @@ disable_services:
   - firewalld
 
 pool_regex: "{{ ceph_subscription_pool_regex }}"
-
-nic_attachments:
-  - "{{ infrastructure_network_services }}"
-  - "{{ infrastructure_network_admin }}"
-  - "{{ infrastructure_network_storage }}"
-default_route_via: "{{ infrastructure_network_services }}"
-name_service_via: "{{ infrastructure_network_services }}"
-ksdevice: eth1
-ntp_client: ntpd
-
-packages: rhscon-agent

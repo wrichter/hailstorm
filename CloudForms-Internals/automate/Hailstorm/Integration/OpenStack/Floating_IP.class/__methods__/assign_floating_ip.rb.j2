@@ -60,6 +60,7 @@ begin
   $evm.log("info", "Nova UUID for vm is #{vm.ems_ref}")
 
   tenant_name = $evm.vmdb(:cloud_tenant).find_by_id(vm.cloud_tenant_id).name
+  tenant_id = $evm.vmdb(:cloud_tenant).find_by_id(vm.cloud_tenant_id).ems_ref
 
   ext_mgt_system=vm.ext_management_system
   $evm.log("info", "#{ext_mgt_system.methods}")
@@ -70,12 +71,12 @@ begin
     :provider => "OpenStack",
     :openstack_api_key => ext_mgt_system.authentication_password,
     :openstack_username => ext_mgt_system.authentication_userid,
-    :openstack_auth_url => "http://#{ext_mgt_system.hostname}:#{ext_mgt_system.port}/v3/auth/tokens",
+    :openstack_auth_url => "{% if current_lifecycle_env.osp_use_tls %}https{% else %}http{% endif %}://#{ext_mgt_system.hostname}:#{ext_mgt_system.port}/v3/auth/tokens",
     :openstack_tenant => tenant_name,
     :openstack_domain_id => ext_mgt_system['uid_ems']
   }
 
-  $evm.log("info", "Connecting to tenant #{tenant_name} with credentials #{credentials}")
+  $evm.log("info", "Connecting to tenant #{tenant_name} id #{tenant_id} with credentials #{credentials}")
 
   conn = Fog::Compute.new(credentials)
 

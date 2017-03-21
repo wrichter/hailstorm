@@ -14,7 +14,7 @@ encrypt_key        = no
 # base request
 distinguished_name = req_distinguished_name
 
-{% if cert_san is defined and cert_san|length > 0 %}
+{% if wildcard is not defined or not wildcard %}
 # extensions
 req_extensions     = v3_req
 {% endif %}
@@ -31,14 +31,14 @@ streetAddress          = ""                       # L/street=
 #}commonName             = "{{ certcn|default(hostname) }}"            # CN=
 emailAddress           = "webmaster@{{ hailstorm_dns_domain }}"  # CN/emailAddress=
 
-{% if cert_san is defined and cert_san|length > 0 %}
+{% if wildcard is not defined or not wildcard %}
 # req_extensions
 [ v3_req ]
 # The subject alternative name extension allows various literal values to be
 # included in the configuration file
 # http://www.openssl.org/docs/apps/x509v3_config.html
 #subjectAltName  = DNS:www.example.com,DNS:www2.example.com # multidomain certificate
-subjectAltName = DNS:{{ cert_san|join(",DNS:") }}
+subjectAltName = DNS:{{ certcn|default(hostname) }}{% if cert_san is defined and cert_san|length > 0 %},DNS:{{ cert_san|join(",DNS:") }}{% endif %}
 {% endif %}
 
 # vim:ft=config

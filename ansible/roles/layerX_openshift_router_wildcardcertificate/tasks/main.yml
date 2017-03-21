@@ -1,0 +1,12 @@
+- block:
+    - name: remove existing router
+      shell: oc delete -n default dc/router
+    - name: remove existing service
+      shell: oc delete service router -n default
+    - name: remove existing secrets
+      shell: oc delete secrets router-certs -n default
+    - name: create certificate file
+      copy: content="{{ wildcard_cert }}\n{{ wildcard_key }}" dest="~/wildcard.crt"
+    - name: recreate router
+      shell: oadm router --default-cert=wildcard.crt --selector='region=infra'
+  when: wildcard_key is defined and wildcard_cert is defined

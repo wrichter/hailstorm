@@ -1,7 +1,7 @@
 [{
   "name" :  "{{ hostvars['layer1'].inventory_hostname_short }}",
   "ip" : "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}"
-},{% for item in groups.all %}
+},{% for item in groups.all %}{% set outer_last = loop.last %}
 {% if hostvars[item].vm_nics is defined %}
 {% for _nic in hostvars[item].vm_nics %}
 {% if _nic.netname is defined and hostvars[item].default_route_via is defined and _nic.netname == hostvars[item].default_route_via.netname and _nic.ip is defined %}
@@ -20,7 +20,7 @@
 {% endfor %}
 {% endif %}
 
-{% if not loop.last %}
+{% if not outer_last %}
 ,
 {% endif %}
 

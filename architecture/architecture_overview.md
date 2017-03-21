@@ -91,4 +91,4 @@ From bottom to top:
 * [requirements.md](requirements.md) lists the requirements to be fulfilled by this setup
 * [components.md](components.md)
 * [deployment.md](deployment.md)
-* [architecture_decisions.md](architecture_decisions.md)
+* [architectural_decisions.md](architectural_decisions.md)

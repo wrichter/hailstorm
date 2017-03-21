@@ -39,7 +39,7 @@ ose3-master2    ansible_host=192.168.103.21 openshift_node_labels="{'region': 'm
 ose3-master3    ansible_host=192.168.103.22 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}"
 
 [ose3-node]
-ose3-infranode1 ansible_host=192.168.103.23 openshift_node_labels="{'region': 'infra', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}" additional_dns="*.apps"
+ose3-infranode1 ansible_host=192.168.103.23 openshift_node_labels="{'region': 'infra', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}" additional_dns="*.apps,apps"
 ose3-node1      ansible_host=192.168.103.25 openshift_node_labels="{'region': 'primary', 'zone': 'east', 'logging-infra-fluentd': 'true'}"  activation_key="AK-CV-RHOSE3-{{ stage }}"
 ose3-node2      ansible_host=192.168.103.26 openshift_node_labels="{'region': 'primary', 'zone': 'west', 'logging-infra-fluentd': 'true'}"  activation_key="AK-CV-RHOSE3-{{ stage }}"
 
@@ -86,10 +86,12 @@ lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVE
 #ceph3 ansible_host=192.168.103.4 activation_key="AK-CV-CEPH-{{ stage }}"
 #ceph4 ansible_host=192.168.103.5 activation_key="AK-CV-CEPH-{{ stage }}"
 
+[storage-console]
+storage-console ansible_host=192.168.103.9 activation_key="AK-CV-CEPH-{{ stage }}"
 
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
-openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]"
+openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]" default_route_via="{{ infrastructure_network_services }}"
 undercloud-public ansible_host=192.168.105.40 nic_attachments="[ {{ infrastructure_network_rhosp_provisioning }} ]" default_route_via={{infrastructure_network_rhosp_provisioning}} additional_dns="director"
 undercloud-admin  ansible_host=192.168.105.41 nic_attachments="[ {{ infrastructure_network_rhosp_provisioning }} ]"
 
@@ -170,6 +172,7 @@ dev-client
 tower
 cloudforms
 ansible-jump-host
+storage-console
 
 # All layer2 node groups that are installed with RHEL6
 [rhel6:children]
@@ -189,6 +192,7 @@ infrastructure
 efk
 dev-client
 tower
+storage-console
 
 # to let it participate in the calculation of ansible_host and vm_nics
 # and the ssh proxy command used to communicate with all layer2/3 hosts
@@ -211,6 +215,7 @@ rhevm
 lookbusy-rhev
 dev-client
 tower
+storage-console
 
 [lookbusy:children]
 lookbusy-osp

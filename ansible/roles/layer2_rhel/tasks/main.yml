@@ -20,3 +20,14 @@
       redhat_subscription: state=absent
       ignore_errors: yes
   when: mode=="destroy"
+
+- block:
+    - name: get installed katello ca package name
+      command: rpm -qa "katello-ca-consumer*"
+      register: pkg
+      failed_when: pkg.stdout == ""
+    - name: remove katello cert
+      yum: state=absent name={{ pkg.stdout }}
+    - name: reinstall katello cert
+      yum: state=present name="http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm"
+  when: mode=="refreshcert"

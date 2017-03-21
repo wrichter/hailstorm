@@ -1,0 +1,10 @@
+{% if current_lifecycle_env.openstack_version >= 10 %}
+## A Heat environment file which can be used to set up logging agents
+resource_registry:
+  OS::TripleO::Services::FluentdClient: /usr/share/openstack-tripleo-heat-templates/puppet/services/logging/fluentd-client.yaml
+
+parameter_defaults:
+  LoggingServers:
+    - host: {{ hostvars['efk'].hostname }}
+      port: 4000
+{% endif %}

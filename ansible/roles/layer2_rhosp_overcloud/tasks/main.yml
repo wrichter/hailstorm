@@ -25,6 +25,8 @@
           - tls-enable-environment.yaml
           - tls-endpoints-public-dns-environment.yaml
           - tls-inject-trust-anchor-environment.yaml
+          - monitoring-environment.yaml
+          - logging-environment.yaml
     - include: adapt_to_keystone_v3.yml
       tags: ['overcloud-config-keystone']
     - include: configure_tenants.yml
@@ -73,4 +75,6 @@
           - tls-enable-environment.yaml
           - tls-endpoints-public-dns-environment.yaml
           - tls-inject-trust-anchor-environment.yaml
+          - monitoring-environment.yaml
+          - logging-environment.yaml
   when: mode=="reset"

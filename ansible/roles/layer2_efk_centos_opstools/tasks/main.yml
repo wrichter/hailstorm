@@ -1,0 +1,79 @@
+- block:
+
+    - name: ensure base dir exists
+      file: state=directory path=/etc/pki/opstools
+
+    - name: create certificate files
+      copy: content="{{ item.value }}" dest="/etc/pki/opstools/{{ item.name }}" mode="400"
+      with_items:
+        - name: ipa-apache.key.nopass
+          value: "{{ ssl_key }}"
+        - name: ipa-apache.cer
+          value: "{{ ssl_cert }}"
+        - name: ipa-ca.pem
+          value: "{{ ssl_cacert }}"
+
+    - name: install epel-release
+      yum:
+        name: "{{ epel_rpm }}"
+        state: present
+    - name: install additional packages
+      yum: name=ansible,git,python-urllib3,python-requests,python-pip,python-netaddr state=latest
+    - name: disable epel
+      shell: sed -i "s/enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
+    - name: clone opstools repo
+      git: repo=https://github.com/centos-opstools/opstools-ansible.git dest=~/opstools-ansible
+    - name: create ansible inventory
+      template: src=hosts.j2 dest=~/opstools-ansible/inventory/hosts
+      register: hosts
+    - name: create config.yml
+      template: src=config.yml.j2 dest=~/opstools-ansible/config.yml
+      register: config
+
+    - name: run playbook
+      shell: cd ~/opstools-ansible && ansible-playbook playbook.yml -i inventory -e @config.yml
+      async: 7200
+      poll: 0
+      tags: ['playbook']
+      register: playbook
+      when: hosts|changed or config|changed
+
+    - name: check on playbook completed
+      async_status: jid={{ playbook.ansible_job_id }}
+      register: job_result
+      until: job_result.finished
+      retries: 480
+      delay: 15
+      when: hosts|changed or config|changed
+
+
+
+## install curator
+
+
+    # - name: install python-pip
+    #   yum: name=python-pip state=latest
+
+    - name: check if curator is installed
+      shell: pip show elasticsearch-curator || true
+      register: curator
+      changed_when: false
+      ignore_errors: true
+
+    - name: install curator
+      command: pip install elasticsearch-curator==3.4
+      when: curator.stdout == ""
+
+    # - name: create curator config direction
+    #   file: dest=.curator state=directory
+    #
+    # - name: create curator config file
+    #   template: src=curator_config.yml.j2 dest=.curator/curator.yml
+    #
+    # - name: create curator action file
+    #   template: src=curator_action_alias.yml.j2 dest=./alias.yml
+
+    - name: add curator cron job
+      cron: name="curator delete indices older than 14 days" minute="5" hour="1" job="curator --host localhost --port 9200 delete indices --older-than 14 --time-unit days --timestring '%Y.%m.%d'" user=root
+
+  when: mode=='create'

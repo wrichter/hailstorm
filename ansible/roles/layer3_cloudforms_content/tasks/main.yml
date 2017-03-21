@@ -30,22 +30,21 @@
       with_items:
         - type: provision_dialogs
         - type: service_dialogs
-# TODO: service catalog items are broken at the moment, created entries are not editable
-#        - type: service_catalogs
         - type: roles
-          import_individual_files: true
+          import_individual_files: "{{ '4a9c5478e58181c099cd9f1dce00ae09c55f2298' == current_lifecycle_env.cfme_rhconsulting_scripts_hash }}"
         - type: tags
-          import_individual_files: true
+          import_individual_files: "{{ '4a9c5478e58181c099cd9f1dce00ae09c55f2298' == current_lifecycle_env.cfme_rhconsulting_scripts_hash }}"
         - type: buttons
-          import_individual_files: true
+          import_individual_files: "{{ '4a9c5478e58181c099cd9f1dce00ae09c55f2298' == current_lifecycle_env.cfme_rhconsulting_scripts_hash }}"
         - type: customization_templates
-          import_individual_files: true
+          import_individual_files: "{{ '4a9c5478e58181c099cd9f1dce00ae09c55f2298' == current_lifecycle_env.cfme_rhconsulting_scripts_hash }}"
         - type: reports
         - type: widgets
         - type: alerts
         - type: alertsets
         - type: policies
-
+        # TODO: service catalog items are broken at the moment, created entries are not editable and do not work
+        #- type: service_catalogs
 
     - name: remove temp dir
       local_action: file name={{ mktemp_directory.stdout }} state=absent

@@ -63,7 +63,7 @@
             cd ~/certificates &&
             echo "{{ hostvars['ipa'].ipa_admin_password }}" |
             kinit admin 1>/dev/null &&
-            ipa cert-request --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
+            ipa cert-request {% if wildcard is defined and wildcard %}--profile wildcard{% endif %} --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
       when: openssl_conf|changed
 
     - name: retrieve last issued cert in PEM format
@@ -81,10 +81,11 @@
         - "~/certificates/{{ certcn|default(hostname) }}.crt"
         - "~/certificates/{{ certcn|default(hostname) }}.key"
         - "/etc/ipa/ca.crt"
+        - "~/certificates/{{ certcn|default(hostname) }}.csr"
       register: keydata
       changed_when: false
 
     - name: set cert + key as facts
-      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[2].stdout }}"}
+      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[2].stdout }}","{{ factprefix|default('ssl') }}_certreq":"{{ keydata.results[3].stdout }}"}
   when: mode=="create"
   delegate_to: ipa
