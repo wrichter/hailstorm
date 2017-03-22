@@ -1,0 +1,148 @@
+#
+# Copyright 2015-2017 Red Hat, Inc. and/or its affiliates
+# and other contributors as indicated by the @author tags.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+apiVersion: v1
+kind: Template
+metadata:
+  name: hawkfly
+  annotations:
+    openshift.io/display-name: Hawkfly
+    description: WildFly server with embedded Hawkular-agent
+    #iconClass: icon-app-code https://github.com/openshift/openshift-docs/issues/1329
+    iconClass: wildfly
+    tags: hawkular
+parameters:
+- name: HAWKULAR_SERVER_IP
+  description: The IP / hostname of the Hawkular Server
+- name: HAWKULAR_SERVER_PORT
+  description: The port where the Hawkular Server listens for agents
+  value: "8080"
+- name: HAWKULAR_SERVER_USER
+  description: The username for the agent to connect to the Hawkular Server
+  value: "jdoe"
+- name: HAWKULAR_SERVER_PASSWORD
+  description: The password for the agent to connect to the Hawkular Server
+  value: "password"
+- name: HAWKFLY_IMAGE
+  description: The image to use
+  value: pilhuhn/hawkfly
+labels:
+  template: hawkfly
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: hawkfly
+    name: hawkfly
+  spec:
+    dockerImageRepository: ${HAWKFLY_IMAGE}
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: hawkfly-secret
+  type: Opaque
+  data:
+    username: ${HAWKULAR_SERVER_USER}
+    password: ${HAWKULAR_SERVER_PASSWORD}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: hawkfly
+    name: hawkfly
+  spec:
+    replicas: 1
+    selector:
+      app: hawkfly
+      deploymentconfig: hawkfly
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: hawkfly
+          deploymentconfig: hawkfly
+      spec:
+        containers:
+        - env:
+          - name: HAWKULAR_SERVER_ADDR
+            value: ${HAWKULAR_SERVER_IP}
+          - name: HAWKULAR_SERVER_PORT
+            value: ${HAWKULAR_SERVER_PORT}
+          - name: HAWKULAR_AGENT_USER
+            valueFrom:
+              secretKeyRef:
+                name: hawkfly-secret
+                key: username
+          - name: HAWKULAR_AGENT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: hawkfly-secret
+                key: password
+          image: pilhuhn/hawkfly
+          imagePullPolicy: Always
+          name: hawkfly
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - hawkfly
+        from:
+          kind: ImageStreamTag
+          name: hawkfly:latest
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: hawkfly
+    name: hawkfly
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 9090-tcp
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      deploymentconfig: hawkfly
+    sessionAffinity: None
+    type: ClusterIP
