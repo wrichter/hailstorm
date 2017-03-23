@@ -59,17 +59,21 @@
 - block:
   - name: Register Middleware Provider with CloudForms
     uri:
-#        url: "https://localhost/api/providers?provider_class=provider"
         url: "https://localhost/api/providers"
         method: "POST"
         user: "admin"
         password: "{{ root_password }}"
         validate_certs: no
         body_format: json
+        status_code: 200,400
         body: "{{ lookup('template', 'middleware_provider.json.j2') | to_json }}"
-    register: mw_provider
+    register: command_result
+    failed_when:
+        not
+        (command_result.status == 200 or
+        (command_result.status == 400 and ('Host Name has already been taken' in command_result.json.error.message)))
     delegate_to: cloudforms
-  - debug: var=mw_provider
+  - debug: var=command_result
   tags: ["ose3-cfme-mwmgr", "provider"]
 
 - block:
