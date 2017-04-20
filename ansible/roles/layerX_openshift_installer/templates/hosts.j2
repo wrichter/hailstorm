@@ -51,6 +51,8 @@ os_sdn_network_plugin_name="redhat/openshift-ovs-multitenant"
 #openshift_docker_additional_registries
 #openshift_docker_insecure_registries
 #openshift_master_overwrite_named_certificates=true
+
+openshift_metrics_install_metrics=true
 openshift_hosted_metrics_deploy=true
 openshift_hosted_metrics_storage_kind=nfs
 openshift_hosted_metrics_storage_access_modes=['ReadWriteOnce']
@@ -58,7 +60,23 @@ openshift_hosted_metrics_storage_host={{ infrastructure_address_nfs_server }}
 openshift_hosted_metrics_storage_nfs_directory={{ nfs_ose3_pv_path }}
 openshift_hosted_metrics_storage_volume_name=metrics
 openshift_hosted_metrics_storage_volume_size=10Gi
+openshift_metrics_hawkular_nodeselector={"region":"infra"}
+openshift_metrics_cassandra_nodeselector={"region":"infra"}
+openshift_metrics_heapster_nodeselector={"region":"infra"}
 
+openshift_hosted_logging_deploy=true
+# do not use NFS for logging since it is not supported - rely on the default empty volume being attached
+#openshift_hosted_logging_storage_kind=nfs
+#openshift_hosted_logging_storage_access_modes=['ReadWriteOnce']
+#openshift_hosted_logging_storage_host={{ infrastructure_address_nfs_server }}
+#openshift_hosted_logging_storage_nfs_directory={{ nfs_ose3_pv_path }}
+#openshift_hosted_logging_storage_volume_name=logging
+#openshift_hosted_logging_storage_volume_size=10Gi
+openshift_logging_curator_nodeselector={"region":"infra"}
+openshift_logging_kibana_nodeselector={"region":"infra"}
+# do not set a nodeselector for fluentd: https://bugzilla.redhat.com/show_bug.cgi?id=1442281
+#openshift_logging_fluentd_nodeselector={"region":"infra"}
+openshift_logging_es_nodeselector={"region":"infra"}
 
 # host group for masters
 [masters]
