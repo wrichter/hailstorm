@@ -9,6 +9,7 @@ nic_attachments:
   - "{{ infrastructure_network_admin }}"
   - "{{ infrastructure_network_storage }}"
   - "{{ infrastructure_network_rhosp_provisioning }}"
+default_route_via: "{{ infrastructure_network_services }}"
 
 repos: "{{ cloudforms_repos }}"
 pool_regex: "{{ cloudforms_subscription_pool_regex }}"
