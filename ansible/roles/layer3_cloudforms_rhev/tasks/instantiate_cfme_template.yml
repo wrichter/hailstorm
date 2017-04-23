@@ -11,7 +11,7 @@
     - name: get CFME template name
       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/templates" | \
-             xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/name/text()" - || true
+             xmllint --xpath "//template[starts-with(name,'RedHat_CFME-{{ current_lifecycle_env.cloudforms_version }}')]/name/text()" - || true
       changed_when: false
       register: template
       failed_when: template.stdout == ''
