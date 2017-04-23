@@ -1,10 +1,13 @@
 - block:
     - name: create ~/git directory
       file: state=directory path="~/git"
+      tags: ['git']
     - name: remove existing ticketmonster repo
       file: state=absent path="~/git/ose3-ticket-monster"
+      tags: ['git']
     - name: clone ticketmonster repo
       git: repo=http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git dest=~/git/ose3-ticket-monster
+      tags: ['git']
     - name: log in to openshift
       shell: oc login https://openshift.{{ hailstorm_dns_domain }}:8443 --username=developer --password={{ root_password }}
     - name: change repo remote URL
