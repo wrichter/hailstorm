@@ -35,7 +35,7 @@ layer2_rhev_hypervisor_cpu: 16
 
 layer2_rhosp_director_mem: 16384
 layer2_rhosp_director_cpu: 4
-layer2_rhosp_control_mem: 8192
+layer2_rhosp_control_mem: 16384
 layer2_rhosp_control_cpu: 4
 layer2_rhosp_compute_mem: 32768
 layer2_rhosp_compute_cpu: 8
@@ -261,8 +261,41 @@ external_network_config:
           - from_port: 443
             to_port: 443
             proto: tcp
+          # novnc proxy
           - from_port: 6080
             to_port: 6080
+            proto: tcp
+          # novnc proxy TLS
+          - from_port: 13080
+            to_port: 13080
+            proto: tcp
+          # keystone
+          - from_port: 13000
+            to_port: 13000
+            proto: tcp
+          # heat
+          - from_port: 13004
+            to_port: 13004
+            proto: tcp
+          # heat-cfn
+          - from_port: 13005
+            to_port: 13005
+            proto: tcp
+          # ironic
+          - from_port: 13385
+            to_port: 13385
+            proto: tcp
+          # mistral
+          - from_port: 13989
+            to_port: 13989
+            proto: tcp
+          # swift
+          - from_port: 13808
+            to_port: 13808
+            proto: tcp
+          # zaqar-websocket
+          - from_port: 9000
+            to_port: 9000
             proto: tcp
       - expose_machine: tower
         on_host_prefix: 10.32.105.8/32
