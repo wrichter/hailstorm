@@ -1,28 +1,36 @@
-- name: stop VM
-  ovirt:
-    user: admin@internal
-    url: "https://localhost"
-    instance_name: "{{ inventory_hostname_short }}"
-    password: "{{ root_password }}"
-    state: shutdown
+- name: find existing VM
+  shell: >
+    ovirt-shell -E 'list vms --query name={{ inventory_hostname_short }}' |
+    awk '/^id/ { print $3 }'
+  register: vm_id
   delegate_to: rhevm
-
-- name: wait for VM to shut down
-  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
-         xmllint --xpath "//vm[name='{{ inventory_hostname_short }}']/status/state/text()" - || true
   changed_when: false
-  register: vm_status
-  until: vm_status.stdout == 'down'
-  retries: 30
-  delay: 10
-  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+- block:
+    - name: stop VM
+      ovirt:
+        user: admin@internal
+        url: "https://localhost{% if current_lifecycle_env.rhv_version == 4 %}/ovirt-engine{% endif %}"
+        instance_name: "{{ inventory_hostname_short }}"
+        password: "{{ root_password }}"
+        state: shutdown
 
-- name: remove VM
-  ovirt:
-    user: admin@internal
-    url: "https://localhost"
-    instance_name: "{{ inventory_hostname_short }}"
-    password: "{{ root_password }}"
-    state: absent
+    - name: wait for VM to shut down
+      shell: >
+        {% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'show vm {{ inventory_hostname_short }}' |
+        awk '/^status-state/{print $3}'
+      changed_when: false
+      register: vm_status
+      until: vm_status.stdout == 'down'
+      failed_when: vm_status.stdout == ''
+      retries: 30
+      delay: 10
+
+    - name: remove VM
+      ovirt:
+        user: admin@internal
+        url: "https://localhost{% if current_lifecycle_env.rhv_version == 4 %}/ovirt-engine{% endif %}"
+        instance_name: "{{ inventory_hostname_short }}"
+        password: "{{ root_password }}"
+        state: absent
   delegate_to: rhevm
+  when: vm_id.stdout != ''

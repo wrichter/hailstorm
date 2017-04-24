@@ -7,7 +7,7 @@
 
 - name: find existing VM
   shell: >
-    rhevm-shell -E 'list vms --query name={{ inventory_hostname_short }}' |
+    {{ ovirt_shell_command }} -E 'list vms --query name={{ inventory_hostname_short }}' |
     awk '/^id/ { print $3 }'
   register: vm_id
   delegate_to: rhevm
@@ -19,14 +19,15 @@
 
 - name: get VM state
   shell: >
-    rhevm-shell -E "show vm {{ vm_id.stdout }}" |
+    {{ ovirt_shell_command }} -E "show vm {{ vm_id.stdout }}" |
     awk '/^status-state/ { print $3 }'
   register: vm_state
   delegate_to: rhevm
   when: vm_exists
 
 - name: start VM
-  shell: rhevm-shell -E "action vm {{ vm_id.stdout }} start"
+  shell: >
+    {{ ovirt_shell_command }} -E "action vm {{ vm_id.stdout }} start"
   delegate_to: rhevm
   when: vm_exists and vm_state.stdout != "up"
 
