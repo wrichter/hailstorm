@@ -146,9 +146,12 @@ resources:
               name: br-guests
               use_dhcp: false
 
-              addresses:
-                -
-                  ip_netmask: {get_param: ManagementIpSubnet }
+# don't allocate an IP address to the NIC - otherwise access from OSP instances to the OSP API will not work
+# since the request will enter on the br-services interface and should exit via br-guests and is therefore discarded
+# (unless we make a special kernel configs) 
+#              addresses:
+#                -
+#                  ip_netmask: {get_param: ManagementIpSubnet }
 # don't set a default route on the guests network - that will need to be done in the OSP router
 #              routes:
 #                -
