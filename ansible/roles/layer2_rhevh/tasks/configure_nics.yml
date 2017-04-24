@@ -89,7 +89,7 @@
 - name: find out which nics have not yet been assigned
 #rhevm-shell -E 'list nics --parent-host-name rhevh1.hailstorm2.coe.muc.redhat.com --show-all'
 # show nic --parent-host-name rhevh1.hailstorm2.coe.muc.redhat.com eth0
-  shell: rhevm-shell -E 'show nic --parent-host-name {{ hostname }} {{ item.dev }}' | awk '/^network-id/ { print $3 }'
+  shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'show nic --parent-host-name {{ hostname }} {{ item.dev }}' | awk '/^network-id/ { print $3 }'"
   delegate_to: rhevm
   register: unassigned_nic
   changed_when: false
@@ -98,14 +98,20 @@
 
 # - name: deactivate host
 
-- name: asign nic to network
+- name: assign nic to network (RHEV 3.6)
   shell: rhevm-shell -E 'action nic {{ item.item.dev }} attach --parent-host-name {{ hostname }} --network-name {{ item.item.netname[0:10] }}'
-  when: item.stdout == ""
+  when: item.stdout == "" and current_lifecycle_env.rhv_version == 3
+  with_items: "{{ unassigned_nic.results }}"
+  delegate_to: rhevm
+
+- name: assign nic to network (RHEV 4.x)
+  shell: ovirt-shell -E 'add networkattachment --parent-host-name {{ hostname }} --host_nic-name {{ item.item.dev }} --network-name {{ item.item.netname[0:10] }} --ip_address_assignments-ip_address_assignment "ip_address_assignment.ip.address={{ item.item.ip }},ip_address_assignment.assignment_method.ip.netmask={{ item.item.netmask }},ip_address_assignment.assignment_method.ip.gateway={{ item.item.default_gw }},ip_address_assignment.assignment_method=static"'
+  when: item.stdout == "" and current_lifecycle_env.rhv_version == 4
   with_items: "{{ unassigned_nic.results }}"
   delegate_to: rhevm
 
 - name: commit nic config
-  shell: rhevm-shell -E 'action host {{ hostname }} commitnetconfig'
+  shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'action host {{ hostname }} commitnetconfig'"
   delegate_to: rhevm
 
 # - name: activate host

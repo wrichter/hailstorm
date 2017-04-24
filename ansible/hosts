@@ -176,7 +176,7 @@ storage-console
 
 # All layer2 node groups that are installed with RHEL6
 [rhel6:children]
-rhevm
+#rhevm #group assignment (rhel6 or rhel7) now done via role
 test-rhel6
 
 # everything on layer2

@@ -6,14 +6,19 @@
     - "{{ hostvars['rhevh2'].vm_nics[1].ip }} {{ hostvars['rhevh2'].hostname }}"
 
 - name: copy the answerfile over
-  template: src=templates/answers_withdwh.j2 dest=/root/answers
+  template: src=templates/{% if current_lifecycle_env.rhv_version == 3 %}answers_withdwh.j2{% else %}answers_rhv40_withdwh.j2{% endif %} dest=/root/answers
 
 - name: configure rhev via answerfile
   command: engine-setup --config-append=/root/answers  creates=/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf
   register: engine_setup
 
-- name: create .rhevmshellrc
+- name: create .rhevmshellrc (for RHEV 3.6)
   template: src=rhevmshellrc.j2 dest=/root/.rhevmshellrc mode=0600
+  when: current_lifecycle_env.rhv_version == 3
+
+- name: create .ovirtshellrc (for RHEV 4.x)
+  template: src=ovirtshellrc.j2 dest=/root/.ovirtshellrc mode=0600
+  when: current_lifecycle_env.rhv_version == 4
 
 # - pause: minutes=2
 #   when: engine_setup|changed
