@@ -1,0 +1,8 @@
+- block:
+    # sets the variable "rhev_image" to the cloudforms template name
+    - include: import_cfme_template_rhv{{ current_lifecycle_env.rhv_version }}.yml
+  when: mode == 'create'
+
+- block:
+    - include: remove_cfme_template.yml
+  when: mode == 'destroy'

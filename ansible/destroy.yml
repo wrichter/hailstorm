@@ -127,12 +127,14 @@
   gather_facts: false
   remote_user: root
   roles:
-
     - role: layer2_rhel
       tags: [ 'layer3', 'cf', 'rhel']
       mode: destroy
-    - role: layer3_cloudforms_rhev
+    - role: layer3_vm_on_rhev
       tags: [ 'layer3', 'cf' ]
+      mode: destroy
+    - role: layer3_cloudforms_rhev_template
+      tags: [ 'layer3', 'cf', 'cf-template' ]
       mode: destroy
 
 - hosts: rhev
@@ -305,19 +307,19 @@
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start
-      when: destroy_satellite is defined and destroy_satellite==true
+      when: destroy_satellite is defined and destroy_satellite
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'rhel' ]
       mode: start
-      when: destroy_satellite is defined and destroy_satellite==true
+      when: destroy_satellite is defined and destroy_satellite
     - role: layer2_rhel
       tags: [ 'layer2','satellite', 'rhel'  ]
       mode: destroy
-      when: destroy_satellite is defined and destroy_satellite==true
+      when: destroy_satellite is defined and destroy_satellite
     - role: layer2_vms
       tags: [ 'layer2','satellite', 'vm' ]
       mode: destroy
-      when: destroy_satellite is defined and destroy_satellite==true
+      when: destroy_satellite is defined and destroy_satellite
 
 - hosts: layer1
   gather_facts: false

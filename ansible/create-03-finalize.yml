@@ -39,7 +39,8 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer3_cloudforms_rhev, tags: [ 'layer3', 'cf' ], mode: create }
+    - { role: layer3_cloudforms_rhev_template, tags: [ 'layer3', 'cf', 'cf-template' ], mode: create }
+    - { role: layer3_vm_on_rhev, tags: [ 'layer3', 'cf' ], mode: create }
     - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
     - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf', 'cfme-config' ], mode: create }
 # RHEL after cloudforms config, to ensure the hostname is set before subscribing
