@@ -51,7 +51,7 @@ tdagent_configs:
     path: /var/log/ovirt-engine/engine.log
     pos_file: /var/log/td-agent/ovirt_engine_log.pos
     format: /^(?<time>[^ ]* [^ ]*) (?<loglevel>[^ ]*) +\[(?<component>[^ ]*)\] +\((?<thread>[^ ]*)\) +(?<message>.*)$/
-    time_format: "%Y-%m-%d %H:%M:%S,%L"
+    time_format: "%Y-%m-%d %H:%M:%S,%L%z"
     permissions:
       - path: /var/log/ovirt-engine
         mode: o+xr
