@@ -20,6 +20,9 @@
 - name: restart PostgreSQL
   service: name="postgresql" state="restarted"
   when: config1|changed or config2|changed
+- name: restart ovirt-engine
+  service: name="ovirt-engine" state="restarted"
+  when: (config1|changed or config2|changed) and current_lifecycle_env.rhv_version == 4
 
 - name: check current IPTables config
   shell: iptables -L INPUT -n | grep 5432 | grep ACCEPT
