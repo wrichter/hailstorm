@@ -1,0 +1,34 @@
+#https://access.redhat.com/documentation/en-us/red_hat_virtualization/4.1/html/administration_guide/appe-red_hat_enterprise_virtualization_and_ssl#Replacing_the_Manager_SSL_Certificate
+- block:
+    - name: check apache-ca
+      stat: path=/etc/pki/ovirt-engine/apache-ca.pem
+      register: apache_ca
+
+    - name: remove apache-ca symlink
+      file: path=/etc/pki/ovirt-engine/apache-ca.pem state=absent
+      when: apache_ca.stat.lnk_source is defined
+
+    - name: create certificate files
+      copy: content="{{ item.value }}" dest="{{ item.name }}" mode="400"
+      with_items:
+        - name: /etc/pki/ovirt-engine/keys/apache.key.nopass
+          value: "{{ ssl_key }}"
+        - name: /etc/pki/ovirt-engine/certs/apache.cer
+          value: "{{ ssl_cert }}"
+        - name: /etc/pki/ovirt-engine/apache-ca.pem
+          value: "{{ ssl_cacert }}"
+        - name: /etc/pki/ca-trust/source/anchors/apache-ca.pem
+          value: "{{ ssl_cacert }}"
+
+    - name: update-ca-trust
+      shell: update-ca-trust
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+    - name: create truststore config
+      template: src=99-custom-truststore.conf.j2 dest=/etc/ovirt-engine/engine.conf.d/99-custom-truststore.conf
+
+    - name: restart ovirt-engine
+      service: name=ovirt-engine state=restarted
+  when: ssl_key is defined and ssl_cert is defined

@@ -1,0 +1,25 @@
+#https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Virtualization/3.6/html/Administration_Guide/appe-Red_Hat_Enterprise_Virtualization_and_SSL.html#Replacing_the_SSL_certificate_used_by_Red_Hat_Enterprise_Virtualization_Manager_to_identify_itself_to_users_connecting_over_https
+- block:
+    - name: create certificate files
+      copy: content="{{ item.value }}" dest="{{ item.name }}" mode="400"
+      with_items:
+        - name: /etc/pki/ovirt-engine/keys/ipa-apache.key.nopass
+          value: "{{ ssl_key }}"
+        - name: /etc/pki/ovirt-engine/certs/ipa-apache.cer
+          value: "{{ ssl_cert }}"
+        - name: /etc/pki/ovirt-engine/ipa-ca.pem
+          value: "{{ ssl_cacert }}"
+
+    - name: change httpd config
+      lineinfile: line="{{ item.line }}" regexp="{{ item.regexp }}" dest="/etc/httpd/conf.d/ssl.conf"
+      with_items:
+        - line: "SSLCertificateFile /etc/pki/ovirt-engine/certs/ipa-apache.cer"
+          regexp: "^SSLCertificateFile.*$"
+        - line: "SSLCertificateKeyFile /etc/pki/ovirt-engine/keys/ipa-apache.key.nopass"
+          regexp: "^SSLCertificateKeyFile.*$"
+        - line: "SSLCACertificateFile /etc/pki/ovirt-engine/ipa-ca.pem"
+          regexp: "^SSLCACertificateFile.*$"
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+  when: ssl_key is defined and ssl_cert is defined

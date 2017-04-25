@@ -57,7 +57,7 @@
     - { role: layer2_rhevm_ldap, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-ldap' ], mode: create }
     - { role: layer2_rhevm_templates, tags: [ 'layer2', 'rhev', 'rhevm', 'rhevm-templates' ], mode: create }
     - { role: layer2_ipa_certificate, tags: ['layer2', 'rhev', 'rhevm',  'rhevm-certificate'], mode: create, certcn: "rhev.{{ hailstorm_dns_domain }}" }
-    - { role: layer2_rhevm_certificate, tags: ['layer2', 'rhev', 'rhevm', 'rhevm-certificate'], mode: create, when: "current_lifecycle_env.rhv_version == 3" }
+    - { role: layer2_rhevm_certificate, tags: ['layer2', 'rhev', 'rhevm', 'rhevm-certificate'], mode: create }
 
 - hosts: satellite
   remote_user: root
