@@ -1,6 +1,6 @@
 {# https://bugzilla.redhat.com/show_bug.cgi?id=1355750 #}
 {
-  "type":"ManageIQ::Providers::OpenshiftEnterprise::ContainerManager",
+  "type":"ManageIQ::Providers::Openshift{% if current_lifecycle_env.cloudforms_version == 5.7 %}Enterprise{% endif %}::ContainerManager",
   "name":"openshift.{{ hailstorm_dns_domain }}",
   "connection_configurations" : [
     {
