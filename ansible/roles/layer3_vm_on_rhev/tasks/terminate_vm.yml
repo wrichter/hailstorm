@@ -1,6 +1,6 @@
 - name: find existing VM
   shell: >
-    ovirt-shell -E 'list vms --query name={{ inventory_hostname_short }}' |
+    {{ hostvars['rhevm'].ovirt_shell_command }} -E 'list vms --query name={{ inventory_hostname_short }}' |
     awk '/^id/ { print $3 }'
   register: vm_id
   delegate_to: rhevm

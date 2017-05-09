@@ -7,7 +7,7 @@
 
 - name: find existing VM
   shell: >
-    {{ ovirt_shell_command }} -E 'list vms --query name={{ inventory_hostname_short }}' |
+    {{ hostvars['rhevm'].ovirt_shell_command }} -E 'list vms --query name={{ inventory_hostname_short }}' |
     awk '/^id/ { print $3 }'
   register: vm_id
   delegate_to: rhevm
@@ -19,7 +19,7 @@
 
 - name: get VM state
   shell: >
-    {{ ovirt_shell_command }} -E "show vm {{ vm_id.stdout }}" |
+    {{ hostvars['rhevm'].ovirt_shell_command }} -E "show vm {{ vm_id.stdout }}" |
     awk '/^status-state/ { print $3 }'
   register: vm_state
   delegate_to: rhevm
@@ -27,11 +27,11 @@
 
 - name: start VM
   shell: >
-    {{ ovirt_shell_command }} -E "action vm {{ vm_id.stdout }} start"
+    {{ hostvars['rhevm'].ovirt_shell_command }} -E "action vm {{ vm_id.stdout }} start"
   delegate_to: rhevm
   when: vm_exists and vm_state.stdout != "up"
 
 - name: wait for VM to become avialable
   wait_for: host={{ ansible_host }} port=22 timeout=600
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
-  when: vm_exists and vm_id.stdout == ""
+  when: vm_exists and vm_id.stdout != "up"

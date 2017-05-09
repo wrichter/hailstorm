@@ -110,6 +110,9 @@
       when: mem is defined
       delegate_to: rhevm
 
+    - name: pause for rhevm to react
+      pause: seconds=15
+
     - name: start VM with cloud-init
       command: >
         curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }}
