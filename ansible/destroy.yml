@@ -127,6 +127,9 @@
   gather_facts: false
   remote_user: root
   roles:
+    - role: layer3_vm_on_rhev
+      tags: [ 'layer3', 'cf' ]
+      mode: start
     - role: layer2_rhel
       tags: [ 'layer3', 'cf', 'rhel']
       mode: destroy
@@ -228,6 +231,20 @@
 
 
 #### CEPH
+- hosts: storage-console
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','storage-console', 'rhel' ]
+      mode: start
+    - role: layer2_rhel
+      tags: [ 'layer2','storage-console', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_vms
+      tags: [ 'layer2','storage-console', 'vm' ]
+      mode: destroy
 - hosts: layer1
   remote_user: root
   gather_facts: false
@@ -240,6 +257,9 @@
     - role: layer2_vms
       tags: [ 'layer2','ceph', 'rhel' ]
       mode: start
+    - role: layer2_ceph_installer
+      tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-installer' ]
+      mode: destroy
     - role: layer2_rhel
       tags: [ 'layer2','ceph', 'rhel' ]
       mode: destroy
@@ -247,7 +267,6 @@
     - role: layer2_vms
       tags: [ 'layer2','ceph', 'vm' ]
       mode: destroy
-
 
 - hosts: infrastructure
   gather_facts: false
@@ -325,7 +344,6 @@
   gather_facts: false
   remote_user: root
   roles:
-
     - role: layer1_openshift
       tags: [ 'layer1', 'ose3' ]
       mode: destroy
