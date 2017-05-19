@@ -68,7 +68,7 @@
       yum:
         name: katello-agent
         state: present
-        enablerepo: "{{ os_variant_dash }}-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+        enablerepo: "{{ os_variant_dash }}-server-satellite-tools-{{ satellite_version }}-rpms"
   when: not disable_registration_against_satellite and activation_key is defined
 
 - name: register system using username/pw against RHN
