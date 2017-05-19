@@ -7,7 +7,7 @@
 #   register: template
 
 - name: check if template is already imported
-  shell: rhevm-shell -E 'list templates --query name=RedHat_CFME*' | awk '/^name/'
+  shell: rhevm-shell -E 'list templates --query name=RedHat_CFME*' | awk '/^name/ { print $3 }'
   delegate_to: rhevm
   changed_when: false
   register: template
@@ -48,17 +48,20 @@
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ template_import_link.stdout }}"
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 
-    - name: pause for rhevm to react
+    - name: pause for rhevm to react (probably to allow disks to be created)
       pause: seconds=15
 
     - name: get template name
-      shell: rhevm-shell -E "list templates --parent-storagedomain-name export1" | awk '/^name.*RedHat_CFME/ { print $3 }'
-      register: template_name
+      shell: rhevm-shell -E "list templates --parent-storagedomain-name export1" | awk '/^name.*RedHat_CFME/{print $3}'
+      register: template2
       delegate_to: rhevm
       changed_when: false
-      failed_when: template_name.stdout == ""
+      failed_when: template2.stdout == ""
 
     - name: remove template from export domain
-      shell: rhevm-shell -E 'delete template {{ template_name.stdout }} --parent-storagedomain-name export1'
+      shell: rhevm-shell -E 'delete template {{ template2.stdout }} --parent-storagedomain-name export1'
       delegate_to: rhevm
   when: template.stdout == ''
+
+- set_fact:
+    rhev_image: "{{ template.stdout|default(template2.stdout,true) }}"

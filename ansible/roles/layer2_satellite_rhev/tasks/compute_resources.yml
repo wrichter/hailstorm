@@ -4,5 +4,5 @@
   changed_when: false
 
 - name: create RHEV compute resource
-  command: hammer compute-resource create --organizations "{{ organization }}" --name {{ hostvars['rhevm'].hostname }} --provider Ovirt --url https://{{ hostvars['rhevm'].hostname }}/api --user admin@internal --password {{ root_password }}
-  when: "'rhevm.{{ hailstorm_dns_domain }}' not in compute_resources.stdout"
+  command: hammer compute-resource create --organizations "{{ organization }}" --name rhev.{{ hailstorm_dns_domain }} --provider Ovirt --url https://rhev.{{ hailstorm_dns_domain }}{% if current_lifecycle_env.rhv_version == 4 %}/ovirt-engine{% endif %}/api --user admin@internal --password {{ root_password }}
+  when: "'rhev.{{ hailstorm_dns_domain }}' not in compute_resources.stdout"

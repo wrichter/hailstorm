@@ -1,0 +1,12 @@
+- name: get list of templates
+  shell: >
+    {% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'list templates --query name=RedHat_CFME-{{ current_lifecycle_env.cloudforms_version }}*' | awk '/^name/ { print $3 }'
+  delegate_to: rhevm
+  changed_when: false
+  register: template
+
+- name: remove templates
+  shell: >
+    {% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'remove template {{ item }}'
+  delegate_to: rhevm
+  with_items: "{{ template.stdout_lines|default([]) }}"

@@ -1,0 +1,3 @@
+- block:
+    - include: configure_ceilometer.yml
+  when: mode=="create"

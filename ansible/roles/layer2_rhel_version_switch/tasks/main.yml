@@ -1,0 +1,5 @@
+- name: add instance to ansible group based on version
+  add_host:
+    name: "{{ inventory_hostname_short }}"
+    groups: "{{ rhel_version }}"
+  when: rhel_version is defined

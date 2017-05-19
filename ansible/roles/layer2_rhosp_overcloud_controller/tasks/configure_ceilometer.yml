@@ -1,0 +1,2 @@
+- name: create ceilometer-expirer daily cron tasks
+  template: src=ceilometer-expirer.j2 dest=/etc/cron.daily/ceilometer-expirer mode=755

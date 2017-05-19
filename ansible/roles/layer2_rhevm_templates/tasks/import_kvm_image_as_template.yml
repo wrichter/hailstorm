@@ -1,6 +1,6 @@
 - name: check existing template
   shell: >
-    rhevm-shell -E 'list templates' |
+    {{ ovirt_shell_command }} -E 'list templates' |
     awk 'BEGIN { print "template:" } /^name.*{{ item.name }}/ { print "  - name: \"" f "\"\n    id: \"" $3 "\"" } { f=$3 }'
   register: template
   changed_when: false
@@ -9,7 +9,7 @@
 
 - name: check existing VM
   shell: >
-    rhevm-shell -E 'list vms' |
+    {{ ovirt_shell_command }} -E 'list vms' |
     awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
   register: vm
   changed_when: false
@@ -26,7 +26,7 @@
 
 - name: check existing VM in export domain
   shell: >
-    rhevm-shell -E 'list vms --parent-storagedomain-name export1' |
+    {{ ovirt_shell_command }} -E 'list vms --parent-storagedomain-name export1' |
     awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
   register: vm_in_export_domain
   changed_when: false
@@ -72,7 +72,7 @@
 
 - name: get VM in export domain
   shell: >
-    rhevm-shell -E 'list vms --parent-storagedomain-name export1' |
+    {{ ovirt_shell_command }} -E 'list vms --parent-storagedomain-name export1' |
     awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
   register: vm_in_export_domain
   changed_when: false
@@ -82,7 +82,8 @@
     (vm.stdout|from_yaml).vm[0] is not defined
 
 - name: import VM
-  shell: rhevm-shell -E 'action vm {{ (vm_in_export_domain.stdout|from_yaml).vm[0].id }} import_vm --parent-storagedomain-name export1 --cluster-name Default --storage_domain-name data1'
+  shell: >
+    {{ ovirt_shell_command }} -E 'action vm {{ (vm_in_export_domain.stdout|from_yaml).vm[0].id }} import_vm --parent-storagedomain-name export1 --cluster-name Default --storage_domain-name data1'
   when: >
     (template.stdout|from_yaml).template[0] is not defined and
     (vm.stdout|from_yaml).vm[0] is not defined and
@@ -90,7 +91,7 @@
 
 - name: get VM
   shell: >
-    rhevm-shell -E 'list vms' |
+    {{ ovirt_shell_command }} -E 'list vms' |
     awk 'BEGIN { print "vm:" } /^name.*{{ item.image | regex_replace('.qcow2','') }}/ { print "  - id: \"" f "\"\n    name: \"" $3 "\"" } { f=$3 }'
   register: vm
   changed_when: false
@@ -98,23 +99,36 @@
     (template.stdout|from_yaml).template[0] is not defined and
     (vm_in_export_domain.stdout|from_yaml).vm[0] is defined
 
+# - name: wait for VM to unlock
+#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
+#          xmllint --xpath "//vm[name='{{ item.image | regex_replace('.qcow2','') }}']/status/state/text()" - || true
+#   changed_when: false
+#   register: vm_status
+#   until: vm_status.stdout == 'down'
+#   retries: 30
+#   delay: 10
+#   delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+#   when: >
+#     (template.stdout|from_yaml).template[0] is not defined and
+#     (vm.stdout|from_yaml).vm[0] is defined
 - name: wait for VM to unlock
-  shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
-         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
-         xmllint --xpath "//vm[name='{{ item.image | regex_replace('.qcow2','') }}']/status/state/text()" - || true
+  shell: >
+    {{ ovirt_shell_command }} -E 'show vm {{ item.image | regex_replace('.qcow2','') }}' |
+    awk '/^status-state/{print $3}'
   changed_when: false
   register: vm_status
   until: vm_status.stdout == 'down'
+  failed_when: vm_status.stdout == ''
   retries: 30
   delay: 10
-  delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
   when: >
     (template.stdout|from_yaml).template[0] is not defined and
     (vm.stdout|from_yaml).vm[0] is defined
 
 - name: convert VM to template
   shell: >
-    rhevm-shell -E 'add template --vm-id {{ (vm.stdout|from_yaml).vm[0].id }} --name "{{ item.name }}"'
+    {{ ovirt_shell_command }} -E 'add template --vm-id {{ (vm.stdout|from_yaml).vm[0].id }} --name "{{ item.name }}"'
   when: >
     (template.stdout|from_yaml).template[0] is not defined and
     (vm.stdout|from_yaml).vm[0] is defined
@@ -124,7 +138,7 @@
 
 - name: get VM disk ID
   shell: >
-    rhevm-shell -E 'list disks --parent-vm-identifier {{ (vm.stdout|from_yaml).vm[0].id }}' |
+    {{ ovirt_shell_command }} -E 'list disks --parent-vm-identifier {{ (vm.stdout|from_yaml).vm[0].id }}' |
     awk '/^id/ { print $3 }'
   register: disk_id
   changed_when: false
@@ -135,7 +149,7 @@
 
 - name: wait for disk to unlock
   shell: >
-    rhevm-shell -E 'show disk {{ disk_id.stdout }}' |
+    {{ ovirt_shell_command }} -E 'show disk {{ disk_id.stdout }}' |
     awk '/^status-state/ { print $3 }'
   register: disk_status
   changed_when: false
@@ -146,7 +160,7 @@
 
 - name: remove VM
   shell: >
-    rhevm-shell -E 'remove vm {{ (vm.stdout|from_yaml).vm[0].id }}'
+    {{ ovirt_shell_command }} -E 'remove vm {{ (vm.stdout|from_yaml).vm[0].id }}'
   when: (vm.stdout|from_yaml).vm[0] is defined
   register: remove_vm
 

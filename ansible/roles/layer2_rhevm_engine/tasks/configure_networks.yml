@@ -25,15 +25,15 @@
 
 - name: give rhevm some time to gather its wits
   pause: seconds=30
-  
+
 - name: find ovirtmgmt network
-  shell: rhevm-shell -E 'show network --parent-datacenter-name Default ovirtmgmt' | awk '/^id/ { print $3 }'
+  shell: "{{ ovirt_shell_command }} -E 'show network --parent-datacenter-name Default ovirtmgmt' | awk '/^id/ { print $3 }'"
   failed_when: false
   changed_when: false
   register: ovirtmgmt_id
 #- debug: var=ovirtmgmt_id
 - name: rename ovirtmgmt network to admin
-  shell: rhevm-shell -E 'update network --datacenter Default ovirtmgmt --name admin'
+  shell: "{{ ovirt_shell_command }} -E 'update network --datacenter Default ovirtmgmt --name admin'"
   when: ovirtmgmt_id.stdout != ""
 
 # - name: query existing networks
@@ -52,13 +52,13 @@
 #   with_items: "{{ vm_nics }}"
 
 - name: find existing networks
-  shell: rhevm-shell -E 'show network --parent-datacenter-name Default {{ item.netname[0:10] }}' | awk '/^id/ { print $3 }'
+  shell: "{{ ovirt_shell_command }} -E 'show network --parent-datacenter-name Default {{ item.netname[0:10] }}' | awk '/^id/ { print $3 }'"
   failed_when: false
   changed_when: false
   register: networks
   with_items: "{{ hostvars['rhevh1'].vm_nics }}"
 - name: create networks in Default DC
-  shell: rhevm-shell -E 'add network --name {{ item.item.netname[0:10] }} --datacenter-name Default' | awk '/^id/ { print $3 }'
+  shell: "{{ ovirt_shell_command }} -E 'add network --name {{ item.item.netname[0:10] }} --datacenter-name Default' | awk '/^id/ { print $3 }'"
   when: item.stdout == ""
   with_items: "{{ networks.results }}"
   failed_when: network_ids.stdout == ''
@@ -83,6 +83,6 @@
 #   with_items: "{{ vm_nics }}"
 
 - name: assign network to Default cluster
-  shell: rhevm-shell -E 'add network --name {{ item.item.item.netname[0:10] }} --parent-cluster-name Default'
+  shell: "{{ ovirt_shell_command }} -E 'add network --name {{ item.item.item.netname[0:10] }} --parent-cluster-name Default'"
   when: item.item.stdout == ""
   with_items: "{{ network_ids.results }}"

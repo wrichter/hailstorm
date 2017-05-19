@@ -63,7 +63,13 @@
       tags: ['layer2', 'rhosp', 'overcloud']
       mode: create
 
-
+- hosts: rhosp-control
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_rhosp_overcloud_controller
+      tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-controller']
+      mode: create
 
 # - hosts: lookbusy-osp
 #   remote_user: root

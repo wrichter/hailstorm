@@ -1,29 +1,4 @@
 ---
-# - hosts: all
-#   remote_user: root
-#   gather_facts: false
-#   tasks:
-#     - set_fact:
-#         rhsm_username: "{{ rhsm_username }}"
-#         rhsm_password: "{{ rhsm_password }}"
-#       tags:
-#         - always
-#     - debug: var=vm_nics
-#       tags:
-#         - always
-#     # - debug: msg={{ vm_nics }}
-#     #   tags:
-#     #     - always
-#
-#   vars_prompt:
-#     - name: "rhsm_username"
-#       prompt: "what is your Red Hat Subscription Manager username?"
-#       default: "wrichter"
-#       private: no
-#     - name: "rhsm_password"
-#       prompt: "what is your Red Hat Subscription Manager password?"
-
-
 #### RHEV ####
 
 - hosts: layer1
@@ -36,6 +11,12 @@
     - role: layer1_rhev
       tags: [ 'rhev', layer1 ]
       mode: create
+
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_rhel_version_switch, tags: [ 'layer2', 'rhev', 'rhel' ], mode: create }
 
 - hosts: rhev
   remote_user: root

@@ -1,8 +1,9 @@
 {
   "type"      : "ManageIQ::Providers::Redhat::InfraManager",
-  "name"      : "{{ hostvars['rhevm'].hostname }}",
-  "hostname"  : "{{ hostvars['rhevm'].hostname }}",
+  "name"      : "rhev.{{ hailstorm_dns_domain }}",
+  "hostname"  : "rhev.{{ hailstorm_dns_domain }}",
   "ipaddress" : "{{ hostvars['rhevm'].vm_nics[0].ip }}",
+  {% if ssl_cacert is defined %} "certificate_authority": "{{ ssl_cacert|regex_replace('\n','\\n') }}",{% endif %}
   "credentials" : [{
     "userid"    : "admin@internal",
     "password"  : "{{ root_password }}"

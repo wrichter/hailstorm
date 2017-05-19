@@ -20,6 +20,9 @@
 - name: restart PostgreSQL
   service: name="postgresql" state="restarted"
   when: config1|changed or config2|changed
+- name: restart ovirt-engine
+  service: name="ovirt-engine" state="restarted"
+  when: (config1|changed or config2|changed) and current_lifecycle_env.rhv_version == 4
 
 - name: check current IPTables config
   shell: iptables -L INPUT -n | grep 5432 | grep ACCEPT
@@ -27,6 +30,10 @@
   failed_when: false
   register: iptablerule
 #- debug: var=iptablerule
-- name: Update the server’s firewall to accept TCP communication on port 5432
+- name: Update the server’s firewall to accept TCP communication on port 5432 (RHEL6)
   shell: iptables -I INPUT -p tcp -m tcp --dport 5432 -j ACCEPT && service iptables save
-  when: iptablerule.stdout == ""
+  when: iptablerule.stdout == "" and current_lifecycle_env.rhv_version == 3
+
+- name: Update the server’s firewall to accept TCP communication on port 5432 (RHEL7)
+  firewalld: port=5432/tcp permanent=true state=enabled zone=public
+  when: iptablerule.stdout == "" and current_lifecycle_env.rhv_version == 4

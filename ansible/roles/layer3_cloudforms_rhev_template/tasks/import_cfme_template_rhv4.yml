@@ -1,0 +1,63 @@
+- name: check if template is already imported
+  shell: ovirt-shell -E 'list templates --query name=RedHat_CFME-{{ current_lifecycle_env.cloudforms_version }}*' | awk '/^name/ { print $3 }'
+  delegate_to: rhevm
+  changed_when: false
+  register: template
+
+- block:
+    - name: get export domain UUID
+      shell: ovirt-shell -E 'show storagedomain export1' | awk '/^id/ { print $3 }'
+      register: export_domain_uuid
+      failed_when: export_domain_uuid.stdout == ''
+      changed_when: false
+      delegate_to: rhevm
+
+    - name: unpack the virtual appliance directly into the RHEV export domain (from layer1 binary dir)
+      unarchive: copy=no src={{ layer1_binary_dir }}/{{ current_lifecycle_env.cloudforms_ova_appliance }} dest="{{ nfs_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
+      delegate_to: "{{ infrastructure_delegate_nfs_server }}"
+      when: (layer1_binary_dir is defined)
+    - name: unpack the virtual appliance directly into the RHEV export domain (from ansible playbook host)
+      unarchive: copy=no src=binary/{{ current_lifecycle_env.cloudforms_ova_appliance }} dest="{{ nfs_rhev_export_domain_path }}/{{ export_domain_uuid.stdout }}" owner=36 group=36
+      delegate_to: "{{ infrastructure_delegate_nfs_server }}"
+      when: (layer1_binary_dir is not defined)
+
+    - name: get template UUID
+      shell: >
+        ovirt-shell -E 'list templates --parent-storagedomain-name export1' |
+        awk '/^id/ { id=$3 } /^name\W*: RedHat_CFME-{{ current_lifecycle_env.cloudforms_version }}/ { print id }'
+      delegate_to: rhevm
+      register: template_uuid
+      failed_when: template_uuid.stdout == ''
+      changed_when: false
+
+    - name: get template import link
+      shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/ovirt-engine/api/storagedomains/{{ export_domain_uuid.stdout }}/templates" | \
+             xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/actions/link[@rel='import']/@href" - | \
+             awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+      register: template_import_link
+      failed_when: template_import_link.stdout == ''
+      changed_when: false
+    - name: import template
+      shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "{{ lookup('template', 'import_template.xml.j2') }}" \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ template_import_link.stdout }}"
+      delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
+
+    - name: pause for rhevm to react (probably to allow disks to be created)
+      pause: seconds=15
+
+    - name: remove template from export domain
+      shell: ovirt-shell -E 'delete template {{ template_uuid.stdout }} --parent-storagedomain-name export1'
+      delegate_to: rhevm
+
+    - name: get template name
+      shell: ovirt-shell -E 'list templates --query name=RedHat_CFME-{{ current_lifecycle_env.cloudforms_version }}*' | awk '/^name/{print $3}'
+      delegate_to: rhevm
+      changed_when: false
+      register: template2
+  when: template.stdout == ''
+
+- set_fact:
+    rhev_image: "{{ template.stdout|default(template2.stdout,true) }}"

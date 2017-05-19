@@ -70,7 +70,7 @@
 
 - block:
     - name: get host status
-      shell: rhevm-shell -E 'show host {{ hostname }}' | awk '/^status-state/ { print $3 }'
+      shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'show host {{ hostname }}' | awk '/^status-state/ { print $3 }'"
       register: host_state
       changed_when: false
       failed_when: false
@@ -78,11 +78,11 @@
 #    - debug: var=host_state
 
     - name: register host
-      shell: rhevm-shell -E 'add host --address "{{ vm_nics[1].ip }}" --cluster-name Default --name  {{ hostname }} --root_password {{ root_password }}'
+      shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'add host --address \"{{ vm_nics[1].ip }}\" --cluster-name Default --name  {{ hostname }} --root_password {{ root_password }}'"
       when: host_state.stdout == ''
 
     - name: wait for host to leave state "Installing"
-      shell: rhevm-shell -E 'show host {{ hostname }}' | awk '/^status-state/ { print $3 }'
+      shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'show host {{ hostname }}' | awk '/^status-state/ { print $3 }'"
       register: host_state
       until: host_state.stdout != "installing"
       failed_when: host_state.stdout == ''

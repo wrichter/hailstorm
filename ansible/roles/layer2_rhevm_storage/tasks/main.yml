@@ -1,5 +1,5 @@
 - block:
-    - include: configure_rhevm_storage.yml
+    - include: configure_rhevm_storage_rhv{{ current_lifecycle_env.rhv_version }}.yml
   when: mode=="create"
 
 #- block:

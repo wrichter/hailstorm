@@ -31,10 +31,13 @@ disk:
 
 pool_regex: "{{ rhev_subscription_pool_regex }}"
 
-repos: "{{ rhevm_repos }}"
-packages: rhevm,ovirt-engine-extension-aaa-ldap-setup,rhevm-dwh
+repos: "{{ rhevm_repos|select|list }}"
+packages: "rhevm,ovirt-engine-extension-aaa-ldap-setup{% if current_lifecycle_env.rhv_version == 3 %},rhevm-dwh{% endif %}"
 
 ksdevice: eth1
+
+rhel_version: "{% if current_lifecycle_env.rhv_version == 4 %}rhel7{% else %}rhel6{% endif %}"
+ovirt_shell_command: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %}"
 
 tdagent_configs:
   - tag: syslog.messages
@@ -47,8 +50,8 @@ tdagent_configs:
   - tag: engine.log
     path: /var/log/ovirt-engine/engine.log
     pos_file: /var/log/td-agent/ovirt_engine_log.pos
-    format: /^(?<time>[^ ]* [^ ]*) (?<loglevel>[^ ]*) +\[(?<component>[^ ]*)\] +\((?<thread>[^ ]*)\) +(?<message>.*)$/
-    time_format: "%Y-%m-%d %H:%M:%S,%L"
+    format: /^(?<time>[^ ]* [^ ]*) (?<loglevel>[^ ]*) +\[(?<component>[^ ]*)\] +\((?<thread>.*?)\) +\[(?<correlationid>[^ ]*)\] (?<message>.*)$/
+    time_format: "%Y-%m-%d %H:%M:%S,%L%z"
     permissions:
       - path: /var/log/ovirt-engine
         mode: o+xr

@@ -1,6 +1,18 @@
 #!/bin/sh
 set -x
 
+function heat_control {
+  # see https://access.redhat.com/solutions/2868471 and https://bugzilla.redhat.com/show_bug.cgi?id=1395139
+  sudo crudini --set /etc/heat/heat.conf DEFAULT heat_metadata_server_url {% if current_lifecycle_env.osp_use_tls %}https{% else %}http{% endif %}://openstack.{{ hailstorm_dns_domain }}:{% if current_lifecycle_env.osp_use_tls %}13005{% else %}8000{% endif %}
+  sudo crudini --set /etc/heat/heat.conf DEFAULT heat_waitcondition_server_url {% if current_lifecycle_env.osp_use_tls %}https{% else %}http{% endif %}://openstack.{{ hailstorm_dns_domain }}:{% if current_lifecycle_env.osp_use_tls %}13005{% else %}8000{% endif %}/v1/waitcondition
+  #sudo crudini --set /etc/heat/heat.conf DEFAULT heat_watch_server_url {% if current_lifecycle_env.osp_use_tls %}https{% else %}http{% endif %}://openstack.{{ hailstorm_dns_domain }}:{% if current_lifecycle_env.osp_use_tls %}13005{% else %}8000{% endif %}
+
+  # ensure that signaling is also NOT usign 127.0.0.1 - see https://bugs.launchpad.net/openstack-ansible/+bug/1459414
+  sudo crudini --set /etc/heat/heat.conf clients_heat endpoint_type publicURL
+
+  sudo systemctl restart openstack-heat-*
+}
+
 function nova_compute_control {
   # set keystone auth version
   sudo crudini --set /etc/nova/nova.conf keystone_authtoken auth_version v3
@@ -130,6 +142,6 @@ EOF
 {% endif %}
 
 hostname | grep -q compute && ({% if ipa_available|success %}nova_compute_control ; {% endif %} nova_compute)
-{% if ipa_available|success %}      hostname | grep -q control && (keystone_control ; nova_compute_control ; cinder_control ; nova_control ; sudo systemctl restart httpd){% endif %}
+hostname | grep -q control && ({% if ipa_available|success %}keystone_control ; {% endif %} nova_compute_control ; cinder_control ; nova_control ; heat_control ; sudo systemctl restart httpd)
 
 exit 0

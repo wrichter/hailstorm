@@ -34,7 +34,7 @@ scl_packages:
   - rh-maven33
   - rh-nodejs4
 
-repos: "{{ ose3_repos + ['rhel-server-rhscl-7-rpms'] }}"
+repos: "{{ ose3_repos|select|list + ['rhel-server-rhscl-7-rpms'] }}"
 packages: "bzip2,git,bash-completion,atomic-openshift-clients,ipa-client,java-1.8.0-openjdk-devel,{{ scl_packages | join(',') }}"
 pool_regex: "{{ ose_subscription_pool_regex }}"
 

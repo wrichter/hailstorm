@@ -1,4 +1,4 @@
 ---
-repos: "{{ ose3_repos }}"
+repos: "{{ ose3_repos|select|list }}"
 packages: "wget,git,net-tools,bind-utils,iptables-services,bridge-utils,bash-completion,atomic-openshift-utils{% if current_lifecycle_env.openshift_version >= 3.4 %},atomic-openshift-excluder,atomic-openshift-docker-excluder{% endif %}"
 pool_regex: "{{ ose_subscription_pool_regex }}"
