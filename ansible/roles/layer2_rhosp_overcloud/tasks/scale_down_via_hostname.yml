@@ -31,6 +31,8 @@
         nova service-disable {{ item }}.localdomain nova-compute
       when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
+      register: command_result
+      failed_when: "'ERROR (NotFound): Could not find binary nova-compute on host' not in command_result.stderr and command_result.rc != 0"
 
     - name: evacuate node
       shell: >
@@ -38,6 +40,8 @@
         nova host-evacuate-live {{ item }}.localdomain
       when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
+      register: command_result
+      failed_when: "'ERROR (NotFound): No hypervisor matching' not in command_result.stderr and command_result.rc != 0"
 
     - name: wait until node is empty
       shell: >
