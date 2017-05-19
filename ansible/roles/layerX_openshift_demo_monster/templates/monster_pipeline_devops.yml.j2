@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: BuildConfig
 metadata:
-  name: demo-monster-pipeline
+  name: ticketmonster-pipeline
 spec:
   strategy:
     jenkinsPipelineStrategy:
         jenkinsfile: |-
           node {
               stage('BuildAndDeployToDev') {
-                  openshiftBuild(buildConfig: 'monster', namespace: 'demo-dev', showBuildLogs: 'true')
+                  openshiftBuild(buildConfig: 'monster', namespace: 'ticketmonster-dev', showBuildLogs: 'true')
               }
 
               stage('VerifyDeployment') {
-                  openshiftVerifyBuild(buildConfig: 'monster', checkForTriggeredDeployments: 'true', namespace: 'demo-dev')
-                  openshiftVerifyDeployment(deploymentConfig: 'monster', namespace: 'demo-dev')
+                  openshiftVerifyBuild(buildConfig: 'monster', checkForTriggeredDeployments: 'true', namespace: 'ticketmonster-dev')
+                  openshiftVerifyDeployment(deploymentConfig: 'monster', namespace: 'ticketmonster-dev')
               }
 
               stage('RunTests') {
@@ -24,11 +24,11 @@ spec:
               }
 
               stage("Initiate Prod Deployment") {
-                openshiftTag srcStream: 'monster', srcTag: 'latest', destinationStream: 'monster', destinationTag: 'prod', namespace: 'demo-dev'
+                openshiftTag srcStream: 'monster', srcTag: 'latest', destinationStream: 'monster', destinationTag: 'prod', namespace: 'ticketmonster-dev'
               }
 
               stage("Verify Prod Deployment") {
-                openshiftVerifyDeployment deploymentConfig: 'monster', namespace: 'demo-prod'
+                openshiftVerifyDeployment deploymentConfig: 'monster', namespace: 'ticketmonster-prod'
               }
           }
     type: JenkinsPipeline
