@@ -1,5 +1,5 @@
 - name: run purge-cluster playbook
-  shell: cd /usr/share/ceph-ansible/ && ansible-playbook purge-cluster.yml --extra-vars="ireallymeanit=yes"
+  shell: cd /usr/share/ceph-ansible/infrastructure-playbooks && ansible-playbook purge-cluster.yml --extra-vars="ireallymeanit=yes" creates=/etc/ansible/hosts
   async: 7200
   poll: 0
   tags: ['playbook']
@@ -11,3 +11,6 @@
   until: job_result.finished
   retries: 480
   delay: 15
+
+- name: remove /etc/ansible/hosts (so installer will be run next time)
+  file: path="/etc/ansible/hosts" state=absent

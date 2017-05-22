@@ -250,6 +250,7 @@
   gather_facts: false
   roles:
     - { role: layer1_ceph_inventory, tags: [ 'layer2', 'ceph' ] }
+
 - hosts: ceph
   gather_facts: false
   remote_user: root
@@ -257,9 +258,17 @@
     - role: layer2_vms
       tags: [ 'layer2','ceph', 'rhel' ]
       mode: start
+- hosts: ceph-installer
+  remote_user: root
+  gather_facts: false
+  roles:
     - role: layer2_ceph_installer
       tags: [ 'layer2', 'ceph', 'ceph-install', 'ceph-installer' ]
       mode: destroy
+- hosts: ceph
+  gather_facts: false
+  remote_user: root
+  roles:
     - role: layer2_rhel
       tags: [ 'layer2','ceph', 'rhel' ]
       mode: destroy
