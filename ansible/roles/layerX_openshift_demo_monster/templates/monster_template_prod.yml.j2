@@ -73,7 +73,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: monster:prod
-          namespace: demo-dev
+          namespace: ticketmonster-dev
 
 - kind: DeploymentConfig
   apiVersion: v1
@@ -141,4 +141,3 @@ objects:
   spec:
     to:
       name: monster
-      

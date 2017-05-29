@@ -41,7 +41,7 @@
     shell: "oc new-app --template monster-dev -n ticketmonster-dev --labels=MonsterDevInitialDeploymentTest=true"
 
   - name: Wait for monster dev to become online
-    shell: curl "http://ticketmonster-dev.apps.{{ hailstorm_dns_domain }}/"
+    shell: curl "http://monster-ticketmonster-dev.apps.{{ hailstorm_dns_domain }}/"
     register: tstcurl
     changed_when: false
     until: "'<title>Ticket Monster</title>' in tstcurl.stdout"
@@ -77,7 +77,7 @@
 
   - name: Create git hook for monster
     shell: oc rsync /tmp/hooks/ {{ gitPod.stdout }}:/var/lib/git/ose3-ticket-monster.git/hooks  -n devops-tools --strategy=tar
-  when: mode=="create"
+  when: mode=="create" or mode=="reset"
 
 # Create BuildPipeline in devops-tools to promote monster from ticketmonster-dev to ticketmonster-prod
 - name: Grant devops-Jenkins access to ticketmonster-dev
