@@ -64,5 +64,8 @@
 - name: Expose stomp-ssl
   shell: oc create route passthrough --service broker-amq-stomp-ssl -n demo-amq
 
+- name: Switch to roundrobin
+  shell: oc annotate route broker-amq-stomp-ssl -n demo-amq haproxy.router.openshift.io/balance=roundrobin --overwrite
+
 - name: Expose tcp-ssl
   shell: oc create route passthrough --service broker-amq-tcp-ssl -n demo-amq
