@@ -77,7 +77,7 @@
 
   - name: Create git hook for monster
     shell: oc rsync /tmp/hooks/ {{ gitPod.stdout }}:/var/lib/git/ose3-ticket-monster.git/hooks  -n devops-tools --strategy=tar
-  when: mode=="create" or mode=="reset"
+  when: mode=="create"
 
 # Create BuildPipeline in devops-tools to promote monster from ticketmonster-dev to ticketmonster-prod
 - name: Grant devops-Jenkins access to ticketmonster-dev
