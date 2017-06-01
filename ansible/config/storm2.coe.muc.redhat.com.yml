@@ -179,7 +179,7 @@ external_network_config:
             to_port: 80
             proto: tcp
           - from_port: 443
-            to_port: 8443
+            to_port: 443
             proto: tcp
           - from_port: 8443
             to_port: 8443
