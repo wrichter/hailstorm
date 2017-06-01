@@ -56,5 +56,5 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layerX_openshift_enablepipelines, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-pipelines' ], mode: create, when: current_lifecycle_env.openshift_version == "3.3" }
-    - { role: layerX_openshift_fix_metrics_url_bug, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-fixmetricsurl'], mode: create, when: current_lifecycle_env.openshift_version == '3.2' or current_lifecycle_env.openshift_version == '3.3' or current_lifecycle_env.openshift_version == '3.4' }
+    - { role: layerX_openshift_enablepipelines, tags: [ 'layer2', 'ose3', 'ose3-install','ose3-pipelines' ], mode: create, when: current_lifecycle_env.openshift_version == 3.3 }
+    - { role: layerX_openshift_fix_metrics_url_bug, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-fixmetricsurl'], mode: create, when: current_lifecycle_env.openshift_version < 3.5 }
