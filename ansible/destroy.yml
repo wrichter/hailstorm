@@ -91,7 +91,7 @@
   remote_user: root
   roles:
     - role: layer2_vms
-      tags: [ 'layer2','ose3', 'rhel','ose3-devops' ]
+      tags: [ 'layer2','ose3', 'rhel','ose3-devops', 'ose3-testvm' ]
       mode: start
 
 - hosts: ose3-installer
@@ -102,12 +102,16 @@
       tags: ['ose3-demo','ose3-content', 'content']
       mode: destroy
       when: vm_exists is defined and vm_exists == true
+    - role: layerX_openshift_demo_wordpress
+      tags: ['ose3-demo', 'ose3-content', 'content', 'ose3-demo-wordpress']
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layerX_openshift_devops_tools
-      tags: ['ose3-devops','ose3-content','content']
+      tags: ['ose3-devops', 'ose3-content','content']
       mode: destroy
       when: vm_exists is defined and vm_exists == true
     - role: layerX_openshift_installer
-      tags: ['ose3-metrics', 'ose3-roles','ose3-content','content']
+      tags: ['ose3-metrics', 'ose3-roles', 'ose3-content', 'content']
       mode: destroy
       when: vm_exists is defined and vm_exists == true
 

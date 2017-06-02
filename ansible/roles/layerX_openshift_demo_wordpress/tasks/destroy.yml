@@ -1,0 +1,3 @@
+- name: delete template wordpress-mysql
+  shell: oc delete template wordpress-mysql  -n openshift
+  ignore_errors: true

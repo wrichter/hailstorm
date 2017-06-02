@@ -1,0 +1,10 @@
+- block:
+    - include: create.yml
+      tags: ["ose3-demo-wordpress"]
+  when: mode=="create" or mode=="reset"
+
+
+- block:
+    - include: destroy.yml
+      tags: ["ose3-demo-wordpress"]
+  when: mode=="destroy"
