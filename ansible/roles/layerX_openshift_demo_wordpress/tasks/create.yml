@@ -1,0 +1,14 @@
+# --- Create Templates monster and monster-prod in namespace openshift:
+- name: check existing templates
+  shell: oc get templates -n openshift | awk '{ print $1 }'
+  register: templates
+  changed_when: false
+
+- block:
+  - name: Prepare Wordpress Demo Template
+    template: src=wordpress-mysql-template.yml.j2 dest=/tmp/wordpress-mysql-template.yml
+
+  - name: Create wordpress template in openshift namespace
+    shell: "oc create -f /tmp/wordpress-mysql-template.yml -n openshift"
+  when: "'wordpress-mysql' not in templates.stdout_lines"
+
