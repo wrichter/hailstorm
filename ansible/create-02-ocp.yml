@@ -42,9 +42,33 @@
     - { role: layerX_openshift_route_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-logging-certificate'], mode: create, route: "logging-kibana", namespace: "logging" }
     - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, certcn: 'hawkular-metrics.apps.{{ hailstorm_dns_domain }}' }
     - { role: layerX_openshift_route_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, route: "hawkular-metrics", namespace: "openshift-infra" }
-    - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
     - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create, certcn: 'apps.{{ hailstorm_dns_domain }}', wildcard: true, factprefix: wildcard }
     - { role: layerX_openshift_router_wildcardcertificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create }
+
+### BEGIN CONTAINER NATIVE STORAGE
+- hosts: ose3-node
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layerX_openshift_cns_prepare_nodes
+      tags: [ 'layer2', 'ose3', 'ose3-install','ose3-cns' ]
+      mode: create
+      when: current_lifecycle_env.ocp_use_cns|default(false)
+- hosts: ose3-installer
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layerX_openshift_cns_deploy_cns
+      tags: [ 'layer2', 'ose3', 'ose3-install','ose3-cns' ]
+      mode: create
+      when: current_lifecycle_env.ocp_use_cns|default(false)
+### END CONTAINER NATIVE STORAGE
+
+- hosts: ose3-installer
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
 
 - hosts: ose3-lb
   remote_user: root

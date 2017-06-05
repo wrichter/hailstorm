@@ -1,0 +1,24 @@
+- name: install cns-deploy tools
+  yum: name=cns-deploy,heketi-client state=present
+- name: check if storage-project exists
+  shell: oc get projects | awk '{ print $1 }'
+  register: projects
+  changed_when: false
+- block:
+    - name: create storage-project
+      shell: oadm new-project storage-project --node-selector=""
+    - name: switch to storage-project
+      shell: oc project storage-project
+    - name: add privileged scc to default system account
+      shell: oadm policy add-scc-to-user privileged -z default
+    - name: create topology definition file
+      template: src=topology.json.j2 dest=~/topology.json
+    - name: deploy gluster and heketi
+      shell: cns-deploy -n storage-project -g -y topology.json
+  when: "'storage-project' not in projects.stdout_lines"
+- name: create gluster-container storage-class template
+  template: src=gluster-container-storage-class.yaml.j2 dest=~/gluster-container-storage-class.yaml
+  register: template
+- name: create gluster-container storage-class
+  shell: oc create -f ~/gluster-container-storage-class.yaml
+  when: template|changed
