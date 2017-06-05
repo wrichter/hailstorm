@@ -1,6 +1,6 @@
 - block:
     - name: login to OpenShift
-      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}/
 
     - name: check existing projects
       shell: oc get projects | awk '{ print $1 }'
@@ -22,7 +22,7 @@
 
 - block:
     - name: login to OpenShift
-      shell: oc login --insecure-skip-tls-verify=true -u admin -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/
+      shell: oc login --insecure-skip-tls-verify=true -u admin -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}/
 
     - name: check if anyuid scc is assigned
       shell: oc get scc anyuid -o yaml
@@ -66,7 +66,7 @@
       tags: compile
 
     - name: login to OpenShift
-      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}/
 
     - name: Get existing templates
       shell: oc get templates -n {{ redhat_msa_project }} -o yaml
