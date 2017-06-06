@@ -32,3 +32,23 @@ disk:
       fstype: "{{ fstype }}"
       mountpoint: /var
       size: 15360
+
+extra_disk_files: "{% if current_lifecycle_env.ocp_use_cns %}{{ cns_disk_files}}{% else %}[]{% endif %}"
+
+cns_disk_files:
+  - path: "{{ inventory_hostname_short }}-extra-1.qcow2"
+    size: 60
+    format: qcow2
+    dev: /dev/vdb
+  - path: "{{ inventory_hostname_short }}-extra-2.qcow2"
+    size: 60
+    format: qcow2
+    dev: /dev/vdc
+  - path: "{{ inventory_hostname_short }}-extra-3.qcow2"
+    size: 60
+    format: qcow2
+    dev: /dev/vdd
+  - path: "{{ inventory_hostname_short }}-extra-4.qcow2"
+    size: 60
+    format: qcow2
+    dev: /dev/vde

@@ -1,0 +1,7 @@
+- block:
+    - include: create.yml
+  when: mode=="create"
+
+- block:
+    - include: destroy.yml
+  when: mode=="destroy"

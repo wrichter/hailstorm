@@ -43,25 +43,26 @@
     - name: discover nodes (more coffee)
       shell: . ~/stackrc &&  openstack baremetal introspection bulk start
 
-    #### setting the capabilities is now done in the instackenv.json, therefore not overwriting the introspection results
-    # - name: update control nodes with flavor / node info
-    #   shell: >
-    #     . ~/stackrc && ironic node-update \
-    #     $(ironic port-show --address {{ hostvars[item.1].vm_nics[0].mac }} |  awk '/node_uuid/{ print $4 }') \
-    #     add properties/capabilities='{% if current_lifecycle_env.osp_controlled_node_placement %}node:control-{{ item.0}},profile:baremetal{% else %}profile:control{% endif %},boot_option:local'
-    #   with_indexed_items: "{{ groups['rhosp-control'] }}"
-    #   when: node
-    # - name: update compute nodes with flavor / node info
-    #   shell: >
-    #     . ~/stackrc && ironic node-update \
-    #     $(ironic port-show --address {{ hostvars[item.1].vm_nics[0].mac }} |  awk '/node_uuid/{ print $4 }') \
-    #     add properties/capabilities='{% if current_lifecycle_env.osp_controlled_node_placement %}node:compute-{{ item.0 }},profile:baremetal{% else %}profile:compute{% endif %},boot_option:local'
-    #   with_indexed_items: "{{ groups['rhosp-compute'] }}"
-    #
+    - block:
+      # for OSP10+, setting the capabilities is now done in the instackenv.json,
+      # therefore not overwriting the introspection results
+        - name: update control nodes with flavor / node info
+          shell: >
+            . ~/stackrc && ironic node-update \
+            $(ironic port-show --address {{ hostvars[item.1].vm_nics[0].mac }} |  awk '/node_uuid/{ print $4 }') \
+            add properties/capabilities='{% if current_lifecycle_env.osp_controlled_node_placement %}node:control-{{ item.0}},profile:baremetal{% else %}profile:control{% endif %},boot_option:local'
+          with_indexed_items: "{{ groups['rhosp-control'] }}"
+        - name: update compute nodes with flavor / node info
+          shell: >
+            . ~/stackrc && ironic node-update \
+            $(ironic port-show --address {{ hostvars[item.1].vm_nics[0].mac }} |  awk '/node_uuid/{ print $4 }') \
+            add properties/capabilities='{% if current_lifecycle_env.osp_controlled_node_placement %}node:compute-{{ item.0 }},profile:baremetal{% else %}profile:compute{% endif %},boot_option:local'
+          with_indexed_items: "{{ groups['rhosp-compute'] }}"
+      when: current_lifecycle_env.openstack_version <= 9
   when: instackenv_json.changed
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  
+
 - name: update all nodes with KVM VM name
   shell: >
     . ~/stackrc && ironic node-update \

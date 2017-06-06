@@ -26,7 +26,7 @@ disk:
 pool_regex: "{{ satellite_subscription_pool_regex }}"
 repos: "{{ satellite_repos }}"
 
-packages: "{% if current_lifecycle_env.satellite_version[0:3] != '6.1' %}satellite,{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng"
+packages: "{% if satellite_version != '6.1' %}satellite,{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng"
 
 tdagent_configs:
   - tag: syslog.messages

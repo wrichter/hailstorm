@@ -60,3 +60,11 @@ parameter_defaults:
   NeutronExternalNetworkBridge: "''"
   NeutronBridgeMappings: "datacentre:br-services,guests:br-guests"
   NeutronFlatNetworks: "datacentre, guests"
+
+{% if current_lifecycle_env.openstack_version > 11 %}
+  # List of Neutron network types for tenant networks (will be used in order)
+  #NeutronNetworkType: 'vxlan,vlan'
+  NeutronNetworkType: 'vxlan'
+  # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
+  NeutronTunnelTypes: 'vxlan'
+{% endif %}

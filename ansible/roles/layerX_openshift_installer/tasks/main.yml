@@ -11,10 +11,10 @@
       tags: ["ose3-infracontainer"]
     - include: deploy_logging_3.2.yml
       tags: ["ose3-logging"]
-      when: current_lifecycle_env.openshift_version == '3.2'
+      when: current_lifecycle_env.openshift_version == 3.2
     - include: deploy_logging_3.3.yml
       tags: ["ose3-logging"]
-      when: current_lifecycle_env.openshift_version == '3.3' or current_lifecycle_env.openshift_version == '3.4'
+      when: current_lifecycle_env.openshift_version == 3.3 or current_lifecycle_env.openshift_version == 3.4
     - include: deploy_metrics.yml
       tags: ["ose3-metrics"]
   when: mode=="create"
@@ -23,7 +23,7 @@
 - block:
     - include: remove_metrics.yml
       tags: ["ose3-metrics"]
-      when: current_lifecycle_env.openshift_version == '3.2' or current_lifecycle_env.openshift_version == '3.3' or current_lifecycle_env.openshift_version == '3.4'
+      when: current_lifecycle_env.openshift_version == 3.2 or current_lifecycle_env.openshift_version == 3.3 or current_lifecycle_env.openshift_version == 3.4
     - include: remove_users_from_roles.yml
       tags: ["ose3-roles"]
   when: mode=="destroy"

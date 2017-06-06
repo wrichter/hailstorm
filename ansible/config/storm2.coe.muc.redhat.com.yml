@@ -2,6 +2,7 @@ layer1_ansible_host: storm2.coe.muc.redhat.com
 hailstorm_dns_domain: hailstorm2.coe.muc.redhat.com
 
 disable_registration_against_satellite: false
+satellite_version: 6.2
 stage: DEV
 
 # if this attribute is present, the binaries (except for the SSH keys)
@@ -178,7 +179,7 @@ external_network_config:
             to_port: 80
             proto: tcp
           - from_port: 443
-            to_port: 8443
+            to_port: 443
             proto: tcp
           - from_port: 8443
             to_port: 8443

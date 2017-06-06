@@ -13,7 +13,10 @@
 #    when: kernel_params|changed
 
 - name: set static hostname in /etc/hosts
-  lineinfile: dest=/etc/hosts line="{{ vm_nics[0].ip }} {{ hostname }} {{ hostname_short }}"
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 {{ hostname }} {{ hostname_short }} localhost localhost.localdomain localhost4 localhost4.localdomain4"
+    regexp: "^127\\.0\\.0\\.1.*"
 
 - name: BUGFIX work around reboot problem
   shell: systemctl mask dracut-shutdown.service && \

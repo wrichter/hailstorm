@@ -34,6 +34,7 @@ openshift_master_identity_providers=[{'name': 'allow_all_auth', 'login': 'true',
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
+openshift_master_api_port=443
 openshift_master_logging_public_url=https://kibana.apps.{{ hailstorm_dns_domain }}
 openshift_master_metrics_public_url=https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics
 

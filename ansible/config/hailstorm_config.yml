@@ -15,20 +15,23 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2017-04-20"
+      "*": "2017-06-01"
     errata_for_demo_scenario:
       - RHSA-2017:0286
       - RHSA-2016:1940
-    satellite_version: "6.2"
-    openshift_version: "3.5"
-    openstack_version: 10
+    openshift_version: 3.5
+    openstack_version: 11
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
+    #Controlled Node Placement with OSP10 or later
     osp_controlled_node_placement: false
+    #TLS with OSP10 or later
     osp_use_tls: true
+    #CEPH with OSP10 or later
     osp_use_ceph: true
+    ocp_use_cns: true
     rhv_version: 4
     cloudforms_version: 5.8
-    cloudforms_ova_appliance: cfme-rhevm-5.8.0.10-1.x86_64.rhevm.ova
+    cloudforms_ova_appliance: cfme-rhevm-5.8.0.17-1.x86_64.rhevm.ova
     #cloudforms_version: 5.7
     #cloudforms_ova_appliance: cfme-rhevm-5.7.1.3-1.x86_64.rhevm.ova
     # cloudforms_version: 5.6
@@ -50,13 +53,13 @@ lifecycle_environments:
       "*": "2017-04-20"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: "6.2"
     openshift_version: "3.4"
     openstack_version: 10
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
     osp_controlled_node_placement: false
     osp_use_tls: false
     osp_use_ceph: false
+    ocp_use_cns: false
     rhv_version: 3
     cloudforms_version: 5.7
     cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
@@ -80,12 +83,12 @@ lifecycle_environments:
       "CV-RHOSP": "2016-09-12"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    satellite_version: "6.2"
     openshift_version: 3.3
     openstack_version: 9
     osp_controlled_node_placement: false
     osp_use_tls: false
     osp_use_ceph: false
+    ocp_use_cns: false
     rhv_version: 3
     cloudforms_version: 5.6
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
@@ -98,7 +101,7 @@ lifecycle_environments:
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
     ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.2.tar.gz
 
-current_lifecycle_env: "{{ (lifecycle_environments|selectattr('name','match','^'+stage+'$')|list)[0] }}"
+current_lifecycle_env: "{{ lifecycle_environments|selectattr('name','match','^'+stage+'$')|first }}"
 
 osp_kvm_images:
   - name: RHEL7
@@ -118,7 +121,7 @@ rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*U
 sap_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server for SAP HANA.*)$"
 rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat (Enterprise Linux )?OpenStack Platform.*)$"
-ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*)$"
+ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*|Red Hat Gluster Storage.*)$"
 cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Enterprise Linux OpenStack Platform.*)$"
 ceph_subscription_pool_regex: "^(Employee SKU|Red Hat Satellite - Add-Ons for Providers.*)$"
 
@@ -140,7 +143,7 @@ rhosp_overcloud_repos:
 satellite_repos:
   - rhel-7-server-rpms
   - rhel-server-rhscl-7-rpms
-  - rhel-7-server-satellite-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms
+  - rhel-7-server-satellite-{{ satellite_version }}-rpms
 rhevm_repos:
   - "{% if current_lifecycle_env.rhv_version == 3 %}rhel-6-server-rpms{% else %}rhel-7-server-rpms{% endif %}"
   - "{% if current_lifecycle_env.rhv_version == 3 %}rhel-6-server-supplementary-rpms{% else %}rhel-7-server-supplementary-rpms{% endif %}"
@@ -160,7 +163,8 @@ ose3_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
   - rhel-7-server-ose-{{ current_lifecycle_env.openshift_version }}-rpms
-  - '{% if current_lifecycle_env.openshift_version != "3.4" and current_lifecycle_env.openshift_version != "3.3" %}rhel-7-fast-datapath-rpms{% endif %}'
+  - '{% if current_lifecycle_env.openshift_version >= 3.5 %}rhel-7-fast-datapath-rpms{% endif %}'
+  - '{% if current_lifecycle_env.ocp_use_cns %}rh-gluster-3-for-rhel-7-server-rpms{% endif %}'
 ose3_additional_packages: docker
 
 tdagent_rpm:
@@ -188,14 +192,14 @@ satellite_product_config:
         releasever: 7Server
       # - name: "Red Hat Enterprise Linux 7 Server (Kickstart)"
       #   releasever: "7.2"
-      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 7 Server) (RPMs)"
+      - name: "Red Hat Satellite Tools {{ satellite_version }} (for RHEL 7 Server) (RPMs)"
       - name: "Red Hat Enterprise Linux 6 Server (RPMs)"
         releasever: 6Server
       - name: "Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)"
         releasever: 6Server
       # - name: "Red Hat Enterprise Linux 6 Server (Kickstart)"
       #   releasever: "6.7"
-      - name: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} (for RHEL 6 Server) (RPMs)"
+      - name: "Red Hat Satellite Tools {{ satellite_version }} (for RHEL 6 Server) (RPMs)"
       - name: "Red Hat Ceph Storage Tools 2 for Red Hat Enterprise Linux 7 Server (RPMs)"
         releasever: 7Server
   - product: "Red Hat Enterprise Linux Fast Datapath"
@@ -225,12 +229,21 @@ satellite_product_config:
   - product: Red Hat OpenStack
     basearch: x86_64
     repos:
-      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} {% if current_lifecycle_env.openstack_version < 10 %}director{% else %}Developer Tools{% endif %} for RHEL 7 (RPMs)
+      - name: Red Hat OpenStack Platform 9 director for RHEL 7 (RPMs)
         releasever: 7Server
-      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} for RHEL 7 (RPMs)
+      - name: Red Hat OpenStack Platform 9 for RHEL 7 (RPMs)
         releasever: 7Server
-      - name: Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} Operational Tools for RHEL 7 (RPMs)
+      - name: Red Hat OpenStack Platform 9 Operational Tools for RHEL 7 (RPMs)
         releasever: 7Server
+      - name: Red Hat OpenStack Platform 10 Developer Tools for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform 10 for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform 10 Operational Tools for RHEL 7 (RPMs)
+        releasever: 7Server
+      - name: Red Hat OpenStack Platform 11 Developer Tools for RHEL 7 (RPMs)
+      - name: Red Hat OpenStack Platform 11 for RHEL 7 (RPMs)
+      - name: Red Hat OpenStack Platform 11 Operational Tools for RHEL 7 (RPMs)
 #need manifest WITH satellite
 #  - product: Red Hat Satellite
 #    basearch: x86_64
@@ -245,7 +258,9 @@ satellite_product_config:
   - product: Red Hat OpenShift Container Platform
     basearch: x86_64
     repos:
-      - name: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} (RPMs)"
+      - name: "Red Hat OpenShift Container Platform 3.3 (RPMs)"
+      - name: "Red Hat OpenShift Container Platform 3.4 (RPMs)"
+      - name: "Red Hat OpenShift Container Platform 3.5 (RPMs)"
   - product: Red Hat Virtualization
     basearch: x86_64
     repos:
@@ -268,6 +283,7 @@ satellite_product_config:
     repos:
       - name: Red Hat CloudForms Management Engine 5.6 (RPMs)
       - name: Red Hat CloudForms Management Engine 5.7 (RPMs)
+      - name: Red Hat CloudForms Management Engine 5.8 (RPMs)
   - product: Red Hat Ceph Storage MON
     basearch: x86_64
     repos:
@@ -290,6 +306,11 @@ satellite_product_config:
     repos:
       - name: Red Hat Storage Console Agent for Red Hat Enterprise Linux 7 Server (RPMs)
         releasever: 7Server
+  - product: Red Hat Gluster Storage Server for On-premise
+    basearch: x86_64
+    repos:
+      - name: Red Hat Gluster Storage 3.1 Server (RPMs)
+        releasever: 7Server
 
 satellite_content_config:
   - content_view: "CV-OS-RHEL6-SERVER"
@@ -297,14 +318,14 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 6 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 6 Server RPMs x86_64"
 
   - content_view: "CV-OS-RHEL7-SERVER"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
@@ -318,7 +339,7 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server - Extended Update Support"
         repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support RPMs x86_64 7.2"
       - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
 
   - content_view: "CV-RHEV-MANAGER"
     content:
@@ -327,7 +348,7 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 6 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 6 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 6 Server - Supplementary RPMs x86_64 6Server"
       - product: "JBoss Enterprise Application Platform"
@@ -335,7 +356,7 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Virtualization"
         repository: "Red Hat Virtualization Manager 4.1 RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Virtualization"
@@ -349,7 +370,7 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Virtualization"
         repository: "Red Hat Enterprise Virtualization Management Agents for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat Virtualization"
@@ -358,15 +379,27 @@ satellite_content_config:
   - content_view: "CV-RHOSP"
     content:
       - product: "Red Hat OpenStack"
-        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} {% if current_lifecycle_env.openstack_version < 10 %}director{% else %}Developer Tools{% endif %} for RHEL 7 RPMs x86_64 7Server"
+        repository: "Red Hat OpenStack Platform 9 director for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat OpenStack"
-        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} for RHEL 7 RPMs x86_64 7Server"
+        repository: "Red Hat OpenStack Platform 9 for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat OpenStack"
-        repository: "Red Hat OpenStack Platform {{ current_lifecycle_env.openstack_version }} Operational Tools for RHEL 7 RPMs x86_64 7Server"
+        repository: "Red Hat OpenStack Platform 9 Operational Tools for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 10 Developer Tools for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 10 for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 10 Operational Tools for RHEL 7 RPMs x86_64 7Server"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 11 Developer Tools for RHEL 7 RPMs x86_64"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 11 for RHEL 7 RPMs x86_64"
+      - product: "Red Hat OpenStack"
+        repository: "Red Hat OpenStack Platform 11 Operational Tools for RHEL 7 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
@@ -379,22 +412,32 @@ satellite_content_config:
   - content_view: "CV-RHOSE3"
     content:
       - product: "Red Hat OpenShift Container Platform"
-        repository: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} RPMs x86_64"
+        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.4 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.5 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
+      - product: "Red Hat Gluster Storage Server for On-premise"
+        repository: "Red Hat Gluster Storage 3.1 Server RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSE3-CLIENT"
     content:
       - product: "Red Hat OpenShift Container Platform"
-        repository: "Red Hat OpenShift {% if current_lifecycle_env.openshift_version == '3.2' %}Enterprise 3.2{% else %}Container Platform {{ current_lifecycle_env.openshift_version }}{% endif %} RPMs x86_64"
+        repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.4 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.5 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: Red Hat Software Collections for RHEL Server
@@ -405,7 +448,7 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
@@ -414,6 +457,8 @@ satellite_content_config:
         repository: "Red Hat CloudForms Management Engine 5.6 RPMs x86_64"
       - product: "Red Hat CloudForms"
         repository: "Red Hat CloudForms Management Engine 5.7 RPMs x86_64"
+      - product: "Red Hat CloudForms"
+        repository: "Red Hat CloudForms Management Engine 5.8 RPMs x86_64"
       - product: Red Hat Software Collections for RHEL Server
         repository: "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server"
 
@@ -431,14 +476,14 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
 
   - content_view: "CV-CEPH"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
-        repository: "Red Hat Satellite Tools {{ current_lifecycle_env.satellite_version[0:3] }} for RHEL 7 Server RPMs x86_64"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: Red Hat Ceph Storage Tools 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
       - product: Red Hat Ceph Storage MON
@@ -457,73 +502,73 @@ satellite_activation_keys_and_host_collections:
   #   content_view: "CV-OS-RHEL6-SERVER"
   #   host_collection: "RHEL6"
   #   activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-  #   override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+  #   override: "rhel-6-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-OS-RHEL7-SERVER
     content_view: "CV-OS-RHEL7-SERVER"
     host_collection: "RHEL7"
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
     content_view: "CV-OS-RHEL7.2-EUS-SAP"
     host_collection: "RHEL7"
     activation_key_subscription_regex: "{{ sap_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHEV-MANAGER
     content_view: "CV-RHEV-MANAGER"
     host_collection: "RHEVM"
     activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
-    override: "rhel-6-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-6-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHEV-HYPERVISOR
     content_view: "CV-RHEV-HYPERVISOR"
     host_collection: "RHEVH"
     activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHOSP
     content_view: "CV-RHOSP"
     host_collection: "RHOSP"
     activation_key_subscription_regex: "{{ rhosp_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHOSE3-CLIENT
     content_view: "CV-RHOSE3-CLIENT"
     host_collection: "RHOSE3"
     activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHOSE3
     content_view: "CV-RHOSE3"
     host_collection: "RHOSE3"
     activation_key_subscription_regex: "{{ ose_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-CLOUDFORMS
     content_view: "CV-CLOUDFORMS"
     host_collection: "CLOUDFORMS"
     activation_key_subscription_regex: "{{ cloudforms_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-DEMO-RHEL7-MANAGED
     content_view: CV-DEMO-RHEL7-SSLFIXESONLY
     host_collection: DEMO-MANAGED
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-DEMO-RHEL7-UNMANAGED
     content_view: CV-DEMO-RHEL7-SSLFIXESONLY
     host_collection: DEMO-UNMANAGED
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-CEPH
     content_view: CV-CEPH
     host_collection: CEPH
     activation_key_subscription_regex: "{{ ceph_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ current_lifecycle_env.satellite_version[0:3] }}-rpms"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
 
 timezone: Europe/Berlin
@@ -565,6 +610,14 @@ ipa_user:
     first: tower
     last: binduser
     password: "{{ root_password }}"
+  - username: coolstore-dev
+    first: coolstore
+    last: Developer
+    password: "{{ root_password }}"
+  - username: coolstore-ops
+    first: coolstore
+    last: ops
+    password: "{{ root_password }}"
 
 
 ipa_group:
@@ -583,6 +636,8 @@ ipa_group:
       - ose-bind-user
       - osp-bind-user
       - tower-bind-user
+      - coolstore-dev
+      - coolstore-ops
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=6
   - groupname: demo-consumer
     members:

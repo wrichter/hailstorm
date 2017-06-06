@@ -1,0 +1,241 @@
+# OpenShift Wordpress Demo
+apiVersion: v1
+kind: Template
+labels:
+  template: wordpress-mysql
+message: |-
+  The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.
+
+metadata:
+  annotations:
+    description: |-
+      An WordPress application with a MySQL database with persistent storage.
+    iconClass: icon-php
+    openshift.io/display-name: WordPress + MySQL
+    tags: instant-app,php,wordpress
+  creationTimestamp: null
+  name: wordpress-mysql
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Exposes and load balances the application pods
+      service.alpha.openshift.io/dependencies: '[{"name": "${DATABASE_SERVICE_NAME}",
+        "kind": "Service"}]'
+    name: wordpress-mysql
+  spec:
+    ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+    selector:
+      name: wordpress-mysql
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: wordpress-mysql
+  spec:
+    host: ${APPLICATION_DOMAIN}
+    to:
+      kind: Service
+      name: wordpress-mysql
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    name: wordpress-mysql
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      description: Defines how to build the application
+    name: wordpress-mysql
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: wordpress-mysql:latest
+    source:
+      contextDir: ${CONTEXT_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: php:5.5
+          namespace: openshift
+      type: Source
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+    - github:
+        secret: ${GITHUB_WEBHOOK_SECRET}
+      type: GitHub
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Defines how to deploy the application server
+    name: wordpress-mysql
+  spec:
+    replicas: 3
+    selector:
+      name: wordpress-mysql
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          name: wordpress-mysql
+        name: wordpress-mysql
+      spec:
+        containers:
+        - env:
+          - name: DATABASE_SERVICE_NAME
+            value: ${DATABASE_SERVICE_NAME}
+          - name: DATABASE_ENGINE
+            value: ${DATABASE_ENGINE}
+          - name: DATABASE_NAME
+            value: ${DATABASE_NAME}
+          - name: DATABASE_USER
+            value: ${DATABASE_USER}
+          - name: DATABASE_PASSWORD
+            value: ${DATABASE_PASSWORD}
+          image: wordpress-mysql
+          name: wordpress-mysql
+          ports:
+          - containerPort: 8080
+#gaga wordpress
+          volumeMounts:
+          - mountPath: /wordpress
+            name: ${DATABASE_SERVICE_NAME}-data
+        volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: wordpress-pvc
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - wordpress-mysql
+        from:
+          kind: ImageStreamTag
+          name: wordpress-mysql:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Exposes the database server
+    name: ${DATABASE_SERVICE_NAME}
+  spec:
+    ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306
+    selector:
+      name: ${DATABASE_SERVICE_NAME}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: wordpress-pvc
+#    annotations:
+#      volume.beta.kubernetes.io/storage-class: gluster-container
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Gi
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: mysql-pvc
+#    annotations:
+#      volume.beta.kubernetes.io/storage-class: gluster-container
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Defines how to deploy the database
+    name: ${DATABASE_SERVICE_NAME}
+  spec:
+    replicas: 1
+    selector:
+      name: ${DATABASE_SERVICE_NAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          name: ${DATABASE_SERVICE_NAME}
+        name: ${DATABASE_SERVICE_NAME}
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_USER
+            value: ${DATABASE_USER}
+          - name: MYSQL_PASSWORD
+            value: ${DATABASE_PASSWORD}
+          - name: MYSQL_DATABASE
+            value: ${DATABASE_NAME}
+          image: ${MYSQL_IMAGE}
+          name: mysql
+          ports:
+          - containerPort: 3306
+#gaga mysql
+          volumeMounts:
+          - mountPath: /var/lib/mysql/data
+            name: ${DATABASE_SERVICE_NAME}-data
+        volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: mysql-pvc
+    triggers:
+    - type: ConfigChange
+parameters:
+- description: The URL of the repository with your application source code
+  name: SOURCE_REPOSITORY_URL
+  value: https://github.com/sa-ch/WordPress.git
+- description: Set this to a branch name, tag or other ref of your repository if you
+    are not using the default branch
+  name: SOURCE_REPOSITORY_REF
+- description: Set this to the relative path to your project if it is not in the root
+    of your repository
+  name: CONTEXT_DIR
+- description: The exposed hostname that will route to the wordpress service, if left
+    blank a value will be defaulted.
+  name: APPLICATION_DOMAIN
+- description: A secret string used to configure the GitHub webhook
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GITHUB_WEBHOOK_SECRET
+- description: Database service name
+  name: DATABASE_SERVICE_NAME
+  value: mysql
+- description: Database name
+  name: DATABASE_NAME
+  value: wordpress
+- description: Database user name
+  name: DATABASE_USER
+  value: wordpress
+- description: Database user password
+  from: '[a-zA-Z0-9]{16}'
+  generate: expression
+  name: DATABASE_PASSWORD
+- description: Image to use for mysql
+  name: MYSQL_IMAGE
+  value: openshift/mysql-55-centos7

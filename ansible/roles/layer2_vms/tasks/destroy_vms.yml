@@ -40,8 +40,17 @@
     - name: refresh pool to allow unused images to be deleted
       command: virsh pool-refresh {{ layer1_qcow_storage.poolname }}
       changed_when: false
+    - name: get existing volumes
+      shell: virsh vol-list {{ layer1_qcow_storage.poolname }} | awk '{ print $1 }'
+      register: vols
+      changed_when: false
     - name: remove vm volumes
       command: virsh vol-delete {{ disk.path }} --pool {{ layer1_qcow_storage.poolname }}
-      #when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
-      ignore_errors: true
+      when: '"{{ disk.path }}" in vols.stdout_lines'
+      #ignore_errors: true
+    - name: remove extra volumes
+      command: virsh vol-delete {{ item }} --pool {{ layer1_qcow_storage.poolname }}
+      #ignore_errors: true
+      when: '"{{ item }}" in vols.stdout_lines'
+      with_items: "{{ extra_disk_files|default([])|map(attribute='path')|list }}"
   delegate_to: "{{ infrastructure_delegate_kvm_host }}"

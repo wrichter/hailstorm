@@ -1,0 +1,7 @@
+- name: delete storage class
+  shell: oc delete storageclass gluster-container
+
+- name: delete storage-project
+  shell: oc delete project storage-project
+
+# TODO: clear disk devices

@@ -19,6 +19,11 @@
       register: ifcfg_br_ctlplane2
     - name: ensure that prefix is set to /32
       lineinfile: state=present regexp="^PREFIX1" line="PREFIX1=32" dest=/etc/sysconfig/network-scripts/ifcfg-br-ctlplane
+    - name: remove name from 127.0.0.1 /etc/hosts entry
+      lineinfile:
+        dest: /etc/hosts
+        line: "127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4"
+        regexp: "^127\\.0\\.0\\.1.*"
     - name: change /etc/hosts entry to undercloud-public ip
       lineinfile: state=present regexp=".*{{ hostname }} {{ hostname_short }}" line="{{ hostvars['undercloud-public'].vm_nics[0].ip }} {{ hostname }} {{ hostname_short }}" dest=/etc/hosts
   when: current_lifecycle_env.openstack_version >= 10

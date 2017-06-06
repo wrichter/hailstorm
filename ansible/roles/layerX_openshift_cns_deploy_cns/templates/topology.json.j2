@@ -1,0 +1,35 @@
+{
+  "clusters":
+    [
+      {
+        "nodes":
+          [
+            {% for node in groups['ose3-node'] %}
+            {
+              "node":
+                {
+                  "hostnames":
+                    {
+                      "manage":
+                        [
+                          "{{ hostvars[node].hostname }}"
+                        ],
+                      "storage":
+                        [
+                          "{{ hostvars[node].vm_nics[0].ip }}"
+                        ]
+                    },
+                  "zone": 1
+                },
+              "devices":
+                [
+                  {% for disk_file in hostvars[node].extra_disk_files %}
+                  "{{ disk_file.dev }}"{% if not loop.last %},{% endif %}
+                  {% endfor %}
+                ]
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+      }
+    ]
+}
