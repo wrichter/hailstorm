@@ -184,7 +184,7 @@
     - role: layer2_vms
       tags: [ 'layer2','rhosp', 'rhel' ]
       mode: start
-    - role: layer2_rhosp_overcloud
+    - role: layer2_rhosp_overcloud_deploy
       tags: [ 'layer2', 'rhosp', 'overcloud' ]
       mode: destroy
     - role: layer2_rhosp_director

@@ -38,13 +38,6 @@
       mode: create
       service: haproxy
       when: "current_lifecycle_env.openstack_version >= 10"
-
-    # - role: layer2_ipa_openssl_ca
-    #   tags: ['layer2', 'rhosp', 'undercloud', 'undercloud-cert']
-    #   mode: servercert
-    #   cert_san: "IP:{{ hostvars['undercloud-public'].vm_nics[0].ip }},DNS:{{ hostvars['undercloud-public'].vm_nics[0].ip }},DNS:instack.localdomain,DNS:vip.localdomain"
-    #   cert_cn: 'director.{{ hailstorm_dns_domain }}'
-    #   when: "current_lifecycle_env.openstack_version >= 10"
     - role: layer2_rhosp_director
       tags: ['layer2', 'rhosp', 'undercloud' ]
       mode: create
@@ -53,13 +46,11 @@
       mode: create
       certcn: 'openstack.{{ hailstorm_dns_domain }}'
       when: current_lifecycle_env.osp_use_tls
-
     - role: layer2_ceph_openstackconfig
       tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-ceph']
       mode: create
       when: current_lifecycle_env.osp_use_ceph
-
-    - role: layer2_rhosp_overcloud
+    - role: layer2_rhosp_overcloud_deploy
       tags: ['layer2', 'rhosp', 'overcloud']
       mode: create
 
@@ -67,14 +58,14 @@
   remote_user: root
   gather_facts: false
   roles:
-    - role: layer2_rhosp_overcloud_controller
+    - role: layer2_rhosp_overcloud_postdeploy_controller
       tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-controller']
       mode: create
 
-# - hosts: lookbusy-osp
-#   remote_user: root
-#   gather_facts: false
-#   roles:
-#     - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'vm'], mode: create }
-#     - { role: layer2_rhel, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp', 'rhel'], mode: create }
-#     - { role: layer3_lookbusy, tags: [ 'layer3', 'lookbusy', 'lookbusy-osp' ], mode: create }
+- hosts: rhosp-director
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_rhosp_overcloud_configure
+      tags: ['layer2', 'rhosp', 'overcloud']
+      mode: create
