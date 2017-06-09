@@ -57,7 +57,7 @@
       unarchive: src={{ item.path }} dest={{ image_path }} copy=no
       become: yes
       become_user: "{{ rhosp_stack_user }}"
-      with_items: "{% if rhosp_director_images|skipped %}[]{% else %}{{ rhosp_director_images.files }}{% endif %}"
+      with_items: "{{ rhosp_director_images.files|default([]) }}"
 
     - name: upload images to glance
       shell: . ~/stackrc && openstack overcloud image upload --image-path "{{ image_path }}"

@@ -23,6 +23,7 @@
          sed -i -e "s|^GRUB_CMDLINE_LINUX=\"\(.*\)\"|GRUB_CMDLINE_LINUX=\"\1 rd.lvm.lv=rhel/home\"|" /etc/default/grub && \
          grub2-mkconfig -o /boot/grub2/grub.cfg && \
          touch /.reboot_workaround  creates=/.reboot_workaround
+  when: current_lifecycle_env.openstack_version < 10
 # https://bugzilla.redhat.com/show_bug.cgi?id=1178497
 
 - name: BUGFIX set ipxe timeout to 0
