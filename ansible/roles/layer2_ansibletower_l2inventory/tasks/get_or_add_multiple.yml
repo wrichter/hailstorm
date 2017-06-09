@@ -25,7 +25,7 @@
     body_format: json
     body: "{{ item.body }}"
     status_code: "{{ status_code is defined|ternary(status_code,201) }}"
-  when: resource.json.results|selectattr('name','match','^{{ item.name }}$')|list|length == 0
+  when: resource.json.results|selectattr('name','match','^'+ item.name + '$')|list|length == 0
   with_items: "{{ items }}"
   changed_when: true
   register: resources
