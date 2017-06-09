@@ -1,8 +1,19 @@
-- name: get existing PVs
+- name: get existing Storage Classes
+  shell: oc get storageclass |awk '!/NAME/{print $1}'
+  register: storageclasses
+  changed_when: false
+
+- name: create NFS Storage Class
+  shell: "oc create -f - <<EOF
+         {{ lookup('template','nfs_storageclass.yaml.j2') }}"
+  when: "'nfs' not in storageclasses.stdout_lines"
+
+
+- name: get existing NFS PVs
   shell: oc get pv |awk '!/NAME/{print $1}'
   register: pvs
   changed_when: false
-- name: create PV
+- name: create NFS PV
   shell: "oc create -f - <<EOF
          {{ lookup('template','pv.yaml.j2') }}"
   with_sequence: start=0 end=20 format=pv%02d
