@@ -5,6 +5,7 @@
       tags: ['overcloud-deploy']
       vars:
         templates:
+          - commandlineparams-environment.yaml
           - network-isolation-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
@@ -14,7 +15,6 @@
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
-          #- firstboot-config-fixsatellitebug.sh
           - rhel-registration-environment.yaml
           - rhel-registration.yaml
           - rhel-registration.sh
@@ -23,11 +23,9 @@
           - schedulerhints-environment.yaml
           - dns-config-environment.yaml
           - tls-enable-environment.yaml
-          - tls-endpoints-public-dns-environment.yaml
           - tls-inject-trust-anchor-environment.yaml
           - monitoring-environment.yaml
           - logging-environment.yaml
-          - ceilometer-overcloud-environment.yaml
     - include: adapt_to_keystone_v3.yml
       tags: ['overcloud-config-keystone']
     - include: configure_tenants.yml
@@ -36,6 +34,10 @@
       tags: ['overcloud-config-users']
     - include: configure_neutron.yml
       tags: ['overcloud-config-neutron']
+      when: current_lifecycle_env.openstack_version <= 10
+    - include: configure_neutron_osp11.yml
+      tags: ['overcloud-config-neutron']
+      when: current_lifecycle_env.openstack_version >= 11
     - include: configure_security.yml
       tags: ['overcloud-config-security']
     - include: configure_images.yml
@@ -56,6 +58,7 @@
       static: no
       vars:
         templates:
+          - commandlineparams-environment.yaml
           - network-isolation-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
@@ -65,7 +68,6 @@
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
-          #- firstboot-config-fixsatellitebug.sh
           - rhel-registration-environment.yaml
           - rhel-registration.yaml
           - rhel-registration.sh
@@ -74,9 +76,7 @@
           - schedulerhints-environment.yaml
           - dns-config-environment.yaml
           - tls-enable-environment.yaml
-          - tls-endpoints-public-dns-environment.yaml
           - tls-inject-trust-anchor-environment.yaml
           - monitoring-environment.yaml
           - logging-environment.yaml
-          - ceilometer-overcloud-environment.yaml
   when: mode=="reset"

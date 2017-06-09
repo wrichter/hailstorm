@@ -1,5 +1,7 @@
 openstack overcloud deploy \
 --templates /usr/share/openstack-tripleo-heat-templates \
+--ntp-server {{ infrastructure_address_ntp_server }} \
+{% if current_lifecycle_env.openstack_version < 10 %}
 {% if current_lifecycle_env.osp_controlled_node_placement %}
 --control-flavor baremetal \
 --compute-flavor baremetal \
@@ -9,12 +11,12 @@ openstack overcloud deploy \
 {% endif %}
 --control-scale {{ groups['rhosp-control']|length }} \
 --compute-scale {{ groups['rhosp-compute']|length - 1 }} \
-{% if current_lifecycle_env.openstack_version <= 10 %}
 --neutron-tunnel-types vxlan \
 --neutron-network-type vxlan \
-{% endif %}
---ntp-server {{ infrastructure_address_ntp_server }} \
+{% endif %}{# for OSP>=10, the params are in the commandlineparams-environment.yaml #}
 -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
-{% for template in templates %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }}{% if not loop.last %} \{% endif %}
+{% if current_lifecycle_env.osp_use_tls|default(false) %}-e /usr/share/openstack-tripleo-heat-templates/environments/tls-endpoints-public-dns.yaml \
+{% endif %}
+{% for template in templates|select|list %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }}{% if not loop.last %} \{% endif %}
 
 {% endif %}{% endfor %}

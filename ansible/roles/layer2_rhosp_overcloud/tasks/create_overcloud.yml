@@ -38,7 +38,7 @@
 
     - name: create custom install configuration
       template: src={{ item }}.j2 dest=~/templates/{{ item }} mode=0644
-      with_items: "{{ templates }}"
+      with_items: "{{ templates|select|list }}"
 
     - name: create nic configs
       template: src={{ item }}.j2 dest=~/templates/nic-configs/{{ item }} mode=0644
