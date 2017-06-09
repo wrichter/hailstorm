@@ -9,5 +9,9 @@ pool.default.auth.simple.password = ${global:vars.password}
 pool.default.serverset.type = single
 pool.default.serverset.single.server = ${global:vars.server}
 pool.default.ssl.startTLS = true
+{% if current_lifecycle_env.rhv_version == 4 %}
+{# work around https://bugzilla.redhat.com/show_bug.cgi?id=1456352 #}
+pool.default.socketfactory.type = java
+{% endif %}
 pool.default.ssl.truststore.file = ${local:_basedir}/IPA.jks
 pool.default.ssl.truststore.password = changeit
