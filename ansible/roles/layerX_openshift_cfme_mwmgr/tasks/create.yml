@@ -44,6 +44,7 @@
               -e HAWKULAR_INVENTORY_JDBC_USERNAME=mwmanager \
               -e HAWKULAR_INVENTORY_JDBC_PASSWORD=mwmanager \
               -e HAWKULAR_USERNAME=user \
+              -e HAWKULAR_USER=user \
               -e HAWKULAR_PASSWORD=user
 
   - name: Add Storage to Hawkular Middleware-Manager
@@ -68,10 +69,7 @@
         status_code: 200,400
         body: "{{ lookup('template', 'middleware_provider.json.j2') | to_json }}"
     register: command_result
-    failed_when:
-        not
-        (command_result.status == 200 or
-        (command_result.status == 400 and ('Host Name has already been taken' in command_result.json.error.message)))
+    ignore_errors: true
     delegate_to: cloudforms
   - debug: var=command_result
   tags: ["ose3-cfme-mwmgr", "provider"]
