@@ -4,7 +4,7 @@
 
 - block:
     - name: login to OpenShift
-      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}:8443/ 
+      shell: oc login --insecure-skip-tls-verify=true -u developer -p {{ root_password }} https://openshift.{{ hailstorm_dns_domain }}/ 
     - name: remove redhat-msa project
       shell: oc delete project {{ redhat_msa_project }}
     - name: remove workdirs

@@ -17,7 +17,7 @@ function nova_compute_control {
   # set keystone auth version
   sudo crudini --set /etc/nova/nova.conf keystone_authtoken auth_version v3
 
-  {% if current_lifecycle_env.openstack_version <= 10 %}
+  {% if current_lifecycle_env.openstack_version < 10 %}
   # install optools fluentd
   yum install -y fluentd rubygem-fluent-plugin-add
   for user in {keystone,nova,neutron,cinder,glance}; do usermod -a -G $user fluentd; done
@@ -58,15 +58,15 @@ function nova_compute {
   sudo sed -i "s/^SELINUX=.*$/SELINUX=permissive/" /etc/selinux/config
 
   # restart compute service
-  sudo systemctl restart openstack-nova-compute
+  sudo systemctl condrestart openstack-nova-compute
 }
 {% if ipa_available|success %}
 
 function cinder_control {
   sudo sed -i "s;:5000/v2;:5000/v3;g" /etc/cinder/cinder.conf
   sudo crudini --set /etc/cinder/cinder.conf keystone_authtoken auth_version v3
-  sudo systemctl restart openstack-cinder-api
-  sudo systemctl restart openstack-cinder-volume
+  sudo systemctl condrestart openstack-cinder-api
+  sudo systemctl condrestart openstack-cinder-volume
 }
 
 function keystone_control {

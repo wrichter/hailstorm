@@ -14,14 +14,13 @@
 
 - name: delete kickstart files
   file: path={{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg  state=absent
-  #when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
   delegate_to: "{{ infrastructure_delegate_nfs_server }}"
 
 - block:
     - name: destroy vms
       #virt: command=destroy name={{ inventory_hostname_short }}
       shell: virsh destroy {{ inventory_hostname_short }}
-      when: "{{ inventory_hostname_short in running_vms.stdout_lines }}"
+      when: inventory_hostname_short in running_vms.stdout_lines
       ignore_errors: true
 
     - name: list VM snapshots
@@ -35,7 +34,7 @@
     - name: undefine vms
       #virt: command=undefine name={{ inventory_hostname_short }}
       command: virsh undefine {{ inventory_hostname_short }}
-      when: "{{ inventory_hostname_short in virt_vms.list_vms }}"
+      when: inventory_hostname_short in virt_vms.list_vms
       ignore_errors: true
     - name: refresh pool to allow unused images to be deleted
       command: virsh pool-refresh {{ layer1_qcow_storage.poolname }}

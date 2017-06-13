@@ -1,2 +1,0 @@
-parameter_defaults:
-  ComputeCount: {{ nova_uuids.stdout|from_json|selectattr('Name','match','.*compute.*')|list|length - hostnames|from_json|length}}

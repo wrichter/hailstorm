@@ -25,7 +25,7 @@
     body_format: json
     body: "{{ body }}"
     status_code: 201
-  when: resource.json.results|selectattr('name','match','^{{ name }}$')|list|length == 0
+  when: resource.json.results|selectattr('name','match','^' + name + '$')|list|length == 0
   register: resource2
   changed_when: true
 

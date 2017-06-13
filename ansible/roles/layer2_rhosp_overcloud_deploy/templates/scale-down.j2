@@ -1,0 +1,9 @@
+openstack overcloud node delete \
+--stack overcloud \
+--templates \
+-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
+{% if current_lifecycle_env.osp_use_tls|default(false) %}-e /usr/share/openstack-tripleo-heat-templates/environments/tls-endpoints-public-dns.yaml \
+{% endif %}
+{% for template in templates|select|list %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }}{% if not loop.last %} \{% endif %}
+
+{% endif %}{% endfor %}

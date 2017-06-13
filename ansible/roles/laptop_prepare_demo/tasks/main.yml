@@ -9,7 +9,7 @@
       git: repo=http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git dest=~/git/ose3-ticket-monster
       tags: ['git']
     - name: log in to openshift
-      shell: oc login --insecure-skip-tls-verify https://openshift.{{ hailstorm_dns_domain }}:443 --username=developer --password={{ root_password }}
+      shell: oc login --insecure-skip-tls-verify https://openshift.{{ hailstorm_dns_domain }} --username=developer --password={{ root_password }}
     - name: change repo remote URL
       shell: cd ~/git/ose3-ticket-monster && git remote set-url origin http://developer:$(oc whoami -t)@git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
     - name: revert git repo to known state & push

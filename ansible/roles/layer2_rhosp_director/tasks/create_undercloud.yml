@@ -71,14 +71,16 @@
 
 
 # install bootif fix - see https://bugzilla.redhat.com/show_bug.cgi?id=1234601
-- name: create bootif-fix command
-  copy: src=../templates/bootif-fix dest=/usr/bin/bootif-fix mode=0755
-- name: create bootif-fix service
-  copy: src=../templates/bootif-fix.service dest=/usr/lib/systemd/system/bootif-fix.service mode=0644
-- name: (re)start bootif-fix
-  service: name=bootif-fix state=restarted
-- name: enable bootif-fix
-  service: name=bootif-fix enabled=yes
+- block:
+    - name: create bootif-fix command
+      copy: src=../templates/bootif-fix dest=/usr/bin/bootif-fix mode=0755
+    - name: create bootif-fix service
+      copy: src=../templates/bootif-fix.service dest=/usr/lib/systemd/system/bootif-fix.service mode=0644
+    - name: (re)start bootif-fix
+      service: name=bootif-fix state=restarted
+    - name: enable bootif-fix
+      service: name=bootif-fix enabled=yes
+  when: current_lifecycle_env.openstack_version < 10
 
 #configure DNS for provisioning Network
 - name: determine network UUID

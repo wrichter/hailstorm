@@ -1,0 +1,20 @@
+- block:
+    - include: adapt_to_keystone_v3.yml
+      tags: ['overcloud-config-keystone']
+    - include: configure_tenants.yml
+      tags: ['overcloud-config-tenants']
+    - include: configure_user_access.yml
+      tags: ['overcloud-config-users']
+    - include: configure_neutron.yml
+      tags: ['overcloud-config-neutron']
+      when: current_lifecycle_env.openstack_version <= 10
+    - include: configure_neutron_osp11.yml
+      tags: ['overcloud-config-neutron']
+      when: current_lifecycle_env.openstack_version >= 11
+    - include: configure_security.yml
+      tags: ['overcloud-config-security']
+    - include: configure_images.yml
+      tags: ['overcloud-config-images']
+    - include: create_flavors.yml
+      tags: ['overcloud-create-flavors']
+  when: mode=="create"

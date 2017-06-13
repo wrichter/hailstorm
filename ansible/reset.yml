@@ -3,4 +3,4 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_rhosp_overcloud, tags: ['layer2', 'rhosp', 'overcloud'], mode: reset }
+    - { role: layer2_rhosp_overcloud_deploy, tags: ['layer2', 'rhosp', 'overcloud'], mode: reset }
