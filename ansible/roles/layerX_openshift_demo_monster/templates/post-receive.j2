@@ -4,4 +4,4 @@
 # To be placed into git container as
 # /var/lib/git/ose3-ticket-monster.git/hooks/post-receive
 echo "Triggering OSE build via webhook...."
-curl --insecure --request POST https://openshift.{{ hailstorm_dns_domain }}:8443/oapi/v1/namespaces/ticketmonster-dev/buildconfigs/monster/webhooks/secret/generic
+curl --insecure --request POST https://openshift.{{ hailstorm_dns_domain }}:443/oapi/v1/namespaces/ticketmonster-dev/buildconfigs/monster/webhooks/secret/generic
