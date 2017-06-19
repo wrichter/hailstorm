@@ -1,10 +1,10 @@
 - block:
     - include: create.yml
-      tags: ["ose3-demo-monster"]
+      tags: ["ose3-demo-amq"]
   when: mode=="create"
 
 
 - block:
     - include: destroy.yml
-      tags: ["ose3-demo-monster"]
+      tags: ["ose3-demo-amq"]
   when: mode=="destroy"
