@@ -46,8 +46,8 @@
     - name: create logging-deployer configmap
       shell: >
         oc create configmap logging-deployer -n logging
-        --from-literal kibana-hostname=kibana.apps.{{ hailstorm_dns_domain }}
-        --from-literal kibana-ops-hostname=kibana-ops.apps.{{ hailstorm_dns_domain }}
+        --from-literal kibana-hostname=kibana.{{ ocp_apps_dns_domain }}
+        --from-literal kibana-ops-hostname=kibana-ops.{{ ocp_apps_dns_domain }}
         --from-literal public-master-url=https://openshift.{{ hailstorm_dns_domain }}:8443/
         --from-literal es-cluster-size=1
         --from-literal es-instance-ram=8G

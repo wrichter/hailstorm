@@ -39,5 +39,5 @@
     - name: ipa host-add apps.hailstorm1.coe.muc.redhat.com
       shell: echo {{ ipa_admin_password }} | kinit admin && ipa host-add apps.{{ hailstorm_dns_domain }}
     - name: ipa caacl-add-host wildcard-hosts --hosts apps....
-      shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-host wildcard-hosts --hosts apps.{{ hailstorm_dns_domain }}
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-host wildcard-hosts --hosts {{ ocp_apps_dns_domain }}
   when: "'wildcard-hosts' not in existing_caacls.stdout_lines"
