@@ -1,0 +1,319 @@
+layer1_ansible_host: 52.166.60.127
+infrastructure_address_ssh_user: ocpadmin
+
+hailstorm_dns_domain: hailstorm3.coe.muc.redhat.com
+#ocp_apps_dns_domain: apps.{{ hailstorm_dns_domain }}
+ocp_apps_dns_domain: 52.178.117.21.xip.io
+
+
+
+disable_registration_against_satellite: false
+satellite_version: 6.2
+stage: TEST
+
+# if this attribute is present, the binaries (except for the SSH keys)
+# will be copied from the layer1 host instead of the control host
+# you need to ensure they are there before running the playbook
+layer1_binary_dir: /var/hailstorm/binary
+layer1_qcow_storage:
+  poolname: 'sata'
+  path: /var/hailstorm/images
+
+nfs_kickstart_folder: /var/hailstorm/kickstart
+nfs_rhev_data_domain_path: /var/hailstorm/rhev-data1
+nfs_rhev_iso_domain_path: /var/hailstorm/rhev-iso1
+nfs_rhev_export_domain_path: /var/hailstorm/rhev-export1
+
+nfs_rhosp_nova_path: /var/hailstorm/rhosp-nova
+nfs_rhosp_glance_path: /var/hailstorm/rhosp-glance
+nfs_rhosp_cinder_path: /var/hailstorm/rhosp-cinder
+
+nfs_ose3_pv_path: /var/hailstorm/ose3-pv
+
+layer2_rhev_manager_mem: 16384
+layer2_rhev_manager_cpu: 4
+layer2_rhev_hypervisor_mem: 32768
+layer2_rhev_hypervisor_cpu: 8
+
+layer2_rhosp_director_mem: 16384
+layer2_rhosp_director_cpu: 4
+layer2_rhosp_control_mem: 16384
+#layer2_rhosp_control_mem: 8192
+layer2_rhosp_control_cpu: 4
+layer2_rhosp_compute_mem: 32768
+layer2_rhosp_compute_cpu: 8
+
+layer2_satellite_mem: 32768
+layer2_satellite_cpu: 4
+
+layer2_ose3node_mem: 16384
+layer2_ose3node_cpu: 8
+layer2_ose3master_mem: 4096
+layer2_ose3master_cpu: 4
+layer2_ose3lb_mem: 2048
+layer2_ose3lb_cpu: 2
+
+layer2_devclient_mem: 2048
+layer2_devclient_cpu: 2
+
+layer2_ceph_mem: 4096
+layer2_ceph_cpu: 2
+
+# if a property http_proxy is defined, satellite will be configured to sync via http_proxy
+http_proxy:
+  proxyname: proxy.coe.muc.redhat.com
+  port: 3128
+  protocol: https
+
+external_network_config:
+  services_network_dnat:
+    layer1_dev: em1
+    mapping:
+      - expose_machine: satellite
+        on_host_prefix: 10.32.105.30/32
+        via_network: services
+        ports:
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+#The Katello agent to communicate with the Capsule's Qpid dispatch router
+          - from_port: 5647
+            to_port: 5647
+            proto: tcp
+#HTTPS	Anaconda to download kickstart templates to hosts, and for downloading iPXE firmware
+          - from_port: 8000
+            to_port: 8000
+            proto: tcp
+#HTTPS	Puppet agent to Puppet master connections
+          - from_port: 8140
+            to_port: 8140
+            proto: tcp
+#HTTPS	Subscription Management Services connection to the reverse proxy for the certificate-based API
+          - from_port: 8443
+            to_port: 8443
+            proto: tcp
+#HTTPS	Sending generated SCAP reports to the proxy in the Capsule for spooling
+          - from_port: 9090
+            to_port: 9090
+            proto: tcp
+      - expose_machine: ipa
+        on_host_prefix: 10.32.105.31/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+      - expose_machine: infrastructure
+        on_host_prefix: 10.32.105.32/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 53
+            to_port: 53
+            proto: tcp
+          - from_port: 53
+            to_port: 53
+            proto: udp
+          - from_port: 143
+            to_port: 143
+            proto: tcp
+          - from_port: 993
+            to_port: 993
+            proto: tcp
+          - from_port: 25
+            to_port: 25
+            proto: tcp
+          - from_port: 465
+            to_port: 465
+            proto: tcp
+      - expose_machine: rhevm
+        on_host_prefix: 10.32.105.33/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 6100
+            to_port: 6100
+            proto: tcp
+      - expose_machine: cloudforms
+        on_host_prefix: 10.32.105.34/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+      - expose_machine: ose3-lb
+        on_host_prefix: 10.32.105.35/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 8443
+            to_port: 8443
+            proto: tcp
+      - expose_machine: ose3-infranode1
+        on_host_prefix: 10.32.105.36/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+      - expose_machine: efk
+        on_host_prefix: 10.32.105.37/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 9200
+            to_port: 9200
+            proto: tcp
+      - expose_machine: rhosp-director
+        on_host_prefix: 10.32.105.38/32
+        via_network: rhosp_provisioning
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+      - expose_machine: undercloud-public
+        on_host_prefix: 10.32.105.38/32
+        via_network: rhosp_provisioning
+        ports:
+          # webui
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          # keystone
+          - from_port: 13000
+            to_port: 13000
+            proto: tcp
+          # heat
+          - from_port: 13004
+            to_port: 13004
+            proto: tcp
+          # ironic
+          - from_port: 13385
+            to_port: 13385
+            proto: tcp
+          # mistral
+          - from_port: 13989
+            to_port: 13989
+            proto: tcp
+          # swift
+          - from_port: 13808
+            to_port: 13808
+            proto: tcp
+          # zaqar-websocket
+          - from_port: 9000
+            to_port: 9000
+            proto: tcp
+      - expose_machine: openstack
+        on_host_prefix: 10.32.105.39/32
+        via_network: services
+        ports:
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          # novnc proxy
+          - from_port: 6080
+            to_port: 6080
+            proto: tcp
+          # novnc proxy TLS
+          - from_port: 13080
+            to_port: 13080
+            proto: tcp
+      - expose_machine: tower
+        on_host_prefix: 10.32.105.7/32
+        via_network: services
+        ports:
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+  guest_network_bridging:
+    layer1_dev: em2
+    default_gw_host_prefix: 10.32.111.254/20
+    dns_server: 10.32.96.1
+    osp_infra_start: 10.32.105.163
+    osp_infra_end: 10.32.105.179
+    osp_floating_start: 10.32.105.180
+    osp_floating_end: 10.32.105.219
+    bridged_vms:
+      rhevh1:
+        guests:
+          mac: "52:54:00:48:03:01"
+          ip: 10.32.105.160
+      rhevh2:
+        guests:
+          mac: "52:54:00:48:03:02"
+          ip: 10.32.105.161
+      rhevh3:
+        guests:
+          mac: "52:54:00:48:03:03"
+          ip: 10.32.105.162
+      "rhosp-control1":
+        guests:
+          mac: "52:54:00:48:03:04"
+          ip:
+      "rhosp-control2":
+        guests:
+          mac: "52:54:00:48:03:05"
+          ip:
+      "rhosp-control3":
+        guests:
+          mac: "52:54:00:48:03:06"
+          ip:
