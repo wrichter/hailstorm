@@ -27,7 +27,7 @@
   #   shell: "oc rollout latest nexus -n devops-tools"
 
   - name: Wait for nexus become online
-    shell: curl -L "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/nexus/"
+    shell: curl -L "http://nexus-devops-tools.{{ ocp_apps_dns_domain }}/nexus/"
     register: tstcurl
     changed_when: false
     until: "'<title>Nexus Repository Manager</title>' in tstcurl.stdout"
@@ -60,7 +60,7 @@
     when: nexus_conf|changed
 
   - name: Wait for nexus become online again
-    shell: curl -L "http://nexus-devops-tools.apps.{{ hailstorm_dns_domain }}/nexus/"
+    shell: curl -L "http://nexus-devops-tools.{{ ocp_apps_dns_domain }}/nexus/"
     register: tstcurl
     changed_when: false
     until: "'<title>Nexus Repository Manager</title>' in tstcurl.stdout"
@@ -95,7 +95,7 @@
     shell: "oadm policy add-cluster-role-to-user edit system:serviceaccount:devops-tools:git"
 
   - name: Wait for git become online
-    shell: curl "http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/"
+    shell: curl "http://git-devops-tools.{{ ocp_apps_dns_domain }}/"
     register: tstcurl
     changed_when: false
     until: "'Not Found' in tstcurl.stdout"

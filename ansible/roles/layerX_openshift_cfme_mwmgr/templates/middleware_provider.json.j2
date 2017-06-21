@@ -1,7 +1,7 @@
 {
   "type":"ManageIQ::Providers::Hawkular::MiddlewareManager",
   "name":"HawkularMiddlewareManager",
-  "hostname":"manager-cf-mwmgr.apps.{{ hailstorm_dns_domain }}",
+  "hostname":"manager-cf-mwmgr.{{ ocp_apps_dns_domain }}",
   "port":"80",
   "credentials" : {
     "userid"    : "user",
