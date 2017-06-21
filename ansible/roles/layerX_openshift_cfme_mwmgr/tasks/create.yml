@@ -10,7 +10,7 @@
     shell: oc delete namespace cf-mwmgr --ignore-not-found
 
   - name: Create cf-mwmgr project
-    shell: "oadm new-project cf-mwmgr --description='CloudForms Middleware Manager Tech Preview' --admin='developer'"
+    shell: "oc adm new-project cf-mwmgr --description='CloudForms Middleware Manager Tech Preview' --admin='developer'"
     register: result
     until: result.stderr.find("project cf-mwmgr already exists") == -1 and result.stderr.find("Operation cannot be fulfilled on namespaces") == -1
     retries: 30
@@ -79,7 +79,7 @@
       shell: oc delete namespace cf-mwmgr-demo --ignore-not-found
 
     - name: Create cf-mwmgr-demo project
-      shell: "oadm new-project cf-mwmgr-demo --description='CloudForms Middleware Sample Workload - Wildfly with Agent connected to cf-mwmgr' --admin='developer'"
+      shell: "oc adm new-project cf-mwmgr-demo --description='CloudForms Middleware Sample Workload - Wildfly with Agent connected to cf-mwmgr' --admin='developer'"
       register: result
       until: result.stderr.find("project cf-mwmgr-demo already exists") == -1 and result.stderr.find("Operation cannot be fulfilled on namespaces") == -1
       retries: 30

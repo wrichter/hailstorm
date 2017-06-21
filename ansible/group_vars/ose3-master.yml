@@ -11,7 +11,7 @@ disk:
   #   swap: 2048
   #   home: 2048
   #   root: 10000
-  
+
   physvols:
     boot: 500
     rhel: 59500
@@ -32,3 +32,6 @@ disk:
       fstype: "{{ fstype }}"
       mountpoint: /var
       size: 30720
+
+
+openshift_master_api_host_and_port: openshift.{{ hailstorm_dns_domain }}:443

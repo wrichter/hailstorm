@@ -5,7 +5,7 @@
   changed_when: false
 
 - name: Create devops-tools project
-  shell: "oadm new-project devops-tools --admin='developer' --description='DevOps Tools like nexus, jenkins etc'"
+  shell: "oc adm new-project devops-tools --admin='developer' --description='DevOps Tools like nexus, jenkins etc'"
   when: "'devops-tools' not in projects.stdout_lines"
 
 - name: check existing deploymentconfigs
@@ -92,7 +92,7 @@
 
   - name: Add System-wide Edit Role to Git User
     #shell: "oc policy add-role-to-user edit -z git"
-    shell: "oadm policy add-cluster-role-to-user edit system:serviceaccount:devops-tools:git"
+    shell: "oc adm policy add-cluster-role-to-user edit system:serviceaccount:devops-tools:git"
 
   - name: Wait for git become online
     shell: curl "http://git-devops-tools.{{ ocp_apps_dns_domain }}/"
