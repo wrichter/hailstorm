@@ -5,7 +5,7 @@
   changed_when: false
 
 - name: Create ticketmonster-dev project
-  shell: "oadm new-project ticketmonster-dev --admin='developer' --description='ticket monster developers stage'"
+  shell: "oc adm new-project ticketmonster-dev --admin='developer' --description='ticket monster developers stage'"
   when: mode=="create" and 'ticketmonster-dev' not in projects.stdout_lines
 
 - name: Reseting ticketmonster-dev project to empty state
@@ -13,7 +13,7 @@
   when: "'ticketmonster-dev' in projects.stdout_lines"
 
 - name: Create ticketmonster-prod project
-  shell: "oadm new-project ticketmonster-prod --admin='developer' --description='ticket monster production stage'"
+  shell: "oc adm new-project ticketmonster-prod --admin='developer' --description='ticket monster production stage'"
   when: mode=="create" and 'ticketmonster-prod' not in projects.stdout_lines
 
 - name: Reseting ticketmonster-prod project to empty state

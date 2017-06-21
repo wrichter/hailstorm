@@ -7,7 +7,7 @@
   shell: oc delete namespace demo-amq --ignore-not-found
 
 - name: Create demo-amq project
-  shell: "oadm new-project demo-amq --admin='developer' --description='A-MQ Demo Project'"
+  shell: "oc adm new-project demo-amq --admin='developer' --description='A-MQ Demo Project'"
   register: result
   until: result.stderr.find("project demo-amq already exists") == -1 and result.stderr.find("Operation cannot be fulfilled on namespaces") == -1
   retries: 30
