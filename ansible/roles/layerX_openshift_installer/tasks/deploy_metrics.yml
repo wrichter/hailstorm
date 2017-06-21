@@ -40,12 +40,12 @@
     #   changed_when: false
 
     - name: Process the metrics deployer
-      #shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
-      #shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }},USE_PERSISTENT_STORAGE=false | oc create -n openshift-infra -f -
+      #shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.{{ ocp_apps_dns_domain }},USE_PERSISTENT_STORAGE=true,CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
+      #shell: oc process metrics-deployer-template -n openshift -v IMAGE_VERSION={{ version_tag.stdout }},MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/,HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.{{ ocp_apps_dns_domain }},USE_PERSISTENT_STORAGE=false | oc create -n openshift-infra -f -
       shell: >
         oc process metrics-deployer-template -n openshift
         {% if current_lifecycle_env.openshift_version >= 3.4 %}-v IMAGE_VERSION=v3.4{% endif %}
-        -v HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.apps.{{ hailstorm_dns_domain }}
+        -v HAWKULAR_METRICS_HOSTNAME=hawkular-metrics.{{ ocp_apps_dns_domain }}
         -v USE_PERSISTENT_STORAGE=true
         -v CASSANDRA_PV_SIZE=5Gi | oc create -n openshift-infra -f -
   when: "'hawkular-metrics' not in rc.stdout"

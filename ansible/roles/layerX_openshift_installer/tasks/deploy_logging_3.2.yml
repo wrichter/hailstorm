@@ -52,8 +52,8 @@
 
     - name:  deploy logging-deployer-template
       action: command oc new-app logging-deployer-template \
-                 --param KIBANA_HOSTNAME=kibana.apps.{{ hailstorm_dns_domain }} \
-                 --param KIBANA_OPS_HOSTNAME=kibana-ops.apps.{{ hailstorm_dns_domain }} \
+                 --param KIBANA_HOSTNAME=kibana.{{ ocp_apps_dns_domain }} \
+                 --param KIBANA_OPS_HOSTNAME=kibana-ops.{{ ocp_apps_dns_domain }} \
                  --param MASTER_URL=https://openshift.{{ hailstorm_dns_domain }}:8443/ \
                  --param ES_CLUSTER_SIZE=1 \
                  --param IMAGE_VERSION={{ version_tag.stdout }} \

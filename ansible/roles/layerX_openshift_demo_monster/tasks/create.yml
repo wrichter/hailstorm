@@ -41,7 +41,7 @@
     shell: "oc new-app --template monster-dev -n ticketmonster-dev --labels=MonsterDevInitialDeploymentTest=true"
 
   - name: Wait for monster dev to become online
-    shell: curl "http://monster-ticketmonster-dev.apps.{{ hailstorm_dns_domain }}/"
+    shell: curl "http://monster-ticketmonster-dev.{{ ocp_apps_dns_domain }}/"
     register: tstcurl
     changed_when: false
     until: "'<title>Ticket Monster</title>' in tstcurl.stdout"

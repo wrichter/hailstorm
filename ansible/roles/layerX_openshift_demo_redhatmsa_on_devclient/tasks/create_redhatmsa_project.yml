@@ -127,7 +127,7 @@
       when: (dcs.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^' + item.name + '$') | list | length == 0
 
     - name: Define Frontend domain
-      shell: "oc env -n {{ redhat_msa_project }} dc/frontend OS_SUBDOMAIN=apps.{{ hailstorm_dns_domain }}"
+      shell: "oc env -n {{ redhat_msa_project }} dc/frontend OS_SUBDOMAIN={{ ocp_apps_dns_domain }}"
 
     - name: Create OpenShift Readiness Probe for applications
       shell: "oc set -n {{ redhat_msa_project }} probe dc/{{ item.name }} --readiness --get-url={{ item.probe }}"
@@ -155,7 +155,7 @@
       when: (services.stdout|from_yaml)['items'] | map(attribute='metadata') | selectattr('name','match','^hystrix-dashboard$') | list | length == 0
 
     - name: Expose hystrix-dashboard service
-      shell: oc expose -n {{ redhat_msa_project }} service hystrix-dashboard --hostname=hystrix-dashboard-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }}
+      shell: oc expose -n {{ redhat_msa_project }} service hystrix-dashboard --hostname=hystrix-dashboard-{{ redhat_msa_project }}.{{ ocp_apps_dns_domain }}
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
@@ -171,7 +171,7 @@
     - name: Install Kubernetes Zipkin
       shell: >
         oc create -n {{ redhat_msa_project }} -f http://repo1.maven.org/maven2/io/fabric8/zipkin/zipkin-starter-minimal/0.0.8/zipkin-starter-minimal-0.0.8-kubernetes.yml &&
-        oc expose -n {{ redhat_msa_project }} service zipkin-query --hostname=zipkin-query-{{ redhat_msa_project }}.apps.{{ hailstorm_dns_domain }}
+        oc expose -n {{ redhat_msa_project }} service zipkin-query --hostname=zipkin-query-{{ redhat_msa_project }}.{{ ocp_apps_dns_domain }}
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"

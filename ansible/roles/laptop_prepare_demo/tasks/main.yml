@@ -6,12 +6,12 @@
       file: state=absent path="~/git/ose3-ticket-monster"
       tags: ['git']
     - name: clone ticketmonster repo
-      git: repo=http://git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git dest=~/git/ose3-ticket-monster
+      git: repo=http://git-devops-tools.{{ ocp_apps_dns_domain }}/ose3-ticket-monster.git dest=~/git/ose3-ticket-monster
       tags: ['git']
     - name: log in to openshift
       shell: oc login --insecure-skip-tls-verify https://openshift.{{ hailstorm_dns_domain }} --username=developer --password={{ root_password }}
     - name: change repo remote URL
-      shell: cd ~/git/ose3-ticket-monster && git remote set-url origin http://developer:$(oc whoami -t)@git-devops-tools.apps.{{ hailstorm_dns_domain }}/ose3-ticket-monster.git
+      shell: cd ~/git/ose3-ticket-monster && git remote set-url origin http://developer:$(oc whoami -t)@git-devops-tools.{{ ocp_apps_dns_domain }}/ose3-ticket-monster.git
     - name: revert git repo to known state & push
       shell: cd ~/git/ose3-ticket-monster && git reset --hard 6de7839dcc201abe619fcee184a146b85a1b9ed0 && git push -f origin master
     # - name: remove floating IP ranges from ~/.ssh/known_hosts

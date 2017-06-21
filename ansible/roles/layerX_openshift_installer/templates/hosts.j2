@@ -14,8 +14,8 @@ ansible_ssh_user=root
 #ansible_sudo=true
 
 deployment_type=openshift-enterprise
-osm_default_subdomain=apps.{{ hailstorm_dns_domain }}
-openshift_master_default_subdomain=apps.{{ hailstorm_dns_domain }}
+osm_default_subdomain={{ ocp_apps_dns_domain }}
+openshift_master_default_subdomain={{ ocp_apps_dns_domain }}
 osm_default_node_selector="region=primary"
 
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
@@ -36,8 +36,8 @@ openshift_master_cluster_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_cluster_public_hostname=openshift.{{ hailstorm_dns_domain }}
 openshift_master_api_port=443
 openshift_master_public_console_url=https://openshift.{{ hailstorm_dns_domain }}/console
-openshift_master_logging_public_url=https://kibana.apps.{{ hailstorm_dns_domain }}
-openshift_master_metrics_public_url=https://hawkular-metrics.apps.{{ hailstorm_dns_domain }}/hawkular/metrics
+openshift_master_logging_public_url=https://kibana.{{ ocp_apps_dns_domain }}
+openshift_master_metrics_public_url=https://hawkular-metrics.{{ ocp_apps_dns_domain }}/hawkular/metrics
 
 {% if openshift_key is defined %}
 #openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "names": ["public-master-host.com"]}]

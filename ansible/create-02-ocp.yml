@@ -38,11 +38,11 @@
   roles:
     - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-roles'], mode: create, certcn: 'openshift.{{ hailstorm_dns_domain }}', factprefix: openshift }
     - { role: layerX_openshift_installer, tags: [ 'layer2', 'ose3', 'ose3-install', 'ose3-metrics', 'ose3-roles' ], mode: create }
-    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-logging-certificate'], mode: create, certcn: 'kibana.apps.{{ hailstorm_dns_domain }}' }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-logging-certificate'], mode: create, certcn: 'kibana.{{ ocp_apps_dns_domain }}' }
     - { role: layerX_openshift_route_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-logging-certificate'], mode: create, route: "logging-kibana", namespace: "logging" }
-    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, certcn: 'hawkular-metrics.apps.{{ hailstorm_dns_domain }}' }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, certcn: 'hawkular-metrics.{{ ocp_apps_dns_domain }}' }
     - { role: layerX_openshift_route_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-metrics-certificate'], mode: create, route: "hawkular-metrics", namespace: "openshift-infra" }
-    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create, certcn: 'apps.{{ hailstorm_dns_domain }}', wildcard: true, factprefix: wildcard }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create, certcn: '{{ ocp_apps_dns_domain }}', wildcard: true, factprefix: wildcard }
     - { role: layerX_openshift_router_wildcardcertificate, tags: ['layer2', 'ose3', 'ose3-install', 'ose3-router-certificate'], mode: create }
 
 ### BEGIN CONTAINER NATIVE STORAGE
