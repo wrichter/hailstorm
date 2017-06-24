@@ -16,7 +16,7 @@
   changed_when: false
 
 - name: add groups to IPA
-  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa group-add --nonposix {{ item.groupname }}'
+  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa group-add --nonposix {{ item.groupname }}'
   when: item.groupname not in current_ipa_groups.stdout_lines
   with_items: "{{ ipa_group }}"
   register: current_ipa_groups_2
@@ -28,7 +28,7 @@
   changed_when: false
 
 - name: set group password policy
-  shell: echo {{ ipa_admin_password }} {% if item.item.pwpolicy is defined %}| kinit admin && ipa pwpolicy-add {{ item.item.groupname }} {{ item.item.pwpolicy }}{% endif %}
+  shell: echo {{ ipa_admin_password }} {% if item.item.pwpolicy is defined %}| kinit admin && ipa pwpolicy-add {{ item.item.groupname }} {{ item.item.pwpolicy }}{% endif %}
   when: item|changed and item.item.pwpolicy is defined
   with_items: "{{ current_ipa_groups_2.results }}"
 

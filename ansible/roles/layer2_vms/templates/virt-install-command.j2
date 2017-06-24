@@ -22,5 +22,5 @@ virt-install  --name {{ inventory_hostname_short }}
               --noautoconsole
               --wait 10
               --location {{ layer1_qcow_storage.path }}/{{ rhel_iso_img }}
-              --extra-args='ks=nfs:{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
+              --extra-args='ks=nfs:{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}:{{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg {% if ksdevice is defined %}ksdevice={{ ksdevice }} {% endif %}ip=dhcp console=tty0 console=ttyS0,115200n8'
             {% endif %}

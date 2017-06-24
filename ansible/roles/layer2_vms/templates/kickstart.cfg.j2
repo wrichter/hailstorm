@@ -21,7 +21,7 @@ selinux --{{ selinux_mode }}
 # Network information
 #network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
 {% for nic in vm_nics %}
-network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ nic.netmask}} {% if default_route_via.netname == nic.netname %} --gateway={{ nic.default_gw }}{% endif %} {% if name_service_via.netname == nic.netname %} --nameserver={{ nic.default_gw }} {% endif %} --activate
+network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ nic.netmask}} {% if default_route_via.netname == nic.netname %} --gateway={{ nic.default_gw }}{% endif %} {% if name_service_via.netname == nic.netname %} --nameserver={{ nic.default_gw }} {% endif %} --activate
 {% endfor %}
 
 network  --hostname={{ hostname }}
@@ -40,7 +40,7 @@ bootloader --append=" crashkernel=auto" --location=mbr
 zerombr
 clearpart --all --initlabel
 # Disk partitioning information
-part /boot --fstype="{{ fstype }}" --ondisk=vda --size={{ disk.physvols.boot }}
+part /boot --fstype="{{ fstype }}" --ondisk=vda --size={{ disk.physvols.boot }}
 {#part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ disk.partition_table.lvmpv }}#}
 part pv.123 --fstype="lvmpv" --ondisk=vda --size={{ disk.physvols.rhel }}
 volgroup rhel --pesize=4096 pv.123
@@ -48,7 +48,7 @@ volgroup rhel --pesize=4096 pv.123
 #logvol /home  --fstype="{{ fstype }}" --size={{ disk.partition_table.home }} --name=home --vgname=rhel
 #logvol /  --fstype="{{ fstype }}" --size={{ disk.partition_table.root }} --name=root --vgname=rhel#}
 {% for logvol in disk.logvols %}
-logvol {{ logvol.mountpoint }}  --fstype="{{ logvol.fstype }}" --size={{ logvol.size }} --name={{ logvol.name }} --vgname=rhel
+logvol {{ logvol.mountpoint }}  --fstype="{{ logvol.fstype }}" --size={{ logvol.size }} --name={{ logvol.name }} --vgname=rhel
 {% endfor %}
 
 %packages

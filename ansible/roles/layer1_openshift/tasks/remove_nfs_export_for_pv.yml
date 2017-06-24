@@ -6,4 +6,4 @@
   command: exportfs -r
   when: etc_exports|changed
 - name: remove storage contents
-  file: state=absent path={{ nfs_ose3_pv_path }}
+  file: state=absent path={{ nfs_ose3_pv_path }}

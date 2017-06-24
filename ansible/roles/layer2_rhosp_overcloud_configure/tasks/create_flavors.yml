@@ -12,13 +12,13 @@
     . ~/overcloudrc_v3 &&
     openstack flavor create
     --id {{ item.ID }}
-    --ram {{ item.RAM }}
+    --ram {{ item.RAM }}
     --disk {{ item.Disk }}
-    --ephemeral {{ item.Ephemeral }}
+    --ephemeral {{ item.Ephemeral }}
     --vcpus {{ item.VCPUs }}
     {% if item['Is Public'] %}--public{% else %}--private{% endif %}
-    {{ item.Name }}
+    {{ item.Name }}
   when: item.Name not in flavors.stdout|from_json|map(attribute="Name")|list
-  with_items: "{{ default_overcloud_flavors }}"
+  with_items: "{{ default_overcloud_flavors }}"
   become: yes
   become_user: "{{ rhosp_stack_user }}"

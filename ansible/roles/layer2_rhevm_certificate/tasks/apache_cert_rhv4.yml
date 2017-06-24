@@ -12,13 +12,13 @@
       copy: content="{{ item.value }}" dest="{{ item.name }}" mode="400"
       with_items:
         - name: /etc/pki/ovirt-engine/keys/apache.key.nopass
-          value: "{{ ssl_key }}"
+          value: "{{ ssl_key }}"
         - name: /etc/pki/ovirt-engine/certs/apache.cer
-          value: "{{ ssl_cert }}"
+          value: "{{ ssl_cert }}"
         - name: /etc/pki/ovirt-engine/apache-ca.pem
-          value: "{{ ssl_cacert }}"
+          value: "{{ ssl_cacert }}"
         - name: /etc/pki/ca-trust/source/anchors/apache-ca.pem
-          value: "{{ ssl_cacert }}"
+          value: "{{ ssl_cacert }}"
 
     - name: update-ca-trust
       shell: update-ca-trust

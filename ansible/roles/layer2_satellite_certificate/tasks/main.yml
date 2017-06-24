@@ -3,14 +3,14 @@
     file: state=directory path=~/sat_cert
 
   - name: create certificate files
-    copy: content={{ item.content }} dest=~/sat_cert/{{ item.name }}
+    copy: content={{ item.content }} dest=~/sat_cert/{{ item.name }}
     with_items:
       - name: satellite.key
         content: "{{ ssl_key }}"
       - name: satellite.crt
         content: "{{ ssl_cert }}"
       - name: satellite.csr
-        content: "{{ ssl_certreq }}"
+        content: "{{ ssl_certreq }}"
       - name: ca_cert.crt
         content: "{{ ssl_cacert }}"
 

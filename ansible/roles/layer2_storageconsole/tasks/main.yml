@@ -10,11 +10,11 @@
 #     EOF
 
 - name: create TLS cert
-  copy: content="{{ item.content }}" dest="{{ item.dest }}" mode="{{ item.mode }}"
+  copy: content="{{ item.content }}" dest="{{ item.dest }}" mode="{{ item.mode }}"
   with_items:
     - dest: /etc/pki/tls/skyring.crt
-      content: "{{ ssl_cert }}"
+      content: "{{ ssl_cert }}"
       mode: 644
     - dest: /etc/pki/tls/private/skyring.key
-      content: "{{ ssl_key }}"
+      content: "{{ ssl_key }}"
       mode: 600

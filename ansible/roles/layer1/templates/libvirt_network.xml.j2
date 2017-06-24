@@ -7,14 +7,14 @@
   {% endif %}
 
   {% if item.forward_mode is not defined or item.forward_mode != "bridge" %}
-  <ip address="{{ item.default_gw_host_prefix | ipaddr('address') }}" netmask="{{ item.default_gw_host_prefix | ipaddr('netmask')  }}">
+  <ip address="{{ item.default_gw_host_prefix | ipaddr('address') }}" netmask="{{ item.default_gw_host_prefix | ipaddr('netmask')  }}">
 
   {% if item.dhcp_start is defined and item.dhcp_end is defined %}
     <dhcp>
       <range start="{{item.dhcp_start}}" end="{{item.dhcp_end}}" />
       {% for host in groups.all %}{% if host != 'localhost' and hostvars[host].vm_nics is defined %}
       {% for nic in hostvars[host].vm_nics %}{% if nic.netname is defined and nic.netname == item.netname  %}
-       <host mac="{{ nic.mac }}" name="{{ hostvars[host].hostname }}" ip="{{ nic.ip  }}" />
+       <host mac="{{ nic.mac }}" name="{{ hostvars[host].hostname }}" ip="{{ nic.ip  }}" />
       {% endif %}{% endfor %}
       {% endif %}{% endfor %}
     </dhcp>

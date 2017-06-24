@@ -30,13 +30,13 @@
       vars:
         url: "/api/v1/projects/"
         name: "{{ project_dir }}"
-        body: "{{ lookup('template','project.json.j2') }}"
+        body: "{{ lookup('template','project.json.j2') }}"
         var: "project"
 
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "/api/v1/inventories/"
-        name: "{{ inventoryname }}"
+        name: "{{ inventoryname }}"
         var: "inventory"
 
     # - include: roles/common/tasks/get_or_add.yml
@@ -50,7 +50,7 @@
         url: "https://localhost/api/v1/credentials/?page_size=100"
         method: "GET"
         user: "admin"
-        password: "{{ root_password }}"
+        password: "{{ root_password }}"
         validate_certs: no
       register: credentials
 
@@ -58,13 +58,13 @@
       local_action: find paths={{ content_location }}/jobtemplates recurse=no
       register: jobtemplates
 
-    - debug: msg={{ lookup('template','job_template.json.j2')|combine(lookup('template', item)|from_yaml)|combine(lookup('template','credential_id.json.j2')) }}
+    - debug: msg={{ lookup('template','job_template.json.j2')|combine(lookup('template', item)|from_yaml)|combine(lookup('template','credential_id.json.j2')) }}
       with_items: "{% if jobtemplates.files is defined %}{{ jobtemplates.files|map(attribute='path')|list }}{% endif %}"
 
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "/api/v1/job_templates/"
         name: "{{ (lookup('template', item)|from_yaml).name }}"
-        body: "{{ lookup('template','job_template.json.j2')|combine(lookup('template', item)|from_yaml)|combine(lookup('template','credential_id.json.j2')) }}"
+        body: "{{ lookup('template','job_template.json.j2')|combine(lookup('template', item)|from_yaml)|combine(lookup('template','credential_id.json.j2')) }}"
       with_items: "{% if jobtemplates.files is defined %}{{ jobtemplates.files|map(attribute='path')|list }}{% endif %}"
   when: mode=="create"

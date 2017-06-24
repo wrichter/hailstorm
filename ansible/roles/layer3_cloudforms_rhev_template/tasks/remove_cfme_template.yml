@@ -7,6 +7,6 @@
 
 - name: remove templates
   shell: >
-    {% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'remove template {{ item }}'
+    {% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'remove template {{ item }}'
   delegate_to: rhevm
-  with_items: "{{ template.stdout_lines|default([]) }}"
+  with_items: "{{ template.stdout_lines|default([]) }}"

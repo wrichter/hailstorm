@@ -1,6 +1,6 @@
 - block:
     - name: add ipa entry to /etc/hosts
-      lineinfile: dest=/etc/hosts line="{{ hostvars['ipa'].vm_nics[0].ip }} {{ hostvars['ipa'].hostname }} ipa"
+      lineinfile: dest=/etc/hosts line="{{ hostvars['ipa'].vm_nics[0].ip }} {{ hostvars['ipa'].hostname }} ipa"
     - name: install IPA client
       command: ipa-client-install --no-nisdomain --enable-dns-updates --server={{ hostvars['ipa'].inventory_hostname_short }}.{{ hailstorm_dns_domain }} --domain={{ hailstorm_dns_domain }} --realm={{ hailstorm_dns_domain|upper }} --principal=admin --password={{ root_password }} --mkhomedir --no-ntp --unattended
   when: mode=="create"
@@ -9,5 +9,5 @@
     - name: install IPA client
       command: ipa-client-install --uninstall --unattended
     - name: remove ipa entry from /etc/hosts
-      lineinfile: dest=/etc/hosts regexp="{{ hostvars['ipa'].vm_nics[0].ip }}.*" state=absent
+      lineinfile: dest=/etc/hosts regexp="{{ hostvars['ipa'].vm_nics[0].ip }}.*" state=absent
   when: mode=="destroy"

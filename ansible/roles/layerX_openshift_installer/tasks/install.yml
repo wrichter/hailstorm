@@ -22,11 +22,11 @@
   when: openshift_key is defined and openshift_cert is defined
   with_items:
     - name: openshift.key
-      value: "{{ openshift_key }}"
+      value: "{{ openshift_key }}"
     - name: openshift.crt
-      value: "{{ openshift_cert }}"
+      value: "{{ openshift_cert }}"
     - name: openshift-ca.crt
-      value: "{{ openshift_cacert }}"
+      value: "{{ openshift_cacert }}"
 
 - name: create /etc/ansible/hosts
   template: src=hosts.j2 dest=/etc/ansible/hosts

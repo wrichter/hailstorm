@@ -9,7 +9,7 @@
   {% if nic.netname == network.netname %}
 
   {% for port in mapping.ports %}
-  <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ nic.ip }}:{{ port.to_port }}</rule>
+  <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ nic.ip }}:{{ port.to_port }}</rule>
   <rule>FORWARD -t filter -o {{ network.bridge }} -p {{ port.proto }} -d {{ nic.ip }} --dport {{ port.to_port }} -j ACCEPT</rule>
   {% endfor %}
 

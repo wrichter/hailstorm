@@ -20,19 +20,19 @@ disk:
       mountpoint: swap
       size: 4096
     - name: root
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /
       size: 190000
     - name: home
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
 
 pool_regex: "{{ rhosp_subscription_pool_regex }}"
 repos:
   - rhel-7-server-rpms
-  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-optools-rpms
-  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-optools-rpms
+  - rhel-7-server-openstack-{{ current_lifecycle_env.openstack_version }}-rpms
   - rhel-7-server-optional-rpms
   - rhel-7-server-extras-rpms
 

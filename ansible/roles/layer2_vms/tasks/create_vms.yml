@@ -63,7 +63,7 @@
 #  when: "{{ inventory_hostname_short not in virt_vms.list_vms and skip_install is defined and skip_install == true }}"
 #  with_items: groups[group]
 #- name: create VM
-#  virt: command=define name={{ inventory_hostname_short }} uri=qemu:///system xml={{ lookup('template','domain.xml.j2') }}
+#  virt: command=define name={{ inventory_hostname_short }} uri=qemu:///system xml={{ lookup('template','domain.xml.j2') }}
 #  when: "{{ inventory_hostname_short not in virt_vms.list_vms and skip_install is defined and skip_install == true }}"
 #  with_items: groups[group]
 - name: create VM template

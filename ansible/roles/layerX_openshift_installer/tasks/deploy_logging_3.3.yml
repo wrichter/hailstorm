@@ -41,7 +41,7 @@
 
     - name: delete logging-deployer configmap
       shell: oc delete configmap logging-deployer -n logging
-      when: (configmap.stdout | from_yaml).data is defined
+      when: (configmap.stdout | from_yaml).data is defined
 
     - name: create logging-deployer configmap
       shell: >
@@ -59,13 +59,13 @@
       shell: oc version | awk '/^oc/{ print substr($2,2,5) }'
       register: version_tag
       changed_when: false
-    - debug: msg="{% if current_lifecycle_env.openshift_version >=3.4 %}v3.4{% else %}{{ version_tag.stdout }}{% endif %}"
+    - debug: msg="{% if current_lifecycle_env.openshift_version >=3.4 %}v3.4{% else %}{{ version_tag.stdout }}{% endif %}"
     - name:  deploy logging-deployer-template
       command: >
         oc new-app logging-deployer-template -n logging
         --param IMAGE_PREFIX=registry.access.redhat.com/openshift3/
         --param MODE=install
-        --param IMAGE_VERSION={% if current_lifecycle_env.openshift_version >= 3.4 %}v3.4{% else %}{{ version_tag.stdout }}{% endif %}
+        --param IMAGE_VERSION={% if current_lifecycle_env.openshift_version >= 3.4 %}v3.4{% else %}{{ version_tag.stdout }}{% endif %}
 
     - name: Wait for logging-deployer to complete
       shell: oc get pod -l "app=logging-deployer-template" -n logging

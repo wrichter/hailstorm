@@ -9,18 +9,18 @@
   changed_when: false
 
 - name: create activation keys for content_view
-  command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1.content_view }}" --lifecycle-environment {{ item.0 }} --name "{{ item.1.activation_key }}-{{ item.0 }}"
+  command: hammer activation-key create --organization "{{ organization }}" --content-view "{{ item.1.content_view }}" --lifecycle-environment {{ item.0 }} --name "{{ item.1.activation_key }}-{{ item.0 }}"
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ satellite_activation_keys_and_host_collections }}"
-  when: "'{{ item.1.activation_key }}-{{ item.0 }}' not in current_activation_keys.stdout"
+    - "{{ satellite_activation_keys_and_host_collections }}"
+  when: "'{{ item.1.activation_key }}-{{ item.0 }}' not in current_activation_keys.stdout"
 
 - name: associate activation keys to host collection
-  command: hammer activation-key add-host-collection --organization "{{ organization }}" --name "{{ item.1.activation_key }}-{{ item.0 }}" --host-collection "{{ item.1.host_collection }}"
+  command: hammer activation-key add-host-collection --organization "{{ organization }}" --name "{{ item.1.activation_key }}-{{ item.0 }}" --host-collection "{{ item.1.host_collection }}"
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ satellite_activation_keys_and_host_collections }}"
-  when: "'{{ item.1.activation_key }}-{{ item.0 }}' not in current_activation_keys.stdout"
+    - "{{ satellite_activation_keys_and_host_collections }}"
+  when: "'{{ item.1.activation_key }}-{{ item.0 }}' not in current_activation_keys.stdout"
 
 ### ADD SUBSCRIPTIONS TO AK
 
@@ -33,17 +33,17 @@
   shell: hammer --output json activation-key subscriptions {% if satellite_version==6.1 %}--name{% else %}--activation-key{% endif %} "{{ item.1.activation_key }}-{{ item.0 }}"  --organization "{{ organization }}"
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ satellite_activation_keys_and_host_collections }}"
+    - "{{ satellite_activation_keys_and_host_collections }}"
   register: assigned_subs
   changed_when: false
 
 # - debug: var=assigned_subs
-# - debug: msg="{{ lookup('template','missing_subscriptions.json.j2')  }}"
+# - debug: msg="{{ lookup('template','missing_subscriptions.json.j2')  }}"
 # - local_action: template src=missing_subscriptions.json.j2 dest=/tmp/test.txt
 
 - name: associate subscription to activation keys
   shell: hammer activation-key add-subscription --organization "{{ organization }}" --name "{{ item.activation_key }}" --subscription-id {{ item.subscription_id }}
-  with_items: "{{ lookup('template','missing_subscriptions.json.j2') }}"
+  with_items: "{{ lookup('template','missing_subscriptions.json.j2') }}"
 
 ### SET CONTENT_OVERRIDE
 
@@ -51,5 +51,5 @@
   command: hammer activation-key content-override --organization "{{ organization }}" --name "{{ item.1.activation_key }}-{{ item.0 }}" --content-label "{{ item.1.override }}" --value 1
   with_nested:
     - "{{ current_lifecycle_environments.stdout_lines }}"
-    - "{{ satellite_activation_keys_and_host_collections }}"
-  when: "'{{ item.1.activation_key }}-{{ item.0 }}' not in current_activation_keys.stdout"
+    - "{{ satellite_activation_keys_and_host_collections }}"
+  when: "'{{ item.1.activation_key }}-{{ item.0 }}' not in current_activation_keys.stdout"

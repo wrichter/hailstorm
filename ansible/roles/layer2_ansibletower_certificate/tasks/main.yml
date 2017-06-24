@@ -3,9 +3,9 @@
       copy: content="{{ item.value }}" dest="{{ item.name }}" mode="400"
       with_items:
         - name: /etc/tower/tower.key
-          value: "{{ ssl_key }}"
+          value: "{{ ssl_key }}"
         - name: /etc/tower/tower.cert
-          value: "{{ ssl_cert }}"
+          value: "{{ ssl_cert }}"
 
     - name: restart tower
       shell: ansible-tower-service restart

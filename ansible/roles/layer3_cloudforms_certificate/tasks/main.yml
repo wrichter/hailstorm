@@ -3,12 +3,12 @@
       copy: content="{{ item.value }}" dest="/var/www/miq/vmdb/certs/{{ item.name }}" mode="400"
       with_items:
         - name: cloudforms.key
-          value: "{{ ssl_key }}"
+          value: "{{ ssl_key }}"
         - name: cloudforms.crt
-          value: "{{ ssl_cert }}"
+          value: "{{ ssl_cert }}"
 
     - name: change httpd config
-      lineinfile: line="{{ item.line }}" regexp="{{ item.regexp }}" dest="/etc/httpd/conf.d/manageiq-https-application.conf"
+      lineinfile: line="{{ item.line }}" regexp="{{ item.regexp }}" dest="/etc/httpd/conf.d/manageiq-https-application.conf"
       with_items:
         - line: "SSLCertificateFile /var/www/miq/vmdb/certs/cloudforms.crt"
           regexp: "^SSLCertificateFile.*$"

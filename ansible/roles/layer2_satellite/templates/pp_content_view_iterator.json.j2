@@ -4,10 +4,10 @@
 {% for key,version in (result.stdout|from_json)['Versions'].iteritems() %}
 {% if needscomma|last %},{% endif %}
 {
-  "content_view":"{{ (result.stdout|from_json)['Name'] }}",
+  "content_view":"{{ (result.stdout|from_json)['Name'] }}",
   "content_view_id":"{{ (result.stdout|from_json)['ID'] }}",
   "version":"{{ version.Version }}",
-  "version_id":"{{ version.ID }}"
+  "version_id":"{{ version.ID }}"
 }
 {% if needscomma.append(true) %}{% endif %}{# this is a kludge but otherwise I cannot modify the variable outside of the inner loops' scope #}
 {% endfor %}

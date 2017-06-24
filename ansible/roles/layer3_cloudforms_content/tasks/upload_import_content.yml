@@ -4,21 +4,21 @@
     outer_item: "{{ item }}"
 
 - name: check if type is present
-  local_action: stat path={{ mktemp_directory.stdout }}/{{ item.type }}
+  local_action: stat path={{ mktemp_directory.stdout }}/{{ item.type }}
   register: stat_item
 - name: check if content directory has contents
-  local_action: find paths={{ mktemp_directory.stdout }}/{{ item.type }}
+  local_action: find paths={{ mktemp_directory.stdout }}/{{ item.type }}
   register: type_files
   when: stat_item.stat.exists
 - block:
     - name: remove tmp directory (removing old content)
-      file: name=/tmp/miq_import/{{ item.type }} state=absent
+      file: name=/tmp/miq_import/{{ item.type }} state=absent
 
     - name: create tmp directory
-      file: name=/tmp/miq_import/{{ item.type }} state=directory
+      file: name=/tmp/miq_import/{{ item.type }} state=directory
 
     - name: upload contents to CF
-      copy: src={{ mktemp_directory.stdout }}/{{ item.type }} dest=/tmp/miq_import
+      copy: src={{ mktemp_directory.stdout }}/{{ item.type }} dest=/tmp/miq_import
 
     - name: import contents
       shell: /usr/bin/miqimport {{ item.type }} /tmp/miq_import/{{ item.type }}
@@ -34,13 +34,13 @@
     # - debug: var=content_files
 
     - name: rename individual files / remove spaces
-      shell: mv "{{ item }}" "{{ item|regex_replace('\s','_') }}"
+      shell: mv "{{ item }}" "{{ item|regex_replace('\s','_') }}"
       when: not content_files|skipped and item|search('\s')
-      with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
+      with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
 
     - name: import contents (individual files)
-      shell: /usr/bin/miqimport {{ outer_item.type }} "{{ item|regex_replace('\s','_') }}"
-      with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
+      shell: /usr/bin/miqimport {{ outer_item.type }} "{{ item|regex_replace('\s','_') }}"
+      with_items: "{% if content_files.files is defined %}{{ content_files.files|map(attribute='path')|list }}{% else %}[]{% endif %}"
       register: import
       failed_when: "'aborted' in import.stderr"
       when: not content_files|skipped

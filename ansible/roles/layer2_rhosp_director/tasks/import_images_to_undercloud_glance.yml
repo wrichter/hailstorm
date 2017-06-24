@@ -32,7 +32,7 @@
 #     authorized_key: user=root key={{ layer1_ssh_pub_key.stdout }}
 #
 #   - name: copy rhosp images from layer1
-#     synchronize: mode=push src={{ layer1_binary_dir }}/{{ item }} dest=/tmp/{{ item }}
+#     synchronize: mode=push src={{ layer1_binary_dir }}/{{ item }} dest=/tmp/{{ item }}
 #     delegate_to: "{{ infrastructure_delegate_local_content_host }}"
 #     with_items: "{{ rhosp_images }}"
 #

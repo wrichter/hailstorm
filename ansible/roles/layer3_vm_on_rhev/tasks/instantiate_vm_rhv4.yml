@@ -16,9 +16,9 @@
       #   instance_name: "{{ inventory_hostname_short }}"
       #   password: "{{ root_password }}"
       #   resource_type: template
-      #   image: "{{ rhev_image }}"
+      #   image: "{{ rhev_image }}"
       # delegate_to: rhevm
-      command: ovirt-shell -E 'add vm --template-name {{ rhev_image }} --cluster-name Default --name {{ inventory_hostname_short }}'
+      command: ovirt-shell -E 'add vm --template-name {{ rhev_image }} --cluster-name Default --name {{ inventory_hostname_short }}'
       delegate_to: rhevm
       register: create_vm
 
@@ -47,35 +47,35 @@
     - debug: var=nicinfo.stdout
 
     - name: reconfigure improperly configured nics
-      shell: ovirt-shell -E 'update nic {{ item.dev }} --parent-vm-name {{ inventory_hostname_short }} --mac-address {{ item.mac }} --interface virtio --network-name {{ item.netname[0:10] }}'
+      shell: ovirt-shell -E 'update nic {{ item.dev }} --parent-vm-name {{ inventory_hostname_short }} --mac-address {{ item.mac }} --interface virtio --network-name {{ item.netname[0:10] }}'
       when: >
         (nicinfo.stdout|from_json|selectattr('name','match','^' + item.dev + '$')|list|length > 0) and
         (item.mac not in nicinfo.stdout|from_json|selectattr('name','match','^' + item.dev + '$')|map(attribute='mac')|list)
-      with_items: "{{ vm_nics }}"
+      with_items: "{{ vm_nics }}"
 
     - name: create missing nics  & attach it to VM
-      shell: ovirt-shell -E 'add nic --parent-vm-name {{ inventory_hostname_short }} --name {{ item.dev }} --mac-address {{ item.mac }} --interface virtio --network-name {{ item.netname[0:10] }}'
+      shell: ovirt-shell -E 'add nic --parent-vm-name {{ inventory_hostname_short }} --name {{ item.dev }} --mac-address {{ item.mac }} --interface virtio --network-name {{ item.netname[0:10] }}'
       when: (nicinfo.stdout|from_json|selectattr('name','match','^' + item.dev + '$')|list|length) == 0
-      with_items: "{{ vm_nics }}"
+      with_items: "{{ vm_nics }}"
 
     - name: create additional disks & attach it to VM
-      shell: ovirt-shell -E 'add disk --parent-vm-name {{ inventory_hostname_short }} --format cow --interface virtio --size {{ item }}'
-      with_items: "{{ vm_additional_disks|default([]) }}"
+      shell: ovirt-shell -E 'add disk --parent-vm-name {{ inventory_hostname_short }} --format cow --interface virtio --size {{ item }}'
+      with_items: "{{ vm_additional_disks|default([]) }}"
 
     - name: increase CFME VM memory
-      shell: ovirt-shell -E 'update vm {{ inventory_hostname_short }} --{{ item.param }} {{ item.value }}'
+      shell: ovirt-shell -E 'update vm {{ inventory_hostname_short }} --{{ item.param }} {{ item.value }}'
       with_items:
         - param: memory
-          value: "{{ mem|default(0)*1024*1024 }}"
+          value: "{{ mem|default(0)*1024*1024 }}"
         - param: memory_policy-guaranteed
-          value: "{{ mem|default(0)*1024*1024 }}"
+          value: "{{ mem|default(0)*1024*1024 }}"
       when: mem is defined
 
     - name: pause for rhevm to react
       pause: seconds=15
 
     - name: find VM Start URL
-      shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+      shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/ovirt-engine/api/vms" | \
              xmllint --xpath "//vm[name='{{ inventory_hostname_short }}']/actions/link[@rel='start']/@href" - | \
              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -84,7 +84,7 @@
       changed_when: false
     - name: start VM with cloud-init
       command: >
-        curl -v -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }}
+        curl -v -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }}
              -d '{{ lookup('template','start_action.xml.j2') | trim }}'
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ cloudforms_vm_start_url.stdout }}"
       #format explained here: http://www.ovirt.org/develop/api/rest-api/rest-api/ and here: https://github.com/oVirt/ovirt-engine/blob/3c7527401a0778a1e06203da932fda6fa4e72b2a/backend/manager/modules/restapi/interface/definition/src/main/resources/v3/api.xsd
@@ -93,7 +93,7 @@
   delegate_to: rhevm
 
 - name: wait for VM to become avialable
-  wait_for: host={{ ansible_host }} port=22 timeout=600
+  wait_for: host={{ ansible_host }} port=22 timeout=600
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
   when: vm_id.stdout == ""
 

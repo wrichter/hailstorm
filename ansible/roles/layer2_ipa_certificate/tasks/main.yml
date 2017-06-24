@@ -1,6 +1,6 @@
 - block:
     - name: check host exists in IPA DB
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ item }} | awk '/Host name:/{ print $3 }'
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-find {{ item }} | awk '/Host name:/{ print $3 }'
       changed_when: false
       failed_when: false
       with_items: "['{{ certcn|default(hostname) }}']{% if cert_san is defined %}+{{ cert_san }}{% endif %}"
@@ -12,14 +12,14 @@
       with_items: "{{ existing_host.results }}"
 
     - name: get principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find {{ service|default('HTTP') }}/{{ item.item }} | grep {{ item.item }}
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-find {{ service|default('HTTP') }}/{{ item.item }} | grep {{ item.item }}
       register: existing_principal
       changed_when: false
       failed_when: false
       with_items: "{{ existing_host.results }}"
 
     - name: create principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service|default('HTTP') }}/{{ item.item.item }}
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service|default('HTTP') }}/{{ item.item.item }}
       when: item.stdout == ""
       with_items: "{{ existing_principal.results }}"
 
@@ -30,7 +30,7 @@
     #   shell: cd ~/certificates && certutil -N -d . --empty-password  creates=~/certificates/cert8.db
     #
     # - name: check IPA CA CERT
-    #   shell: cd ~/certificates && certutil -L -d . | grep "{{ hailstorm_dns_domain|upper }} IPA CA"
+    #   shell: cd ~/certificates && certutil -L -d . | grep "{{ hailstorm_dns_domain|upper }} IPA CA"
     #   register: ipa_ca_cert
     #   failed_when: false
     #   changed_when: false
@@ -38,7 +38,7 @@
     # - name: add IPA CA CERT
     #   shell: >
     #     cd ~/certificates &&
-    #     certutil -A -d . -n '{{ hailstorm_dns_domain|upper }} IPA CA' -t CT,, -a < /etc/ipa/ca.crt
+    #     certutil -A -d . -n '{{ hailstorm_dns_domain|upper }} IPA CA' -t CT,, -a < /etc/ipa/ca.crt
     #   when: ipa_ca_cert.stdout == ""
     #
     # - name: create CSR
@@ -63,7 +63,7 @@
             cd ~/certificates &&
             echo "{{ hostvars['ipa'].ipa_admin_password }}" |
             kinit admin 1>/dev/null &&
-            ipa cert-request {% if wildcard is defined and wildcard %}--profile wildcard{% endif %} --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
+            ipa cert-request {% if wildcard is defined and wildcard %}--profile wildcard{% endif %} --principal={{ service|default('HTTP') }}/{{ certcn|default(hostname) }} {{ certcn|default(hostname) }}.csr
       when: openssl_conf|changed
 
     - name: retrieve last issued cert in PEM format
@@ -73,19 +73,19 @@
         kinit admin 1>/dev/null &&
         ipa cert-show $(ipa cert-find --subject={{ certcn|default(hostname) }} | awk '/Serial number:/ { serial=$3 } END { print serial }') --raw |
         awk 'BEGIN { print "-----BEGIN CERTIFICATE-----" } /^  certificate: / { line = $2 } !/^  certificate: / { line=$1 } /^  serial|^  owner:/ { line="" } { if (line!="") print line } END { print "-----END CERTIFICATE-----" }'
-        > {{ certcn|default(hostname) }}.crt creates=~/certificates/{{ certcn|default(hostname) }}.crt
+        > {{ certcn|default(hostname) }}.crt creates=~/certificates/{{ certcn|default(hostname) }}.crt
 
     - name: get cert + key
       shell: cat {{ item }}
       with_items:
-        - "~/certificates/{{ certcn|default(hostname) }}.crt"
-        - "~/certificates/{{ certcn|default(hostname) }}.key"
+        - "~/certificates/{{ certcn|default(hostname) }}.crt"
+        - "~/certificates/{{ certcn|default(hostname) }}.key"
         - "/etc/ipa/ca.crt"
-        - "~/certificates/{{ certcn|default(hostname) }}.csr"
+        - "~/certificates/{{ certcn|default(hostname) }}.csr"
       register: keydata
       changed_when: false
 
     - name: set cert + key as facts
-      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[2].stdout }}","{{ factprefix|default('ssl') }}_certreq":"{{ keydata.results[3].stdout }}"}
+      set_fact: {"{{ factprefix|default('ssl') }}_cert":"{{ keydata.results[0].stdout }}","{{ factprefix|default('ssl') }}_key":"{{ keydata.results[1].stdout }}","{{ factprefix|default('ssl') }}_cacert":"{{ keydata.results[2].stdout }}","{{ factprefix|default('ssl') }}_certreq":"{{ keydata.results[3].stdout }}"}
   when: mode=="create"
   delegate_to: ipa

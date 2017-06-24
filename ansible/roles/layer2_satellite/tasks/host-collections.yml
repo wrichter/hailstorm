@@ -7,4 +7,4 @@
 - name: create host collections
   command: hammer host-collection create --organization "Default Organization" --name {{ item }}
   when: "item not in host_collections.stdout"
-  with_items: "{{ satellite_activation_keys_and_host_collections | map(attribute='host_collection') | list | unique }}"
+  with_items: "{{ satellite_activation_keys_and_host_collections | map(attribute='host_collection') | list | unique }}"

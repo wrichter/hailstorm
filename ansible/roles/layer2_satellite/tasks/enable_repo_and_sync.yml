@@ -1,15 +1,15 @@
 # - name: find enabled products
-#   shell: hammer product list --enabled true --organization "{{ organization }}" | tail -n+3 | awk 'BEGIN { FS = "|" } ; { gsub(/^[ \t]+/, "", $2); gsub(/[ \t]+$/, "", $2); print $2 }'
+#   shell: hammer product list --enabled true --organization "{{ organization }}" | tail -n+3 | awk 'BEGIN { FS = "|" } ; { gsub(/^[ \t]+/, "", $2); gsub(/[ \t]+$/, "", $2); print $2 }'
 #   register: prods
 #   changed_when: false
 
 - name: find enabled repositories
-  shell: hammer --output json repository list --organization "{{ organization }}"
+  shell: hammer --output json repository list --organization "{{ organization }}"
   register: enabled_repositories
   changed_when: false
 
 - name: enable repos
-  command: 'hammer repository-set enable --organization "{{ organization }}" --product "{{ item.0.product }}" --basearch="{{ item.0.basearch }}" --name "{{ item.1.name }}"{% if item.1.releasever is defined %} --releasever "{{ item.1.releasever }}"{% endif %}'
+  command: 'hammer repository-set enable --organization "{{ organization }}" --product "{{ item.0.product }}" --basearch="{{ item.0.basearch }}" --name "{{ item.1.name }}"{% if item.1.releasever is defined %} --releasever "{{ item.1.releasever }}"{% endif %}'
   #when: (republish is defined and republish) or item.0.product not in prods.stdout_lines
   when: (enabled_repositories.stdout|from_json)|selectattr('Product','match','^' + item.0.product + '$')|selectattr('Name','match','^' + item.1.name)|list|length == 0
   with_subelements:
@@ -19,5 +19,5 @@
   #ignore_errors: yes
 
 - name: start sync tasks for RHEL repos
-  command: 'hammer product synchronize --async --organization "{{ organization }}" --name "{{ item.product }}"'
+  command: 'hammer product synchronize --async --organization "{{ organization }}" --name "{{ item.product }}"'
   with_items: "{{ satellite_product_config }}"

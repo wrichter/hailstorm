@@ -15,6 +15,6 @@ spec:
   - ReadOnlyMany
   nfs:
     path: {{ nfs_ose3_pv_path }}/{{ item }}
-    server: {{ infrastructure_address_nfs_server }}
+    server: {{ infrastructure_address_nfs_server }}
   persistentVolumeReclaimPolicy: Recycle
 EOF

@@ -16,7 +16,7 @@
   changed_when: false
 
 - name: add users to IPA
-  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa user-add {{ item.username }} --first="{{ item.first }}" --last="{{ item.last }}"'
+  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa user-add {{ item.username }} --first="{{ item.first }}" --last="{{ item.last }}"'
   when: item.username not in users.stdout_lines
   with_items: "{{ ipa_user }}"
 
@@ -26,7 +26,7 @@
   with_items: "{{ ipa_user }}"
 
 - name: login as user and change password
-  shell: "echo -e 'dummy4711\n{{ item.password }}\n{{ item.password }}' | kinit {{ item.username }}"
+  shell: "echo -e 'dummy4711\n{{ item.password }}\n{{ item.password }}' | kinit {{ item.username }}"
   when: item.username not in users.stdout_lines and item.password is defined
   with_items: "{{ ipa_user }}"
 
@@ -40,9 +40,9 @@
       shell:
         ldapsearch
         -h localhost
-        -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
-        -w {{ root_password }}
-        -b cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
+        -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
+        -w {{ root_password }}
+        -b cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
         uid=admin objectClass |
         awk '/^objectClass/ { print $2 }'
       register: objectClasses
@@ -52,7 +52,7 @@
       template: src=admin_inetOrgPerson.ldif.j2 dest=/tmp/admin_inetOrgPerson.ldif
       when: "'inetOrgPerson' not in objectClasses.stdout_lines"
     - name: add inetOrgPerson to admin account
-      shell: ldapmodify -x -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }} -w {{ root_password }} -f /tmp/admin_inetOrgPerson.ldif
+      shell: ldapmodify -x -D uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }} -w {{ root_password }} -f /tmp/admin_inetOrgPerson.ldif
       when: "'inetOrgPerson' not in objectClasses.stdout_lines"
     # - name: give IPA 30 seconds pause (otherwise the next step fails)
     #   pause: seconds=30

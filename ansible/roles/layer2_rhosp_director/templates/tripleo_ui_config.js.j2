@@ -1,9 +1,9 @@
 window.tripleOUiConfig = {
   "keystone": "https://{{ hostname }}:13000/v2.0",
-  "heat": "https://{{ hostname }}:13004/v1/{{ (tenant.stdout|from_json).id }}",
+  "heat": "https://{{ hostname }}:13004/v1/{{ (tenant.stdout|from_json).id }}",
   "ironic": "https://{{ hostname }}:13385",
   "mistral": "https://{{ hostname }}:13989/v2",
-  "swift": "https://{{ hostname }}:13808/v1/AUTH_{{ (tenant.stdout|from_json).id }}",
+  "swift": "https://{{ hostname }}:13808/v1/AUTH_{{ (tenant.stdout|from_json).id }}",
   "zaqar-websocket": "wss://{{ hostname }}:9000",
   "zaqar_default_queue": "tripleo"
 };

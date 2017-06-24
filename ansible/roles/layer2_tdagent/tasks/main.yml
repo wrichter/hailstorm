@@ -15,7 +15,7 @@
       register: configs
 
     - name: enable tdagent to access log files
-      file: mode={{ item.1.mode }} path={{ item.1.path}}
+      file: mode={{ item.1.mode }} path={{ item.1.path}}
       with_subelements:
         -  "{% if tdagent_configs is defined %}{{ tdagent_configs }}{% endif %}"
         - "permissions"

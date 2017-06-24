@@ -1,5 +1,5 @@
 {
-  "name": "{{ groupname }}",
-  "description": "Hailstorm {{ groupname }}",
+  "name": "{{ groupname }}",
+  "description": "Hailstorm {{ groupname }}",
   "variables": "{% if jumphost is defined%}ansible_ssh_common_args: -o ProxyCommand='ssh -o StrictHostKeyChecking=no -i /etc/ansible/{{ hailstorm_ssh_priv_key_file }} -W %h:%p -q root@{{ jumphost }}' -o StrictHostKeyChecking=no{% endif %}"
 }

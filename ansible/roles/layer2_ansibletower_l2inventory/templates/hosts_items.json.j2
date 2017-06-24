@@ -2,12 +2,12 @@
 {% for host in groups['layer2'] %}
 {% if needscomma|last %},{% endif %}
 {
-  "name":"{{ host }}",
+  "name":"{{ host }}",
   "body": {
-      "name": "{{ host }}",
+      "name": "{{ host }}",
       "description": "",
       "enabled": true,
-      "variables": "{% if hostvars[host].ansible_host is defined %}ansible_host: {{ hostvars[host].ansible_host }}{% endif %}"
+      "variables": "{% if hostvars[host].ansible_host is defined %}ansible_host: {{ hostvars[host].ansible_host }}{% endif %}"
   },
   "post_to_related": {
     "bodies": []

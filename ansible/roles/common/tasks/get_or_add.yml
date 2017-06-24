@@ -8,7 +8,7 @@
     url: "https://localhost/{{ url }}?page_size=100"
     method: "GET"
     user: "admin"
-    password: "{{ root_password }}"
+    password: "{{ root_password }}"
     validate_certs: no
   register: resource
 
@@ -20,17 +20,17 @@
     url: "https://localhost/{{ url }}"
     method: "POST"
     user: "admin"
-    password: "{{ root_password }}"
+    password: "{{ root_password }}"
     validate_certs: no
     body_format: json
-    body: "{{ body }}"
+    body: "{{ body }}"
     status_code: 201
   when: resource.json.results|selectattr('name','match','^' + name + '$')|list|length == 0
   register: resource2
   changed_when: true
 
-# - debug: msg={{ (resource.json.results + resource2|skipped|ternary([],[resource2.json])) }}
-# - debug: msg={{ (resource.json.results + resource2|skipped|ternary([],[resource2.json]))|selectattr('name','match','^' + name + '$')|list }}
+# - debug: msg={{ (resource.json.results + resource2|skipped|ternary([],[resource2.json])) }}
+# - debug: msg={{ (resource.json.results + resource2|skipped|ternary([],[resource2.json]))|selectattr('name','match','^' + name + '$')|list }}
 - set_fact:
-    "{{ var }}": "{{ ( (resource.json.results + resource2|skipped|ternary([],[resource2.json]))|selectattr('name','match','^' + name + '$')|list) [0] }}"
+    "{{ var }}": "{{ ( (resource.json.results + resource2|skipped|ternary([],[resource2.json]))|selectattr('name','match','^' + name + '$')|list) [0] }}"
   when: var is defined

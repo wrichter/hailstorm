@@ -91,7 +91,7 @@
         . ~/overcloudrc_v3 &&
         openstack endpoint list --service keystone --interface {{ item }} --column URL -f value |
         sed s/v2.0/v3/g |
-        xargs openstack endpoint create --region regionOne keystonev3 {{ item }}
+        xargs openstack endpoint create --region regionOne keystonev3 {{ item }}
       when: item not in keystonev3_endpoints.stdout_lines
       with_items:
         - admin

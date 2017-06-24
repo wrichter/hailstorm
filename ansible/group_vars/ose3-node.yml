@@ -1,6 +1,6 @@
 ---
-mem: "{{ layer2_ose3node_mem }}"
-vcpu: "{{ layer2_ose3node_cpu }}"
+mem: "{{ layer2_ose3node_mem }}"
+vcpu: "{{ layer2_ose3node_cpu }}"
 
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
@@ -21,15 +21,15 @@ disk:
       mountpoint: swap
       size: 2048
     - name: root
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /
       size: 5120
     - name: home
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
     - name: var
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /var
       size: 15360
 

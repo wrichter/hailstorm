@@ -23,6 +23,6 @@ server=https://{{ item }}.{{ hailstorm_dns_domain }}:443
 username=admin@internal
 password={{ root_password }}
 #encryped_password=
-owner={{ hostvars['satellite'].organization_id }}
+owner={{ hostvars['satellite'].organization_id }}
 env=production
 hypervisor_id=hostname

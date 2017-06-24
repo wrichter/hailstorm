@@ -42,7 +42,7 @@
       when: ipaprops|changed or ipaauthz|changed or ipaauthn|changed
 
     - name: wait for rhev web ui to become available
-      wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600
+      wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600
   when: ldap_keystore.stat.exists == False
 
 - name: initialize LDAP auth plugin by performing query

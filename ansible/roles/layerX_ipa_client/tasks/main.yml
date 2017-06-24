@@ -11,8 +11,8 @@
     - name: install IPA client
       shell: >
         ipa-client-install
-        --hostname={{ hostname }}
-        --server={{ hostvars['ipa'].hostname }}
+        --hostname={{ hostname }}
+        --server={{ hostvars['ipa'].hostname }}
         --domain={{ hailstorm_dns_domain }}
         --principal=admin
         --no-ntp

@@ -7,4 +7,4 @@
     - name: create internal snapshot
       command: virsh snapshot-create-as "{{ inventory_hostname_short }}" "{{ snapshot_name | default('') }}" --atomic
       when: virt_vms.stdout == name
-  delegate_to: "{{ infrastructure_delegate_kvm_host }}"
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"

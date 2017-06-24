@@ -1,6 +1,6 @@
 ---
-mem: "{{ layer2_devclient_mem }}"
-vcpu: "{{ layer2_devclient_cpu }}"
+mem: "{{ layer2_devclient_mem }}"
+vcpu: "{{ layer2_devclient_cpu }}"
 
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
@@ -21,11 +21,11 @@ disk:
       mountpoint: swap
       size: 2048
     - name: root
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /
       size: 10000
     - name: home
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
 
@@ -35,7 +35,7 @@ scl_packages:
   - rh-nodejs4
 
 repos: "{{ ose3_repos|select|list + ['rhel-server-rhscl-7-rpms'] }}"
-packages: "bzip2,git,bash-completion,atomic-openshift-clients,ipa-client,java-1.8.0-openjdk-devel,{{ scl_packages | join(',') }}"
+packages: "bzip2,git,bash-completion,atomic-openshift-clients,ipa-client,java-1.8.0-openjdk-devel,{{ scl_packages | join(',') }}"
 pool_regex: "{{ ose_subscription_pool_regex }}"
 
 redhat_msa_project: helloworld-msa

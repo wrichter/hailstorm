@@ -1,6 +1,6 @@
 {
-    "name": "{{ item }}",
+    "name": "{{ item }}",
     "description": "",
     "enabled": true,
-    "variables": "{% if hostvars[item].ansible_host is defined %}ansible_host: {{ hostvars[item].ansible_host }}{% endif %}"
+    "variables": "{% if hostvars[item].ansible_host is defined %}ansible_host: {{ hostvars[item].ansible_host }}{% endif %}"
 }

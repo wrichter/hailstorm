@@ -6,4 +6,4 @@
 - name: create lifecycle environments
   command: hammer lifecycle-environment create --organization "{{ organization }}" --description "{{ item.description}}" --name "{{ item.name }}" --label "{{ item.label }}" --prior "{{ item.prior }}"
   when: "'{{ item.name }}' not in current_lifecycle.stdout_lines"
-  with_items: "{{ lifecycle_environments }}"
+  with_items: "{{ lifecycle_environments }}"

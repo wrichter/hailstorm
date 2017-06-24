@@ -1,8 +1,8 @@
 - name: check if openstack is reachable
-  shell: curl -k {% if current_lifecycle_env.osp_use_tls %}https{% else %}http{% endif %}://{{ hostvars['openstack'].vm_nics[0].ip }}/ || true
+  shell: curl -k {% if current_lifecycle_env.osp_use_tls %}https{% else %}http{% endif %}://{{ hostvars['openstack'].vm_nics[0].ip }}/ || true
   register: openstack_response
   changed_when: false
-  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
 
 - block:
     - block:
@@ -13,7 +13,7 @@
     - block:
        - include: set_floating_ip_as_fact.yml
        - name: wait for vm to become available
-         local_action: wait_for host={{ ansible_host }} port=22 timeout=600
+         local_action: wait_for host={{ ansible_host }} port=22 timeout=600
          when: vm_exists
        - name: wait for subscription to finish
          shell: subscription-manager status | awk '/^Overall Status/{ print $3 }'

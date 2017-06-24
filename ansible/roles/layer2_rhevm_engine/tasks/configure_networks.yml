@@ -17,7 +17,7 @@
   failed_when: false
   changed_when: false
   register: networks
-  with_items: "{{ hostvars['rhevh1'].vm_nics }}"
+  with_items: "{{ hostvars['rhevh1'].vm_nics }}"
 - name: create networks in Default DC
   shell: "{{ ovirt_shell_command }} -E 'add network --name {{ item.item.netname[0:10] }} --datacenter-name Default' | awk '/^id/ { print $3 }'"
   when: item.stdout == ""
@@ -26,6 +26,6 @@
   register: network_ids
 
 - name: assign network to Default cluster
-  shell: "{{ ovirt_shell_command }} -E 'add network --name {{ item.item.item.netname[0:10] }} --parent-cluster-name Default'"
+  shell: "{{ ovirt_shell_command }} -E 'add network --name {{ item.item.item.netname[0:10] }} --parent-cluster-name Default'"
   when: item.item.stdout == ""
   with_items: "{{ network_ids.results }}"

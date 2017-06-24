@@ -10,21 +10,21 @@
       vars:
         url: "/api/v1/inventories/"
         name: "{{ inventoryname }}"
-        body: "{{ lookup('template','inventory.json.j2') }}"
+        body: "{{ lookup('template','inventory.json.j2') }}"
         var: "inventory"
 
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "/api/v1/credentials/"
         name: "{{ groupname }}"
-        body: "{{ lookup('template','cloud_credential.json.j2') }}"
+        body: "{{ lookup('template','cloud_credential.json.j2') }}"
         var: "credential"
 
     - include: roles/common/tasks/get_or_add.yml
       vars:
         url: "{{ inventory.related.groups }}"
-        name: "{{ groupname }}"
-        body: "{{ lookup('template','groups.json.j2') }}"
+        name: "{{ groupname }}"
+        body: "{{ lookup('template','groups.json.j2') }}"
         var: "group"
 
     - name: get inventory source
@@ -32,7 +32,7 @@
         url: "https://localhost/{{ group.related.inventory_source }}"
         method: "GET"
         user: "admin"
-        password: "{{ root_password }}"
+        password: "{{ root_password }}"
         validate_certs: no
       register: inventory_source
 
@@ -41,10 +41,10 @@
         url: "https://localhost{{ group.related.inventory_source }}"
         method: "PATCH"
         user: "admin"
-        password: "{{ root_password }}"
+        password: "{{ root_password }}"
         validate_certs: no
         body_format: json
-        body: "{{ lookup('template','inventory_source.json.j2') }}"
+        body: "{{ lookup('template','inventory_source.json.j2') }}"
       changed_when: true
       when: inventory_source.json.credential != credential.id
 
@@ -52,7 +52,7 @@
       vars:
         url: "/api/v1/credentials/"
         name: "{{ credentialname }}"
-        body: "{{ lookup('template','machine_credential.json.j2') }}"
+        body: "{{ lookup('template','machine_credential.json.j2') }}"
         var: "credential"
 
     - name: copy hailstorm privkey is available on tower host

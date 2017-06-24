@@ -5,7 +5,7 @@
   register: storagedomains
   changed_when: false
 
-#- debug: msg="{{ storagedomains.stdout }}"
+#- debug: msg="{{ storagedomains.stdout }}"
 
 - name: wait for a rhevh host which is up
   shell: "{{ ovirt_shell_command }} -E 'list hosts --show-all' | awk '/^name/ {name=$3} /^status-state\\W*: up$/ {print name}'"
@@ -16,11 +16,11 @@
   until: rhevh_up.stdout != ''
 
 - name: add NFS storage domain
-  shell: "{{ ovirt_shell_command }} -E 'add storagedomain --host-name {{ rhevh_up.stdout_lines|first }} --type {{ item.type }} --storage-type nfs --storage-address {{ infrastructure_address_nfs_server }} --storage-path {{ item.path }} --name {{ item.domainname }}'"
+  shell: "{{ ovirt_shell_command }} -E 'add storagedomain --host-name {{ rhevh_up.stdout_lines|first }} --type {{ item.type }} --storage-type nfs --storage-address {{ infrastructure_address_nfs_server }} --storage-path {{ item.path }} --name {{ item.domainname }}'"
   when: item.domainname not in storagedomains.stdout|from_json|map(attribute="name")|list
-  with_items: "{{ rhev_storage_domains }}"
+  with_items: "{{ rhev_storage_domains }}"
 
 - name: attach storage domain to data center
   shell: "{{ ovirt_shell_command }} -E 'add storagedomain --parent-datacenter-name Default --name {{ item.domainname }}'"
   when: item.domainname not in storagedomains.stdout|from_json|map(attribute="name")|list or storagedomains.stdout|from_json|selectattr('name','match','^' + item.domainname + '$')|map(attribute="status")|first == "unattached"
-  with_items: "{{ rhev_storage_domains }}"
+  with_items: "{{ rhev_storage_domains }}"

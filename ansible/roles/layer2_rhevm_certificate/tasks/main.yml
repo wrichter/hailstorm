@@ -1,3 +1,3 @@
 - block:
-    - include: apache_cert_rhv{{ current_lifecycle_env.rhv_version }}.yml
+    - include: apache_cert_rhv{{ current_lifecycle_env.rhv_version }}.yml
   when: mode=="create"

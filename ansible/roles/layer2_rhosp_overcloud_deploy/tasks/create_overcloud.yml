@@ -49,7 +49,7 @@
     - name: deploy overcloud (even more coffee!)
       shell: >
         . ~/stackrc &&
-        {{ lookup('template','deploy-overcloud.j2') }} 2>&1 >~/deploy_overcloud.log
+        {{ lookup('template','deploy-overcloud.j2') }} 2>&1 >~/deploy_overcloud.log
       tags: ['deploy']
     #   async: 7200
     #   poll: 0
@@ -69,10 +69,10 @@
 - name: wait for stack creation to complete
   shell: . ~/stackrc && openstack stack list -f json
   register: stacklist
-  until: "'IN_PROGRESS' not in ( stacklist.stdout | from_json )[0]['Stack Status']"
+  until: "'IN_PROGRESS' not in ( stacklist.stdout | from_json )[0]['Stack Status']"
   retries: 720
   delay: 60
   become: yes
   become_user: "{{ rhosp_stack_user }}"
-  failed_when: "'FAILED' in ( stacklist.stdout | from_json )[0]['Stack Status']"
+  failed_when: "'FAILED' in ( stacklist.stdout | from_json )[0]['Stack Status']"
   changed_when: false

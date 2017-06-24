@@ -1,9 +1,9 @@
 - name: read instance data
   shell: >
     . ~/overcloudrc_v3_hailstorm &&
-    OS_TENANT_NAME={{ osp_tenant }}
+    OS_TENANT_NAME={{ osp_tenant }}
     OS_PASSWORD={{ root_password }}
-    openstack server list -f json --name {{ inventory_hostname_short }}
+    openstack server list -f json --name {{ inventory_hostname_short }}
   register: instance_data
   failed_when: instance_data.stdout == ""
   changed_when: false
@@ -13,7 +13,7 @@
 
 - name: save vm existence as fact
   set_fact:
-    vm_exists: "{{ instance_data.stdout|from_json|list|length > 0 }}"
+    vm_exists: "{{ instance_data.stdout|from_json|list|length > 0 }}"
 
 - name: save floating IP as fact ansible_host
   set_fact:

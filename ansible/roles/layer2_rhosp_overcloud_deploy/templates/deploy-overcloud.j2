@@ -9,8 +9,8 @@ openstack overcloud deploy \
 --control-flavor control \
 --compute-flavor compute \
 {% endif %}
---control-scale {{ groups['rhosp-control']|length }} \
---compute-scale {{ groups['rhosp-compute']|length - 1 }} \
+--control-scale {{ groups['rhosp-control']|length }} \
+--compute-scale {{ groups['rhosp-compute']|length - 1 }} \
 --neutron-tunnel-types vxlan \
 --neutron-network-type vxlan \
 {% endif %}{# for OSP>=10, the params are in the commandlineparams-environment.yaml #}

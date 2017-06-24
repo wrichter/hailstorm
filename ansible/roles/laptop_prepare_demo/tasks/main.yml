@@ -1,6 +1,6 @@
 - block:
     - name: log in to openshift
-      shell: oc login --insecure-skip-tls-verify https://{{ openshift_master_api_host_and_port }} --username=developer --password={{ root_password }}
+      shell: oc login --insecure-skip-tls-verify https://{{ openshift_master_api_host_and_port }} --username=developer --password={{ root_password }}
       tags: ['login']
     - name: get git route
       shell:  oc get route -n devops-tools git | awk '/^git/ { print $2 }'

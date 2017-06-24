@@ -1,6 +1,6 @@
 
 # - name: get host nics link
-#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
 #          xmllint --xpath "//host[name='{{ hostname }}']/link[@rel='nics']/@href" - | \
 #          awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -10,7 +10,7 @@
 #
 # #curl -u admin@internal:redhat01 -k https://192.168.103.10/api/hosts/a79a3bfe-2a62-4531-9120-9e957543bd13/nics | xmllint --xpath "//host_nic[not(network)]" -
 # - name: find out which nics have not yet been assigned
-#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #         "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ host_nics_url.stdout }}" | \
 #         xmllint --xpath "//host_nic[not(network)]/name/text()" - || true
 #   register: unassigned_nic
@@ -20,7 +20,7 @@
 #
 # - block:
 #     - name: get network ids
-#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/networks" | \
 #              xmllint --xpath "//networks/network[name='{{ item.netname[0:10] }}']/@id" - | \
 #              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -37,7 +37,7 @@
 #       # for some odd reason the first attempt for the default NW fails...hence doing it twice and ignoring the error
 #
 #     - name: get networkattachment links
-#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ host_nics_url.stdout }}" | \
 #              xmllint --xpath "//host_nics/host_nic[name='{{ item.item.dev }}']/link[@rel='networkattachments']/@href" - | \
 #              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -48,7 +48,7 @@
 #       when: not item|skipped
 #
 #     - name: get deactivate host link
-#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
 #              xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='deactivate']/@href" - | \
 #              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -56,13 +56,13 @@
 #       failed_when: deactivate_url.stdout == ''
 #       register: deactivate_url
 #     - name: set host into maintenance mode (deactivate host)
-#       shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              -d '<action />'
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ deactivate_url.stdout }}"
 #       failed_when: false
 #
 #     - name: attach nics to networks
-#       shell: curl -v -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -v -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              -d '{{ lookup('template','nic_network_attachment.xml.j2') }}'
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ item.stdout }}"
 #       with_items: "{{ networkattachment_url.results }}"
@@ -72,7 +72,7 @@
 #     - debug: var=nic_attachment
 #
 #     - name: get activate host link
-#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/hosts" | \
 #              xmllint --xpath "//host[name='{{ hostname }}']/actions/link[@rel='activate']/@href" - | \
 #              awk 'match($0, /.*="(.*)"/, m) { print m[1]  }'
@@ -80,7 +80,7 @@
 #       failed_when: activate_url.stdout == ''
 #       register: activate_url
 #     - name: set host into active mode (activate host)
-#       shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#       shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #              -d '<action />'
 #              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ activate_url.stdout }}"
 #   when: unassigned_nic.stdout != ''
@@ -89,25 +89,25 @@
 - name: find out which nics have not yet been assigned
 #rhevm-shell -E 'list nics --parent-host-name rhevh1.hailstorm2.coe.muc.redhat.com --show-all'
 # show nic --parent-host-name rhevh1.hailstorm2.coe.muc.redhat.com eth0
-  shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'show nic --parent-host-name {{ hostname }} {{ item.dev }}' | awk '/^network-id/ { print $3 }'"
+  shell: "{% if current_lifecycle_env.rhv_version == 4 %}ovirt-shell{% else %}rhevm-shell{% endif %} -E 'show nic --parent-host-name {{ hostname }} {{ item.dev }}' | awk '/^network-id/ { print $3 }'"
   delegate_to: rhevm
   register: unassigned_nic
   changed_when: false
-  with_items: "{{ vm_nics }}"
+  with_items: "{{ vm_nics }}"
 
 
 # - name: deactivate host
 
 - name: assign nic to network (RHEV 3.6)
-  shell: rhevm-shell -E 'action nic {{ item.item.dev }} attach --parent-host-name {{ hostname }} --network-name {{ item.item.netname[0:10] }}'
+  shell: rhevm-shell -E 'action nic {{ item.item.dev }} attach --parent-host-name {{ hostname }} --network-name {{ item.item.netname[0:10] }}'
   when: item.stdout == "" and current_lifecycle_env.rhv_version == 3
-  with_items: "{{ unassigned_nic.results }}"
+  with_items: "{{ unassigned_nic.results }}"
   delegate_to: rhevm
 
 - name: assign nic to network (RHEV 4.x)
-  shell: ovirt-shell -E 'add networkattachment --parent-host-name {{ hostname }} --host_nic-name {{ item.item.dev }} --network-name {{ item.item.netname[0:10] }} --ip_address_assignments-ip_address_assignment "ip_address_assignment.ip.address={{ item.item.ip }},ip_address_assignment.assignment_method.ip.netmask={{ item.item.netmask }},ip_address_assignment.assignment_method.ip.gateway={{ item.item.default_gw }},ip_address_assignment.assignment_method=static"'
+  shell: ovirt-shell -E 'add networkattachment --parent-host-name {{ hostname }} --host_nic-name {{ item.item.dev }} --network-name {{ item.item.netname[0:10] }} --ip_address_assignments-ip_address_assignment "ip_address_assignment.ip.address={{ item.item.ip }},ip_address_assignment.assignment_method.ip.netmask={{ item.item.netmask }},ip_address_assignment.assignment_method.ip.gateway={{ item.item.default_gw }},ip_address_assignment.assignment_method=static"'
   when: item.stdout == "" and current_lifecycle_env.rhv_version == 4
-  with_items: "{{ unassigned_nic.results }}"
+  with_items: "{{ unassigned_nic.results }}"
   delegate_to: rhevm
 
 - name: commit nic config

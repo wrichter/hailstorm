@@ -12,9 +12,9 @@
       changed_when: false
 
     - name: adjust cert profile policy
-      lineinfile: line={{ item.line }} regexp={{ item.regexp }} dest="/tmp/wildcard.cfg"
+      lineinfile: line={{ item.line }} regexp={{ item.regexp }} dest="/tmp/wildcard.cfg"
       with_items:
-        - line: "policyset.serverCertSet.1.default.params.name=CN=*.$request.req_subject_name.cn$, O={{ hailstorm_dns_domain|upper }}"
+        - line: "policyset.serverCertSet.1.default.params.name=CN=*.$request.req_subject_name.cn$, O={{ hailstorm_dns_domain|upper }}"
           regexp: "policyset.serverCertSet.1.default.params.name=CN.*"
         - line: "profileId=wildcard"
           regexp: "profileId=caIPAserviceCert"
@@ -37,7 +37,7 @@
     - name: ipa caacl-add-profile wildcard-hosts --certprofiles wildcard
       shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-profile wildcard-hosts --certprofiles wildcard
     - name: ipa host-add apps.hailstorm1.coe.muc.redhat.com
-      shell: echo {{ ipa_admin_password }} | kinit admin && ipa host-add apps.{{ hailstorm_dns_domain }}
+      shell: echo {{ ipa_admin_password }} | kinit admin && ipa host-add apps.{{ hailstorm_dns_domain }}
     - name: ipa caacl-add-host wildcard-hosts --hosts apps....
       shell: echo {{ ipa_admin_password }} | kinit admin && ipa caacl-add-host wildcard-hosts --hosts {{ ocp_apps_dns_domain }}
   when: "'wildcard-hosts' not in existing_caacls.stdout_lines"

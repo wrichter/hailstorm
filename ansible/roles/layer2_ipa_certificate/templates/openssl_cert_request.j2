@@ -28,7 +28,7 @@ postalCode             = ""                       # L/postalcode=
 streetAddress          = ""                       # L/street=
 #}organizationName       = "{{ hailstorm_dns_domain|upper }}"        # O=
 {#organizationalUnitName = "IT Department"          # OU=
-#}commonName             = "{{ certcn|default(hostname) }}"            # CN=
+#}commonName             = "{{ certcn|default(hostname) }}"            # CN=
 emailAddress           = "webmaster@{{ hailstorm_dns_domain }}"  # CN/emailAddress=
 
 {% if wildcard is not defined or not wildcard %}
@@ -38,7 +38,7 @@ emailAddress           = "webmaster@{{ hailstorm_dns_domain }}"  # CN/emailAddre
 # included in the configuration file
 # http://www.openssl.org/docs/apps/x509v3_config.html
 #subjectAltName  = DNS:www.example.com,DNS:www2.example.com # multidomain certificate
-subjectAltName = DNS:{{ certcn|default(hostname) }}{% if cert_san is defined and cert_san|length > 0 %},DNS:{{ cert_san|join(",DNS:") }}{% endif %}
+subjectAltName = DNS:{{ certcn|default(hostname) }}{% if cert_san is defined and cert_san|length > 0 %},DNS:{{ cert_san|join(",DNS:") }}{% endif %}
 {% endif %}
 
 # vim:ft=config

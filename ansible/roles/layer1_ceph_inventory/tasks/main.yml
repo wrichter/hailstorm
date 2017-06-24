@@ -5,6 +5,6 @@
     groups: ceph,ceph-osds,accessible_via_admin_network,rhel7{% if item.0 == 0%},ceph-installer,ceph-rgws-installer{% endif %}{% if item.0 < 3%},ceph-mons,ceph-rgws{% endif %}{% if item.0 == 1 %},ceph-calamari{% endif %}
     ansible_host: "192.168.103.{{ 2 + item.0 }}"
     activation_key: "AK-CV-CEPH-{{ stage }}"
-    extra_disk_device: "{{ item.1 }}"
+    extra_disk_device: "{{ item.1 }}"
   with_indexed_items: "{% if layer1_ceph_devices is defined %}{{ layer1_ceph_devices }}{% else %}[]{% endif %}"
   delegate_to: localhost

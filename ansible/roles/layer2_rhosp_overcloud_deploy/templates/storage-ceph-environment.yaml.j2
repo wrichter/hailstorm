@@ -9,7 +9,7 @@ resource_registry:
 parameter_defaults:
   # NOTE: These example parameters are required when using CephExternal
   CephClusterFSID: '{{ ceph_fsid }}'
-  CephClientKey: '{{ ceph_clientkey }}'
+  CephClientKey: '{{ ceph_clientkey }}'
   CephExternalMonHost: '{% for mon in groups['ceph-mons'] %}{{ hostvars[mon].vm_nics[2].ip }}{% if not loop.last %},{% endif %}{% endfor %}'
 
   # the following parameters enable Ceph backends for Cinder, Glance, Gnocchi and Nova

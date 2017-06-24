@@ -17,7 +17,7 @@
       failed_when: false
 
     - name: create principal for host
-      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service }}/{{ host|default(hostname) }}
+      shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa service-add {{ service }}/{{ host|default(hostname) }}
       when: existing_principal.stdout == ""
 
   when: mode=="create"

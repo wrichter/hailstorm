@@ -22,7 +22,7 @@
   file: state=directory path=~/ceph-ansible-keys
 
 - name: create ansible installation configs
-  template: src={{ item }}.j2 dest=/usr/share/ceph-ansible/group_vars/{{ item }}
+  template: src={{ item }}.j2 dest=/usr/share/ceph-ansible/group_vars/{{ item }}
   with_items:
     - all.yml
     - mons.yml

@@ -1,7 +1,7 @@
 {% if current_lifecycle_env.openstack_version >= 10 %}
 parameter_defaults:
-  ControllerCount: {{ groups['rhosp-control']|length }}
-  ComputeCount: {{ groups['rhosp-compute']|length - 1 }}
+  ControllerCount: {{ groups['rhosp-control']|length }}
+  ComputeCount: {{ groups['rhosp-compute']|length - 1 }}
   OvercloudControlFlavor: '{% if current_lifecycle_env.osp_controlled_node_placement %}baremetal{% else %}control{% endif %}'
   OvercloudComputeFlavor: '{% if current_lifecycle_env.osp_controlled_node_placement %}baremetal{% else %}compute{% endif %}'
   # List of Neutron network types for tenant networks (will be used in order)

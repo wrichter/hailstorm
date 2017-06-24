@@ -5,7 +5,7 @@
 #   register: subscription_list
 #   changed_when: False
 # - name: attach to pool
-#   command: 'subscription-manager attach --pool={{ poolid }}'
+#   command: 'subscription-manager attach --pool={{ poolid }}'
 #   when: subscription_list.stdout is not defined or poolid != subscription_list.stdout | regex_replace('Pool ID:\\s+(\\S*).*', '\\1')
 
 - name: get current enabled repos
@@ -20,8 +20,8 @@
 
 - name: store repo info as fact
   set_fact:
-    disable_repos: "{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','1')|map(attribute='repo')|list|difference(repos) }}"
-    enable_repos: "{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','0')|map(attribute='repo')|list|intersect(repos) }}"
+    disable_repos: "{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','1')|map(attribute='repo')|list|difference(repos) }}"
+    enable_repos: "{{ (current_repos.stdout|from_yaml).repos|selectattr('enabled','match','0')|map(attribute='repo')|list|intersect(repos) }}"
   when: repos is defined
 # - debug: var=disable_repos
 # - debug: var=enable_repos
@@ -99,6 +99,6 @@
   when: prerequisites|changed or enable|changed or disable|changed
 - name: waiting for server to come back
   wait_for: host={{ ansible_host }} port=22 delay=30 timeout=600
-  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
   # https://github.com/ansible/ansible/issues/11705
   when: prerequisites|changed or enable|changed or disable|changed

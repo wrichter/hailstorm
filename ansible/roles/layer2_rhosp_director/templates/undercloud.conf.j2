@@ -2,9 +2,9 @@
 #undercloud_hostname={{ hostname }}
 local_ip = {{ vm_nics[0].ip }}/24
 local_interface = {{ vm_nics[0].dev }}
-undercloud_public_vip = {% if current_lifecycle_env.openstack_version >= 10 %}{{ hostname }}{% else %}{{ hostvars['undercloud-public'].vm_nics[0].ip }}{% endif %}
+undercloud_public_vip = {% if current_lifecycle_env.openstack_version >= 10 %}{{ hostname }}{% else %}{{ hostvars['undercloud-public'].vm_nics[0].ip }}{% endif %}
 
-undercloud_admin_vip = {{ hostvars['undercloud-admin'].vm_nics[0].ip }}
+undercloud_admin_vip = {{ hostvars['undercloud-admin'].vm_nics[0].ip }}
 masquerade_network = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}0/24
 dhcp_start = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 13 }}
 dhcp_end = {{ vm_nics[0].ip | regex_replace('(^.*\.).*$', '\\1') }}{{ vm_nics[0].ip.split('.')[3] | int + 30 }}
@@ -20,7 +20,7 @@ undercloud_service_certificate = /etc/pki/instack-certs/undercloud.pem
 {% else %}
 generate_service_certificate = true
 certificate_generation_ca = IPA
-service_principal = haproxy/{{ hostname }}@{{ hailstorm_dns_domain|upper }}
+service_principal = haproxy/{{ hostname }}@{{ hailstorm_dns_domain|upper }}
 {% endif %}
 {% endif %}
 

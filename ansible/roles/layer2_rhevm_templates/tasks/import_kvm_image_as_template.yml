@@ -45,29 +45,29 @@
       changed_when: false
     - name: add layer1 root ssh pub key to rhevh1
       authorized_key: user=root key={{ layer1_ssh_pub_key.stdout }}
-      delegate_to: "{{ groups['rhevh'][0] }}"
+      delegate_to: "{{ groups['rhevh'][0] }}"
     # - name: ensure rsync is installed
     #   yum: name=rsync state=latest
-    #   delegate_to: "{{ groups['rhevh'][0] }}"
+    #   delegate_to: "{{ groups['rhevh'][0] }}"
     - name: copy KVM image from layer1
-      #synchronize: src={{ layer1_binary_dir }}/{{ item.image }} dest={{ hostvars[groups['rhevh'][0]].vm_nics[1].ip }}:/tmp/{{ item.image }}
-      command: scp -o StrictHostKeyChecking=no {{ layer1_binary_dir }}/{{ item.image }} {{ hostvars[groups['rhevh'][0]].vm_nics[1].ip }}:/tmp/{{ item.image }}
-      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
+      #synchronize: src={{ layer1_binary_dir }}/{{ item.image }} dest={{ hostvars[groups['rhevh'][0]].vm_nics[1].ip }}:/tmp/{{ item.image }}
+      command: scp -o StrictHostKeyChecking=no {{ layer1_binary_dir }}/{{ item.image }} {{ hostvars[groups['rhevh'][0]].vm_nics[1].ip }}:/tmp/{{ item.image }}
+      delegate_to: "{{ infrastructure_delegate_local_content_host }}"
 
     - name: install virt-v2v
       yum: name=virt-v2v state=latest
-      delegate_to: "{{ groups['rhevh'][0] }}"
+      delegate_to: "{{ groups['rhevh'][0] }}"
 
     - name: convert image to VM
-      shell: LIBGUESTFS_BACKEND=direct virt-v2v -i disk /tmp/{{ item.image }} -o rhev -os {{ infrastructure_address_nfs_server }}:{{ nfs_rhev_export_domain_path }}
-      delegate_to: "{{ groups['rhevh'][0] }}"
+      shell: LIBGUESTFS_BACKEND=direct virt-v2v -i disk /tmp/{{ item.image }} -o rhev -os {{ infrastructure_address_nfs_server }}:{{ nfs_rhev_export_domain_path }}
+      delegate_to: "{{ groups['rhevh'][0] }}"
       register: v2v
 
 #    - debug: var=v2v
 
     - name: remove image
       file: path=/tmp/{{ item.image }} state=absent
-      delegate_to: "{{ groups['rhevh'][0] }}"
+      delegate_to: "{{ groups['rhevh'][0] }}"
   when: (template.stdout|from_yaml).template[0] is not defined and (vm.stdout|from_yaml).vm[0] is not defined and (vm_in_export_domain.stdout|from_yaml).vm[0] is not defined
 
 - name: get VM in export domain
@@ -100,7 +100,7 @@
     (vm_in_export_domain.stdout|from_yaml).vm[0] is defined
 
 # - name: wait for VM to unlock
-#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+#   shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
 #          "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/api/vms" | \
 #          xmllint --xpath "//vm[name='{{ item.image | regex_replace('.qcow2','') }}']/status/state/text()" - || true
 #   changed_when: false

@@ -7,5 +7,5 @@
   command: exportfs -r
   when: etc_exports|changed
 - name: remove storage domain contents
-  file: state=absent path={{ item.path }}
+  file: state=absent path={{ item.path }}
   with_items: "{{ items }}"

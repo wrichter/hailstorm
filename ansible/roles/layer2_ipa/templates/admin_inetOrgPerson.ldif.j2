@@ -1,4 +1,4 @@
-dn: uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
+dn: uid=admin,cn=users,cn=accounts,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}
 changetype: modify
 add: objectClass
 objectClass: inetOrgPerson
