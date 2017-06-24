@@ -104,7 +104,8 @@ ansible-jump-demo-vms  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_te
 #ansible-jump-demo-infra  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
 
 [laptop]
-localhost              ansible_connection=local
+localhost              ansible_connection=local openshift_master_api_host_and_port='openshift.{{ hailstorm_dns_domain }}:443'
+
 
 #### ADDITIONAL GROUPS
 
