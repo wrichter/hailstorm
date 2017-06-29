@@ -2,6 +2,7 @@ parameter_defaults:
   CloudName: {{ hostvars['openstack'].hostname }}
 
   #if this parameter is set, the rollout will fail in ControllerLoadBalancerDeployment_Step1
+  #https://access.redhat.com/solutions/2089051
   #CloudDomain: {{ hailstorm_dns_domain }}
 
   # Define the DNS servers (maximum 2) for the overcloud nodes

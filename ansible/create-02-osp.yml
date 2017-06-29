@@ -51,7 +51,7 @@
       mode: create
       when: current_lifecycle_env.osp_use_ceph
     - role: layer2_rhosp_overcloud_deploy
-      tags: ['layer2', 'rhosp', 'overcloud']
+      tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-deploy']
       mode: create
 
 - hosts: rhosp-control
@@ -67,5 +67,5 @@
   gather_facts: false
   roles:
     - role: layer2_rhosp_overcloud_configure
-      tags: ['layer2', 'rhosp', 'overcloud']
+      tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-configure']
       mode: create
