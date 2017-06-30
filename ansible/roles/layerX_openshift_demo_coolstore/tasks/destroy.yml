@@ -1,0 +1,7 @@
+- name: Delete CoolStore Demo
+  shell: |
+    oc delete project coolstore-prod-demo
+    oc delete project coolstore-test-demo
+    oc delete project ci-demo
+    oc delete project inventory-dev-demo
+    oc delete project developer-demo
