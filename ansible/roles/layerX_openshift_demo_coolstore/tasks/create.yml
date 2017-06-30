@@ -19,7 +19,7 @@
   register: result
   failed_when: result.rc > 1
   until: result.stdout.find("CoolStore") == -1
-  retries: 30
+  retries: 60
   delay: 1
 
 - name: Deploy CoolStore Demo - this will take about 5 minutes

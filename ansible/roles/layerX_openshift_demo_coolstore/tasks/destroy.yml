@@ -1,11 +1,7 @@
-- name: delete project ticketmonster-prod
-  shell: oc delete project ticketmonster-prod -n ticketmonster-prod
-  ignore_errors: true
-
-- name: delete template monster-dev
-  shell: oc delete template monster-dev  -n openshift
-  ignore_errors: true
-
-- name: delete template monster-prod
-  shell: oc delete template monster-prod  -n openshift
-  ignore_errors: true
+- name: Delete CoolStore Demo
+  shell: |
+    oc delete project coolstore-prod-demo
+    oc delete project coolstore-test-demo
+    oc delete project ci-demo
+    oc delete project inventory-dev-demo
+    oc delete project developer-demo
