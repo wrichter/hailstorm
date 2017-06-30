@@ -7,5 +7,5 @@ vm_nics: >
   "dev":        "eth{{ loop.index0 }}",
   "default_gw": "{{ nic_attachment.default_gw_host_prefix | ipaddr('address') }}",
   "netmask":    "{{ nic_attachment.default_gw_host_prefix | ipaddr('netmask') }}",
-  "netname":    "{{ nic_attachment.netname }}"
+  "netname":    "{{ nic_attachment.netname }}"
   }{% if not loop.last %},{% endif %}{% endfor %}{% endif %}]

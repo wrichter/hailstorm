@@ -1,7 +1,7 @@
 - block:
     #variable rhev_image needs to point to a valid rhev template
     #variable vm_additional_disks is an optional array of disk sizes (in bytes)
-    - include: instantiate_vm_rhv{{ current_lifecycle_env.rhv_version }}.yml
+    - include: instantiate_vm_rhv{{ current_lifecycle_env.rhv_version }}.yml
   when: mode=="create"
 
 - block:

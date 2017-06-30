@@ -12,7 +12,7 @@
     - include: roles/common/tasks/prepare_nfs_export.yml
       vars:
         items:
-          - path: "{{ nfs_rhosp_nova_path }}"
+          - path: "{{ nfs_rhosp_nova_path }}"
         file_mode: 0775
         owner: 162
         group: 162
@@ -25,5 +25,5 @@
         items:
           - path: "{{ nfs_rhosp_glance_path }}"
           - path: "{{ nfs_rhosp_cinder_path }}"
-          - path: "{{ nfs_rhosp_nova_path }}"
+          - path: "{{ nfs_rhosp_nova_path }}"
   when: mode=="destroy"

@@ -11,7 +11,7 @@
 #     - debug: var=vm_nics
 #       tags:
 #         - always
-#     # - debug: msg={{ vm_nics }}
+#     # - debug: msg={{ vm_nics }}
 #     #   tags:
 #     #     - always
 #
@@ -94,5 +94,5 @@
   gather_facts: false
   roles:
     - { role: layer2_ansibletower_l3inventory, tags: [ 'layer2', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-cloudforms' ], mode: create, kind: "cloudforms", inventoryname: "Hailstorm", groupname: "CloudForms", credentialname: "Hailstorm L3 SSH", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"https://cloudforms.{{ hailstorm_dns_domain }}"} }
-    - { role: layer2_ansibletower_l3inventory, tags: [ 'layer2', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-openstack' ], mode: create, kind: "openstack", inventoryname: "Hailstorm", groupname: "OpenStack", credentialname: "Hailstorm L3 SSH", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-vms", "domain": "hailstorm"}, "jumphost": "{{ hostvars['ansible-jump-demo-vms'].ansible_host }}" }
-#    - { role: layer2_ansibletower_inventory, tags: [ 'layer2', 'tower', 'tower-openstack' ], mode: create, kind: "openstack", inventoryname: "Hailstorm L3", groupname: "OpenStack Infra-VMs", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-infra", "domain": "hailstorm"}, "jumphost": "{{ hostvars['ansible-jump-demo-infra'].ansible_host }}" }
+    - { role: layer2_ansibletower_l3inventory, tags: [ 'layer2', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-openstack' ], mode: create, kind: "openstack", inventoryname: "Hailstorm", groupname: "OpenStack", credentialname: "Hailstorm L3 SSH", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-vms", "domain": "hailstorm"}, "jumphost": "{{ hostvars['ansible-jump-demo-vms'].ansible_host }}" }
+#    - { role: layer2_ansibletower_inventory, tags: [ 'layer2', 'tower', 'tower-openstack' ], mode: create, kind: "openstack", inventoryname: "Hailstorm L3", groupname: "OpenStack Infra-VMs", cloud_credentials: {"username":"admin", "password":"{{ root_password }}", "url":"http://openstack.{{ hailstorm_dns_domain }}:5000/v3", "project": "demo-infra", "domain": "hailstorm"}, "jumphost": "{{ hostvars['ansible-jump-demo-infra'].ansible_host }}" }

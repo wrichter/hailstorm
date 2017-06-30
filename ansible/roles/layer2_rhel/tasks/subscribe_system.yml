@@ -44,14 +44,14 @@
 
 - block:
     - name: add entries to /etc/hosts
-      lineinfile: dest=/etc/hosts line="{{ item }}"
+      lineinfile: dest=/etc/hosts line="{{ item }}"
       with_items:
-        - "{{ hostvars['satellite'].vm_nics[0].ip }} satellite {{ hostvars['satellite'].hostname }}"
+        - "{{ hostvars['satellite'].vm_nics[0].ip }} satellite {{ hostvars['satellite'].hostname }}"
 
     - name: install katello-ca-consumer-latest
       # yum module can't do localinstall...
-      #command: yum -y localinstall http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm  creates=/etc/rhsm/rhsm.conf.kat-backup
-      yum: state=present name=http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
+      #command: yum -y localinstall http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm  creates=/etc/rhsm/rhsm.conf.kat-backup
+      yum: state=present name=http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
 
   when: not disable_registration_against_satellite and activation_key is defined and (rhsm_target.stdout != hostvars['satellite'].hostname or (subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'))
 
@@ -68,13 +68,13 @@
       yum:
         name: katello-agent
         state: present
-        enablerepo: "{{ os_variant_dash }}-server-satellite-tools-{{ satellite_version }}-rpms"
+        enablerepo: "{{ os_variant_dash }}-server-satellite-tools-{{ satellite_version }}-rpms"
   when: not disable_registration_against_satellite and activation_key is defined
 
 - name: register system using username/pw against RHN
   redhat_subscription:
     state: present
     username: "{{ rhsm_username }}"
-    password: "{{ rhsm_password }}"
+    password: "{{ rhsm_password }}"
     pool: "{{ pool_regex }}"
   when: (disable_registration_against_satellite or activation_key is not defined) and subscription_status.stdout != 'Current' and subscription_status.stdout != 'Insufficient'

@@ -4,14 +4,14 @@
       copy: content="{{ item.value }}" dest="{{ item.name }}" mode="400"
       with_items:
         - name: /etc/pki/ovirt-engine/keys/ipa-apache.key.nopass
-          value: "{{ ssl_key }}"
+          value: "{{ ssl_key }}"
         - name: /etc/pki/ovirt-engine/certs/ipa-apache.cer
-          value: "{{ ssl_cert }}"
+          value: "{{ ssl_cert }}"
         - name: /etc/pki/ovirt-engine/ipa-ca.pem
-          value: "{{ ssl_cacert }}"
+          value: "{{ ssl_cacert }}"
 
     - name: change httpd config
-      lineinfile: line="{{ item.line }}" regexp="{{ item.regexp }}" dest="/etc/httpd/conf.d/ssl.conf"
+      lineinfile: line="{{ item.line }}" regexp="{{ item.regexp }}" dest="/etc/httpd/conf.d/ssl.conf"
       with_items:
         - line: "SSLCertificateFile /etc/pki/ovirt-engine/certs/ipa-apache.cer"
           regexp: "^SSLCertificateFile.*$"

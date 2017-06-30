@@ -144,6 +144,12 @@
       tags: [ 'layer3', 'cf', 'cf-template' ]
       mode: destroy
 
+- hosts: rhevm
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_rhel_version_switch, tags: [ 'layer2', 'rhev', 'rhel' ], mode: destroy }
+
 - hosts: rhev
   gather_facts: false
   remote_user: root

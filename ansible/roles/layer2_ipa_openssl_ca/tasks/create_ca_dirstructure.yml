@@ -1,5 +1,5 @@
 - name: create CA directories
-  file: state=directory path={{ item.name }} mode={{ item.mode }}
+  file: state=directory path={{ item.name }} mode={{ item.mode }}
   with_items:
     - name: "{{ ca_dir }}"
       mode: 755

@@ -1,3 +1,3 @@
 ssh_pub_key_hailstorm: "{{ lookup('file', 'binary/' + hailstorm_ssh_pub_key_file) }}"
 hostname: "{{ hostname_override|default(inventory_hostname_short, true) }}.{{ hailstorm_dns_domain }}"
-hostname_short: "{{ hostname_override|default(inventory_hostname_short, true) }}"
+hostname_short: "{{ hostname_override|default(inventory_hostname_short, true) }}"

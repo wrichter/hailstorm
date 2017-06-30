@@ -1,3 +1,6 @@
 # the node where the ansible playbook will run
 [ose3-installer]
 localhost ansible_connection=local
+
+[laptop]
+localhost ansible_connection=local

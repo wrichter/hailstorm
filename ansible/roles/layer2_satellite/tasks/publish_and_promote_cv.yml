@@ -1,12 +1,12 @@
 - name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)
   command: hammer --output json content-view info --organization "{{ organization }}"  --name "{{ item }}"
-  with_items: "{{ satellite_content_config | map(attribute='content_view') | list }}"
+  with_items: "{{ satellite_content_config | map(attribute='content_view') | list }}"
   register: content_view_info
   changed_when: false
 
 #- debug: msg="{{ lookup('template','pp_content_view_iterator.json.j2') }}"
 - name: iterate over all content view versions and retrieve their descriptions (which may contain filter info)
-  command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
+  command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
   with_items: "{{ lookup('template','pp_content_view_iterator.json.j2') }}"
   register: content_view_version_info
   changed_when: false
@@ -21,18 +21,18 @@
 - name: create staging filter
   command: >
     hammer content-view filter create
-    --content-view {{ item.item.content_view }}
+    --content-view {{ item.item.content_view }}
     --name "Staging"
     --description "Staging Filter"
     --inclusion false
     --organization "{{ organization }}"
     --type erratum
     --repositories "{{ item.item.content|map(attribute="repository")|join('\",\"') }}"
-  when: "'Staging' not in (item.stdout | from_json | map(attribute='Name') | list)"
+  when: "'Staging' not in (item.stdout | from_json | map(attribute='Name') | list)"
   with_items: "{{ existing_filters.results }}"
 
 - name: retrieve existing filter rules
-  command: hammer --output json content-view filter rule list --content-view-filter "Staging" --content-view "{{ item.content_view }}" --organization "{{ organization }}"
+  command: hammer --output json content-view filter rule list --content-view-filter "Staging" --content-view "{{ item.content_view }}" --organization "{{ organization }}"
   with_items: "{{ satellite_content_config }}"
   register: existing_filter_rules
   changed_when: false
@@ -43,7 +43,7 @@
   command: >
     hammer --output json content-view filter rule create
     --organization "{{ organization }}"
-    --content-view  "{{ item.item.content_view }}"
+    --content-view  "{{ item.item.content_view }}"
     --content-view-filter "Staging"
     --date-type updated
     --start-date "{{ ansible_date_time.date }}"
@@ -62,24 +62,24 @@
 # set filter and publish content view for missing dates
 #- debug: var=created_filter_rule_result
 #- debug: var=content_view_version_info
-#- debug: msg="{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
+#- debug: msg="{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
 - include: publish_and_promote_cv_publish.yml
-  with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
+  with_items: "{{ lookup('template', 'pp_missingdates_iterator.json.j2')|unique }}"
   register: publish
 
 - name: iterate over content views and retrieve the content view versions (and which lifecycle_environments they are promoted to)
   command: hammer --output json content-view info --organization "{{ organization }}"  --name "{{ item }}"
-  with_items: "{{ satellite_content_config | map(attribute='content_view') | list }}"
+  with_items: "{{ satellite_content_config | map(attribute='content_view') | list }}"
   register: content_view_info2
   changed_when: false
 
 - name: iterate over all content view versions and retrieve their descriptions (which may contain filter info)
-  command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
+  command: hammer --output json content-view version info --organization "{{ organization }}" --content-view-id {{ item.content_view_id }} --id {{ item.version_id }}
   with_items: "{{ lookup('template','pp_content_view_iterator2.json.j2') }}"
   register: content_view_version_info2
   changed_when: false
 
-#- debug: msg="{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
+#- debug: msg="{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
 # if the satellite_content_config is NOT already promoted to the respective lifecycle env / staging satellite_content_config
 - name: promote specific content config to lifecycle env
   command: >
@@ -88,4 +88,4 @@
     --id "{{ item.id }}"
     --to-lifecycle-environment '{{ item.lifecycle_environment }}'
     --force
-  with_items: "{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"
+  with_items: "{{ lookup('template', 'pp_promotion_iterator.json.j2') }}"

@@ -15,7 +15,7 @@
     {
       "username": "heat-admin",
       "hostname": "{{ computenode }}",
-      "ip": "{{ hostvars[computenode].vm_nics[4].ip }}"
+      "ip": "{{ hostvars[computenode].vm_nics[4].ip }}"
     }
     {% if not loop.last %},{% endif %}
     {% endfor %}]
@@ -25,7 +25,7 @@
   with_items:
     - username: "{{ hostvars['layer1'].rhosp_stack_user }}"
       hostname: "layer1"
-      ip: "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}"
+      ip: "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}"
 
 ## need ssh from virtwho-host to hypervisors....
 ## rhevm is handled differently

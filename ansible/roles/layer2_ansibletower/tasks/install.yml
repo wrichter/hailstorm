@@ -4,19 +4,19 @@
     state: present
 
 - name: check if installer dir exists
-  stat: path={{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }}
+  stat: path={{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }}
   register: installer_dir
 
 - name: download & unpack tower installer
-  shell: curl {{ current_lifecycle_env.ansible_tower_url }} | tar xzvf -
+  shell: curl {{ current_lifecycle_env.ansible_tower_url }} | tar xzvf -
   when: not installer_dir.stat.exists
 
 - name: adjust inventory
-  template: src=inventory.j2 dest={{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }}/inventory
+  template: src=inventory.j2 dest={{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }}/inventory
   register: inventory
 
 - name: run tower installer
-  shell: cd {{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }} && ./setup.sh
+  shell: cd {{ current_lifecycle_env.ansible_tower_url | basename | regex_replace('.tar.gz','') }} && ./setup.sh
   when: inventory|changed
 
 - name: get tower config info
@@ -34,7 +34,7 @@
     curl -k -u admin:{{ root_password }}
     -H 'Content-Type: application/json'
     -H 'Accept: application/json'
-    -d'{{ lookup('file', 'binary/' + tower_license_key_file) | from_json | combine({"eula_accepted":"true"}) | to_json }}'
+    -d'{{ lookup('file', 'binary/' + tower_license_key_file) | from_json | combine({"eula_accepted":"true"}) | to_json }}'
     -XPOST https://localhost/api/v1/config/
   when: (config.stdout|from_json)['license_info']|length == 0
   register: config2

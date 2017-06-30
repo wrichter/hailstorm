@@ -15,7 +15,7 @@
   {% set _ = ip.append(mapping.expose_ip) %}
   {% endif %}
   {% for port in mapping.ports %}
-  <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ ip[-1] }}:{{ port.to_port }}</rule>
+  <rule>PREROUTING -t nat -p {{ port.proto }} --dport {{ port.from_port }} -d {{ mapping.on_host_prefix }} -j DNAT --to {{ ip[-1] }}:{{ port.to_port }}</rule>
   <rule>FORWARD -t filter -o {{ network.bridge }} -p {{ port.proto }} -d {{ ip[-1] }} --dport {{ port.to_port }} -j ACCEPT</rule>
   {% endfor %}
   {% endfor %}

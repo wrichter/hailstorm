@@ -1,13 +1,13 @@
 - block:
     - name: wait for cfme web ui to become available again
-      wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
+      wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
       delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
     - name: create tower provider
       uri:
         url: "https://{{ vm_nics[0].ip }}/api/providers?provider_class=provider"
         method: "POST"
         user: "admin"
-        password: "{{ root_password }}"
+        password: "{{ root_password }}"
         validate_certs: no
         body_format: json
         body: "{{ lookup('template', 'tower_provider.json.j2') | to_json }}"

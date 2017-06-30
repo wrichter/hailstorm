@@ -72,7 +72,7 @@ emailAddress            = optional
 
 [ req ]
 # Options for the `req` tool (`man req`).
-default_bits        = {{ key_bitsize|default('2048') }}
+default_bits        = {{ key_bitsize|default('2048') }}
 distinguished_name  = req_distinguished_name
 string_mask         = utf8only
 
@@ -93,7 +93,7 @@ req_extensions     = v3_req
 [ req_distinguished_name ]
 # See <https://en.wikipedia.org/wiki/Certificate_signing_request>.
 organizationName       = "{{ hailstorm_dns_domain|upper }}"        # O=
-commonName             = "{{ cert_cn }}"            # CN=
+commonName             = "{{ cert_cn }}"            # CN=
 emailAddress           = "webmaster@{{ hailstorm_dns_domain }}"  # CN/emailAddress=
 
 {% if cert_san is defined and cert_san|length > 0 %}
@@ -103,7 +103,7 @@ emailAddress           = "webmaster@{{ hailstorm_dns_domain }}"  # CN/emailAddre
 # included in the configuration file
 # http://www.openssl.org/docs/apps/x509v3_config.html
 #subjectAltName  = DNS:www.example.com,DNS:www2.example.com # multidomain certificate
-subjectAltName = {{ cert_san }}
+subjectAltName = {{ cert_san }}
 {% endif %}
 
 [ v3_ca ]

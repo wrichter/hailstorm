@@ -9,8 +9,8 @@
 
     - name: store role ids as fact
       set_fact:
-        admin_role_id: "{{ role_ids.stdout|from_json|selectattr('Name','match','^admin$')|map(attribute='ID')|first }}"
-        member_role_id: "{{ role_ids.stdout|from_json|selectattr('Name','match','^_member_$')|map(attribute='ID')|first }}"
+        admin_role_id: "{{ role_ids.stdout|from_json|selectattr('Name','match','^admin$')|map(attribute='ID')|first }}"
+        member_role_id: "{{ role_ids.stdout|from_json|selectattr('Name','match','^_member_$')|map(attribute='ID')|first }}"
 
     - name: find project ids
       shell: >
@@ -25,7 +25,7 @@
         . ~/overcloudrc_v3 &&
         openstack role assignment list --project {{ project_ids.stdout|from_json|selectattr('Name','match','^' + item + '$')|map(attribute='ID')|first }} -f json
       register: role_assignments_proj
-      with_items: "{{ osp_projects }}"
+      with_items: "{{ osp_projects }}"
       changed_when: false
 
     - name: get existing role assignments for domain
@@ -47,14 +47,14 @@
     - name: assign admin role for projects to default domain admin
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ default_dom_admin_user.stdout }} --project {{ item.item }} {{ admin_role_id }}
+        openstack role add --user {{ default_dom_admin_user.stdout }} --project {{ item.item }} {{ admin_role_id }}
       when: (item.stdout|from_json|selectattr('User','match','^' + default_dom_admin_user.stdout + '$')|selectattr('Role','match','^' + admin_role_id + '$')|list|length) == 0
-      with_items: "{{ role_assignments_proj.results }}"
+      with_items: "{{ role_assignments_proj.results }}"
 
     - name: get domain user ids
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack user list -f json --domain {{ osp_domain_name }}
+        openstack user list -f json --domain {{ osp_domain_name }}
       register: dom_user_ids
       changed_when: false
       failed_when: dom_user_ids.stdout == ""
@@ -62,14 +62,14 @@
     - name: assign admin users to domain
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ item.ID }} --domain {{ osp_domain_name }} {{ admin_role_id }}
+        openstack role add --user {{ item.ID }} --domain {{ osp_domain_name }} {{ admin_role_id }}
       when: item.Name in osp_admin_user and item.ID not in role_assignments_dom.stdout_lines
-      with_items: "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
+      with_items: "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
 
     - name: assign admin users to projects
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ item.0.ID }} --project {{ item.1.item }} {{ admin_role_id }}
+        openstack role add --user {{ item.0.ID }} --project {{ item.1.item }} {{ admin_role_id }}
       when: item.0.Name in osp_admin_user and (item.1.stdout|from_json|selectattr('User','match','^' + item.0.ID + '$')|selectattr('Role','match','^' + admin_role_id + '$')|list|length == 0)
       # when: >
       #   role_assignments_proj|flatten|
@@ -78,18 +78,18 @@
       #   selectattr('Project','match','^' + project_ids.stdout|from_json|selectattr('Name','match','^' + item.1 + '$') + '$')|
       #   list|length == 0
       with_nested:
-        - "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
-        - "{{ role_assignments_proj.results }}"
-      #- "{{ osp_admin_user }}"
-      #- "{{ osp_projects }}"
+        - "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
+        - "{{ role_assignments_proj.results }}"
+      #- "{{ osp_admin_user }}"
+      #- "{{ osp_projects }}"
 
     - name: assign member users to projects
       shell: >
         . ~/overcloudrc_v3 &&
-        openstack role add --user {{ item.0.ID }} --project {{ item.1.item }} {{ member_role_id }}
+        openstack role add --user {{ item.0.ID }} --project {{ item.1.item }} {{ member_role_id }}
       when: item.0.Name in osp_member_user and (item.1.stdout|from_json|selectattr('User','match','^' + item.0.ID + '$')|selectattr('Role','match','^' + member_role_id + '$')|list|length == 0)
       with_nested:
-        - "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
-        - "{{ role_assignments_proj.results }}"
+        - "{% if dom_user_ids.stdout is defined %}{{ dom_user_ids.stdout|from_json }}{% else %}[]{% endif %}"
+        - "{{ role_assignments_proj.results }}"
   become: yes
   become_user: "{{ rhosp_stack_user }}"

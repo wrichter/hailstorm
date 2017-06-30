@@ -1,14 +1,14 @@
 # - name: find configured IP addresses
-#   shell: nmcli con show {{ dnat_rules.layer1_dev }} | grep ipv4.addresses
+#   shell: nmcli con show {{ dnat_rules.layer1_dev }} | grep ipv4.addresses
 #   register: ip_addresses
 #   changed_when: false
 # - name: remove static IP configuration for DNAT
-#   command: nmcli con modify {{ dnat_rules.layer1_dev }} -ipv4.addresses "{{ item.on_host_prefix }}"
+#   command: nmcli con modify {{ dnat_rules.layer1_dev }} -ipv4.addresses "{{ item.on_host_prefix }}"
 #   when: item.on_host_prefix in ip_addresses.stdout
-#   with_items: "{{ dnat_rules.mapping }}"
+#   with_items: "{{ dnat_rules.mapping }}"
 #   register: ip_address_change
 # - name: reload interface configuration
-#   command: nmcli con up {{ dnat_rules.layer1_dev }}
+#   command: nmcli con up {{ dnat_rules.layer1_dev }}
 #   when: ip_address_change|changed
 
 

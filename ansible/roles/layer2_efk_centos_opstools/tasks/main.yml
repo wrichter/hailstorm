@@ -7,11 +7,11 @@
       copy: content="{{ item.value }}" dest="/etc/pki/opstools/{{ item.name }}" mode="400"
       with_items:
         - name: ipa-apache.key.nopass
-          value: "{{ ssl_key }}"
+          value: "{{ ssl_key }}"
         - name: ipa-apache.cer
-          value: "{{ ssl_cert }}"
+          value: "{{ ssl_cert }}"
         - name: ipa-ca.pem
-          value: "{{ ssl_cacert }}"
+          value: "{{ ssl_cacert }}"
 
     - name: install epel-release
       yum:

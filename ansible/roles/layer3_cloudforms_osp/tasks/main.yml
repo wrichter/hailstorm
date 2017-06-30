@@ -1,6 +1,6 @@
 - block:
     - name: wait for cfme web ui to become available again
-      wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
+      wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
       delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
     - include: create_osp_provider.yml
   when: mode=="create"

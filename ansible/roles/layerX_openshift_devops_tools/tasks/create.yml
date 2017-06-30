@@ -48,7 +48,7 @@
       dest: /tmp/nexus_conf/nexus.xml
       regexp: '(</repositories>[^<]*<repositoryGrouping>)'
       replace: >
-        {{ lookup('template','nexus_config_snippets.xml.j2') }} \1
+        {{ lookup('template','nexus_config_snippets.xml.j2') }} \1
     register: nexus_conf
 
   - name: copy modified nexus config files back to pod

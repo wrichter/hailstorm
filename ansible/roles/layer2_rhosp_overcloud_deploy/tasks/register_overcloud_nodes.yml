@@ -23,8 +23,8 @@
       shell: >
         . ~/stackrc && openstack flavor create --id auto
         --ram {{ hostvars[groups['rhosp-' + item][0]].mem }}
-        --disk {{ hostvars[groups['rhosp-' + item][0]].disk.size - 2 }}
-        --vcpus {{ hostvars[groups['rhosp-' + item][0]].vcpu }}
+        --disk {{ hostvars[groups['rhosp-' + item][0]].disk.size - 2 }}
+        --vcpus {{ hostvars[groups['rhosp-' + item][0]].vcpu }}
         {{ item }}
       with_items:
         - compute

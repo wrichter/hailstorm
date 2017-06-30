@@ -3,7 +3,7 @@
 {% for rule in newfilter.item.1.rules %}
 {% if needscomma|last %},{% endif %}
 {
-  "content_view": "{{ newfilter.item.0.item.content_view }}",
+  "content_view": "{{ newfilter.item.0.item.content_view }}",
   "filtername": "{{ newfilter.item.1.name }}"
   {% if rule.name is defined %},"name": "{{ rule.name }}"{% endif %}
   {% if rule.errata_ids is defined %},"errata_ids": {{ rule.errata_ids }}{% endif %}

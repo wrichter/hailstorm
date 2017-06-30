@@ -14,7 +14,7 @@
   register: repository_ids
 
 - name: add repos to content_view
-  command: 'hammer content-view add-repository --organization "{{ organization }}" --name "{{ item.0.content_view }}" --product "{{ item.1.product }}" --repository "{{ item.1.repository }}"'
+  command: 'hammer content-view add-repository --organization "{{ organization }}" --name "{{ item.0.content_view }}" --product "{{ item.1.product }}" --repository "{{ item.1.repository }}"'
   when: >
     current_content_views.stdout|from_json|selectattr('Name','match','^' + item.0.content_view + '$')|list|length == 0
     or
@@ -34,16 +34,16 @@
   changed_when: false
 
 - name: create filters
-  command: hammer content-view filter create --content-view {{ item.0.item.content_view }} --name "{{ item.1.name }}" --description "{{ item.1.description }}" --inclusion "{{ item.1.include }}" --organization "{{ organization }}" --type {{ item.1.type }} --repositories "{{ item.1.apply_to|join('\",\"') }}"
-  when: not item.0|skipped and item.1.name not in (item.0.stdout | from_json | map(attribute='Name') | list)
+  command: hammer content-view filter create --content-view {{ item.0.item.content_view }} --name "{{ item.1.name }}" --description "{{ item.1.description }}" --inclusion "{{ item.1.include }}" --organization "{{ organization }}" --type {{ item.1.type }} --repositories "{{ item.1.apply_to|join('\",\"') }}"
+  when: not item.0|skipped and item.1.name not in (item.0.stdout | from_json | map(attribute='Name') | list)
   with_subelements:
     - "{{ existing_filters.results }}"
     - item.filter
   register: new_filters
 
-# - debug: msg="{{ lookup('template','missing_filters.json.j2') }}"
+# - debug: msg="{{ lookup('template','missing_filters.json.j2') }}"
 # - local_action: template src=missing_filters.json.j2 dest=/tmp/text2.txt
 
 - name: create filter rules
-  command: hammer content-view filter rule create {% if item.name is defined %}--name "{{ item.name }}"{% endif %} {% if item.errata_ids is defined %}--errata-ids "{{ item.errata_ids|join(',') }}"{% endif %} --content-view  {{ item.content_view }} --organization "{{ organization }}" --content-view-filter "{{ item.filtername }}"
-  with_items: "{{ lookup('template','missing_filters.json.j2') }}"
+  command: hammer content-view filter rule create {% if item.name is defined %}--name "{{ item.name }}"{% endif %} {% if item.errata_ids is defined %}--errata-ids "{{ item.errata_ids|join(',') }}"{% endif %} --content-view  {{ item.content_view }} --organization "{{ organization }}" --content-view-filter "{{ item.filtername }}"
+  with_items: "{{ lookup('template','missing_filters.json.j2') }}"

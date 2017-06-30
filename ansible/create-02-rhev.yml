@@ -16,7 +16,7 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_rhel_version_switch, tags: [ 'layer2', 'rhev', 'rhel' ], mode: create }
+    - { role: layer2_rhel_version_switch, tags: [ 'layer2', 'rhev', 'rhel', 'vm' ], mode: create }
 
 - hosts: rhev
   remote_user: root

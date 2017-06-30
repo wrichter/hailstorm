@@ -31,7 +31,7 @@
       changed_when: false
 
     - name: get template import link
-      shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+      shell: curl -XGET {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
              "https://{{ hostvars['rhevm'].vm_nics[1].ip }}/ovirt-engine/api/storagedomains/{{ export_domain_uuid.stdout }}/templates" | \
              xmllint --xpath "//template[starts-with(name,'RedHat_CFME')]/actions/link[@rel='import']/@href" - | \
              awk 'match($0, /.*href="(.*)"/, m) { print m[1]  }'
@@ -40,9 +40,9 @@
       failed_when: template_import_link.stdout == ''
       changed_when: false
     - name: import template
-      shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
-             -d "{{ lookup('template', 'import_template.xml.j2') }}" \
-             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ template_import_link.stdout }}"
+      shell: curl -XPOST {{ lookup('template','roles/common/templates/rhev_curl_xml_params.j2') | trim }} \
+             -d "{{ lookup('template', 'import_template.xml.j2') }}" \
+             "https://{{ hostvars['rhevm'].vm_nics[1].ip }}{{ template_import_link.stdout }}"
       delegate_to: "{{ infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results }}"
 
     - name: pause for rhevm to react (probably to allow disks to be created)

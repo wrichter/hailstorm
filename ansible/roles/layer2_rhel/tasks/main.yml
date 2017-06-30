@@ -29,5 +29,5 @@
     - name: remove katello cert
       yum: state=absent name={{ pkg.stdout }}
     - name: reinstall katello cert
-      yum: state=present name="http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm"
+      yum: state=present name="http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm"
   when: mode=="refreshcert"

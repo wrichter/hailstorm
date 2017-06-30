@@ -1,14 +1,14 @@
 [mons]
 {% for vm in groups['ceph-mons'] %}
-{{ hostvars[vm].hostname }}
+{{ hostvars[vm].hostname }}
 {% endfor %}
 
 [osds]
 {% for vm in groups['ceph-osds'] %}
-{{ hostvars[vm].hostname }} devices="['/dev/vdb']"
+{{ hostvars[vm].hostname }} devices="['/dev/vdb']"
 {% endfor %}
 
 [rgws]
 {% for vm in groups['ceph-rgws'] %}
-{{ hostvars[vm].hostname }}
+{{ hostvars[vm].hostname }}
 {% endfor %}

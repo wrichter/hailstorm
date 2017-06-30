@@ -1,5 +1,5 @@
 - name: Create RHOSP stack user in layer 1
-  user: name={{ rhosp_stack_user }}
+  user: name={{ rhosp_stack_user }}
 - name: Copy ssh key from undercloud system to KVM hypervisor host for stack user
   authorized_key: user={{ rhosp_stack_user }} key={{ ssh_pub_key_undercloud }}
 - name: enable KVM control for RHOSP director

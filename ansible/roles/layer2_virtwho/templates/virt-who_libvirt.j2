@@ -23,6 +23,6 @@ server=qemu+ssh://{{ item.ip }}
 username={{ item.username }}
 #password=
 #encryped_password=
-owner={{ hostvars['satellite'].organization_id }}
+owner={{ hostvars['satellite'].organization_id }}
 env=production
 hypervisor_id=hostname

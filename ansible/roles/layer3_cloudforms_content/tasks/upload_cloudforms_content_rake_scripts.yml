@@ -13,7 +13,7 @@
 
 #git is now available on the appliance
 - name: clone git repo to appliance
-  git: repo={{ cfme_rhconsulting_scripts_repo }}
+  git: repo={{ cfme_rhconsulting_scripts_repo }}
        dest=/tmp/cfme-rhconsulting-scripts
   register: repo
 - name: check current HEAD
@@ -21,7 +21,7 @@
   register: head
   changed_when: false
 - name: revert hailstorm branch to known good version
-  shell: cd /tmp/cfme-rhconsulting-scripts && git reset --hard {{ current_lifecycle_env.cfme_rhconsulting_scripts_hash }}
+  shell: cd /tmp/cfme-rhconsulting-scripts && git reset --hard {{ current_lifecycle_env.cfme_rhconsulting_scripts_hash }}
   when: head.stdout != current_lifecycle_env.cfme_rhconsulting_scripts_hash
 - name: make install
   shell: cd /tmp/cfme-rhconsulting-scripts && make clean-install && make clean

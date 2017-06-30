@@ -21,7 +21,7 @@ osm_default_node_selector="region=primary"
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 {% if ipa_available|success and certificate|success %}
-openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.{{ hailstorm_dns_domain }}:389/cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}?uid?sub?(&(objectClass=posixAccount))'}]
+openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.{{ hailstorm_dns_domain }}:389/cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}?uid?sub?(&(objectClass=posixAccount))'}]
 # Configuring the ldap ca certificate
 #openshift_master_ldap_ca='{#{ certificate.stdout }#}'
 # or
@@ -58,7 +58,7 @@ openshift_metrics_install_metrics=true
 openshift_hosted_metrics_deploy=true
 openshift_hosted_metrics_storage_kind=nfs
 openshift_hosted_metrics_storage_access_modes=['ReadWriteOnce']
-openshift_hosted_metrics_storage_host={{ infrastructure_address_nfs_server }}
+openshift_hosted_metrics_storage_host={{ infrastructure_address_nfs_server }}
 openshift_hosted_metrics_storage_nfs_directory={{ nfs_ose3_pv_path }}
 openshift_hosted_metrics_storage_volume_name=metrics
 openshift_hosted_metrics_storage_volume_size=10Gi
@@ -70,7 +70,7 @@ openshift_hosted_logging_deploy=true
 # do not use NFS for logging since it is not supported - rely on the default empty volume being attached
 #openshift_hosted_logging_storage_kind=nfs
 #openshift_hosted_logging_storage_access_modes=['ReadWriteOnce']
-#openshift_hosted_logging_storage_host={{ infrastructure_address_nfs_server }}
+#openshift_hosted_logging_storage_host={{ infrastructure_address_nfs_server }}
 #openshift_hosted_logging_storage_nfs_directory={{ nfs_ose3_pv_path }}
 #openshift_hosted_logging_storage_volume_name=logging
 #openshift_hosted_logging_storage_volume_size=10Gi

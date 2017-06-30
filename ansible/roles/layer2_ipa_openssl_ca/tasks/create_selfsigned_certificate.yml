@@ -3,24 +3,24 @@
 
 - name: create key
   shell: >
-    cd {{ ca_dir }} &&
-    openssl genrsa -out private/{{ basefilename }}.key.pem {{ key_bitsize }}
-    creates={{ ca_dir }}/private/{{ basefilename }}.key.pem
+    cd {{ ca_dir }} &&
+    openssl genrsa -out private/{{ basefilename }}.key.pem {{ key_bitsize }}
+    creates={{ ca_dir }}/private/{{ basefilename }}.key.pem
 - name: set key mode
-  file: state=file path={{ ca_dir }}/private/{{ basefilename }}.key.pem mode="400"
+  file: state=file path={{ ca_dir }}/private/{{ basefilename }}.key.pem mode="400"
 
 - name: create certificate
   shell: >
-    cd {{ ca_dir }} &&
+    cd {{ ca_dir }} &&
     openssl req
     -config {{ basefilename }}.cnf
-    -key private/{{ basefilename }}.key.pem
+    -key private/{{ basefilename }}.key.pem
     -new
     -sha256
     -x509
     -days 7300
     -extensions v3_ca
-    -out certs/{{ basefilename }}.cert.pem
-    creates={{ ca_dir }}/certs/{{ basefilename }}.cert.pem
+    -out certs/{{ basefilename }}.cert.pem
+    creates={{ ca_dir }}/certs/{{ basefilename }}.cert.pem
 - name: set cert mode
-  file: state=file path={{ ca_dir }}/certs/{{ basefilename }}.cert.pem mode="444"
+  file: state=file path={{ ca_dir }}/certs/{{ basefilename }}.cert.pem mode="444"

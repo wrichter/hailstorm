@@ -12,11 +12,11 @@
       register: templates
     #- debug: var=templates
     - name: apply templates (overwriting existing files if necessary)
-      local_action: template src="{{ item }}" dest="{{ item | regex_replace('.j2$','') }}"
-      with_items: "{{ templates.files | map(attribute='path') | list }}"
+      local_action: template src="{{ item }}" dest="{{ item | regex_replace('.j2$','') }}"
+      with_items: "{{ templates.files | map(attribute='path') | list }}"
     - name: remove template
       local_action: file path="{{ item }}" state=absent
-      with_items: "{{ templates.files | map(attribute='path') | list }}"
+      with_items: "{{ templates.files | map(attribute='path') | list }}"
 
 
 

@@ -16,11 +16,11 @@ disk:
       mountpoint: swap
       size: 2048
     - name: root
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /
       size: 10000
     - name: home
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
 

@@ -6,79 +6,78 @@
       register: projects
       changed_when: false
 
-    - name: get openstack client major version
-      shell: >
-        . ~/overcloudrc_v3 &&
-        openstack --version 2>&1 | awk '{ print substr($2,1,1) }'
-      register: openstack_client_version
-      failed_when: openstack_client_version.stdout==""
-      changed_when: false
+    - block:
+        - name: get openstack client major version
+          shell: >
+            . ~/overcloudrc_v3 &&
+            openstack --version 2>&1 | awk '{ print substr($2,1,1) }'
+          register: openstack_client_version
+          failed_when: openstack_client_version.stdout==""
+          changed_when: false
 
-    - name: get default security group info
-      shell: >
-        . ~/overcloudrc_v3 &&
-        openstack security group list -f json {% if openstack_client_version.stdout == '1' %}--all-projects{% endif %}
-      changed_when: false
-      failed_when: security_group_info.stdout==""
-      register: security_group_info
+        - name: get default security group info
+          shell: >
+            . ~/overcloudrc_v3 &&
+            openstack security group list -f json {% if openstack_client_version.stdout == '1' %}--all-projects{% endif %}
+          changed_when: false
+          failed_when: security_group_info.stdout==""
+          register: security_group_info
 
-    # - name: get default security group id for tenant
-    #   shell: >
-    #     . ~/overcloudrc_v3 &&
-    #     export OS_TENANT_NAME={{ item }} &&
-    #     export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-    #     openstack security group list | awk '/default/ { print $2 }'
-    #   register: security_group_id
-    #   changed_when: false
-    #   failed_when: security_group_id.stdout == ""
-    #   with_items: "{{ osp_projects }}"
+        - name: get existing security group rules
+          shell: >
+            . ~/overcloudrc_v3 &&
+            openstack security group rule list {{ security_group_info.stdout | from_json | selectattr("Project","match", "^(" + item + "|" +  projects.stdout | from_json | selectattr("Name","match","^" + item + "$") | map(attribute="ID") | join('|') + ")$" ) | map(attribute="ID") | first }}
+          with_items: "{{ osp_projects }}"
+          register: existing_security_group_rules
+          changed_when: false
+      #  - debug: var=existing_security_group_rules
 
-    # - name: get existing security group rules
-    #   shell: >
-    #     . ~/overcloudrc_v3 &&
-    #     export OS_TENANT_NAME={{ item.item }} &&
-    #     export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-    #     openstack security group rule list {{ item.stdout }}
-    #   with_items: "{{ security_group_id.results }}"
-    #   register: existing_security_group_rules
-    #   changed_when: false
+        - name: configure default security group to allow ssh + icmp
+          shell: >
+            . ~/overcloudrc_v3 &&
+            export OS_TENANT_NAME={{ item.0.item }} &&
+            export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
+            openstack security group rule create --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ security_group_info.stdout | from_json | selectattr("Project","match", "(" + item.0.item + "|" +  projects.stdout | from_json | selectattr("Name","match","^" + item.0.item + "$") | map(attribute="ID") | join('|') + ")" ) | map(attribute="ID") | first }}
+          when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
+          with_nested:
+            - "{{ existing_security_group_rules.results }}"
+            -
+              - protocol: icmp
+              - protocol: tcp
+                port_range: "22:22"
+      when: current_lifecycle_env.openstack_version < 11
 
-    # - name: configure default security group to allow ssh + icmp
-    #   shell: >
-    #     . ~/overcloudrc_v3 &&
-    #     export OS_TENANT_NAME={{ item.0.item.item }} &&
-    #     export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-    #     openstack security group rule create --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ item.0.item.stdout }}
-    #   when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
-    #   with_nested:
-    #     - "{{ existing_security_group_rules.results }}"
-    #     -
-    #       - protocol: icmp
-    #       - protocol: tcp
-    #         port_range: "22:22"
-    
-    - name: get existing security group rules
-      shell: >
-        . ~/overcloudrc_v3 &&
-        openstack security group rule list {{ security_group_info.stdout | from_json | selectattr("Project","match", "^(" + item + "|" +  projects.stdout | from_json | selectattr("Name","match","^" + item + "$") | map(attribute="ID") | join('|') + ")$" ) | map(attribute="ID") | first }}
-      with_items: "{{ osp_projects }}"
-      register: existing_security_group_rules
-      changed_when: false
+    - block:
+        - debug: var=projects
+        - name: get default security group info
+          shell: >
+            . ~/overcloudrc_v3 &&
+            for uuid in `openstack security group list -c ID -f value`; do
+            openstack security group show -c id -c project_id -f yaml $uuid;
+            done | awk 'BEGIN { print "[" } /^id: /{ if (id != "") print ","; id=$2} /project_id: /{ print "{\"id\":\"" id "\",\"project_id\":\"" $2 "\"}" } END { print "]" }'
+          register: security_group_info2
+          changed_when: false
+        #- debug: var=security_group_info2
+        - name: get existing security group rules
+          shell:
+            . ~/overcloudrc_v3 &&
+            openstack security group rule list {{ security_group_info2.stdout|from_json|selectattr('project_id','match','^(' +  projects.stdout | from_json | selectattr("Name","match","^" + item + "$") | map(attribute="ID") | join('|') + ')$') | map(attribute='id') | first }}
+          with_items: "{{ osp_projects }}"
+          register: existing_security_group_rules2
+          changed_when: false
+        #- debug: var=existing_security_group_rules2
 
-  #  - debug: var=existing_security_group_rules
-
-    - name: configure default security group to allow ssh + icmp
-      shell: >
-        . ~/overcloudrc_v3 &&
-        export OS_TENANT_NAME={{ item.0.item }} &&
-        export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
-        openstack security group rule create --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ security_group_info.stdout | from_json | selectattr("Project","match", "(" + item.0.item + "|" +  projects.stdout | from_json | selectattr("Name","match","^" + item.0.item + "$") | map(attribute="ID") | join('|') + ")" ) | map(attribute="ID") | first }}
-      when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
-      with_nested:
-        - "{{ existing_security_group_rules.results }}"
-        -
-          - protocol: icmp
-          - protocol: tcp
-            port_range: "22:22"
+        - name: configure default security group to allow ssh + icmp
+          shell: >
+            . ~/overcloudrc_v3 &&
+            openstack security group rule create --project {{ item.0.item }} --project-domain {{ osp_domain_name }} --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ security_group_info2.stdout|from_json|selectattr('project_id','match','^(' +  projects.stdout | from_json | selectattr("Name","match","^" + item.0.item + "$") | map(attribute="ID") | join('|') + ')$') | map(attribute='id') | first }}
+          when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
+          with_nested:
+            - "{{ existing_security_group_rules2.results }}"
+            -
+              - protocol: icmp
+              - protocol: tcp
+                port_range: "22:22"
+      when: current_lifecycle_env.openstack_version >= 11
   become: yes
   become_user: "{{ rhosp_stack_user }}"

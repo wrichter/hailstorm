@@ -5,10 +5,10 @@
 
 #add subscription manager
 #yum -t -y -e 0 install subscription-manager
-rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
+rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
 
 echo "Registering the System"
-subscription-manager register --org="{{ hostvars['satellite'].organization_id }}" --name={{ hostname }} --activationkey="{{ activation_key }}"
+subscription-manager register --org="{{ hostvars['satellite'].organization_id }}" --name={{ hostname }} --activationkey="{{ activation_key }}"
 
 # add the rhel rpms to install katello agent
 # not required here since this is already configured via Satellite Activation Key

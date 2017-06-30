@@ -1,6 +1,6 @@
 ---
 mem: "{{ layer2_rhev_manager_mem }}"
-vcpu: "{{ layer2_rhev_manager_cpu }}"
+vcpu: "{{ layer2_rhev_manager_cpu }}"
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
   size: 60
@@ -20,11 +20,11 @@ disk:
       mountpoint: swap
       size: 16384
     - name: root
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /
       size: 20000
     - name: home
-      fstype: "{{ fstype }}"
+      fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
 

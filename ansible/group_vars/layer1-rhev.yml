@@ -7,4 +7,4 @@ rhev_storage_domains:
     path: "{{ nfs_rhev_iso_domain_path }}"
   - domainname: export1
     type: export
-    path: "{{ nfs_rhev_export_domain_path }}"
+    path: "{{ nfs_rhev_export_domain_path }}"

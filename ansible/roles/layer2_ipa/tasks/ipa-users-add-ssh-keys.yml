@@ -1,17 +1,17 @@
 - name: read provided ssh keys
-  local_action: shell cat ../keys/{{ item }}.pub || true
-  with_items: "{{ ipa_user | map(attribute='username') | list }}"
+  local_action: shell cat ../keys/{{ item }}.pub || true
+  with_items: "{{ ipa_user | map(attribute='username') | list }}"
   changed_when: false
   register: key
 
 - name: get existing ssh keys in IPA
-  shell: echo {{ ipa_admin_password }} | kinit admin 1>/dev/null && ipa user-show {{ item.item }} --all | awk '/SSH public key:/ { print substr($0,19) }' | sed "s_, _\n_g"
+  shell: echo {{ ipa_admin_password }} | kinit admin 1>/dev/null && ipa user-show {{ item.item }} --all | awk '/SSH public key:/ { print substr($0,19) }' | sed "s_, _\n_g"
   register: existing_ssh_keys
   when: item.stdout != ""
   with_items: "{{ key.results }}"
   changed_when: false
 
 - name: add ssh key to user
-  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa user-mod {{ item.item.item }} --addattr="ipaSshPubKey={{ item.item.stdout }}"'
+  shell: 'echo {{ ipa_admin_password }} | kinit admin && ipa user-mod {{ item.item.item }} --addattr="ipaSshPubKey={{ item.item.stdout }}"'
   when: not item|skipped and item.item.stdout not in item.stdout_lines
   with_items: "{{ existing_ssh_keys.results }}"

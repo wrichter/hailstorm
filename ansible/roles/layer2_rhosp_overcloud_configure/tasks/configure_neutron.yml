@@ -14,14 +14,14 @@
         . ~/overcloudrc_v3 &&
         neutron net-create services --router:external --provider:network_type flat --provider:physical_network datacentre &&
         neutron subnet-create --name sub_services --disable-dhcp --allocation-pool=start={{ infrastructure_network_services.floating_start }},end={{ infrastructure_network_services.floating_end }} --gateway={{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }} services {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('prefix') }}
-      when: '"services" not in networks.stdout | from_json | map(attribute="Name") | list'
+      when: '"services" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create guests aka external aka public network (in admin project)
       shell: >
         . ~/overcloudrc_v3 &&
         neutron net-create guests --router:external --provider:network_type flat --provider:physical_network guests &&
         neutron subnet-create --name sub_guests --disable-dhcp --allocation-pool=start={{ infrastructure_network_guests.floating_start }},end={{ infrastructure_network_guests.floating_end }} --gateway={{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('address') }} guests {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('prefix') }}
-      when: '"guests" not in networks.stdout | from_json | map(attribute="Name") | list'
+      when: '"guests" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create internal network
       shell: >
@@ -29,8 +29,8 @@
         export OS_TENANT_NAME={{ item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron net-create internal_{{ item }} --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "match", "^" + item + "$") | list)[0]['ID'] }}
-      when: '"internal_{{ item }}" not in networks.stdout | from_json | map(attribute="Name") | list'
-      with_items: "{{ osp_projects }}"
+      when: '"internal_{{ item }}" not in networks.stdout | from_json | map(attribute="Name") | list'
+      with_items: "{{ osp_projects }}"
 
     - name: create internal sub-network
       shell: >
@@ -38,18 +38,18 @@
         export OS_TENANT_NAME={{ item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron subnet-create --name sub_internal_{{ item }} --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "match", "^" + item + "$") | list)[0]['ID'] }} --enable_dhcp=True --gateway 172.20.0.1 --dns-nameserver={{ infrastructure_network_guests.dns_server }} internal_{{ item }} 172.20.0.0/16
-      when: '"internal_{{ item }}" not in networks.stdout | from_json | map(attribute="Name") | list'
-      with_items: "{{ osp_projects }}"
+      when: '"internal_{{ item }}" not in networks.stdout | from_json | map(attribute="Name") | list'
+      with_items: "{{ osp_projects }}"
 
     - name: get existing routers
       shell: >
         . ~/overcloudrc_v3 &&
-        export OS_TENANT_NAME={{ item }} &&
+        export OS_TENANT_NAME={{ item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron router-list -F name -f json
       register: routers
       changed_when: false
-      with_items: "{{ osp_projects }}"
+      with_items: "{{ osp_projects }}"
 
     - name: create routers
       shell: >
@@ -57,8 +57,8 @@
         export OS_TENANT_NAME={{ item.item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron router-create --tenant-id {{ (projects.stdout | from_json | selectattr("Name", "match", "^" + item.item + "$") | list)[0]['ID'] }} router_internal_{{ item.item }}
-      when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
-      with_items: "{{ routers.results }}"
+      when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
+      with_items: "{{ routers.results }}"
 
     - name: set gateway on router
       shell: >
@@ -66,8 +66,8 @@
         export OS_TENANT_NAME={{ item.item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron router-gateway-set router_internal_{{ item.item }} guests
-      when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
-      with_items: "{{ routers.results }}"
+      when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
+      with_items: "{{ routers.results }}"
 
     - name: add interface to internal
       shell: >
@@ -75,8 +75,8 @@
         export OS_TENANT_NAME={{ item.item }} &&
         export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
         neutron router-interface-add router_internal_{{ item.item }} sub_internal_{{ item.item }}
-      when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
-      with_items: "{{ routers.results }}"
+      when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
+      with_items: "{{ routers.results }}"
 
     # - name: add interface to services
     #   shell: >
@@ -84,8 +84,8 @@
     #     export OS_TENANT_NAME={{ item.item }} &&
     #     export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
     #     neutron router-interface-add router_internal_{{ item.item }} sub_services
-    #   when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
-    #   with_items: "{{ routers.results }}"
+    #   when: '"router_internal_{{ item.item }}" not in item.stdout | from_json | map(attribute="name") | list'
+    #   with_items: "{{ routers.results }}"
 
   become: yes
   become_user: "{{ rhosp_stack_user }}"

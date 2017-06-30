@@ -7,7 +7,7 @@
       register: stacklist
       become: yes
       become_user: "{{ rhosp_stack_user }}"
-      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS')
+      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS')
       changed_when: false
 
     # - name: get ironic UUIDs for nova UUIDs
@@ -29,7 +29,7 @@
       shell: >
         . ~/overcloudrc_v3 &&
         nova service-disable {{ item }}.localdomain nova-compute
-      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
       register: command_result
       failed_when: "'ERROR (NotFound): Could not find binary nova-compute on host' not in command_result.stderr and command_result.rc != 0"
@@ -38,7 +38,7 @@
       shell: >
         . ~/overcloudrc_v3 &&
         nova host-evacuate-live {{ item }}.localdomain
-      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
       register: command_result
       failed_when: "'ERROR (NotFound): No hypervisor matching' not in command_result.stderr and command_result.rc != 0"
@@ -47,10 +47,10 @@
       shell: >
         . ~/overcloudrc_v3 &&
         openstack server list --all-projects -f json --host {{ item }}.localdomain
-      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
       register: server_on_host
-      until: server_on_host.stdout | from_json | length == 0
+      until: server_on_host.stdout | from_json | length == 0
       retries: 30
       delay: 10
       changed_when: false
@@ -58,29 +58,29 @@
     - name: scale down nodes
       shell: >
         . ~/stackrc &&
-        {{ lookup('template','scale-down.j2') | trim }} \
-        {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$") | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
+        {{ lookup('template','scale-down.j2') | trim }} \
+        {% for item in (hostnames | from_json) %}{% if nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0 %} {{ (nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$") | map(attribute="ID") | list )[0] }} {% endif %}{% endfor %}
       tags: ['scale']
 
     - name: wait for heat update to complete
       shell: . ~/stackrc && openstack stack list -f json
       register: stacklist
-      until: not ( ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS') )
+      until: not ( ( stacklist.stdout | from_json )[0]['Stack Status'] | search('PROGRESS') )
       retries: 720
       delay: 60
       become: yes
       become_user: "{{ rhosp_stack_user }}"
-      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('FAILED')
+      failed_when: ( stacklist.stdout | from_json )[0]['Stack Status'] | search('FAILED')
       changed_when: false
 
     - name: get nova service IDs
       shell: >
         . ~/overcloudrc_v3 &&
-        nova service-list --binary nova-compute | awk '/{{ item }}.*disabled/ { print $2 }'
+        nova service-list --binary nova-compute | awk '/{{ item }}.*disabled/ { print $2 }'
       register: nova_service_ids
       failed_when: nova_service_ids.stdout==""
       changed_when: false
-      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       with_items: "{{ hostnames }}"
 
     #- debug: var=nova_service_ids
@@ -90,7 +90,7 @@
         . ~/overcloudrc_v3 &&
         nova service-delete {% if item.stdout is defined %}{{ item.stdout }}{% endif %}
       when: not item|skipped
-      with_items: "{{ nova_service_ids.results }}"
+      with_items: "{{ nova_service_ids.results }}"
       register: remove_nova
 
     - name: get neutron agent IDs
@@ -103,13 +103,13 @@
     - name: remove neutron agent
       # shell: >
       #   . ~/overcloudrc_v3 &&
-      #   neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","match", "^neutron-openvswitch-agent$") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
-      # when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
+      #   neutron agent-delete {{ (neutron_agent_uuids.stdout | from_json | selectattr("binary","match", "^neutron-openvswitch-agent$") | selectattr("host","match", "^" + item) | map(attribute="id") | list)[0] }}
+      # when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item + "$" ) | list | length > 0
       # with_items: "{{ hostnames }}"
       shell: >
         . ~/overcloudrc_v3 &&
-        neutron agent-delete {{ item.id }}
-      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item.host|regexp_replace('\..*','') + "$" ) | list | length > 0
+        neutron agent-delete {{ item.id }}
+      when: nova_uuids.stdout | from_json | selectattr("Name","match", "^" + item.host|regexp_replace('\..*','') + "$" ) | list | length > 0
       with_items: "{{ neutron_agent_uuids.stdout|from_json|selectattr('host','match','^' + hostnames|from_json|join('|') )|list }}"
     #
     #   register: rem_neutron

@@ -7,7 +7,7 @@ resource_registry:
 # or via the global environment on the seed in
 # /etc/heat/environment.d/default.yaml
 parameter_defaults:
-  rhel_reg_activation_key: "{{ activation_key }}"
+  rhel_reg_activation_key: "{{ activation_key }}"
   rhel_reg_auto_attach: ""
   rhel_reg_base_url: ""
   rhel_reg_environment: ""
@@ -17,8 +17,8 @@ parameter_defaults:
   rhel_reg_password: ""
   rhel_reg_pool_id: ""
   rhel_reg_release: ""
-  rhel_reg_repos: "{{ rhosp_overcloud_repos | join(' ') }}"
-  rhel_reg_sat_url: "http://{{ hostvars['satellite'].vm_nics[0].ip }}"
+  rhel_reg_repos: "{{ rhosp_overcloud_repos | join(' ') }}"
+  rhel_reg_sat_url: "http://{{ hostvars['satellite'].vm_nics[0].ip }}"
   rhel_reg_server_url: ""
   rhel_reg_service_level: ""
   rhel_reg_user: ""

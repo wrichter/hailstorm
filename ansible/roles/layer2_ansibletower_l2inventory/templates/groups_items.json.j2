@@ -2,9 +2,9 @@
 {% for group in groups.keys()| difference(['all']) %}
 {% if needscomma|last %},{% endif %}
 {
-  "name":"{{ group }}",
+  "name":"{{ group }}",
   "body": {
-      "name": "{{ group }}",
+      "name": "{{ group }}",
       "description": "",
       "variables": ""
   },
@@ -12,7 +12,7 @@
     "url_variable": "hosts",
     "bodies": [{% set needscomma2 = [false] %}{% for host in groups[group] %}
     {% if needscomma2|last %},{% endif %}
-    { "name": "{{ host }}" }
+    { "name": "{{ host }}" }
     {% if needscomma2.append(true) %}{% endif %}{% endfor %}]
   }
 

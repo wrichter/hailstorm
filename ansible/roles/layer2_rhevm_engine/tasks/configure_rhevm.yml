@@ -24,4 +24,4 @@
 #   when: engine_setup|changed
 
 - name: wait for rhev web ui to become available
-  wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600
+  wait_for: host={{ vm_nics[0].ip }} port=443 timeout=600

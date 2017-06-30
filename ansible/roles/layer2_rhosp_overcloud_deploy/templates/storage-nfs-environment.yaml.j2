@@ -25,7 +25,7 @@ parameter_defaults:
   # CinderNfsMountOptions: ''
   CinderNfsMountOptions: 'rw,sync'
   ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
-  CinderNfsServers: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_cinder_path }}'
+  CinderNfsServers: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_cinder_path }}'
 
 {% if current_lifecycle_env.openstack_version < 10 %}
   #### GLANCE FILE BACKEND PACEMAKER SETTINGS (used for mounting NFS) ####
@@ -35,7 +35,7 @@ parameter_defaults:
   ## File system type of the mount
   GlanceFilePcmkFstype: nfs
   ## Pacemaker mount point, e.g. '192.168.122.1:/export/glance' for NFS
-  GlanceFilePcmkDevice: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_glance_path }}'
+  GlanceFilePcmkDevice: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_glance_path }}'
   ## Options for the mount managed by Pacemaker
   # GlanceFilePcmkOptions: ''
   GlanceFilePcmkOptions: 'rw,sync,context=system_u:object_r:glance_var_lib_t:s0'
@@ -49,7 +49,7 @@ parameter_defaults:
   ## NFS share for image storage, e.g. '192.168.122.1:/export/glance'
   ## (If using IPv6, use both double- and single-quotes,
   ## e.g. "'[fdd0::1]:/export/glance'")
-  GlanceNfsShare: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_glance_path }}'
+  GlanceNfsShare: '{{ infrastructure_address_nfs_server }}:{{ nfs_rhosp_glance_path }}'
   ## Mount options for the NFS image storage mount point
   GlanceNfsOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
 {% endif %}

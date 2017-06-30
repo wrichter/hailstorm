@@ -5,7 +5,7 @@
       changed_when: false
 
     - name: create osd pools
-      command: ceph osd pool create {{ item.name }} {{ item.pgnum }}
+      command: ceph osd pool create {{ item.name }} {{ item.pgnum }}
       when: ceph_osd_pool_stats.stdout|from_json|selectattr('pool_name','match','^' + item.name + '$')|list|length == 0
       with_items:
         - name: backups
