@@ -1,0 +1,10 @@
+- block:
+    - include: create.yml
+      tags: ["ose3-demo-coolstore"]
+  when: mode=="create" or mode=="reset"
+
+
+- block:
+    - include: destroy.yml
+      tags: ["ose3-demo-coolstore"]
+  when: mode=="destroy"

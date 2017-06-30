@@ -1,0 +1,57 @@
+- name: Clone Demo Content from git
+  git:
+    repo: https://github.com/jbossdemocentral/coolstore-microservice.git
+    dest: ~/git/coolstore-microservice
+    version: stable-ocp-3.5
+
+- name: Delete CoolStore Demo
+  shell: |
+    ~/git/coolstore-microservice/openshift/scripts/provision-demo.sh \
+    delete msa-cicd-eap \
+    --maven-mirror-url  http://nexus-devops-tools.{{ ocp_apps_dns_domain }}/nexus/content/groups/main/  \
+    --project-suffix demo \
+    --user developer
+  register: del_out
+- debug: var=del_out.stdout_lines
+
+- name: Wait for projects to be gone
+  shell: "oc get projects | grep Terminating"
+  register: result
+  failed_when: result.rc > 1
+  until: result.stdout.find("CoolStore") == -1
+  retries: 30
+  delay: 1
+
+- name: Deploy CoolStore Demo - this will take about 5 minutes
+  shell: |
+    ~/git/coolstore-microservice/openshift/scripts/provision-demo.sh \
+    deploy msa-cicd-eap \
+    --maven-mirror-url  http://nexus-devops-tools.{{ ocp_apps_dns_domain }}/nexus/content/groups/main/  \
+    --project-suffix demo \
+    --user developer
+  register: deploy_out
+- debug: var=deploy_out.stdout_lines
+
+- name: Fix project names and user permissions
+  shell: |
+    # Rename Description of some project so that all pre fix with CoolStore
+    oc annotate project ci-demo "openshift.io/display-name=CoolStore CI/CD" --overwrite
+    oc annotate project inventory-dev-demo "openshift.io/display-name=CoolStore DEV Inventory " --overwrite
+    oc annotate project developer-demo "openshift.io/display-name=CoolStore Developer Project" --overwrite
+    # Fix acces permission in case script runs as system:admin
+    # Make visible to user developer
+    oc adm policy add-role-to-user admin developer -n coolstore-prod-demo
+    oc adm policy add-role-to-user admin developer -n coolstore-test-demo
+    oc adm policy add-role-to-user admin developer -n ci-demo
+    oc adm policy add-role-to-user admin developer -n inventory-dev-demo
+    oc adm policy add-role-to-user admin developer -n developer-demo
+    # Add coolstore-dev and coolstore-ops user
+    oc adm policy add-role-to-user admin coolstore-dev -n coolstore-prod-demo
+    oc adm policy add-role-to-user admin coolstore-dev -n ci-demo
+    oc adm policy add-role-to-user admin coolstore-dev -n inventory-dev-demo
+    oc adm policy add-role-to-user admin coolstore-dev -n developer-demo
+    oc adm policy add-role-to-user view coolstore-dev -n coolstore-test-demo
+    oc adm policy add-role-to-user admin coolstore-ops -n coolstore-test-demo
+
+- name: Trigger BuildPipeline
+  shell: oc start-build inventory-pipeline  -n ci-demo
