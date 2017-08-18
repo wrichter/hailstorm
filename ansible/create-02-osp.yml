@@ -49,7 +49,7 @@
     - role: layer2_ceph_openstackconfig
       tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-ceph']
       mode: create
-      when: current_lifecycle_env.osp_use_ceph
+      when: current_lifecycle_env.osp_storage_backend == "ceph_ownvms"
     - role: layer2_rhosp_overcloud_deploy
       tags: ['layer2', 'rhosp', 'overcloud', 'overcloud-deploy']
       mode: create

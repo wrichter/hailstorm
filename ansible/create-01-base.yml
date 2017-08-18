@@ -39,7 +39,7 @@
       mode: create
     - role: layer1_ceph_inventory
       tags: [ 'layer2', 'ceph', 'ipa' ]
-      when: current_lifecycle_env.osp_use_ceph == true
+      when: current_lifecycle_env.osp_storage_backend == "ceph_ownvms"
 
 #### SATELLITE ####
 

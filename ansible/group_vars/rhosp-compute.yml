@@ -16,3 +16,24 @@ nic_attachments:
   - "{{ infrastructure_network_admin }}"
 default_route_via: "{{ infrastructure_network_services }}"
 name_service_via: "{{ infrastructure_network_services }}"
+
+
+extra_disk_files: "{% if current_lifecycle_env.osp_storage_backend=='ceph_hyperconverged' %}{{ ceph_disk_files }}{% else %}[]{% endif %}"
+
+ceph_disk_files:
+  - path: "{{ inventory_hostname_short }}-extra-1.qcow2"
+    size: 100
+    format: qcow2
+    dev: /dev/vdb
+  - path: "{{ inventory_hostname_short }}-extra-2.qcow2"
+    size: 100
+    format: qcow2
+    dev: /dev/vdc
+  - path: "{{ inventory_hostname_short }}-extra-3.qcow2"
+    size: 100
+    format: qcow2
+    dev: /dev/vdd
+  - path: "{{ inventory_hostname_short }}-extra-4.qcow2"
+    size: 100
+    format: qcow2
+    dev: /dev/vde

@@ -43,7 +43,7 @@ function nova_compute {
   sudo crudini --set /etc/nova/nova.conf vnc novncproxy_base_url {% if current_lifecycle_env.osp_use_tls %}https://openstack.{{ hailstorm_dns_domain }}:13080/vnc_auto.html{% else %}http://openstack.{{ hailstorm_dns_domain }}:6080/vnc_auto.html{% endif %}
   sudo crudini --del /etc/nova/nova.conf DEFAULT novncproxy_base_url
 
-{% if current_lifecycle_env.osp_use_ceph %}
+{% if current_lifecycle_env.osp_storage_backend == "ceph_ownvms" %}
   sudo crudini --set /etc/nova/nova.conf libvirt hw_disk_discard unmap
 {% endif %}
 {# even if we're using Ceph, we want to mount /var/lib/nova via NFS, so the console log isn't lost #}

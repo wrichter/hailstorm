@@ -35,7 +35,7 @@
     - name: remove raw images
       file: state=absent path=/tmp/{{ item.image }}.raw
       become_user: "{{ rhosp_stack_user }}"
-  when: current_lifecycle_env.osp_use_ceph
+  when: current_lifecycle_env.osp_storage_backend.startswith("ceph")
 
 - name: load qcow2 image into glance
   shell: >
@@ -46,4 +46,4 @@
     --disk-format qcow2
     "{{ item.name }}"
   become_user: "{{ rhosp_stack_user }}"
-  when: not current_lifecycle_env.osp_use_ceph and item.name not in images.stdout | from_json | map(attribute="Name") | list
+  when: not current_lifecycle_env.osp_storage_backend.startswith("ceph") and item.name not in images.stdout | from_json | map(attribute="Name") | list

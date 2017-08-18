@@ -27,7 +27,8 @@ lifecycle_environments:
     #TLS with OSP10 or later
     osp_use_tls: true
     #CEPH with OSP10 or later
-    osp_use_ceph: true
+    #osp_storage_backend: ceph_ownvms
+    osp_storage_backend: ceph_hyperconverged
     ocp_use_cns: true
     rhv_version: 4
     cloudforms_version: 5.8
@@ -58,7 +59,7 @@ lifecycle_environments:
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
     osp_controlled_node_placement: false
     osp_use_tls: true
-    osp_use_ceph: false
+    osp_storage_backend: nfs_layer1
     ocp_use_cns: false
     rhv_version: 3
     cloudforms_version: 5.7
@@ -87,7 +88,7 @@ lifecycle_environments:
     openstack_version: 9
     osp_controlled_node_placement: false
     osp_use_tls: false
-    osp_use_ceph: false
+    osp_storage_backend: nfs_layer1
     ocp_use_cns: false
     rhv_version: 3
     cloudforms_version: 5.6
