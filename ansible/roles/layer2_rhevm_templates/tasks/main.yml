@@ -1,6 +1,6 @@
 - block:
     - include: import_kvm_image_as_template.yml
-      with_items: "{{ rhev_templates }}"
+      with_items: "{{ current_lifecycle_env.rhev_templates }}"
   when: mode=="create"
 
 # - block:

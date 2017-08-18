@@ -10,7 +10,7 @@
       changed_when: false
 
     - include: configure_images_instance.yml
-      with_items: "{{ osp_kvm_images }}"
+      with_items: "{{ current_lifecycle_env.osp_kvm_images }}"
 
   become: yes
   become_user: "{{ rhosp_stack_user }}"

@@ -10,7 +10,7 @@
     - name: create non-working image (from layer1 host binary dir)
       shell: >
         . ~/overcloudrc_v3 &&
-        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ osp_kvm_images[0].image }} |
+        ssh -o StrictHostKeyChecking=no {{ rhosp_stack_user }}@{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} cat {{ layer1_binary_dir }}/{{ current_lifecycle_env.osp_kvm_images[0].image }} |
         openstack image create --public --disk-format qcow2 -f json this_image_will_not_work
       when: image.stdout == ''
       register: image2
