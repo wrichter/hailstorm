@@ -39,7 +39,7 @@
   roles:
     - { role: layerX_openshift_devops_tools, tags: [layer2, 'ose3', 'ose3-devops'], mode: create }
     - { role: layerX_openshift_demo_monster, tags: [layer2, 'ose3', 'ose3-demo', 'ose3-demo-ticketmonster'], mode: create }
-    - { role: layerX_openshift_demo_coolstore, tags: [layer2, 'ose3', 'ose3-demo', 'ose3-demo-coolstore'], mode: create }
+    - { role: layerX_openshift_demo_coolstore, tags: [layer2, 'ose3', 'ose3-demo', 'ose3-demo-coolstore'], mode: create, when: current_lifecycle_env.openshift_version >= 3.5 }
     - { role: layerX_openshift_demo_wordpress, tags: [layer2, 'ose3', 'ose3-demo', 'ose3-demo-wordpress'], mode: create }
     - { role: layerX_openshift_demo_amq, tags: [layer2, 'ose3', 'ose3-demo-amq'], mode: create }
     - { role: layerX_openshift_cfme_mwmgr, tags: [layer2, 'ose3', 'ose3-cfme-mwmgr'], mode: create }

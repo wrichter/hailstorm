@@ -53,7 +53,7 @@ lifecycle_environments:
       "*": "2017-04-20"
     errata_for_demo_scenario:
       - RHSA-2016:1940
-    openshift_version: "3.4"
+    openshift_version: 3.4
     openstack_version: 10
     # controlled node placement fails on the second scale up since an unmapped hostname (overcloud-compute-3) is assigned
     osp_controlled_node_placement: false
@@ -117,13 +117,13 @@ rhev_templates:
 
 # RED HAT SUBSCRIPTIONS
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
-rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
-sap_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server for SAP HANA.*)$"
-rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
-rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat (Enterprise Linux )?OpenStack Platform.*)$"
-ose_subscription_pool_regex: "^(Employee SKU|OpenShift Enterprise.*|Red Hat Gluster Storage.*)$"
-cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Enterprise Linux OpenStack Platform.*)$"
-ceph_subscription_pool_regex: "^(Employee SKU|Red Hat Satellite - Add-Ons for Providers.*)$"
+rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux.*(Unlimited guests|Company-Wide).*)$"
+#sap_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server for SAP HANA.*)$"
+rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
+rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat (Enterprise Linux )?OpenStack Platform.*)$"
+ose_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|OpenShift Enterprise.*|Red Hat Gluster Storage.*)$"
+cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Cloud Suite.*|Red Hat Enterprise Linux OpenStack Platform.*)$"
+ceph_subscription_pool_regex: "^(Employee SKU|Red Hat Ceph Storage.*|Red Hat Satellite - Add-Ons for Providers.*)$"
 
 # REPOSITORIES
 rhosp_undercloud_repos:
@@ -207,20 +207,20 @@ satellite_product_config:
     repos:
       - name: "Red Hat Enterprise Linux Fast Datapath (RHEL 7 Server) (RPMs)"
         releasever: 7Server
-   # for SAP HANA usecase
-  - product: "RHEL for SAP HANA - Extended Update Support"
-    basearch: x86_64
-    repos:
-      - name: "RHEL for SAP HANA (for RHEL 7 Server) Extended Update Support (RPMs)"
-        releasever: 7.2
-   # for SAP HANA usecase
-  - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-    basearch: x86_64
-    repos:
-      - name: "Red Hat Enterprise Linux 7 Server - Extended Update Support (RPMs)"
-        releasever: 7.2
-      - name: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
-        releasever: 7.2
+  #  # for SAP HANA usecase
+  # - product: "RHEL for SAP HANA - Extended Update Support"
+  #   basearch: x86_64
+  #   repos:
+  #     - name: "RHEL for SAP HANA (for RHEL 7 Server) Extended Update Support (RPMs)"
+  #       releasever: 7.2
+  #  # for SAP HANA usecase
+  # - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+  #   basearch: x86_64
+  #   repos:
+  #     - name: "Red Hat Enterprise Linux 7 Server - Extended Update Support (RPMs)"
+  #       releasever: 7.2
+  #     - name: "Red Hat Satellite Tools 6.2 (for RHEL 7 Server - EUS) (RPMs)"
+  #       releasever: 7.2
   - product: "Red Hat Enterprise Linux High Availability for RHEL Server"
     basearch: x86_64
     repos:
@@ -309,7 +309,7 @@ satellite_product_config:
   - product: Red Hat Gluster Storage Server for On-premise
     basearch: x86_64
     repos:
-      - name: Red Hat Gluster Storage 3.1 Server (RPMs)
+      - name: Red Hat Gluster Storage 3 Server (RPMs)
         releasever: 7Server
 
 satellite_content_config:
@@ -332,14 +332,14 @@ satellite_content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server"
 
   # for HANA
-  - content_view: "CV-OS-RHEL7.2-EUS-SAP"
-    content:
-      - product: "RHEL for SAP HANA - Extended Update Support"
-        repository: "RHEL for SAP HANA for RHEL 7 Server Extended Update Support RPMs x86_64 7.2"
-      - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-        repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support RPMs x86_64 7.2"
-      - product: "Red Hat Enterprise Linux Server - Extended Update Support"
-        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
+  # - content_view: "CV-OS-RHEL7.2-EUS-SAP"
+  #   content:
+  #     - product: "RHEL for SAP HANA - Extended Update Support"
+  #       repository: "RHEL for SAP HANA for RHEL 7 Server Extended Update Support RPMs x86_64 7.2"
+  #     - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+  #       repository: "Red Hat Enterprise Linux 7 Server - Extended Update Support RPMs x86_64 7.2"
+  #     - product: "Red Hat Enterprise Linux Server - Extended Update Support"
+  #       repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server - EUS RPMs x86_64 7.2"
 
   - content_view: "CV-RHEV-MANAGER"
     content:
@@ -424,7 +424,7 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Gluster Storage Server for On-premise"
-        repository: "Red Hat Gluster Storage 3.1 Server RPMs x86_64 7Server"
+        repository: "Red Hat Gluster Storage 3 Server RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSE3-CLIENT"
     content:
@@ -510,11 +510,11 @@ satellite_activation_keys_and_host_collections:
     activation_key_subscription_regex: "{{ rhel_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
-  - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
-    content_view: "CV-OS-RHEL7.2-EUS-SAP"
-    host_collection: "RHEL7"
-    activation_key_subscription_regex: "{{ sap_subscription_pool_regex }}"
-    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
+  # - activation_key: AK-CV-OS-RHEL7.2-EUS-SAP
+  #   content_view: "CV-OS-RHEL7.2-EUS-SAP"
+  #   host_collection: "RHEL7"
+  #   activation_key_subscription_regex: "{{ sap_subscription_pool_regex }}"
+  #   override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHEV-MANAGER
     content_view: "CV-RHEV-MANAGER"

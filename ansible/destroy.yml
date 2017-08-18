@@ -220,17 +220,21 @@
       tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l3' ]
       mode: destroy
       inventoryname: "Hailstorm L3 OSP"
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_ansibletower_l3inventory
       tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l3' ]
       mode: destroy
       inventoryname: "Hailstorm L3 RHEV"
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_ansibletower_l2inventory
       tags: [ 'layer2', 'tower', 'tower-inventory', 'tower-inventory-l2' ]
       mode: destroy
       inventoryname: "Hailstorm L2"
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_ansibletower
       tags: [ 'layer2', 'tower' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_rhel
       tags: [ 'layer2','tower', 'rhel' ]
       mode: destroy
