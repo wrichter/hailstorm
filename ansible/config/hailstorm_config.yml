@@ -15,7 +15,7 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2017-06-01"
+      "*": "2017-08-18"
     errata_for_demo_scenario:
       - RHSA-2017:0286
       - RHSA-2016:1940
@@ -37,9 +37,9 @@ lifecycle_environments:
     # cloudforms_version: 5.6
     # cloudforms_ova_appliance: cfme-rhevm-5.6.3.3-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
-    rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
+    rhel7_iso_image: rhel-server-7.4-x86_64-dvd.iso
     kvm_images:
-      RHEL7: rhel-guest-image-7.3-35.x86_64.qcow2
+      RHEL7: rhel-server-7.4-x86_64-kvm.qcow2
       CirrOS: cirros-0.3.4-x86_64-disk.img
       Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
     cfme_rhconsulting_scripts_hash: d28acf658d14b321d5e220d99cf5a8e3fb941c26
