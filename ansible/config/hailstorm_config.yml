@@ -39,10 +39,18 @@ lifecycle_environments:
     # cloudforms_ova_appliance: cfme-rhevm-5.6.3.3-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.4-x86_64-dvd.iso
-    kvm_images:
-      RHEL7: rhel-server-7.4-x86_64-kvm.qcow2
-      CirrOS: cirros-0.3.4-x86_64-disk.img
-      Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    osp_kvm_images:
+      - name: RHEL7
+        image: rhel-server-7.4-x86_64-kvm.qcow2
+      - name: CirrOS
+        image: cirros-0.3.4-x86_64-disk.img
+      - name: Windows
+        image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+      - name: Cloudforms
+        image: cfme-rhos-5.8.1.5-1.x86_64.qcow2
+    rhev_templates:
+      - name: RHEL7
+        image: rhel-server-7.4-x86_64-kvm.qcow2
     cfme_rhconsulting_scripts_hash: d28acf658d14b321d5e220d99cf5a8e3fb941c26
     ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.3.tar.gz
 
@@ -66,10 +74,16 @@ lifecycle_environments:
     cloudforms_ova_appliance: cfme-rhevm-5.7.0.17-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.3-x86_64-dvd.iso
-    kvm_images:
-      RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
-      CirrOS: cirros-0.3.4-x86_64-disk.img
-      Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    osp_kvm_images:
+      - name: RHEL7
+        image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+      - name: CirrOS
+        image: cirros-0.3.4-x86_64-disk.img
+      - name: Windows
+        image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    rhev_templates:
+      - name: RHEL7
+        image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
     ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.3.tar.gz
 
@@ -95,26 +109,22 @@ lifecycle_environments:
     cloudforms_ova_appliance: cfme-rhevm-5.6.1.2-1.x86_64.rhevm.ova
     rhel6_iso_image: rhel-server-6.8-x86_64-dvd.iso
     rhel7_iso_image: rhel-server-7.2-x86_64-dvd.iso
-    kvm_images:
-      RHEL7: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
-      CirrOS: cirros-0.3.4-x86_64-disk.img
-      Windows: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    osp_kvm_images:
+      - name: RHEL7
+        image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+      - name: CirrOS
+        image: cirros-0.3.4-x86_64-disk.img
+      - name: Windows
+        image: windows_server_2012_r2_standard_eval_kvm_20151021.qcow2.gz
+    rhev_templates:
+      - name: RHEL7
+        image: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
     cfme_rhconsulting_scripts_hash: 4a9c5478e58181c099cd9f1dce00ae09c55f2298
     ansible_tower_url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.0.2.tar.gz
 
 current_lifecycle_env: "{{ lifecycle_environments|selectattr('name','match','^'+stage+'$')|first }}"
 
-osp_kvm_images:
-  - name: RHEL7
-    image: "{{ current_lifecycle_env.kvm_images['RHEL7'] }}"
-  - name: CirrOS
-    image: "{{ current_lifecycle_env.kvm_images['CirrOS'] }}"
-  - name: Windows Server 2012
-    image: "{{ current_lifecycle_env.kvm_images['Windows'] }}"
 
-rhev_templates:
-  - name: RHEL7
-    image: "{{ current_lifecycle_env.kvm_images['RHEL7'] }}"
 
 # RED HAT SUBSCRIPTIONS
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
