@@ -32,7 +32,7 @@ lifecycle_environments:
     ocp_use_cns: true
     rhv_version: 4
     cloudforms_version: 5.8
-    cloudforms_ova_appliance: cfme-rhevm-5.8.0.17-1.x86_64.rhevm.ova
+    cloudforms_ova_appliance: cfme-rhevm-5.8.1.5-1.x86_64.rhevm.ova
     #cloudforms_version: 5.7
     #cloudforms_ova_appliance: cfme-rhevm-5.7.1.3-1.x86_64.rhevm.ova
     # cloudforms_version: 5.6
