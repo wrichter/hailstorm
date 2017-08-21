@@ -1,0 +1,3 @@
+- name: Removing RH-SS
+  shell: echo Fix Me
+  ignore_errors: true
