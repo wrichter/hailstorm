@@ -89,6 +89,14 @@ lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVE
 [storage-console]
 storage-console ansible_host=192.168.103.9 activation_key="AK-CV-CEPH-{{ stage }}"
 
+[additional-helper]
+install-host ansible_host=192.168.103.6 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+rh-sso ansible_host=192.168.103.7 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+[nuage]
+vsd ansible_host=192.168.103.8 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+vsc ansible_host=192.168.103.9 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
 openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]" default_route_via="{{ infrastructure_network_services }}"
@@ -160,6 +168,8 @@ ose3-master1
 
 # All layer2 node groups that are installed with RHEL7
 [rhel7:children]
+additional-helper
+nuage
 rhosp-all
 satellite
 rhevh
@@ -182,6 +192,8 @@ test-rhel6
 
 # everything on layer2
 [layer2:children]
+additional-helper
+nuage
 ose3
 satellite
 rhev
@@ -206,6 +218,8 @@ lookbusy-rhev
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]
+additional-helper
+nuage
 satellite
 test-rhel
 infrastructure

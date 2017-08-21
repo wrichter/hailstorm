@@ -1,4 +1,42 @@
 ---
+- hosts: additional-helper
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','additional-helper', 'vm' ]
+      mode: start
+    - role: layerX_ipa_client
+      tags: [ 'layer2','additional-helper', 'ipa-client' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_rhel
+      tags: [ 'layer2','additional-helper', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_vms
+      tags: [ 'layer2','additional-helper', 'vm' ]
+      mode: destroy
+
+- hosts: nuage
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2','nuage', 'vm' ]
+      mode: start
+    - role: layerX_ipa_client
+      tags: [ 'layer2','nuage', 'ipa-client' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_rhel
+      tags: [ 'layer2','nuage', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer2_vms
+      tags: [ 'layer2','nuage', 'vm' ]
+      mode: destroy
+
 # - hosts: test-rhel
 #   gather_facts: false
 #   remote_user: root
