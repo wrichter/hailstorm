@@ -1,0 +1,42 @@
+# Configure RH SSO
+# To be used by OpenShift
+# Author: Daniel Fröhlich
+# See:  https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_jboss_sso_for_openshift/#OSE-SSO-AUTH-TUTE
+- name: login to sso
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    config credentials --server http://localhost:8080/auth \
+    --realm master --user admin --password {{ root_password }}
+
+- name: create realm
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    create realms -s realm=infra -s enabled=true
+
+- name: create admin user in realm
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+     create users -r infra -s username=adminFromSSO -s enabled=true
+  register: newUserId
+
+- name: reset admin user password
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    update users/304a1a87-e694-48a2-a61d-68f96e2e4553/reset-password \
+    -r infra -s type=password -s value=redhat01 -s temporary=false -n
+
+- name: create ocp client
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    create clients -r infra -f - << EOF
+      {
+        "clientId": "ocp",
+        "enabled": true,
+        "redirectUris": ["https://openshift.hailstorm2.coe.muc.redhat.com/*"],
+        "protocol": "openid-connect",
+        "clientAuthenticatorType": "client-secret",
+        "publicClient": false,
+        "attributes": {}
+      }
+      EOF
+#TODO: Capture Client ID
+
+- name: get ocp client secret
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    get clients/14887dbc-60a9-4882-af03-ede9100c49cc/installation/providers/keycloak-oidc-keycloak-json \
+    -r infra | grep secret | cut -d \" -f 4
