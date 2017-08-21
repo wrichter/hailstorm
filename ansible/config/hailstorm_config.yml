@@ -621,6 +621,10 @@ ipa_user:
     first: tower
     last: binduser
     password: "{{ root_password }}"
+  - username: rhsso-bind-user
+    first: rhsso
+    last: binduser
+    password: "{{ root_password }}"
   - username: coolstore-dev
     first: coolstore
     last: Developer
