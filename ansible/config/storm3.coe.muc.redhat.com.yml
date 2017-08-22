@@ -279,6 +279,19 @@ external_network_config:
           - from_port: 22
             to_port: 22
             proto: tcp
+      - expose_machine: rh-sso
+        on_host_prefix: 10.32.105.179/32
+        via_network: services
+        ports:
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
+          - from_port: 22
+            to_port: 22
+            proto: tcp
   guest_network_bridging:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
