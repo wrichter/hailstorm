@@ -1,0 +1,10 @@
+{
+  "clientId": "ocp",
+  "enabled": true,
+  "redirectUris": ["https://{{ openshift_master_api_host_and_port }}/*"],
+  "protocol": "openid-connect",
+  "clientAuthenticatorType": "client-secret",
+  "publicClient": false,
+  "attributes": {}
+}
+EOF

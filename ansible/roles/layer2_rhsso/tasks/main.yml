@@ -3,7 +3,6 @@
       tags: ["rhsso"]
   when: mode=="create"
 
-
 - block:
     - include: destroy.yml
       tags: ["rhsso:"]

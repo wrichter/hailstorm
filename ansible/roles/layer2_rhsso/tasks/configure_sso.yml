@@ -24,17 +24,8 @@
 - name: create ocp client
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
     create clients -r infra -f - << EOF
-      {
-        "clientId": "ocp",
-        "enabled": true,
-        "redirectUris": ["https://openshift.hailstorm2.coe.muc.redhat.com/*"],
-        "protocol": "openid-connect",
-        "clientAuthenticatorType": "client-secret",
-        "publicClient": false,
-        "attributes": {}
-      }
-      EOF
-#TODO: Capture Client ID
+      {{ lookup('template','sso_create_client.json.j2') }}
+  register: ssoClientId
 
 - name: get ocp client secret
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \

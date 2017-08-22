@@ -1,0 +1,10 @@
+{
+  "clientId": "ocp",
+  "enabled": true,
+  "redirectUris": ["https://openshift.hailstorm2.coe.muc.redhat.com/*"],
+  "protocol": "openid-connect",
+  "clientAuthenticatorType": "client-secret",
+  "publicClient": false,
+  "attributes": {}
+}
+EOF

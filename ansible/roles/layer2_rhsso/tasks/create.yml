@@ -1,6 +1,6 @@
 - block:
     - include: install_sso.yml
-      tags: ['sso-install']
+      tags: ['rhsso', 'rhsso-install']
     - include: configure_sso.yml
-      tags: ['sso-config']
+      tags: ['rhsso','rhsso-config']
   when: mode=="create"

@@ -1,7 +1,7 @@
 # Install RH SSO
 # Author: Daniel Fröhlich
 # See: https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.1/html/server_installation_and_configuration_guide/
-- name: install pre-req packages
+- name: install rhsso pre-req packages
   yum:
     name: java-1.8.0-openjdk,zip,postgresql,postgresql-jdbc
     state: present

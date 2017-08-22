@@ -113,7 +113,6 @@
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
     - { role: layer2_tdagent, tags: [ 'layer2', 'tdagent', 'infrastructure'], mode: create }
 
-
 #### VIRT-WHO host (either infrastrcture or satellite)
 
 - hosts: virt-who
@@ -183,6 +182,14 @@
     - role: layerX_ipa_client
       tags: [ 'layer2', 'additional-helper',  'ipa-client']
       mode: create
+
+#### RH-SSO (VM is in additional-helper group)
+- hosts: rh-sso
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_rhsso, tags: [ 'layer2', 'infrastructure', 'rhsso' ], mode: create }
+
 
 # create the "nuage" VMs, subscribe against satellite,
 # install packages defined in groups/newgroup.yml and
