@@ -63,6 +63,7 @@ rhosp-director  ansible_host=192.168.103.30 activation_key="AK-CV-RHOSP-{{ stage
 rhosp-compute1  ansible_host=192.168.103.31 activation_key="AK-CV-RHOSP-{{ stage }}"
 rhosp-compute2  ansible_host=192.168.103.32 activation_key="AK-CV-RHOSP-{{ stage }}"
 rhosp-compute3  ansible_host=192.168.103.33 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-compute4  ansible_host=192.168.103.40 activation_key="AK-CV-RHOSP-{{ stage }}"
 
 # The group of all osp control nodes
 [rhosp-control]

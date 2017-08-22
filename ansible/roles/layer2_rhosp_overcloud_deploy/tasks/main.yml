@@ -11,10 +11,11 @@
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh
           - ceilometer-config-environment.yaml
-          - "{% if current_lifecycle_env.osp_storage_backend == 'ceph_ownvms' %}storage-ceph-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}{# TODO replace with proper env #}storage-nfs-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'nfs_layer1' %}storage-nfs-environment.yaml{% endif %}"
+          - "{% if current_lifecycle_env.osp_storage_backend == 'ceph_ownvms' %}storage-ceph-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}storage-ceph-hyperconverged-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'nfs_layer1' %}storage-nfs-environment.yaml{% endif %}"
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
+          - firstboot-config-setrootpw.sh
           - rhel-registration-environment.yaml
           - rhel-registration.yaml
           - rhel-registration.sh
@@ -46,10 +47,11 @@
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh
           - ceilometer-config-environment.yaml
-          - "{% if current_lifecycle_env.osp_storage_backend == 'ceph_ownvms' %}storage-ceph-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}{# TODO replace with proper env #}storage-nfs-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'nfs_layer1' %}storage-nfs-environment.yaml{% endif %}"
+          - "{% if current_lifecycle_env.osp_storage_backend == 'ceph_ownvms' %}storage-ceph-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}storage-ceph-hyperconverged-environment.yaml{% elif current_lifecycle_env.osp_storage_backend == 'nfs_layer1' %}storage-nfs-environment.yaml{% endif %}"
           - firstboot-config-environment.yaml
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
+          - firstboot-config-setrootpw.sh
           - rhel-registration-environment.yaml
           - rhel-registration.yaml
           - rhel-registration.sh
