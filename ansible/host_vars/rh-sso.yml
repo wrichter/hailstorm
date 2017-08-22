@@ -1,6 +1,6 @@
-mem: 1024
+---
+mem: 4096
 vcpu: 2
-
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
   size: 30
@@ -10,7 +10,6 @@ disk:
   #   swap: 2048
   #   home: 2048
   #   root: 10000
-
   physvols:
     boot: 500
     rhel: 29500
@@ -27,6 +26,16 @@ disk:
       fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
+    - name: var
+      fstype: "{{ fstype }}"
+      mountpoint: /var
+      size: 12000
 
-packages: git,python
-pool_regex: "{{ rhel_subscription_pool_regex }}"
+
+repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-extras-rpms
+  - jb-eap-7.0-for-rhel-7-server-rpms
+  - rh-sso-7.1-for-rhel-7-server-rpms
+
+#  "{{ rh_sso_repos }}"

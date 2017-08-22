@@ -37,7 +37,7 @@ ipa_admin_password: "{{ root_password }}"
 firewalld_rules:
  - DNStcp:
    port: 53
-   protocol: udp
+   protocol: tcp
    state: enabled
    zone: public
    permanent: true

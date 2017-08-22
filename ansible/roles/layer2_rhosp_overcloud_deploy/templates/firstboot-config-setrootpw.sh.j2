@@ -1,0 +1,22 @@
+#!/bin/bash
+set -x
+
+permit_ssh()
+{
+  # Permit root login over SSH
+  #sed -i -e 's/.*ssh-rsa/ssh-rsa/' /root/.ssh/authorized_keys
+  sed -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  sed -i -e 's/ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+  sed -i -e 's/#UseDNS yes/UseDNS no/g' /etc/ssh/sshd_config
+  
+  systemctl restart sshd
+}
+
+set_rootpw()
+{
+  # Update the root password to something we know
+  echo {{ root_password }} | sudo passwd root --stdin
+}
+
+permit_ssh
+set_rootpw
