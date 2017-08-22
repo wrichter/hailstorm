@@ -58,7 +58,7 @@ tdagent_configs:
 firewalld_rules:
  - DNStcp:
    port: 53
-   protocol: udp
+   protocol: tcp
    state: enabled
    zone: public
    permanent: true
