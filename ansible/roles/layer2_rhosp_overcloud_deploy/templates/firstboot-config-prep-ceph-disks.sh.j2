@@ -1,0 +1,67 @@
+#!/bin/bash
+set -x
+
+wipe_disks()
+{
+  # This script wipes all disks except for the root disk to make sure there's nothing
+  # left from a previous install and to have GPT labels in place.
+  export LVM_SUPPRESS_FD_WARNINGS=true
+  echo -e "\nPreparing disks for local storage usage...\n================================================="
+  echo "Number of disks detected: $(lsblk -no NAME,TYPE,MOUNTPOINT | grep "disk" | awk '{print $1}' | wc -l)"
+  echo "Number of mpath devices: $(ls /dev/mapper/mpath[a-z] 2>/dev/null | wc -l)"
+  multipath -ll
+  DISKDEVS=""
+  vgchange -an 2>/dev/null
+  for VG in `vgs --noheadings --rows|head -1`; do
+    vgremove -f $VG
+  done
+  cd /dev
+  for DEVICE in `lsblk -no NAME,TYPE,MOUNTPOINT | grep "disk" | awk '{print $1}'` mapper/mpath[a-z]; do
+    ROOTFOUND=0
+    echo "Checking /dev/$DEVICE..."
+    [ -e /dev/$DEVICE ] || continue
+    echo "Number of partitions on /dev/$DEVICE: $(expr $(lsblk -n /dev/$DEVICE | awk '{print $7}' | wc -l) - 1)"
+    for MOUNTS in `lsblk -n /dev/$DEVICE | awk '{print $7}'`; do
+      if [ "$MOUNTS" = "/" ]; then
+        ROOTFOUND=1
+      fi
+    done
+    if [ $ROOTFOUND = 0 ]; then
+      echo "Root not found in /dev/${DEVICE}"
+      # if this device is part of an mpath we skip it
+      lsblk -n /dev/$DEVICE 2>/dev/null | paste -s | grep disk | grep mpath && echo "/dev/${DEVICE} is an mpath device... skipping." && continue
+      for part in /dev/${DEVICE}?*; do
+        if [ -b $part ]; then
+          echo "Zeroing partition $part"
+          dd if=/dev/zero of=$part bs=1G count=2
+        fi
+      done
+      echo "Wiping disk /dev/${DEVICE}"
+      partx -d /dev/${DEVICE}
+      sgdisk -Z /dev/${DEVICE}
+      sgdisk -g /dev/${DEVICE}
+      partx -a /dev/${DEVICE}
+      partx -u /dev/${DEVICE}
+      DISKDEVS="${DISKDEVS} ${DEVICE}"
+      lsblk -no SIZE -db /dev/${DEVICE}
+      sync
+    else
+      echo "Root found in /dev/${DEVICE}... skipping."
+    fi
+  done
+}
+
+prep_cheph_disks()
+{
+  if [[ `hostname` = *"ceph"* ]]; then
+    wipe_disks
+  fi
+}
+
+{% if current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}
+wipe_disks
+{% elif current_lifecycle_env.osp_storage_backend == 'ceph_ownvms' %}
+prep_cheph_disks
+{% else %}
+echo "$0: we do not wipe here anything as this is not a ceph setup"
+{% endif %}
