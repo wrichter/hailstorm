@@ -16,6 +16,7 @@
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
           - firstboot-config-setrootpw.sh
+          - firstboot-config-prep-ceph-disks.sh
           - rhel-registration-environment.yaml
           - rhel-registration.yaml
           - rhel-registration.sh
@@ -52,6 +53,7 @@
           - firstboot-config.yaml
           - firstboot-config-rootsshkey.sh
           - firstboot-config-setrootpw.sh
+          - firstboot-config-prep-ceph-disks.sh
           - rhel-registration-environment.yaml
           - rhel-registration.yaml
           - rhel-registration.sh
