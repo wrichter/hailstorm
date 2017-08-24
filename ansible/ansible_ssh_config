@@ -1,0 +1,4 @@
+Host *
+        ForwardAgent no
+        ControlMaster=auto
+        ControlPersist=60s
