@@ -14,5 +14,21 @@
     name: "@rh-sso7"
     state: present
 
+#
+# ----------- Cert Suff ------
+# We need a nice TLS Certifacte for RH_SSO signed by IPA root ca. That
+# has been created already by IPA using a role invoked in create-01-base.yml and stored
+# in var rhsso_(key|cert|cacert). This block creates them as file in the rhsso host /root directory:
+- name: create certificate files
+  copy: content="{{ item.value }}" dest="/root/{{ item.name }}" mode="400"
+  when: rhsso_key is defined and rhsso_cert and rhsso_cacert is defined
+  with_items:
+    - name: rhsso.key
+      value: "{{ rhsso_key }}"
+    - name: rhsso.crt
+      value: "{{ rhsso_cert }}"
+    - name: rhsso-ca.crt
+      value: "{{ rhsso_cacert }}"
+
 - name: create sso admin username
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/add-user-keycloak.sh -r master -u admin -p {{ root_password }}
