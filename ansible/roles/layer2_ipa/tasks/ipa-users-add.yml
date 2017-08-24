@@ -11,7 +11,7 @@
 #     ignore_no_modifications=true
 
 - name: find existing users
-  shell: echo "{{ ipa_admin_password }}" | kinit admin && LANG=C ipa user-find | grep "User login:" | cut -c 15-
+  shell: echo "{{ ipa_admin_password }}" | kinit admin && ipa user-find | grep "User login:" | cut -c 15-
   register: users
   changed_when: false
 
