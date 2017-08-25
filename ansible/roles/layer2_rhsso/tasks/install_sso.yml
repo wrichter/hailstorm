@@ -76,13 +76,13 @@
 
     - name: configure eap for TLS
       shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/jboss-cli.sh --file=/root/configure_eap_for_tls.cli
-  when: ( standalone_would_have | changed) or ( standalone_would_have | failed)
+  when: ( standalone_would_have.msg == 'line added') or ( standalone_would_have | failed)
 
-- name: enable and (re-)start rhsso service
+- name: enable and start rhsso service
   service:
     name: rh-sso7
     enabled: yes
-    state: restarted
+    state: started
 
 - name: wait for rhsso service to be online
   wait_for:

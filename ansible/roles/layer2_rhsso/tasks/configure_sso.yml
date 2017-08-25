@@ -6,30 +6,46 @@
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
     config credentials --server http://localhost:8080/auth \
     --realm master --user admin --password {{ root_password }}
+  changed_when: false
 
-- name: create realm
+- name: create infra realm
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
     create realms -s realm=infra -s enabled=true
+  register: command_result
+  failed_when: "'Realm with same name exists' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'Realm with same name exists' not in command_result.stderr"
 
-- name: create admin user in realm
+- name: create admin user in infra realm
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
      create users -r infra -s username=adminFromSSO -s enabled=true
-  register: newUserId
+  register: create_admin_result
+  failed_when: "'User exists with same username' not in create_admin_result.stderr and create_admin_result.rc != 0"
+  changed_when: "'User exists with same username' not in create_admin_result.stderr"
 
-- name: reset admin user password
-  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
-    update users/304a1a87-e694-48a2-a61d-68f96e2e4553/reset-password \
-    -r infra -s type=password -s value={{ root_password }} -s temporary=false -n
+- block:
+    - name: get id of admin user
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get users -r infra --fields 'id' -q username='adminfromsso' --format=csv --noquotes
+      register: adminUserId
+      changed_when: false
+
+    - name: reset admin user password
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+        update users/{{ adminUserId.stdout }}/reset-password \
+        -r infra -s type=password -s value={{ root_password }} -s temporary=false -n
+  when: create_admin_result | changed
+
+# TODO: Register LDAP Provider for IPA-LPDA
+
 
 # Todo: Move this to openshift installation
-- name: create ocp sso client in rh-sso
-  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
-    create clients -r infra -f - << EOF
-      {{ lookup('template','sso_create_client.json.j2') }}
-  register: ssoClientId
-
-- name: get ocp sso client secret from rh-sso
-  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
-    get clients/14887dbc-60a9-4882-af03-ede9100c49cc/installation/providers/keycloak-oidc-keycloak-json \
-    -r infra | grep secret | cut -d \" -f 4
-  register: ssoClientId
+#- name: create oidc client in rh-sso for ocp
+#  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+#    create clients -r infra -f - << EOF
+#      {{ lookup('template','create_ocp_oidc_client_in_rhsso.json.j2') }}
+#  register: ssoClientId
+#
+#- name: get ocp ssoidco client secret from rh-sso
+#  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+#    get clients/14887dbc-60a9-4882-af03-ede9100c49cc/installation/providers/keycloak-oidc-keycloak-json \
+#    -r infra | grep secret | cut -d \" -f 4
+#  register: ssoClientId
