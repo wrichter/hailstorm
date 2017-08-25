@@ -190,6 +190,14 @@
   roles:
     - { role: layer2_rhsso, tags: [ 'layer2', 'infrastructure', 'rhsso' ], mode: create }
 
+#### install-host (VM is in additional-helper group)
+- hosts: install-host
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_installhost
+      tags: [ 'layer2', 'infrastructure', 'installhost' ]
+      mode: create
 
 # create the "nuage" VMs, subscribe against satellite,
 # install packages defined in groups/newgroup.yml and
