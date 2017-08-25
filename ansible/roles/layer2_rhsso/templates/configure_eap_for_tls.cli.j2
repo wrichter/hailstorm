@@ -1,0 +1,11 @@
+# Server is not yet running - need to embed it:
+embed-server --server-config=standalone.xml
+
+# Create new security realm for undertow:
+/core-service=management/security-realm=UndertowRealm:add()
+
+# Add SSL Config to UndertowRealm to use keystore from /root/keycloak.jks
+/core-service=management/security-realm=UndertowRealm/server-identity=ssl:add(keystore-path=keycloak.jks, keystore-password=keystore, keystore-relative-to=jboss.server.config.dir)
+
+# Add Https Listener using SSL config created in previous step
+/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=UndertowRealm)

@@ -32,5 +32,60 @@
     - name: rhsso-ca.crt
       value: "{{ rhsso_cacert }}"
 
+- name: check for p12 keystore existance
+  stat: path=/root/keycloak.p12
+  register: keycloak_p12
+
+- name: create pkcs12 keystore
+  shell: openssl pkcs12 -export -in /root/rhsso.crt -inkey /root/rhsso.key -name keycloak -CAfile /root/rhsso-ca.crt -caname rootca -out /root/keycloak.p12 -password pass:keystore
+  when: keycloak_p12.stat.exists == false
+
+- name: check for jks keystore existance
+  stat: path=/opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/keycloak.jks
+  register: keycloak_jks
+
+- block:
+  - name: create jks keystore
+    shell: keytool -importkeystore -deststorepass keystore -destkeystore /opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/keycloak.jks  -srckeystore /root/keycloak.p12 -srcstoretype PKCS12 -srcstorepass keystore -alias keycloak
+  - name: import root ca into jks keystore
+    shell: keytool -importcert -alias iparootca -file /root/rhsso-ca.crt -keystore /opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/keycloak.jks -storepass keystore -noprompt
+  when: keycloak_jks.stat.exists == false
+
 - name: create sso admin username
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/add-user-keycloak.sh -r master -u admin -p {{ root_password }}
+  register: command_result
+  failed_when: "'already added' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'already added' not in command_result.stderr"
+
+- name: check if eap is already configured for TLS
+  lineinfile:
+    path: /opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/standalone.xml
+    regexp: '.*<https-listener name="https" security-realm="UndertowRealm" socket-binding="https"/>'
+    line: "dummy"
+    state: present
+  check_mode: yes
+  register: standalone_would_have
+  changed_when: false
+
+- debug:
+    var: standalone_would_have
+
+- block:
+    - name: create configure_eap_for_tls.cli
+      template: src=configure_eap_for_tls.cli.j2 dest=/root/configure_eap_for_tls.cli
+
+    - name: configure eap for TLS
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/jboss-cli.sh --file=/root/configure_eap_for_tls.cli
+  when: ( standalone_would_have | changed) or ( standalone_would_have | failed)
+
+- name: enable and (re-)start rhsso service
+  service:
+    name: rh-sso7
+    enabled: yes
+    state: restarted
+
+- name: wait for rhsso service to be online
+  wait_for:
+    host: localhost
+    port: 9990
+    timeout: 90
