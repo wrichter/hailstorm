@@ -1,0 +1,8 @@
+- name: install epel-release
+  yum:
+    name: "{{ epel_rpm }}"
+    state: present
+- name: install additional packages
+  yum: name=htop,atop state=latest
+- name: disable epel
+  shell: sed -i "s/enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo

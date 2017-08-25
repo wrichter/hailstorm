@@ -1,0 +1,9 @@
+- block:
+    - include: create.yml
+      tags: ["installhost"]
+  when: mode=="create"
+
+- block:
+    - include: destroy.yml
+      tags: ["installhost"]
+  when: mode=="destroy"
