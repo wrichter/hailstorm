@@ -2,4 +2,5 @@
     - include: configure_ceilometer.yml
     - name: create sensu sudoers file
       template: src=sudoers_sensu.j2 dest=/etc/sudoers.d/sensu
+    - include: fix_bugs.yml
   when: mode=="create"

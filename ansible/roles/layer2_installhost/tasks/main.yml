@@ -1,9 +1,9 @@
 - block:
     - include: create.yml
-      tags: ["rhsso"]
+      tags: ["installhost"]
   when: mode=="create"
 
 - block:
     - include: destroy.yml
-      tags: ["rhsso"]
+      tags: ["installhost"]
   when: mode=="destroy"

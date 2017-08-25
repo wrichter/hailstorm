@@ -32,10 +32,15 @@ disk:
       size: 12000
 
 
+pool_regex: "{{ rhsso_subscription_pool_regex }}"
 repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
   - jb-eap-7.0-for-rhel-7-server-rpms
   - rh-sso-7.1-for-rhel-7-server-rpms
-
-#  "{{ rh_sso_repos }}"
+packages:
+  - java-1.8.0-openjdk
+  - zip
+  - postgresql
+  - postgresql-jdbc
+#  - @rh-sso7

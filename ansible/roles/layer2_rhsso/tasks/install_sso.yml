@@ -1,13 +1,15 @@
 # Install RH SSO
 # Author: Daniel Fröhlich
 # See: https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.1/html/server_installation_and_configuration_guide/
-- name: install rhsso pre-req packages
-  yum:
-    name: java-1.8.0-openjdk,zip,postgresql,postgresql-jdbc
-    state: present
 
-- name: enable rhsso repos
-  shell: subscription-manager repos --enable=jb-eap-7.0-for-rhel-7-server-rpms --enable=rh-sso-7.1-for-rhel-7-server-rpms
+# the following moved to host_vars/rh-sso.yml
+#- name: install rhsso pre-req packages
+#  yum:
+#    name: java-1.8.0-openjdk,zip,postgresql,postgresql-jdbc
+#    state: present
+#
+#- name: enable rhsso repos
+#  shell: subscription-manager repos --enable=jb-eap-7.0-for-rhel-7-server-rpms --enable=rh-sso-7.1-for-rhel-7-server-rpms
 
 - name: install rhsso group
   yum:

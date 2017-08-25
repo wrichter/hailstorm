@@ -1,0 +1,3 @@
+- name: fix bug on horizon not reachable (https://access.redhat.com/solutions/3139791)
+  shell: sed '33,34!d' /etc/httpd/conf.d/*-horizon_vhost.conf|grep 'WSGIApplicationGroup %{GLOBAL}' || sed -i '34i\  WSGIApplicationGroup \%\{GLOBAL\}' /etc/httpd/conf.d/*-horizon_vhost.conf
+  when: lifecycle_environments.rhel7_iso_image == 'rhel-server-7.4-x86_64-dvd.iso'

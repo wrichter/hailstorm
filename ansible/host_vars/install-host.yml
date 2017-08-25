@@ -1,2 +1,9 @@
 ---
-packages: ansible
+packages:
+  - git
+  - python
+  - mc
+  - strace
+  - nmap
+  - screen
+  - iotop

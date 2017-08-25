@@ -129,6 +129,7 @@ current_lifecycle_env: "{{ lifecycle_environments|selectattr('name','match','^'+
 # RED HAT SUBSCRIPTIONS
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
 rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux.*(Unlimited guests|Company-Wide).*)$"
+rhsso_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Infrastructure.*)$"
 #sap_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server for SAP HANA.*)$"
 rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat (Enterprise Linux )?OpenStack Platform.*)$"
@@ -289,6 +290,12 @@ satellite_product_config:
         releasever: 6Server
       - name: JBoss Enterprise Application Platform 7 (RHEL 7 Server) (RPMs)
         releasever: 7Server
+      - name: JBoss Enterprise Application Platform 7.0 (RHEL 7 Server) (RPMs)
+        releasever: 7Server
+  - product: Red Hat Single Sign-On
+    basearch: x86_64
+    repos:
+      - name: Single Sign-On 7.1 (RHEL 7 Server) (RPMs)
   - product: Red Hat CloudForms
     basearch: x86_64
     repos:
@@ -386,6 +393,17 @@ satellite_content_config:
         repository: "Red Hat Enterprise Virtualization Management Agents for RHEL 7 RPMs x86_64 7Server"
       - product: "Red Hat Virtualization"
         repository: "Red Hat Virtualization 4 Management Agents for RHEL 7 RPMs x86_64 7Server"
+
+  - content_view: "CV-RH-SSO"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
+      - product: "JBoss Enterprise Application Platform"
+        repository: "JBoss Enterprise Application Platform 7.0 RHEL 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Single Sign-On"
+        repository: "Single Sign-On 7.1 RHEL 7 Server RPMs x86_64"
 
   - content_view: "CV-RHOSP"
     content:
@@ -537,6 +555,12 @@ satellite_activation_keys_and_host_collections:
     content_view: "CV-RHEV-HYPERVISOR"
     host_collection: "RHEVH"
     activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
+
+  - activation_key: AK-CV-RH-SSO
+    content_view: "CV-RH-SSO"
+    host_collection: "RHEL7"
+    activation_key_subscription_regex: "{{ rhsso_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
   - activation_key: AK-CV-RHOSP

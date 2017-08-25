@@ -92,7 +92,7 @@ storage-console ansible_host=192.168.103.9 activation_key="AK-CV-CEPH-{{ stage }
 
 [additional-helper]
 install-host ansible_host=192.168.103.6 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
-rh-sso ansible_host=192.168.103.7 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+rh-sso ansible_host=192.168.103.7 activation_key="AK-CV-RH-SSO-{{ stage }}"
 
 [nuage]
 vsd ansible_host=192.168.103.8 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
