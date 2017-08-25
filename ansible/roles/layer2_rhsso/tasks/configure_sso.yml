@@ -1,5 +1,5 @@
 # Configure RH SSO
-# To be used by OpenShift
+# To be used by OpenShift et al
 # Author: Daniel Fröhlich
 # See:  https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_jboss_sso_for_openshift/#OSE-SSO-AUTH-TUTE
 - name: login to sso
@@ -19,15 +19,17 @@
 - name: reset admin user password
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
     update users/304a1a87-e694-48a2-a61d-68f96e2e4553/reset-password \
-    -r infra -s type=password -s value=redhat01 -s temporary=false -n
+    -r infra -s type=password -s value={{ root_password }} -s temporary=false -n
 
-- name: create ocp client
+# Todo: Move this to openshift installation
+- name: create ocp sso client in rh-sso
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
     create clients -r infra -f - << EOF
       {{ lookup('template','sso_create_client.json.j2') }}
   register: ssoClientId
 
-- name: get ocp client secret
+- name: get ocp sso client secret from rh-sso
   shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
     get clients/14887dbc-60a9-4882-af03-ede9100c49cc/installation/providers/keycloak-oidc-keycloak-json \
     -r infra | grep secret | cut -d \" -f 4
+  register: ssoClientId
