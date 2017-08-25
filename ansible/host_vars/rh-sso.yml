@@ -44,12 +44,13 @@ packages:
   - postgresql
   - postgresql-jdbc
 #  - @rh-sso7
+
 firewalld_rules:
   - HTTPStcp:
-   port: 8443
-   protocol: tcp
-   state: enabled
-   zone: public
-   permanent: true
-   immediate: true
+    port: 8443
+    protocol: tcp
+    state: enabled
+    zone: public
+    permanent: true
+    immediate: true
 
