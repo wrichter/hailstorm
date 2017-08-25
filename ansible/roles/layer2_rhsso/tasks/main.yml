@@ -5,5 +5,5 @@
 
 - block:
     - include: destroy.yml
-      tags: ["rhsso:"]
+      tags: ["rhsso"]
   when: mode=="destroy"
