@@ -1,0 +1,39 @@
+- name: check rhsso is available
+  wait_for: host=rh-sso.{{ hailstorm_dns_domain }} port=8443 timeout=1
+  register: rhsso_available
+
+- block:
+  - name: login to sso
+    shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+      config credentials --server http://localhost:8080/auth \
+      --realm master --user admin --password {{ root_password }}
+    changed_when: false
+    delegate_to: rh-sso
+
+  - name: create oidc json
+    template: src=create_ocp_oidc_client_in_rhsso.json.j2 dest=/root/create_ocp_oidc_client_in_rhsso.json
+    delegate_to: rh-sso
+
+  - name: create oidc client in rh-sso for ocp
+    shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh create clients -r infra -f /root/create_ocp_oidc_client_in_rhsso.json
+    failed_when: "'already exists' not in create_client_result.stderr and create_client_result.rc != 0"
+    changed_when: "'already exists' not in create_client_result.stderr"
+    delegate_to: rh-sso
+    register: create_client_result
+
+  - name: get client id from rh-sso
+    shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get clients -r infra --fields=id -q clientId=ocp-master --format=csv --noquotes
+    delegate_to: rh-sso
+    register: ssoClientId
+    changed_when: false
+
+  - name: get client secret from client
+    shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+      get clients/{{ ssoClientId }}/installation/providers/keycloak-oidc-keycloak-json \
+      -r infra | grep secret | cut -d \" -f 4
+    delegate_to: rh-sso
+    register: ssoClientSecret
+    changed_when: false
+
+  - debug: var=ssoClientSecret
+  when: rhsso_available|success

@@ -1,7 +1,7 @@
 {
-  "clientId": "ocp",
+  "clientId": "ocp-master",
   "enabled": true,
-  "redirectUris": ["https://openshift.hailstorm3.coe.muc.redhat.com/*"],
+  "redirectUris": ["https://openshift.{{ hailstorm_dns_domain }}/*"],
   "protocol": "openid-connect",
   "clientAuthenticatorType": "client-secret",
   "publicClient": false,

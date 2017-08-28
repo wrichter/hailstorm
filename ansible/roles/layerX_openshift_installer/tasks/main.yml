@@ -1,6 +1,8 @@
 - block:
     - include: prereqs.yml
       tags: ["ose3-prereqs"]
+    - include: create_sso_oidc_client.yml
+      tags: ["ose3-rhsso"]
     - include: install.yml
       tags: ["ose3-ansible"]
     - include: add_users_to_roles.yml
