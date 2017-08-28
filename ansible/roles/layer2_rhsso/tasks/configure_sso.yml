@@ -39,6 +39,7 @@
   register: ipaProviderId
   changed_when: false
 
+# Create IPA LDAP Provider as user-federation if not already present:
 - block:
     - name: prepare ldap provider json
       template: src=create_ipa_ldap_provider.json.j2 dest=/root/create_ipa_ldap_provider.json
@@ -57,19 +58,3 @@
       register: syncResult
       failed_when: syncResult.rc != 0 or (syncResult.stdout|from_json)['failed'] !=0
   when: ipaProviderId.stdout == ""
-
-# TODO: Register LDAP Provider for IPA-LPDA
-
-
-# Todo: Move this to openshift installation
-#- name: create oidc client in rh-sso for ocp
-#  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
-#    create clients -r infra -f - << EOF
-#      {{ lookup('template','create_ocp_oidc_client_in_rhsso.json.j2') }}
-#  register: ssoClientId
-#
-#- name: get ocp ssoidco client secret from rh-sso
-#  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
-#    get clients/14887dbc-60a9-4882-af03-ede9100c49cc/installation/providers/keycloak-oidc-keycloak-json \
-#    -r infra | grep secret | cut -d \" -f 4
-#  register: ssoClientId
