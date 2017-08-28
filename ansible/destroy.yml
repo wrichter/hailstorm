@@ -362,6 +362,14 @@
       tags: [ 'layer2', 'vm', 'test-rhel' ]
       mode: destroy
 
+- hosts: rh-sso
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer2_rhsso
+      tags: [ 'layer2', 'infrastructure', 'rhsso' ]
+      mode: destroy
+      
 - hosts: ipa
   gather_facts: false
   remote_user: root

@@ -67,9 +67,6 @@
   register: standalone_would_have
   changed_when: false
 
-- debug:
-    var: standalone_would_have
-
 - block:
     - name: create configure_eap_for_tls.cli
       template: src=configure_eap_for_tls.cli.j2 dest=/root/configure_eap_for_tls.cli
