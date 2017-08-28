@@ -1,3 +1,22 @@
-- name: Removing RH-SS
-  shell: echo Fix Me
+- name: disable and stop rhsso service
+  service:
+    name: rh-sso7
+    enabled: no
+    state: stopped
   ignore_errors: true
+
+- name: de-install rhsso group
+  yum:
+    name: "@rh-sso7"
+    state: absent
+
+- name: remove FILES
+  file: path="{{ item }}" state=absent
+  with_items:
+    - "/root/rhsso-ca.crt"
+    - "/root/rhsso.crt"
+    - "/root/rhsso.key"
+    - "/root/keycloak.p12"
+    - "/var/opt/rh/rh-sso7/lib/keycloak/standalone/data/keycloak.h2.db"
+    - "/var/opt/rh/rh-sso7/lib/keycloak/standalone/data/keycloak.trace.db"
+    - "/var/opt/rh/rh-sso7/lib/keycloak/standalone/data/keycloak.trace.db.old"
