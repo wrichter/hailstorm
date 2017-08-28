@@ -34,6 +34,30 @@
         -r infra -s type=password -s value={{ root_password }} -s temporary=false -n
   when: create_admin_result | changed
 
+- name: check existance of ipa ldap Provider
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get components -r infra --fields 'id' -q name=ldap-ipa  --format=csv --noquotes
+  register: ipaProviderId
+  changed_when: false
+
+- block:
+    - name: prepare ldap provider json
+      template: src=create_ipa_ldap_provider.json.j2 dest=/root/create_ipa_ldap_provider.json
+
+    - name: create ldap Provider
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+        create components -r infra -f /root/create_ipa_ldap_provider.json
+
+    - name: get ipa ldap provider id
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get components -r infra --fields 'id' -q name=ldap-ipa  --format=csv --noquotes
+      register: newIpaProviderId
+      changed_when: false
+
+    - name: force full sync
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh create user-storage/{{ newIpaProviderId.stdout }}/sync?action=triggerFullSync  -r infra -o
+      register: syncResult
+      failed_when: syncResult.rc != 0 or (syncResult.stdout|from_json)['failed'] !=0
+  when: ipaProviderId.stdout == ""
+
 # TODO: Register LDAP Provider for IPA-LPDA
 
 
