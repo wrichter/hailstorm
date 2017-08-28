@@ -1,6 +1,7 @@
 - name: check IPA is available
   wait_for: host={{ inventory_hostname }} port=22 timeout=1
   register: ipa_available
+  ignore_errors: true
 
 - name: copy certificate of IPA
   command: cat /etc/ipa/ca.crt

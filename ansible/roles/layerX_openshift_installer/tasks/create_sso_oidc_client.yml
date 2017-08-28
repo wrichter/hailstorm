@@ -1,6 +1,7 @@
 - name: check rhsso is available
   wait_for: host=rh-sso.{{ hailstorm_dns_domain }} port=8443 timeout=1
   register: rhsso_available
+  ignore_errors: true
 
 - block:
   - name: login to sso
@@ -29,11 +30,10 @@
 
   - name: get client secret from client
     shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
-      get clients/{{ ssoClientId }}/installation/providers/keycloak-oidc-keycloak-json \
+      get clients/{{ ssoClientId.stdout }}/installation/providers/keycloak-oidc-keycloak-json \
       -r infra | grep secret | cut -d \" -f 4
     delegate_to: rh-sso
     register: ssoClientSecret
     changed_when: false
-
-  - debug: var=ssoClientSecret
+    failed_when: ssoClientSecret.stderr != ""
   when: rhsso_available|success
