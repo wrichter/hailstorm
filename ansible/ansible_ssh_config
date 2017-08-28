@@ -1,4 +1,5 @@
 Host *
         ForwardAgent no
-        ControlMaster=auto
-        ControlPersist=60s
+        ControlMaster auto
+        ControlPath binary/%r@%h:%p
+        ControlPersist 60s
