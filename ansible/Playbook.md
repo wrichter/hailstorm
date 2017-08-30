@@ -11,9 +11,9 @@ Each layer is implemented as Ansible role, i.e. encapsulates all the commands, t
 ## How Hailstorm is configured
 
 Hailstorm uses four different files to control its configuration:
-- the ansible inventory ("hosts") which lists all the VMs that are being created
+- the ansible inventory ("hosts_sddc") which lists all the VMs that are being created
 - config/hailstorm_config.yml which controls which software versions are being rolled out
-- config/infrastructure_config.yml which specifies the network configuration and core services such as NTP or DNS provided by the layer1 host. The idea is that the hailstorm code could also be used to roll out the stack to a classic environment as long as the roles/networks described in this file are met through other means.
+- config/infrastructure_config_sddc.yml which specifies the network configuration and core services such as NTP or DNS provided by the layer1 host. The idea is that the hailstorm code could also be used to roll out the stack to a classic environment as long as the roles/networks described in this file are met through other means.
 - config/<layer1_host_specific_file> which contains the layer1-host specific configuration. This can be the CPU/Memory configuration of the VMs (depending on the layer1 sizing), the filesystem layout (where qcow images and binaries are placed), HTTP proxy configuration, etc.
 
 When rolling out hailstorm to a new machine, it is expected that you only need to add/adapt a layer1 host specific file and the rest can be left as-is.
@@ -67,7 +67,7 @@ The playbooks (create.yml, destroy.yml - both in this directory) describe a sequ
 
 ### Inventory
 
-The groups of machines referenced in the playbooks are defined in the [inventory](http://docs.ansible.com/ansible/intro_inventory.html) file "hosts" in this directory. These groups could for example be the virtual machines that make up OpenStack, RHEV, etc... Unless you are defining or changing a group of (virtual) machines, it is unlikely that you will need to change this file.
+The groups of machines referenced in the playbooks are defined in the [inventory](http://docs.ansible.com/ansible/intro_inventory.html) file "hosts_sddc" in this directory. These groups could for example be the virtual machines that make up OpenStack, RHEV, etc... Unless you are defining or changing a group of (virtual) machines, it is unlikely that you will need to change this file.
 
 If a group consists only of a single machine (e.g. layer1), it has the same name as the machine itself. This might be confusing at first because it becomes clear only by knowing Ansible conventions that something refers to a single host versus a group (Hint: it is usually a group).
 
