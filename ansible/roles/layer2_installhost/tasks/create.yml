@@ -2,7 +2,15 @@
   yum:
     name: "{{ epel_rpm }}"
     state: present
+- name: enable epel
+  lineinfile:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^enabled='
+    line: 'enabled=1'
 - name: install additional packages
-  yum: name=htop,atop state=latest
+  yum: name=htop,atop,ansible state=latest
 - name: disable epel
-  shell: sed -i "s/enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
+  lineinfile:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^enabled='
+    line: 'enabled=0'

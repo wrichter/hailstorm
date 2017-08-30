@@ -75,6 +75,9 @@
       shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/jboss-cli.sh --file=/root/configure_eap_for_tls.cli
   when: ( standalone_would_have.msg == 'line added') or ( standalone_would_have | failed)
 
+- name: change ownership to jboss (Note that this might be too much or unneeded at all)
+  command: chown -RHLf --dereference jboss.jboss /opt/rh/rh-sso7/root/usr/share/keycloak/standalone
+
 - name: enable and start rhsso service
   service:
     name: rh-sso7

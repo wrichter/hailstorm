@@ -7,7 +7,7 @@
 - name: create zone db directory
   file: state=directory path=/etc/named/zones/master
 - name: create a sensible serial for BIND zone
-  shell: date +%Y%m%d$((`date +%H`*4+`date +%M`/8))
+  shell: date +%Y%m%d$((`date +%-H`*4+`date +%-M`/8))
   register: bind_zone_serial
 - name: create zone db
   template: src=zone.db.j2 dest=/etc/named/zones/master/db.{{ hailstorm_dns_domain }}

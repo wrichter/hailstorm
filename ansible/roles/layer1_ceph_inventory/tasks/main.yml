@@ -3,7 +3,9 @@
   add_host:
     name: "ceph{{ item.0 }}"
     groups: ceph,ceph-osds,accessible_via_admin_network,rhel7{% if item.0 == 0%},ceph-installer,ceph-rgws-installer{% endif %}{% if item.0 < 3%},ceph-mons,ceph-rgws{% endif %}{% if item.0 == 1 %},ceph-calamari{% endif %}
-    ansible_host: "192.168.103.{{ 2 + item.0 }}"
+    #ansible_host: "192.168.103.{{ 2 + item.0 }}"
+    # untested
+    ansible_host: "{{ infrastructure_network_admin.default_gw_host_prefix|regex_replace('(^.*\\.).*$', '\\1') }}.{{ 2 + item.0 }}"
     activation_key: "AK-CV-CEPH-{{ stage }}"
     extra_disk_device: "{{ item.1 }}"
   with_indexed_items: "{% if layer1_ceph_devices is defined %}{{ layer1_ceph_devices }}{% else %}[]{% endif %}"

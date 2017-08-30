@@ -1,0 +1,114 @@
+# This is to make the various roles the layer1 host plays obvious
+# layer1 roles used for delegation - here we use the host name and let ansible resolve the connection info through the inventory
+infrastructure_delegate_host_used_to_test_if_layer2_host_is_available: "layer1"
+infrastructure_delegate_nfs_server: "layer1"
+infrastructure_delegate_kvm_host: "layer1"
+infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results: "layer1"
+infrastructure_delegate_local_content_host: "layer1"
+#the following hosts are not used for delegation, but used directly
+infrastructure_address_ssh_jump_host: "{{ layer1_ansible_host }}"
+infrastructure_address_ntp_server: "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}"
+infrastructure_address_default_dns: "{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}"
+infrastructure_address_nfs_server: "{{ infrastructure_network_storage.default_gw_host_prefix | ipaddr('address') }}"
+
+infrastructure_network_services:
+  netname: 'services'
+  bridge: 'virbr1'
+  forward_mode: 'nat'
+  default_gw_host_prefix: 10.116.120.1/24
+  osp_undercloud_start:   10.116.120.30
+  osp_undercloud_end:     10.116.120.80
+  osp_overcloud_start:    10.116.120.81
+  osp_overcloud_end:      10.116.120.100
+  dhcp_start:             10.116.120.128
+  dhcp_end:               10.116.120.172
+  floating_start:         10.116.120.173
+  floating_end:           10.116.120.254
+  mac_prefix: "02:00:00:00:01:"
+
+infrastructure_network_guests:
+  netname: 'guests'
+  bridge:                 '{% if external_network_config.guest_network_bridging is not defined %}virbr2{%           else %}br0{% endif %}'
+  forward_mode:           "{% if external_network_config.guest_network_bridging is not defined %}nat{%              else %}bridge{% endif %}"
+  default_gw_host_prefix: "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.1/24{% else %}{{ external_network_config.guest_network_bridging.default_gw_host_prefix }}{% endif %}"
+  infra_start:            "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.129{%  else %}{{ external_network_config.guest_network_bridging.osp_infra_start }}{% endif %}"
+  infra_end:              "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.149{%  else %}{{ external_network_config.guest_network_bridging.osp_infra_end }}{% endif %}"
+  floating_start:         "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.150{%  else %}{{ external_network_config.guest_network_bridging.osp_floating_start }}{% endif %}"
+  floating_end:           "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.254{%  else %}{{ external_network_config.guest_network_bridging.osp_floating_end }}{% endif %}"
+  dns_server:             "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.1{%  else %}{{ external_network_config.guest_network_bridging.dns_server }}{% endif %}"
+
+  # the following are only relevant when forward_mode == 'nat'
+  dhcp_start: 10.116.121.2
+  dhcp_end:   10.116.121.128
+  mac_prefix: "02:00:00:00:02:"
+
+infrastructure_network_admin:
+  netname: 'admin'
+  bridge: 'virbr3'
+  default_gw_host_prefix: 10.116.122.1/24
+  dhcp_start: 10.116.122.172
+  dhcp_end:   10.116.122.254
+  mac_prefix: "02:00:00:00:03:"
+
+infrastructure_network_storage:
+  netname: 'storage'
+  bridge: 'virbr4'
+  default_gw_host_prefix: 10.116.123.1/24
+  dhcp_start: 10.116.123.172
+  dhcp_end:   10.116.123.254
+  mac_prefix: "02:00:00:00:04:"
+
+infrastructure_network_rhosp_provisioning:
+  netname: 'rhosp_provisioning'
+  bridge: 'virbr5'
+  forward_mode: 'nat'
+  default_gw_host_prefix: 10.116.124.1/24
+  mac_prefix: "02:00:00:00:05:"
+
+# deprecated as those networks melt into the others (like they alsways should)
+#infrastructure_network_rhosp_internal:
+#  netname: 'rhosp_internal'
+#  bridge: 'virbr6'
+#  default_gw_host_prefix: 192.168.106.1/24
+#  mac_prefix: "02:00:00:00:06:"
+
+# for SDDC external networks, aka provider networks
+# OSPF1
+infrastructure_network_rhosp_ext1:
+  netname: 'rhosp_ext1'
+  bridge: 'virbr6'
+  default_gw_host_prefix: 10.116.111.1/28
+  mac_prefix: "02:00:00:00:06:"
+
+# OSPF2
+infrastructure_network_rhosp_ext2:
+  netname: 'rhosp_ext2'
+  bridge: 'virbr7'
+  default_gw_host_prefix: 10.116.111.33/28
+  mac_prefix: "02:00:00:00:07:"
+
+# BGP1
+infrastructure_network_rhosp_ext3:
+  netname: 'rhosp_ext3'
+  bridge: 'virbr8'
+  default_gw_host_prefix: 10.116.111.17/28
+  mac_prefix: "02:00:00:00:08:"
+
+# BGP2
+infrastructure_network_rhosp_ext4:
+  netname: 'rhosp_ext4'
+  bridge: 'virbr9'
+  default_gw_host_prefix: 10.116.111.49/28
+  mac_prefix: "02:00:00:00:09:"
+
+infrastructure_networks:
+  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_guests }}"
+  - "{{ infrastructure_network_admin }}"
+  - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_rhosp_provisioning }}"
+  - "{{ infrastructure_network_rhosp_ext1 }}"
+  - "{{ infrastructure_network_rhosp_ext2 }}"
+  - "{{ infrastructure_network_rhosp_ext3 }}"
+  - "{{ infrastructure_network_rhosp_ext4 }}"
+#  - "{{ infrastructure_network_rhosp_internal }}"
