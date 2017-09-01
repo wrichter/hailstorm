@@ -11,11 +11,14 @@ infrastructure_address_ntp_server: "{{ infrastructure_network_admin.default_gw_h
 infrastructure_address_default_dns: "{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}"
 infrastructure_address_nfs_server: "{{ infrastructure_network_storage.default_gw_host_prefix | ipaddr('address') }}"
 
+# services is an external network to access all public services (accept for storage that has its own net), so this can be seen as a carved out part of OpenStacks br-ex for the public services
+# SDDC: BGP1 breakout?
 infrastructure_network_services:
   netname: 'services'
-  bridge: 'virbr1'
+  bridge: 'services'
   forward_mode: 'nat'
   default_gw_host_prefix: 10.116.120.1/24
+  vlan:                   2801
   osp_undercloud_start:   10.116.120.30
   osp_undercloud_end:     10.116.120.80
   osp_overcloud_start:    10.116.120.81
@@ -26,11 +29,16 @@ infrastructure_network_services:
   floating_end:           10.116.120.254
   mac_prefix: "02:00:00:00:01:"
 
+# guests is an external network for virtual machine guests, not to be confused with the OpenStack tentant network; it is as a matter of fact OpenStacks br-ex without the public API endpoints
+# SDDC: BGP2 breakout?
 infrastructure_network_guests:
   netname: 'guests'
   bridge:                 '{% if external_network_config.guest_network_bridging is not defined %}virbr2{%           else %}br0{% endif %}'
+  # should be:
+  #bridge:                 "guests"
   forward_mode:           "{% if external_network_config.guest_network_bridging is not defined %}nat{%              else %}bridge{% endif %}"
   default_gw_host_prefix: "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.1/24{% else %}{{ external_network_config.guest_network_bridging.default_gw_host_prefix }}{% endif %}"
+  vlan:                   2802
   infra_start:            "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.129{%  else %}{{ external_network_config.guest_network_bridging.osp_infra_start }}{% endif %}"
   infra_end:              "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.149{%  else %}{{ external_network_config.guest_network_bridging.osp_infra_end }}{% endif %}"
   floating_start:         "{% if external_network_config.guest_network_bridging is not defined %}10.116.121.150{%  else %}{{ external_network_config.guest_network_bridging.osp_floating_start }}{% endif %}"
@@ -42,73 +50,124 @@ infrastructure_network_guests:
   dhcp_end:   10.116.121.128
   mac_prefix: "02:00:00:00:02:"
 
+# this is meant as a way to connect to the machines in a way like an out-of-band management network, so RACs should be here or in RHSOP-Provisioning; in OpenStack this is the Management Network
 infrastructure_network_admin:
   netname: 'admin'
-  bridge: 'virbr3'
+  bridge: 'admin'
   default_gw_host_prefix: 10.116.122.1/24
+  vlan:       1
+  osp_overcloud_start: 10.116.122.81
+  osp_overcloud_end:   10.116.122.100
   dhcp_start: 10.116.122.172
   dhcp_end:   10.116.122.254
   mac_prefix: "02:00:00:00:03:"
 
-infrastructure_network_storage:
-  netname: 'storage'
-  bridge: 'virbr4'
+# here all internal api calls should happen of products communicating with each other
+infrastructure_network_internal_api:
+  netname: 'internal_api'
+  bridge: 'internal_api'
   default_gw_host_prefix: 10.116.123.1/24
-  dhcp_start: 10.116.123.172
-  dhcp_end:   10.116.123.254
+  vlan:       2814
+  osp_overcloud_start: 10.116.123.81
+  osp_overcloud_end:   10.116.123.100
   mac_prefix: "02:00:00:00:04:"
 
-infrastructure_network_rhosp_provisioning:
-  netname: 'rhosp_provisioning'
-  bridge: 'virbr5'
-  forward_mode: 'nat'
+# this is the real tenant network where all tenant traffic is encapsulated by the sdn solution
+infrastructure_network_tenant:
+  netname: 'tenant'
+  bridge: 'tenant'
   default_gw_host_prefix: 10.116.124.1/24
+  vlan:       2815
+  osp_overcloud_start: 10.116.124.81
+  osp_overcloud_end:   10.116.124.100
   mac_prefix: "02:00:00:00:05:"
 
-# deprecated as those networks melt into the others (like they alsways should)
+# this is a network for accessing the storage systems (aka public APIs); if applicable the storage systems on their own should not utilize this network, e.g. for syncing; for that the Storage Management network should be used like it is done in OpenStack
+infrastructure_network_storage:
+  netname: 'storage'
+  bridge: 'storage'
+  default_gw_host_prefix: 10.116.125.1/24
+  vlan:       2816
+  osp_overcloud_start: 10.116.126.81
+  osp_overcloud_end:   10.116.126.100
+  dhcp_start: 10.116.125.172
+  dhcp_end:   10.116.125.254
+  mac_prefix: "02:00:00:00:06:"
+
+# the Storage Management network should be used for all storage systems for their internal processes like syning and communication; for public endpoints use the Storage Network
+infrastructure_network_storage_mgmt:
+  netname: 'storage_mgmt'
+  bridge: 'storage_mgmt'
+  default_gw_host_prefix: 10.116.126.1/24
+  vlan:       2817
+  osp_overcloud_start: 10.116.126.81
+  osp_overcloud_end:   10.116.126.100
+  mac_prefix: "02:00:00:00:07:"
+
+# this is the provisioning network of OpenStack, although it could be used for all provisioning (like Satellite) as none of the systems should listen to requests of unknown machines; by that they should not interfere
+infrastructure_network_rhosp_provisioning:
+  netname: 'rhosp_provisioning'
+  bridge: 'provisioning'
+  forward_mode: 'nat'
+  default_gw_host_prefix: 10.116.127.1/24
+  vlan: 1
+  mac_prefix: "02:00:00:00:08:"
+
+# deprecated as those networks melt into the others (like they always should)
 #infrastructure_network_rhosp_internal:
 #  netname: 'rhosp_internal'
-#  bridge: 'virbr6'
+#  bridge: 'rhosp_internal'
 #  default_gw_host_prefix: 192.168.106.1/24
 #  mac_prefix: "02:00:00:00:06:"
 
 # for SDDC external networks, aka provider networks
-# OSPF1
-infrastructure_network_rhosp_ext1:
-  netname: 'rhosp_ext1'
-  bridge: 'virbr6'
-  default_gw_host_prefix: 10.116.111.1/28
-  mac_prefix: "02:00:00:00:06:"
-
-# OSPF2
-infrastructure_network_rhosp_ext2:
-  netname: 'rhosp_ext2'
-  bridge: 'virbr7'
-  default_gw_host_prefix: 10.116.111.33/28
-  mac_prefix: "02:00:00:00:07:"
-
 # BGP1
-infrastructure_network_rhosp_ext3:
-  netname: 'rhosp_ext3'
-  bridge: 'virbr8'
+infrastructure_network_provider1:
+  netname: 'provider1'
+  bridge: 'provider1'
   default_gw_host_prefix: 10.116.111.17/28
-  mac_prefix: "02:00:00:00:08:"
+  vlan:       2803
+  floating_start:         10.116.111.18
+  floating_end:           10.116.111.30
+  mac_prefix: "02:00:00:00:09:"
 
 # BGP2
-infrastructure_network_rhosp_ext4:
-  netname: 'rhosp_ext4'
-  bridge: 'virbr9'
+infrastructure_network_provider2:
+  netname: 'provider2'
+  bridge: 'provider2'
   default_gw_host_prefix: 10.116.111.49/28
-  mac_prefix: "02:00:00:00:09:"
+  vlan:       2804
+  floating_start:         10.116.111.50
+  floating_end:           10.116.111.62
+  mac_prefix: "02:00:00:00:10:"
+
+# OSPF1
+#nfrastructure_network_provider3:
+# netname: 'provider3'
+# bridge: 'provider3'
+# default_gw_host_prefix: 10.116.111.1/28
+# vlan:       2801
+# mac_prefix: "02:00:00:00:11:"
+
+# OSPF2
+#nfrastructure_network_provider4:
+# netname: 'provider4'
+# bridge: 'provider4'
+# default_gw_host_prefix: 10.116.111.33/28
+# vlan:       2802
+# mac_prefix: "02:00:00:00:12:"
 
 infrastructure_networks:
   - "{{ infrastructure_network_services }}"
   - "{{ infrastructure_network_guests }}"
   - "{{ infrastructure_network_admin }}"
+  - "{{ infrastructure_network_internal_api }}"
+  - "{{ infrastructure_network_tenant }}"
   - "{{ infrastructure_network_storage }}"
+  - "{{ infrastructure_network_storage_mgmt }}"
   - "{{ infrastructure_network_rhosp_provisioning }}"
-  - "{{ infrastructure_network_rhosp_ext1 }}"
-  - "{{ infrastructure_network_rhosp_ext2 }}"
-  - "{{ infrastructure_network_rhosp_ext3 }}"
-  - "{{ infrastructure_network_rhosp_ext4 }}"
 #  - "{{ infrastructure_network_rhosp_internal }}"
+  - "{{ infrastructure_network_provider1 }}"
+  - "{{ infrastructure_network_provider2 }}"
+# - "{{ infrastructure_network_provider3 }}"
+# - "{{ infrastructure_network_provider4 }}"
