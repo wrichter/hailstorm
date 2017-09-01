@@ -6,7 +6,7 @@
       vars:
         templates:
           - commandlineparams-environment.yaml
-          - network-isolation-environment.yaml
+          - network-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh
@@ -43,7 +43,7 @@
       vars:
         templates:
           - commandlineparams-environment.yaml
-          - network-isolation-environment.yaml
+          - network-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh

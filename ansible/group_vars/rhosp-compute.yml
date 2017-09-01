@@ -5,18 +5,24 @@ disk:
   size: 60
   format: qcow2
 skip_install: true
-#graphics: vnc,listen=0.0.0.0,password=redhat01
+#graphics: vnc,listen=0.0.0.0,password={{ root_password }}
 
 # nic0 needs to be on the provisioning network
 nic_attachments:
   - "{{ infrastructure_network_rhosp_provisioning }}"
-  - "{{ infrastructure_network_services }}"
   - "{{ infrastructure_network_storage }}"
-  - "{{ infrastructure_network_rhosp_internal }}"
+  - "{{ infrastructure_network_storage_mgmt }}"
+  - "{{ infrastructure_network_internal_api }}"
+  - "{{ infrastructure_network_tenant }}"
   - "{{ infrastructure_network_admin }}"
+#  - "{{ infrastructure_network_services }}"
+#  - "{{ infrastructure_network_guests }}"
+#  - "{{ infrastructure_network_provider1 }}"
+#  - "{{ infrastructure_network_provider2 }}"
 default_route_via: "{{ infrastructure_network_services }}"
 name_service_via: "{{ infrastructure_network_services }}"
-
+#default_route_via: "{{ infrastructure_network_rhosp_provisioning }}"
+#name_service_via: "{{ infrastructure_network_rhosp_provisioning }}"
 
 extra_disk_files: "{% if current_lifecycle_env.osp_storage_backend=='ceph_hyperconverged' %}{{ ceph_disk_files }}{% else %}[]{% endif %}"
 

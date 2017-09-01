@@ -1,5 +1,7 @@
 - name: Create RHOSP stack user in rhosp-director
   user: name={{ rhosp_stack_user }}
+- name: Set password for RHOSP stack user
+  shell: echo {{ root_password }} | passwd --stdin {{ rhosp_stack_user }}
 - block:
     - name: Create .ssh directory
       file: path=~/.ssh state=directory mode=0700

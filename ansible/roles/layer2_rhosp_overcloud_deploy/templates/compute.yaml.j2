@@ -29,6 +29,10 @@ parameters:
     default: ''
     description: IP address/subnet on the tenant network
     type: string
+  ManagementIpSubnet: # Only populated when including environments/network-management.yaml
+    default: ''
+    description: IP address/subnet on the management network
+    type: string
   InternalApiNetworkVlanID:
     default: 20
     description: Vlan ID for the internal_api network traffic.
@@ -45,6 +49,11 @@ parameters:
     default: 50
     description: Vlan ID for the tenant network traffic.
     type: number
+# For RHOSP8 - see https://access.redhat.com/documentation/en/red-hat-openstack-platform/version-8/director-installation-and-usage/#sect-Major-Upgrading_the_Overcloud
+  ManagementNetworkVlanID:
+    default: 60
+    description: Vlan ID for the management network traffic.
+    type: number
   ControlPlaneSubnetCidr: # Override this via parameter_defaults
     default: '24'
     description: The subnet CIDR of the control plane network.
@@ -52,21 +61,17 @@ parameters:
   ControlPlaneDefaultRoute: # Override this via parameter_defaults
     description: The subnet CIDR of the control plane network.
     type: string
+# For RHOSP8 - see https://access.redhat.com/documentation/en/red-hat-openstack-platform/version-8/director-installation-and-usage/#sect-Major-Upgrading_the_Overcloud
+  ManagementInterfaceDefaultRoute:
+    default: ''
+    description: default route for the external network
+    type: string
   DnsServers: # Override this via parameter_defaults
     default: []
     description: A list of DNS servers (2 max for some implementations) that will be added to resolv.conf.
     type: json
   EC2MetadataIp: # Override this via parameter_defaults
     description: The IP address of the EC2 metadata server.
-    type: string
-# For RHOSP8 - see https://access.redhat.com/documentation/en/red-hat-openstack-platform/version-8/director-installation-and-usage/#sect-Major-Upgrading_the_Overcloud
-  ManagementIpSubnet: # Only populated when including environments/network-management.yaml
-    default: ''
-    description: IP address/subnet on the management network
-    type: string
-  ManagementInterfaceDefaultRoute:
-    default: ''
-    description: default route for the external network
     type: string
 
 resources:
@@ -99,63 +104,60 @@ resources:
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
             -
-              type: ovs_bridge
-              name: br-isolated
-              use_dhcp: false
-              members:
-                -
-                  type: interface
-                  name: nic4
-                  # force the MAC address of the bridge to this interface
-                  primary: true
-                -
-                  type: vlan
-                  vlan_id: {get_param: InternalApiNetworkVlanID}
-                  addresses:
-                  -
-                    ip_netmask: {get_param: InternalApiIpSubnet}
-                -
-                  type: vlan
-                  vlan_id: {get_param: StorageNetworkVlanID}
-                  addresses:
-                  -
-                    ip_netmask: {get_param: StorageIpSubnet}
-{% if current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}
-                -
-                  type: vlan
-                  vlan_id: {get_param: StorageMgmtNetworkVlanID}
-                  addresses:
-                  -
-                    ip_netmask: {get_param: StorageMgmtIpSubnet}
-{% endif %}
-                -
-                  type: vlan
-                  vlan_id: {get_param: TenantNetworkVlanID}
-                  addresses:
-                  -
-                    ip_netmask: {get_param: TenantIpSubnet}
-            -
-              # HAILSTORM: this one is the admin network
-              type: ovs_bridge
-              name: br-admin
+              type: interface
+              name: nic2
               use_dhcp: true
+            #  use_dhcp: false
+            #  addresses:
+            #    -
+            #      ip_netmask: {get_param: StorageIpSubnet}
+{% if current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}
+            -
+              type: interface
+              name: nic3
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {get_param: StorageMgmtIpSubnet}
+{% endif %}
+            -
+              type: interface
+              name: nic4
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {get_param: InternalApiIpSubnet}
+            -
+              # Create a bridge which can also be used for VLAN-mode bridge mapping
+              type: ovs_bridge
+              name: br-tenant
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {get_param: TenantIpSubnet}
               members:
                 -
                   type: interface
                   name: nic5
+                  use_dhcp: false
                   # force the MAC address of the bridge to this interface
                   primary: true
+            # Uncomment when including environments/network-management.yaml
+            # If setting default route on the Management interface, comment
+            # out the default route on the External interface. This will
+            # make the External API unreachable from remote subnets.
             -
-              # HAILSTORM: this one is the storage network
-              type: ovs_bridge
-              name: br-storage
+              type: interface
+              name: nic6
               use_dhcp: true
-              members:
-                -
-                  type: interface
-                  name: nic3
-                  # force the MAC address of the bridge to this interface
-                  primary: true
+            #  use_dhcp: false
+            #  addresses:
+            #    -
+            #      ip_netmask: {get_param: ManagementIpSubnet}
+            #  routes:
+            #    -
+            #      default: true
+            #      next_hop: {get_param: ManagementInterfaceDefaultRoute}
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

@@ -9,6 +9,7 @@
     - role: layer2_installhost
       tags: [ 'layer2', 'install-host' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layerX_ipa_client
       tags: [ 'layer2','install-host', 'ipa-client' ]
       mode: destroy
@@ -31,6 +32,7 @@
     - role: layer2_nuage
       tags: [ 'layer2', 'nuage' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layerX_ipa_client
       tags: [ 'layer2','nuage', 'ipa-client' ]
       mode: destroy
@@ -181,12 +183,15 @@
     - role: layer2_rhel
       tags: [ 'layer3', 'cf', 'rhel']
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer3_vm_on_rhev
       tags: [ 'layer3', 'cf' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer3_cloudforms_rhev_template
       tags: [ 'layer3', 'cf', 'cf-template' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
 
 - hosts: rhevm
   remote_user: root
@@ -378,6 +383,7 @@
     - role: layer2_rhsso
       tags: [ 'layer2', 'rhsso' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layerX_ipa_client
       tags: [ 'layer2', 'rhsso', 'ipa-client' ]
       mode: destroy
@@ -400,6 +406,7 @@
     - role: layer2_ipa
       tags: [ 'layer2', 'ipa' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_rhel
       tags: [ 'layer2','ipa', 'rhel' ]
       mode: destroy
