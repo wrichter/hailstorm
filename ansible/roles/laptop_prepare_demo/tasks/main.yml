@@ -8,7 +8,7 @@
       failed_when: gitroute.stdout==""
       register: gitroute
     - name: create ~/git directory
-      file: state=directory path="~/git/ose3-ticket-monster "
+      file: state=directory path="~/git/ose3-ticket-monster"
       tags: ['git']
       register: gitdir
     - name: get git remote server
