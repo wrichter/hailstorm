@@ -1,4 +1,6 @@
 - block:
+    - include: prepare_director.yml
+      tags: ['prep-director']
     - include: register_overcloud_nodes.yml
       tags: ['register']
     - include: create_overcloud.yml
@@ -7,6 +9,7 @@
         templates:
           - commandlineparams-environment.yaml
           - network-environment.yaml
+          - ips-from-pool-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh
@@ -44,6 +47,7 @@
         templates:
           - commandlineparams-environment.yaml
           - network-environment.yaml
+          - ips-from-pool-environment.yaml
           - extra-config-post-deployment-environment.yaml
           - extra-config-post-deployment.yaml
           - extra-config-post-deployment-all.sh

@@ -106,11 +106,11 @@ resources:
             -
               type: interface
               name: nic2
-              use_dhcp: true
-            #  use_dhcp: false
-            #  addresses:
-            #    -
-            #      ip_netmask: {get_param: StorageIpSubnet}
+              #use_dhcp: true
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {get_param: StorageIpSubnet}
 {% if current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}
             -
               type: interface
@@ -149,11 +149,11 @@ resources:
             -
               type: interface
               name: nic6
-              use_dhcp: true
-            #  use_dhcp: false
-            #  addresses:
-            #    -
-            #      ip_netmask: {get_param: ManagementIpSubnet}
+              #use_dhcp: true
+              use_dhcp: false
+              addresses:
+                -
+                  ip_netmask: {get_param: ManagementIpSubnet}
             #  routes:
             #    -
             #      default: true
