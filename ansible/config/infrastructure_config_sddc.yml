@@ -88,8 +88,8 @@ infrastructure_network_storage:
   bridge: 'storage'
   default_gw_host_prefix: 10.116.125.1/24
   vlan:       2816
-  osp_overcloud_start: 10.116.126.81
-  osp_overcloud_end:   10.116.126.100
+  osp_overcloud_start: 10.116.125.81
+  osp_overcloud_end:   10.116.125.100
   dhcp_start: 10.116.125.172
   dhcp_end:   10.116.125.254
   mac_prefix: "02:00:00:00:06:"
@@ -167,7 +167,7 @@ infrastructure_networks:
   - "{{ infrastructure_network_storage_mgmt }}"
   - "{{ infrastructure_network_rhosp_provisioning }}"
 #  - "{{ infrastructure_network_rhosp_internal }}"
-  - "{{ infrastructure_network_provider1 }}"
-  - "{{ infrastructure_network_provider2 }}"
+  - "{% if infrastructure_network_provider1 is defined %}{{ infrastructure_network_provider1 }}{% endif %}"
+  - "{% if infrastructure_network_provider2 is defined %}{{ infrastructure_network_provider2 }}{% endif %}"
 # - "{{ infrastructure_network_provider3 }}"
 # - "{{ infrastructure_network_provider4 }}"

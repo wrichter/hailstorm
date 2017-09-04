@@ -1,0 +1,19 @@
+resource_registry:
+  # Port assignments for the controller role
+  OS::TripleO::Controller::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
+  OS::TripleO::Compute::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
+
+parameter_defaults:
+  ControllerIPs:
+    # Each controller will get an IP from the lists below, first controller, first IP
+    management:
+    - {{ hostvars['rhosp-control1']['ansible_host'] }}
+    - {{ hostvars['rhosp-control2']['ansible_host'] }}
+    - {{ hostvars['rhosp-control3']['ansible_host'] }}
+  NovaComputeIPs:
+    # Each compute will get an IP from the lists below, first compute, first IP
+    management:
+    - {{ hostvars['rhosp-compute1']['ansible_host'] }}
+    - {{ hostvars['rhosp-compute2']['ansible_host'] }}
+    - {{ hostvars['rhosp-compute3']['ansible_host'] }}
+    - {{ hostvars['rhosp-compute4']['ansible_host'] }}

@@ -23,14 +23,14 @@
         . ~/overcloudrc_v3 &&
         neutron net-create provider1 --router:external --provider:network_type flat --provider:physical_network provider1 &&
         neutron subnet-create --name sub_provider1 --disable-dhcp --allocation-pool=start={{ infrastructure_network_provider1.floating_start }},end={{ infrastructure_network_provider1.floating_end }} --gateway={{ infrastructure_network_provider1.default_gw_host_prefix | ipaddr('address') }} provider1 {{ infrastructure_network_provider1.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_provider1.default_gw_host_prefix | ipaddr('prefix') }}
-      when: '"provider1" not in networks.stdout | from_json | map(attribute="Name") | list'
+      when: 'infrastructure_network_provider1 is defined and "provider1" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create provider2 network (in admin project)
       shell: >
         . ~/overcloudrc_v3 &&
         neutron net-create provider2 --router:external --provider:network_type flat --provider:physical_network provider2 &&
         neutron subnet-create --name sub_provider2 --disable-dhcp --allocation-pool=start={{ infrastructure_network_provider2.floating_start }},end={{ infrastructure_network_provider2.floating_end }} --gateway={{ infrastructure_network_provider2.default_gw_host_prefix | ipaddr('address') }} provider2 {{ infrastructure_network_provider2.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_provider2.default_gw_host_prefix | ipaddr('prefix') }}
-      when: '"provider2" not in networks.stdout | from_json | map(attribute="Name") | list'
+      when: 'infrastructure_network_provider2 is defined and "provider2" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create internal network
       shell: >

@@ -1,0 +1,15 @@
+- name: Create bin directory
+  file: path=~/bin state=directory
+- name: install helper binaries for operation of RHOSP
+  copy: src="{{ item }}" dest=/home/stack/bin/ owner=stack mode=755
+  with_fileglob: files/*
+- name: extend .bashrc_profile to use stackrc by default and inhibit ssh to save HostKeys
+  lineinfile:
+    path: /home/stack/.bash_profile
+    line: 'source ~/stackrc'
+- lineinfile:
+    path: /home/stack/.bash_profile
+    line: 'PSSH="-oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -q"'
+- lineinfile:
+    path: /home/stack/.bash_profile
+    line: 'alias ssh="ssh $PSSH"'
