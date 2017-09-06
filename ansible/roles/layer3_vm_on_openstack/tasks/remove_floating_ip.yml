@@ -3,6 +3,7 @@
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack ip floating remove {{ ansible_host }} {{ inventory_hostname_short }}
 
@@ -10,6 +11,7 @@
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack ip floating delete {{ ansible_host }}
   become: yes

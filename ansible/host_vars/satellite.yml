@@ -3,11 +3,11 @@ mem: "{{ layer2_satellite_mem }}"
 vcpu: "{{ layer2_satellite_cpu }}"
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 250
+  size: 350
   format: qcow2
   physvols:
     boot: 500
-    rhel: 249500
+    rhel: 349500
   logvols:
     - name: swap
       fstype: swap
@@ -16,7 +16,7 @@ disk:
     - name: root
       fstype: "{{ fstype }}"
       mountpoint: /
-      size: 240000
+      size: 340000
     - name: home
       fstype: "{{ fstype }}"
       mountpoint: /home
