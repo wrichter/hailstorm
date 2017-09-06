@@ -1,0 +1,35 @@
+screen -t syslog 0 sudo journalctl -f
+screen -t htop   1 htop -d 100
+screen -t mc     2 mc -x
+screen -t bash   3 bash
+screen -t bash   4 bash
+screen -t bash   5 bash
+
+autodetach            on              # default: on
+crlf                  off             # default: off
+deflogin              off             # default: on
+hardcopy_append       on              # default: off
+startup_message       off             # default: on
+termcapinfo linux "ve=\E[?25h\E[?17;0;64c" # red
+vbell                 on             # default: ???
+defscrollback         1000            # default: 100
+silencewait           30              # default: 30
+shell                 /bin/bash
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
+
+sorendition 02 34 # yellow on blue
+activity              "activity in %n (%t) [%w:%s]~"
+bell                  "bell     in %n (%t) [%w:%s]~"
+pow_detach_msg        "BYE"
+vbell_msg             " *beep* "
+
+# terminfo and termcap for nice 256 color terminal
+# allow bold colors - necessary for some reason
+attrcolor b ".I"
+# tell screen how to set colors. AB = background, AF=foreground
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+# erase background with current bg color
+defbce "on"
+# set TERM
+term screen-256color
