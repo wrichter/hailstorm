@@ -2,7 +2,9 @@
   file: path=~/bin state=directory
 - name: install helper binaries for operation of RHOSP
   copy: src="{{ item }}" dest=/home/stack/bin/ owner=stack mode=755
-  with_fileglob: files/*
+  with_fileglob:
+    - files/*
+    - files/.screenrc
 - name: extend .bashrc_profile to use stackrc by default and inhibit ssh to save HostKeys
   lineinfile:
     path: /home/stack/.bash_profile
