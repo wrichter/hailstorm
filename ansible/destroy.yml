@@ -193,6 +193,22 @@
       mode: destroy
       when: vm_exists is defined and vm_exists == true
 
+- hosts: cloudforms-osp
+  gather_facts: false
+  remote_user: root
+  roles:
+    - role: layer3_vm_on_openstack
+      tags: [ 'layer3','cloudforms-osp' ]
+      mode: readfacts
+    - role: layer2_rhel
+      tags: [ 'layer3','cloudforms-osp', 'rhel' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+    - role: layer3_vm_on_openstack
+      tags: [ 'layer3','cloudforms-osp', 'vm' ]
+      mode: destroy
+      when: vm_exists is defined and vm_exists == true
+
 - hosts: rhevm
   remote_user: root
   gather_facts: false
