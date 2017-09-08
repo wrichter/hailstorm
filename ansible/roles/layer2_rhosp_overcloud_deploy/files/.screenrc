@@ -1,5 +1,5 @@
 screen -t syslog 0 sudo journalctl -f
-screen -t htop   1 htop -d 100
+screen -t top    1 top -d 60
 screen -t mc     2 mc -x
 screen -t bash   3 bash
 screen -t bash   4 bash
