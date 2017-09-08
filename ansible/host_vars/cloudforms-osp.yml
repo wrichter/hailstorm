@@ -1,0 +1,57 @@
+---
+vm_additional_disks:
+  - 26843545600
+  - 107374182400
+
+vm_networks:
+  - "services"
+  - "admin"
+  - "provisioning"
+
+vm_secgroups:
+  - "webserver"
+  - "default"
+
+repos: "{{ cloudforms_repos }}"
+pool_regex: "{{ cloudforms_subscription_pool_regex }}"
+packages: git
+ntp_client: will_be_configured_in_the_cf_config_role
+
+cfme_settings:
+  - key: '/server/role'
+    value: '--- automate,database_operations,ems_inventory,ems_metrics_collector,ems_metrics_coordinator,ems_metrics_processor,ems_operations,event,notifier,reporting,scheduler,smartproxy,smartstate,user_interface,web_services,websocket\n---\n'
+  - key: '/ntp/server'
+    value: '---\n- {{ infrastructure_address_ntp_server }}\n'
+  - key: '/server/timezone'
+    value: '--- Berlin\n...\n'
+  - key: '/server/company'
+    value: '--- Hailstorm\n...\n'
+  - key: '/authentication/mode'
+    value: '--- httpd\n...\n'
+  - key: '/authentication/httpd_role'
+    value: '--- true\n...\n'
+  - key: '/smtp/authentication'
+    value: '--- none\n...\n'
+  - key: '/smtp/domain'
+    value: '--- {{ hailstorm_dns_domain }}\n...\n'
+  - key: '/smtp/from'
+    value: '--- cloudforms@{{ hailstorm_dns_domain }}\n...\n'
+  - key: '/smtp/host'
+    value: '--- {{ hostvars["infrastructure"].hostname }}\n...\n'
+  - key: '/smtp/enable_starttls_auto'
+    value: '--- false\n...\n'
+  - key: '/smtp/openssl_verify_mode'
+    value: "--- ''''\\n"
+
+
+tdagent_configs:
+  - tag: evm.log
+    path: /var/www/miq/vmdb/log/evm.log
+    pos_file: /var/log/td-agent/evm_log.pos
+    format: multiline
+    format_firstline: '/^\[----\].*/'
+    format1: '/^\[----\]\ [A-Z],\ \[(?<time>[^\ ]*)\ #(?<pid>[0-9]*):(?<thread>[\h]*)\]\s+(?<loglevel>[A-Z]*)\ --\ :(?<message>.*)/'
+    time_format: "%Y-%m-%dT%H:%M:%S.%N"
+    permissions:
+      - path: /var/www/miq/vmdb/log/evm.log
+        mode: o+xr
