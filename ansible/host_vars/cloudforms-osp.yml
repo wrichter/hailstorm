@@ -4,6 +4,7 @@ vm_additional_disks:
   - 107374182400
 
 vm_networks:
+  - "internal_demo-infra"
   - "services"
   - "admin"
   - "provisioning"
