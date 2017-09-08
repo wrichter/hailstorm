@@ -60,6 +60,8 @@ infrastructure_network_admin:
   osp_overcloud_end:   10.116.122.100
   dhcp_start: 10.116.122.172
   dhcp_end:   10.116.122.254
+  floating_start:         10.116.122.101
+  floating_end:           10.116.122.120
   mac_prefix: "02:00:00:00:03:"
 
 # here all internal api calls should happen of products communicating with each other
@@ -111,6 +113,8 @@ infrastructure_network_rhosp_provisioning:
   forward_mode: 'nat'
   default_gw_host_prefix: 10.116.127.1/24
   vlan: 1
+  floating_start:         10.116.127.101
+  floating_end:           10.116.127.120
   mac_prefix: "02:00:00:00:08:"
 
 # deprecated as those networks melt into the others (like they always should)
