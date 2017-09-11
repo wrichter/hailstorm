@@ -3,11 +3,11 @@ mem: "{{ layer2_satellite_mem }}"
 vcpu: "{{ layer2_satellite_cpu }}"
 disk:
   path: "{{ inventory_hostname_short }}.qcow2"
-  size: 250
+  size: 350
   format: qcow2
   physvols:
     boot: 500
-    rhel: 249500
+    rhel: 349500
   logvols:
     - name: swap
       fstype: swap
@@ -16,7 +16,7 @@ disk:
     - name: root
       fstype: "{{ fstype }}"
       mountpoint: /
-      size: 240000
+      size: 340000
     - name: home
       fstype: "{{ fstype }}"
       mountpoint: /home
@@ -26,7 +26,7 @@ disk:
 pool_regex: "{{ satellite_subscription_pool_regex }}"
 repos: "{{ satellite_repos }}"
 
-packages: "{% if satellite_version != '6.1' %}satellite,{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng"
+packages: "{% if satellite_version != '6.1' %}satellite,{% endif %}bind-utils,chrony,katello-agent,vim,screen,iptraf-ng,yum-utils"
 
 tdagent_configs:
   - tag: syslog.messages
@@ -58,7 +58,7 @@ tdagent_configs:
 firewalld_rules:
  - DNStcp:
    port: 53
-   protocol: udp
+   protocol: tcp
    state: enabled
    zone: public
    permanent: true
