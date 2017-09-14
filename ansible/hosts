@@ -63,6 +63,7 @@ rhosp-director  ansible_host=192.168.103.30 activation_key="AK-CV-RHOSP-{{ stage
 rhosp-compute1  ansible_host=192.168.103.31 activation_key="AK-CV-RHOSP-{{ stage }}"
 rhosp-compute2  ansible_host=192.168.103.32 activation_key="AK-CV-RHOSP-{{ stage }}"
 rhosp-compute3  ansible_host=192.168.103.33 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-compute4  ansible_host=192.168.103.40 activation_key="AK-CV-RHOSP-{{ stage }}"
 
 # The group of all osp control nodes
 [rhosp-control]
@@ -89,6 +90,16 @@ lookbusy-rhev   ansible_host=192.168.103.39 activation_key="AK-CV-OS-RHEL7-SERVE
 [storage-console]
 storage-console ansible_host=192.168.103.9 activation_key="AK-CV-CEPH-{{ stage }}"
 
+[install-host]
+install-host ansible_host=192.168.103.6 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+[rh-sso]
+rh-sso ansible_host=192.168.103.7 activation_key="AK-CV-RH-SSO-{{ stage }}"
+
+[nuage]
+vsd ansible_host=192.168.103.8 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+#vsc ansible_host=192.168.103.9 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
 # virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
 [vips]
 openstack       ansible_host=192.168.101.81 nic_attachments="[ {{ infrastructure_network_services }} ]" default_route_via="{{ infrastructure_network_services }}"
@@ -98,6 +109,9 @@ undercloud-admin  ansible_host=192.168.105.41 nic_attachments="[ {{ infrastructu
 # layer 3 openstack
 [lookbusy-osp]
 lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
+
+[cloudforms-osp]
+cloudforms-osp  activation_key="AK-CV-CLOUDFORMS-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.xlarge" osp_image="Cloudforms"
 
 [ansible-jump-host]
 ansible-jump-demo-vms  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-vms" osp_flavor="m1.small" osp_image="RHEL7"
@@ -160,6 +174,9 @@ ose3-master1
 
 # All layer2 node groups that are installed with RHEL7
 [rhel7:children]
+install-host
+rh-sso
+nuage
 rhosp-all
 satellite
 rhevh
@@ -182,6 +199,9 @@ test-rhel6
 
 # everything on layer2
 [layer2:children]
+install-host
+rh-sso
+nuage
 ose3
 satellite
 rhev
@@ -206,6 +226,9 @@ lookbusy-rhev
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]
+install-host
+rh-sso
+nuage
 satellite
 test-rhel
 infrastructure

@@ -77,23 +77,23 @@ external_network_config:
           - from_port: 22
             to_port: 22
             proto: tcp
-#The Katello agent to communicate with the Capsule's Qpid dispatch router
+          # The Katello agent to communicate with the Capsule's Qpid dispatch router
           - from_port: 5647
             to_port: 5647
             proto: tcp
-#HTTPS	Anaconda to download kickstart templates to hosts, and for downloading iPXE firmware
+          # HTTPS	Anaconda to download kickstart templates to hosts, and for downloading iPXE firmware
           - from_port: 8000
             to_port: 8000
             proto: tcp
-#HTTPS	Puppet agent to Puppet master connections
+          # HTTPS	Puppet agent to Puppet master connections
           - from_port: 8140
             to_port: 8140
             proto: tcp
-#HTTPS	Subscription Management Services connection to the reverse proxy for the certificate-based API
+          # HTTPS	Subscription Management Services connection to the reverse proxy for the certificate-based API
           - from_port: 8443
             to_port: 8443
             proto: tcp
-#HTTPS	Sending generated SCAP reports to the proxy in the Capsule for spooling
+          # HTTPS	Sending generated SCAP reports to the proxy in the Capsule for spooling
           - from_port: 9090
             to_port: 9090
             proto: tcp
@@ -279,12 +279,29 @@ external_network_config:
           - from_port: 22
             to_port: 22
             proto: tcp
+      - expose_machine: rh-sso
+        on_host_prefix: 10.32.105.179/32
+        via_network: services
+        ports:
+          - from_port: 8443
+            to_port: 8443
+            proto: tcp
+          - from_port: 22
+            to_port: 22
+            proto: tcp
+      - expose_machine: install-host
+        on_host_prefix: 10.32.105.178/32
+        via_network: services
+        ports:
+          - from_port: 22
+            to_port: 22
+            proto: tcp
   guest_network_bridging:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
     dns_server: 10.32.96.1
     osp_infra_start: 10.32.105.163
-    osp_infra_end: 10.32.105.179
+    osp_infra_end: 10.32.105.177
     osp_floating_start: 10.32.105.180
     osp_floating_end: 10.32.105.219
     bridged_vms:

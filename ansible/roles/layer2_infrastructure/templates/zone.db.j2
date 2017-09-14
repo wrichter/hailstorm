@@ -4,7 +4,7 @@
 $ORIGIN {{ hailstorm_dns_domain }}.
 $TTL    3h
 @       IN      SOA       {{ inventory_hostname_short}}.{{ hailstorm_dns_domain }}. hostmaster.{{ hailstorm_dns_domain }}. (
-                          1        ; Serial
+                          {{ bind_zone_serial.stdout }}        ; Serial
                           3h       ; Refresh after 3 hours
                           1h       ; Retry after 1 hour
                           1w       ; Expire after 1 week

@@ -6,6 +6,7 @@ Integrated Cloud Demo spanning multiple Red Hat Cloud technologies:
 * Red Hat Satellite
 * Red Hat CloudForms
 * Red Hat OpenShift Cloud Platform
+* Red Hat Single Sign On
 * Ansible Tower
 * (Optional) Red Hat Storage
 

@@ -1,4 +1,5 @@
 openstack overcloud deploy \
+--log-file ~/deploy_overcloud.log \
 --templates /usr/share/openstack-tripleo-heat-templates \
 --ntp-server {{ infrastructure_address_ntp_server }} \
 {% if current_lifecycle_env.openstack_version < 10 %}
@@ -16,6 +17,8 @@ openstack overcloud deploy \
 {% endif %}{# for OSP>=10, the params are in the commandlineparams-environment.yaml #}
 -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
 {% if current_lifecycle_env.osp_use_tls|default(false) %}-e /usr/share/openstack-tripleo-heat-templates/environments/tls-endpoints-public-dns.yaml \
+{% endif %}
+{% if current_lifecycle_env.osp_storage_backend == 'ceph_hyperconverged' %}-e /usr/share/openstack-tripleo-heat-templates/environments/hyperconverged-ceph.yaml \
 {% endif %}
 {% for template in templates|select|list %}{% if 'environment.yaml' in template %}-e ~/templates/{{ template }}{% if not loop.last %} \{% endif %}
 

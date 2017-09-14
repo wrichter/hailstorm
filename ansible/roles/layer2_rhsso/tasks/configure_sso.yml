@@ -1,0 +1,60 @@
+# Configure RH SSO
+# To be used by OpenShift et al
+# Author: Daniel Fröhlich
+# See:  https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_jboss_sso_for_openshift/#OSE-SSO-AUTH-TUTE
+- name: login to sso
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    config credentials --server http://localhost:8080/auth \
+    --realm master --user admin --password {{ root_password }}
+  changed_when: false
+
+- name: create infra realm
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+    create realms -s realm=infra -s enabled=true
+  register: command_result
+  failed_when: "'Realm with same name exists' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'Realm with same name exists' not in command_result.stderr"
+
+- name: create admin user in infra realm
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+     create users -r infra -s username=adminFromSSO -s enabled=true
+  register: create_admin_result
+  failed_when: "'User exists with same username' not in create_admin_result.stderr and create_admin_result.rc != 0"
+  changed_when: "'User exists with same username' not in create_admin_result.stderr"
+
+- block:
+    - name: get id of admin user
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get users -r infra --fields 'id' -q username='adminfromsso' --format=csv --noquotes
+      register: adminUserId
+      changed_when: false
+
+    - name: reset admin user password
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+        update users/{{ adminUserId.stdout }}/reset-password \
+        -r infra -s type=password -s value={{ root_password }} -s temporary=false -n
+  when: create_admin_result | changed
+
+- name: check existance of ipa ldap Provider
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get components -r infra --fields 'id' -q name=ldap-ipa  --format=csv --noquotes
+  register: ipaProviderId
+  changed_when: false
+
+# Create IPA LDAP Provider as user-federation if not already present:
+- block:
+    - name: prepare ldap provider json
+      template: src=create_ipa_ldap_provider.json.j2 dest=/root/create_ipa_ldap_provider.json
+
+    - name: create ldap Provider
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh \
+        create components -r infra -f /root/create_ipa_ldap_provider.json
+
+    - name: get ipa ldap provider id
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh get components -r infra --fields 'id' -q name=ldap-ipa  --format=csv --noquotes
+      register: newIpaProviderId
+      changed_when: false
+
+    - name: force full sync
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/kcadm.sh create user-storage/{{ newIpaProviderId.stdout }}/sync?action=triggerFullSync  -r infra -o
+      register: syncResult
+      failed_when: syncResult.rc != 0 or (syncResult.stdout|from_json)['failed'] !=0
+  when: ipaProviderId.stdout == ""

@@ -3,27 +3,53 @@
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack server list -f json --name {{ inventory_hostname_short }}
       register: instance_data
       failed_when: instance_data.stdout == ""
       changed_when: false
-
     - debug: var=instance_data.stdout|from_json
 
     - name: create userdata file
       template: src=cloud-config.txt.j2 dest=/tmp/{{ osp_tenant }}_{{ inventory_hostname_short }}_userdata.txt
       when: instance_data.stdout | from_json | length == 0
 
+    - name: get ids of all networks
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack network list -f json
+      register: osp_network_ids
+      failed_when: osp_network_ids.stdout == ""
+      changed_when: false
+    - debug: var=osp_network_ids.stdout|from_json
+
+    - name: get IDs of needed networks
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack network show {{ item }} -f json|grep '"id":'|cut -d'"' -f4
+      register: vm_networks_ids
+      with_items: "{{ vm_networks }}"
+    - debug: var=vm_networks_ids
+
     - name: instantiate image
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack server create
         --image "{{ osp_image }}"
         --flavor "{{ osp_flavor }}"
         --user-data "/tmp/{{ osp_tenant }}_{{ inventory_hostname_short }}_userdata.txt"
+        {% for network in vm_networks_ids.results %}--nic net-id={{ network.stdout }} {% endfor %}
+        {% for secgroup in vm_secgroups %}--security-group {{ secgroup }} {% endfor %}
         {{ inventory_hostname_short }}
       when: instance_data.stdout | from_json | length == 0
 

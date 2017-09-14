@@ -113,7 +113,6 @@
     - { role: layer2_infrastructure, tags: [ 'layer2', 'infrastructure' ], mode: create }
     - { role: layer2_tdagent, tags: [ 'layer2', 'tdagent', 'infrastructure'], mode: create }
 
-
 #### VIRT-WHO host (either infrastrcture or satellite)
 
 - hosts: virt-who
@@ -161,3 +160,50 @@
 #     - { role: layer2_rhel, tags: [ 'layer2', 'storage-console', 'rhel' ], mode: create }
 #     - { role: layer2_ipa_certificate, tags: ['layer2', 'storage-console', 'cert' ], mode: create }
 #     - { role: layer2_storageconsole, tags: [ 'layer2', 'storage-console', 'storage-console-install' ], mode: create }
+
+#### RH-SSO
+# ansible-playbook -i hosts -e @config/infrastructure_config.yml -e @config/hailstorm_config.yml -e @config/storm3.coe.muc.redhat.com.yml create-01-base.yml --tags rh-sso
+- hosts: rh-sso
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'rhsso', 'vm' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'rhsso', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'rhsso', 'rhel' ], mode: create }
+    - { role: layerX_ipa_client, tags: [ 'layer2', 'rhsso',  'ipa-client'], mode: create }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'rhsso', 'rhsso-cert'], mode: create, certcn: 'rh-sso.{{ hailstorm_dns_domain }}', factprefix: rhsso }
+    - { role: layer2_rhsso, tags: [ 'layer2', 'rhsso' ], mode: create }
+
+#### install-host
+# ansible-playbook -i hosts -e @config/infrastructure_config.yml -e @config/hailstorm_config.yml -e @config/storm3.coe.muc.redhat.com.yml create-01-base.yml --tags install-host
+- hosts: install-host
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer2_vms, tags: [ 'layer2', 'install-host', 'vm' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'install-host', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer2_rhel, tags: [ 'layer2', 'install-host', 'rhel' ], mode: create }
+    - { role: layerX_ipa_client, tags: [ 'layer2', 'install-host',  'ipa-client'], mode: create }
+    - { role: layer2_installhost, tags: [ 'layer2', 'install-host' ], mode: create }
+
+# create the "nuage" VMs, subscribe against satellite,
+# install packages defined in groups/newgroup.yml and
+# register IPA client
+# ansible-playbook -i hosts -e @config/infrastructure_config.yml -e @config/hailstorm_config.yml -e @config/storm3.coe.muc.redhat.com.yml create-01-base.yml --tags nuage
+- hosts: nuage
+  remote_user: root
+  gather_facts: false
+  roles:
+    - role: layer2_vms
+      tags: [ 'layer2', 'nuage', 'vm' ]
+      mode: create
+    - role: layer2_rhel_reconfigure_dns
+      tags: [ 'layer2', 'nuage', 'dns' ]
+      mode: create
+      nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}"
+    - role: layer2_rhel
+      tags: [ 'layer2', 'nuage', 'rhel' ]
+      mode: create
+    - role: layerX_ipa_client
+      tags: [ 'layer2', 'nuage',  'ipa-client']
+      mode: create

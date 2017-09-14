@@ -46,10 +46,17 @@
         - "compute.yaml"
         - "controller.yaml"
 
+
+    - debug:
+        msg: "Hint: to follow the creation of the Overcloud login to the director as user stack and run watch_rhosp_creation.sh"
+        verbosity: 0
+    - debug:
+        msg: "Hint: to debug a failed creation use osp-collect.sh on the director as user stack"
+        verbosity: 0
     - name: deploy overcloud (even more coffee!)
       shell: >
-        . ~/stackrc &&
-        {{ lookup('template','deploy-overcloud.j2') }} 2>&1 >~/deploy_overcloud.log
+        . ~/stackrc && rm ~/deploy_overcloud.log &&
+        {{ lookup('template','deploy-overcloud.j2') }} 2>&1 >> ~/deploy_overcloud.log
       tags: ['deploy']
     #   async: 7200
     #   poll: 0

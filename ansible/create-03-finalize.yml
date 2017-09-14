@@ -51,7 +51,20 @@
     - { role: layer2_ipa_certificate, tags: ['layer2', 'cf', 'cf-certificate'], mode: create }
     - { role: layer3_cloudforms_certificate, tags: ['layer2', 'cf', 'cf-certificate'], mode: create }
 
-
+- hosts: cloudforms-osp
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'cloudforms-osp' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cloudforms-osp', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cloudforms-osp', 'cfme-config' ], mode: create }
+# RHEL after cloudforms config, to ensure the hostname is set before subscribing
+    - { role: layer2_rhel, tags: [ 'layer3', 'cloudforms-osp', 'rhel'], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer3', 'cloudforms-osp', 'tdagent'], mode: create }
+    - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cloudforms-osp', 'cfme-osp-provider' ], mode: create }
+    - { role: layer3_cloudforms_tower, tags: [ 'layer3', 'cloudforms-osp', 'cfme-tower-provider' ], mode: create }
+    - { role: layer2_ipa_certificate, tags: ['layer2', 'cloudforms-osp', 'cf-certificate'], mode: create }
+    - { role: layer3_cloudforms_certificate, tags: ['layer2', 'cloudforms-osp', 'cf-certificate'], mode: create }
 
 - hosts: ose3-installer
   remote_user: root

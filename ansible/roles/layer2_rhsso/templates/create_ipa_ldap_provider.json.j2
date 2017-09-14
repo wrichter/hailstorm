@@ -1,0 +1,91 @@
+{
+  "name": "ldap-ipa",
+  "providerId": "ldap",
+  "providerType": "org.keycloak.storage.UserStorageProvider",
+  "config": {
+    "serverPrincipal": [],
+    "fullSyncPeriod": [
+      "86400"
+    ],
+    "pagination": [
+      "true"
+    ],
+    "usersDn": [
+      "cn=compat,dc=hailstorm3,dc=coe,dc=muc,dc=redhat,dc=com"
+    ],
+    "connectionPooling": [
+      "true"
+    ],
+    "cachePolicy": [
+      "DEFAULT"
+    ],
+    "useKerberosForPasswordAuthentication": [
+      "false"
+    ],
+    "evictionHour": [],
+    "changedSyncPeriod": [
+      "3600"
+    ],
+    "usernameLDAPAttribute": [
+      "uid"
+    ],
+    "bindDn": [
+      "uid=rhsso-bind-user,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}"
+    ],
+    "bindCredential": [
+      "{{ root_password }}"
+    ],
+    "vendor": [
+      "rhds"
+    ],
+    "uuidLDAPAttribute": [
+      "uidNumber"
+    ],
+    "connectionUrl": [
+      "ldaps://ipa.{{ hailstorm_dns_domain }}:636"
+    ],
+    "allowKerberosAuthentication": [
+      "false"
+    ],
+    "syncRegistrations": [
+      "false"
+    ],
+    "authType": [
+      "simple"
+    ],
+    "connectionTimeout": [],
+    "customUserSearchFilter": [
+      "(&(objectClass=posixAccount))"
+    ],
+    "debug": [
+      "false"
+    ],
+    "searchScope": [
+      "2"
+    ],
+    "useTruststoreSpi": [
+      "ldapsOnly"
+    ],
+    "keyTab": [],
+    "maxLifespan": [],
+    "priority": [
+      "110"
+    ],
+    "kerberosRealm": [],
+    "userObjectClasses": [
+      "posixAccount"
+    ],
+    "evictionMinute": [],
+    "rdnLDAPAttribute": [
+      "uid"
+    ],
+    "evictionDay": [],
+    "editMode": [
+      "READ_ONLY"
+    ],
+    "readTimeout": [],
+    "batchSizeForSync": [
+      "1000"
+    ]
+  }
+}

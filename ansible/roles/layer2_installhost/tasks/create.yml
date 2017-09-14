@@ -1,0 +1,16 @@
+- name: install epel-release
+  yum:
+    name: "{{ epel_rpm }}"
+    state: present
+- name: enable epel
+  lineinfile:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^enabled='
+    line: 'enabled=1'
+- name: install additional packages
+  yum: name=htop,atop,ansible state=latest
+- name: disable epel
+  lineinfile:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^enabled='
+    line: 'enabled=0'

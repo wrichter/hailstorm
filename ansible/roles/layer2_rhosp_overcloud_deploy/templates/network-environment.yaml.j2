@@ -1,0 +1,68 @@
+# Enable the creation of Neutron networks for isolated Overcloud
+# traffic and configure each role to assign ports (related
+# to that role) on these networks.
+resource_registry:
+  # NIC Configs for our roles
+  OS::TripleO::Compute::Net::SoftwareConfig: ./nic-configs/compute.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: ./nic-configs/controller.yaml
+  OS::TripleO::Network::Management: /usr/share/openstack-tripleo-heat-templates/network/management.yaml
+  OS::TripleO::Controller::Ports::ManagementPort:   /usr/share/openstack-tripleo-heat-templates/network/ports/management.yaml
+  OS::TripleO::Compute::Ports::ManagementPort:      /usr/share/openstack-tripleo-heat-templates/network/ports/management.yaml
+  OS::TripleO::CephStorage::Ports::ManagementPort:  /usr/share/openstack-tripleo-heat-templates/network/ports/management.yaml
+  OS::TripleO::SwiftStorage::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management.yaml
+  OS::TripleO::BlockStorage::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management.yaml
+
+
+parameter_defaults:
+  PublicVirtualFixedIPs: [{'ip_address':'{{ hostvars['openstack'].vm_nics[0].ip }}'}]
+
+  # Internal API used for private OpenStack Traffic
+  InternalApiNetCidr: {{ infrastructure_network_internal_api.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_internal_api.default_gw_host_prefix | ipaddr('prefix') }}
+  InternalApiAllocationPools: [{'start': '{{ infrastructure_network_internal_api.osp_overcloud_start }}', 'end': '{{ infrastructure_network_internal_api.osp_overcloud_end }}'}]
+  InternalApiNetworkVlanID: {{ infrastructure_network_internal_api.vlan }}
+
+  # Tenant Network Traffic - will be used for VXLAN over VLAN
+  TenantNetCidr: {{ infrastructure_network_tenant.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_tenant.default_gw_host_prefix | ipaddr('prefix') }}
+  TenantAllocationPools: [{'start': '{{ infrastructure_network_tenant.osp_overcloud_start }}', 'end': '{{ infrastructure_network_tenant.osp_overcloud_end }}'}]
+  TenantNetworkVlanID: {{ infrastructure_network_tenant.vlan }}
+
+  # Public Storage Access - e.g. Nova/Glance <--> Ceph
+  StorageNetCidr: {{ infrastructure_network_storage.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_storage.default_gw_host_prefix | ipaddr('prefix') }}
+  StorageAllocationPools: [{'start': '{{ infrastructure_network_storage.osp_overcloud_start }}', 'end': '{{ infrastructure_network_storage.osp_overcloud_end }}'}]
+  StorageNetworkVlanID: {{ infrastructure_network_storage.vlan }}
+
+  # Private Storage Access - i.e. Ceph background cluster/replication
+  StorageMgmtNetCidr: {{ infrastructure_network_storage_mgmt.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_storage_mgmt.default_gw_host_prefix | ipaddr('prefix') }}
+  StorageMgmtAllocationPools: [{'start': '{{ infrastructure_network_storage_mgmt.osp_overcloud_start }}', 'end': '{{ infrastructure_network_storage_mgmt.osp_overcloud_end }}'}]
+  StorageMgmtNetworkVlanID: {{ infrastructure_network_storage_mgmt.vlan }}
+
+  ExternalNetCidr: {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('prefix') }}
+  # Leave room for floating IPs in the External allocation pool (if required)
+  ExternalAllocationPools: [{'start': '{{ infrastructure_network_services.osp_overcloud_start }}', 'end': '{{ infrastructure_network_services.osp_overcloud_end }}'}]
+  # Set to the router gateway on the external network
+  ExternalInterfaceDefaultRoute: {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}
+
+  # @Wolfram: why this? Management should be the Admin Network (which is OOB), not the Guests (which is external)
+  #ManagementNetCidr: {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('prefix') }}
+  #ManagementAllocationPools: [{'start': '{{ infrastructure_network_guests.infra_start }}', 'end': '{{ infrastructure_network_guests.infra_end }}'}]
+  #ManagementInterfaceDefaultRoute: {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('address') }}
+  # changed here for testing
+  ManagementNetCidr: {{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('prefix') }}
+  ManagementAllocationPools: [{'start': '{{ infrastructure_network_admin.osp_overcloud_start }}', 'end': '{{ infrastructure_network_admin.osp_overcloud_end }}'}]
+  ManagementInterfaceDefaultRoute: {{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}
+
+  # Add in configuration for the Control Plane - see http://docs.openstack.org/developer/tripleo-docs/advanced_deployment/network_isolation.html#updating-existing-configuration-templates-to-support-new-parameters
+  # CIDR subnet mask length for provisioning network
+  ControlPlaneSubnetCidr: "{{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix | ipaddr('prefix') }}"
+  # Gateway router for the provisioning network (or Undercloud IP)
+  ControlPlaneDefaultRoute: {{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix | ipaddr('address') }}
+  # this is intentional - the undercloud's (controller, compute) default gw should be on the services network
+  # but we moved the decision directly to the nic-configs/*
+  #ControlPlaneDefaultRoute: {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}
+
+  # Generally the IP of the Undercloud
+  EC2MetadataIp: {{ vm_nics[0].ip }}
+
+  NeutronExternalNetworkBridge: "''"
+  NeutronBridgeMappings: "datacentre:br-services,guests:br-guests,admin:br-admin,provisioning:br-prov{% if infrastructure_network_provider1 is defined %},provider1:br-provider1{% endif %}{% if infrastructure_network_provider2 is defined %},provider2:br-provider2{% endif %}"
+  NeutronFlatNetworks: "datacentre, guests, admin, provisioning,{% if infrastructure_network_provider1 is defined %}, provider1{% endif %}{% if infrastructure_network_provider2 is defined %}, provider2{% endif %}"

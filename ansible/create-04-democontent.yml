@@ -33,6 +33,12 @@
   roles:
     - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }
 
+- hosts: cloudforms-osp
+  remote_user: root
+  gather_facts: false
+  roles:
+    - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cloudforms-osp', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }
+
 - hosts: ose3-installer
   remote_user: root
   gather_facts: false

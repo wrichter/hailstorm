@@ -1,0 +1,91 @@
+# Install RH SSO
+# Author: Daniel Fröhlich
+# See: https://access.redhat.com/documentation/en-us/red_hat_single_sign-on/7.1/html/server_installation_and_configuration_guide/
+
+# the following moved to host_vars/rh-sso.yml
+#- name: install rhsso pre-req packages
+#  yum:
+#    name: java-1.8.0-openjdk,zip,postgresql,postgresql-jdbc
+#    state: present
+#
+#- name: enable rhsso repos
+#  shell: subscription-manager repos --enable=jb-eap-7.0-for-rhel-7-server-rpms --enable=rh-sso-7.1-for-rhel-7-server-rpms
+
+- name: install rhsso group
+  yum:
+    name: "@rh-sso7"
+    state: present
+
+#
+# ----------- Cert Suff ------
+# We need a nice TLS Certifacte for RH_SSO signed by IPA root ca. That
+# has been created already by IPA using a role invoked in create-01-base.yml and stored
+# in var rhsso_(key|cert|cacert). This block creates them as file in the rhsso host /root directory:
+- name: create certificate files
+  copy: content="{{ item.value }}" dest="/root/{{ item.name }}" mode="400"
+  when: rhsso_key is defined and rhsso_cert and rhsso_cacert is defined
+  with_items:
+    - name: rhsso.key
+      value: "{{ rhsso_key }}"
+    - name: rhsso.crt
+      value: "{{ rhsso_cert }}"
+    - name: rhsso-ca.crt
+      value: "{{ rhsso_cacert }}"
+
+- name: check for p12 keystore existance
+  stat: path=/root/keycloak.p12
+  register: keycloak_p12
+
+- name: create pkcs12 keystore
+  shell: openssl pkcs12 -export -in /root/rhsso.crt -inkey /root/rhsso.key -name keycloak -CAfile /root/rhsso-ca.crt -caname rootca -out /root/keycloak.p12 -password pass:keystore
+  when: keycloak_p12.stat.exists == false
+
+- name: check for jks keystore existance
+  stat: path=/opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/keycloak.jks
+  register: keycloak_jks
+
+- block:
+  - name: create jks keystore
+    shell: keytool -importkeystore -deststorepass keystore -destkeystore /opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/keycloak.jks  -srckeystore /root/keycloak.p12 -srcstoretype PKCS12 -srcstorepass keystore -alias keycloak
+  - name: import root ca into jks keystore
+    shell: keytool -importcert -alias iparootca -file /root/rhsso-ca.crt -keystore /opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/keycloak.jks -storepass keystore -noprompt
+  when: keycloak_jks.stat.exists == false
+
+- name: create sso admin username
+  shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/add-user-keycloak.sh -r master -u admin -p {{ root_password }}
+  register: command_result
+  failed_when: "'already added' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'already added' not in command_result.stderr"
+
+- name: check if eap is already configured for TLS
+  lineinfile:
+    path: /opt/rh/rh-sso7/root/usr/share/keycloak/standalone/configuration/standalone.xml
+    regexp: '.*<https-listener name="https" security-realm="UndertowRealm" socket-binding="https"/>'
+    line: "dummy"
+    state: present
+  check_mode: yes
+  register: standalone_would_have
+  changed_when: false
+
+- block:
+    - name: create configure_eap_for_tls.cli
+      template: src=configure_eap_for_tls.cli.j2 dest=/root/configure_eap_for_tls.cli
+
+    - name: configure eap for TLS
+      shell: /opt/rh/rh-sso7/root/usr/share/keycloak/bin/jboss-cli.sh --file=/root/configure_eap_for_tls.cli
+  when: ( standalone_would_have.msg == 'line added') or ( standalone_would_have | failed)
+
+- name: change ownership to jboss (Note that this might be too much or unneeded at all)
+  command: chown -RHLf --dereference jboss.jboss /opt/rh/rh-sso7/root/usr/share/keycloak/standalone
+
+- name: enable and start rhsso service
+  service:
+    name: rh-sso7
+    enabled: yes
+    state: started
+
+- name: wait for rhsso service to be online
+  wait_for:
+    host: localhost
+    port: 9990
+    timeout: 90

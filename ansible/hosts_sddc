@@ -1,0 +1,246 @@
+#### LAYER 1 CONFIGURATION
+
+# the layer1 group should only contain a single server called layer1
+[layer1]
+layer1          ansible_host=10.116.122.1
+
+#### VM CONFIGURATION (LAYER 2 AND LAYER 3)
+
+[satellite]
+satellite       ansible_host=10.116.122.10
+
+# the IPA server
+[ipa]
+ipa             ansible_host=10.116.122.11 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+# the single node that is RHEV-Manager
+[rhevm]
+rhevm           ansible_host=10.116.122.12 activation_key="AK-CV-RHEV-MANAGER-{{ stage }}" additional_dns="rhev"
+
+# the nodes that are RHEV-Hypervisor
+[rhevh]
+rhevh1          ansible_host=10.116.122.13 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh1 }}{% endif %}"
+rhevh2          ansible_host=10.116.122.14 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh2 }}{% endif %}"
+rhevh3          ansible_host=10.116.122.15 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh3 }}{% endif %}"
+
+# the CloudForms management engine
+[cloudforms]
+cloudforms      ansible_host=10.116.122.17 activation_key="AK-CV-CLOUDFORMS-{{ stage }}"
+
+[test-rhel6]
+test-rhel6      ansible_host=10.116.122.18 activation_key="AK-CV-OS-RHEL6-SERVER-{{ stage }}"
+
+[test-rhel7]
+test-rhel7      ansible_host=10.116.122.19 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+[ose3-master]
+ose3-master1    ansible_host=10.116.122.20 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}"
+ose3-master2    ansible_host=10.116.122.21 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}"
+ose3-master3    ansible_host=10.116.122.22 openshift_node_labels="{'region': 'master', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}"
+
+[ose3-node]
+ose3-infranode1 ansible_host=10.116.122.23 openshift_node_labels="{'region': 'infra', 'zone': 'default', 'logging-infra-fluentd': 'true'}" activation_key="AK-CV-RHOSE3-{{ stage }}" additional_dns="*.apps,apps"
+ose3-node1      ansible_host=10.116.122.25 openshift_node_labels="{'region': 'primary', 'zone': 'east', 'logging-infra-fluentd': 'true'}"  activation_key="AK-CV-RHOSE3-{{ stage }}"
+ose3-node2      ansible_host=10.116.122.26 openshift_node_labels="{'region': 'primary', 'zone': 'west', 'logging-infra-fluentd': 'true'}"  activation_key="AK-CV-RHOSE3-{{ stage }}"
+
+[ose3-lb]
+ose3-lb         ansible_host=10.116.122.27 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" additional_dns="openshift"
+
+# Elasticsearch, FluentD, Kibana
+[efk]
+efk             ansible_host=10.116.122.28 activation_key="AK-CV-RHOSP-{{ stage }}"
+
+# the Infrastructure server (DNS, SMTP/IMAP)
+[infrastructure]
+infrastructure  ansible_host=10.116.122.29 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" additional_dns="imap,smtp"
+
+# The single system where osp-director will be installed to
+[rhosp-director]
+rhosp-director  ansible_host=10.116.122.30 activation_key="AK-CV-RHOSP-{{ stage }}"
+
+# The group of all osp compute nodes
+[rhosp-compute]
+rhosp-compute1  ansible_host=10.116.122.31 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-compute2  ansible_host=10.116.122.32 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-compute3  ansible_host=10.116.122.33 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-compute4  ansible_host=10.116.122.40 activation_key="AK-CV-RHOSP-{{ stage }}"
+
+# The group of all osp control nodes
+[rhosp-control]
+rhosp-control1  ansible_host=10.116.122.34 activation_key="AK-CV-RHOSP-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
+rhosp-control2  ansible_host=10.116.122.35 activation_key="AK-CV-RHOSP-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
+rhosp-control3  ansible_host=10.116.122.36 activation_key="AK-CV-RHOSP-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
+
+[dev-client]
+dev-client     ansible_host=10.116.122.37 activation_key="AK-CV-RHOSE3-CLIENT-{{ stage }}"
+
+[tower]
+tower          ansible_host=10.116.122.38 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+[lookbusy-rhev]
+lookbusy-rhev   ansible_host=10.116.122.39 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" rhev_image="RHEL7" nic_attachments="[ {{ infrastructure_network_services }},{{ infrastructure_network_admin }} ]"
+
+[ceph]
+#will be filled in dynamically via layer2_ceph_inventory role
+#ceph1 ansible_host=10.116.122.2 activation_key="AK-CV-CEPH-{{ stage }}"
+#ceph2 ansible_host=10.116.122.3 activation_key="AK-CV-CEPH-{{ stage }}"
+#ceph3 ansible_host=10.116.122.4 activation_key="AK-CV-CEPH-{{ stage }}"
+#ceph4 ansible_host=10.116.122.5 activation_key="AK-CV-CEPH-{{ stage }}"
+
+[storage-console]
+storage-console ansible_host=10.116.122.9 activation_key="AK-CV-CEPH-{{ stage }}"
+
+[install-host]
+install-host ansible_host=10.116.122.6 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+[rh-sso]
+rh-sso ansible_host=10.116.122.7 activation_key="AK-CV-RH-SSO-{{ stage }}"
+
+[nuage]
+vsd ansible_host=10.116.122.8 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+#vsc ansible_host=10.116.122.9 activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}"
+
+# virtual IPs - these will not be instantiated through Ansible (but need them for DNS records, DNAT, etc)
+[vips]
+openstack       ansible_host=10.116.120.81 nic_attachments="[ {{ infrastructure_network_services }} ]" default_route_via="{{ infrastructure_network_services }}"
+undercloud-public ansible_host=10.116.124.40 nic_attachments="[ {{ infrastructure_network_rhosp_provisioning }} ]" default_route_via={{infrastructure_network_rhosp_provisioning}} additional_dns="director"
+undercloud-admin  ansible_host=10.116.124.41 nic_attachments="[ {{ infrastructure_network_rhosp_provisioning }} ]"
+
+# layer 3 openstack
+[lookbusy-osp]
+lookbusy-osp    activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
+
+[cloudforms-osp]
+cloudforms-osp  activation_key="AK-CV-CLOUDFORMS-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.xlarge" osp_image="Cloudforms"
+
+[ansible-jump-host]
+ansible-jump-demo-vms  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-vms" osp_flavor="m1.small" osp_image="RHEL7"
+#ansible-jump-demo-infra  activation_key="AK-CV-OS-RHEL7-SERVER-{{ stage }}" osp_tenant="demo-infra" osp_flavor="m1.small" osp_image="RHEL7"
+
+[laptop]
+localhost              ansible_connection=local openshift_master_api_host_and_port='openshift.{{ hailstorm_dns_domain }}:443'
+
+
+#### ADDITIONAL GROUPS
+
+# which system will host virt-who -> this should not be satellite since virt-who reports to subscription-manager which reports to RHN (which doesn't know the Default Organization) on satellite
+[virt-who]
+infrastructure
+
+# some test nodes to test subscription with satellite
+[test-rhel:children]
+test-rhel6
+test-rhel7
+
+# the list of groups that make up RHEV
+[rhev:children]
+rhevm
+rhevh
+
+# all RHEV nodes and the layer1 host to ensure there's a common view on the storage domain
+[layer1-rhev:children]
+rhev
+layer1
+
+# A list of all OpenStack subgroups
+[rhosp-all:children]
+rhosp-director
+rhosp-undercloud
+
+# The groups that make up the osp undercloud (i.e. compute, control and potentially storage)
+[rhosp-undercloud:children]
+rhosp-compute
+rhosp-control
+
+# a group required to store a common configuration for IPMI emulation between the layer1 host and the osp-director
+[layer1-rhosp]
+rhosp-director
+layer1
+
+# all openshift nodes
+[ose3:children]
+ose3-master
+ose3-node
+ose3-lb
+
+# common config items for openshift masters and nodes
+[ose3-common:children]
+ose3-master
+ose3-node
+
+# the node where the ansible playbook will run
+[ose3-installer]
+ose3-master1
+
+# All layer2 node groups that are installed with RHEL7
+[rhel7:children]
+install-host
+rh-sso
+nuage
+rhosp-all
+satellite
+rhevh
+ose3
+test-rhel7
+ipa
+infrastructure
+efk
+lookbusy
+dev-client
+tower
+cloudforms
+ansible-jump-host
+storage-console
+
+# All layer2 node groups that are installed with RHEL6
+[rhel6:children]
+#rhevm #group assignment (rhel6 or rhel7) now done via role
+test-rhel6
+
+# everything on layer2
+[layer2:children]
+install-host
+rh-sso
+nuage
+ose3
+satellite
+rhev
+rhosp-all
+test-rhel6
+test-rhel7
+ipa
+infrastructure
+efk
+dev-client
+tower
+storage-console
+
+# to let it participate in the calculation of ansible_host and vm_nics
+# and the ssh proxy command used to communicate with all layer2/3 hosts
+[accessible_via_admin_network:children]
+layer2
+cloudforms
+vips
+lookbusy-rhev
+
+
+# A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
+[niclayout-standard:children]
+install-host
+rh-sso
+nuage
+satellite
+test-rhel
+infrastructure
+ipa
+ose3
+efk
+rhevm
+lookbusy-rhev
+dev-client
+tower
+storage-console
+
+[lookbusy:children]
+lookbusy-osp
+lookbusy-rhev

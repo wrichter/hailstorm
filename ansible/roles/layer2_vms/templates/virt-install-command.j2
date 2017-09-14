@@ -1,4 +1,5 @@
 virt-install  --name {{ inventory_hostname_short }}
+            {%if uuid is defined %} --uuid uuid={{ uuid }}{% endif %}
               --ram {{ mem }}
               --vcpus {{ vcpu }}
               --os-type {{ os_type }}

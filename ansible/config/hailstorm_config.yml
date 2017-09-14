@@ -15,7 +15,7 @@ lifecycle_environments:
     description: 'Development'
     label: 'development'
     content_view_date_filter:
-      "*": "2017-08-18"
+      "*": "2017-09-04"
     errata_for_demo_scenario:
       - RHSA-2017:0286
       - RHSA-2016:1940
@@ -129,6 +129,7 @@ current_lifecycle_env: "{{ lifecycle_environments|selectattr('name','match','^'+
 # RED HAT SUBSCRIPTIONS
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
 rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux.*(Unlimited guests|Company-Wide).*)$"
+rhsso_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Infrastructure.*)$"
 #sap_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server for SAP HANA.*)$"
 rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat (Enterprise Linux )?OpenStack Platform.*)$"
@@ -255,6 +256,12 @@ satellite_product_config:
       - name: Red Hat OpenStack Platform 11 Developer Tools for RHEL 7 (RPMs)
       - name: Red Hat OpenStack Platform 11 for RHEL 7 (RPMs)
       - name: Red Hat OpenStack Platform 11 Operational Tools for RHEL 7 (RPMs)
+      - name: "Red Hat Ceph Storage Tools 2 for Red Hat Enterprise Linux 7 Server (RPMs)"
+        releasever: 7Server
+      - name: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
+      - name: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server (RPMs)
+        releasever: 7Server
 #need manifest WITH satellite
 #  - product: Red Hat Satellite
 #    basearch: x86_64
@@ -272,6 +279,7 @@ satellite_product_config:
       - name: "Red Hat OpenShift Container Platform 3.3 (RPMs)"
       - name: "Red Hat OpenShift Container Platform 3.4 (RPMs)"
       - name: "Red Hat OpenShift Container Platform 3.5 (RPMs)"
+      - name: "Red Hat OpenShift Container Platform 3.6 (RPMs)"
   - product: Red Hat Virtualization
     basearch: x86_64
     repos:
@@ -289,6 +297,12 @@ satellite_product_config:
         releasever: 6Server
       - name: JBoss Enterprise Application Platform 7 (RHEL 7 Server) (RPMs)
         releasever: 7Server
+      - name: JBoss Enterprise Application Platform 7.0 (RHEL 7 Server) (RPMs)
+        releasever: 7Server
+  - product: Red Hat Single Sign-On
+    basearch: x86_64
+    repos:
+      - name: Single Sign-On 7.1 (RHEL 7 Server) (RPMs)
   - product: Red Hat CloudForms
     basearch: x86_64
     repos:
@@ -387,6 +401,17 @@ satellite_content_config:
       - product: "Red Hat Virtualization"
         repository: "Red Hat Virtualization 4 Management Agents for RHEL 7 RPMs x86_64 7Server"
 
+  - content_view: "CV-RH-SSO"
+    content:
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
+      - product: "JBoss Enterprise Application Platform"
+        repository: "JBoss Enterprise Application Platform 7.0 RHEL 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Single Sign-On"
+        repository: "Single Sign-On 7.1 RHEL 7 Server RPMs x86_64"
+
   - content_view: "CV-RHOSP"
     content:
       - product: "Red Hat OpenStack"
@@ -419,6 +444,12 @@ satellite_content_config:
         repository: "Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux High Availability for RHEL Server"
         repository: "Red Hat Enterprise Linux High Availability for RHEL 7 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
+        repository: Red Hat Ceph Storage Tools 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
+      - product: Red Hat Ceph Storage MON
+        repository: Red Hat Ceph Storage MON 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
+      - product: Red Hat Ceph Storage OSD
+        repository: Red Hat Ceph Storage OSD 2 for Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server
 
   - content_view: "CV-RHOSE3"
     content:
@@ -428,6 +459,8 @@ satellite_content_config:
         repository: "Red Hat OpenShift Container Platform 3.4 RPMs x86_64"
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Container Platform 3.5 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.6 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
@@ -539,6 +572,12 @@ satellite_activation_keys_and_host_collections:
     activation_key_subscription_regex: "{{ rhev_subscription_pool_regex }}"
     override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
 
+  - activation_key: AK-CV-RH-SSO
+    content_view: "CV-RH-SSO"
+    host_collection: "RHEL7"
+    activation_key_subscription_regex: "{{ rhsso_subscription_pool_regex }}"
+    override: "rhel-7-server-satellite-tools-{{ satellite_version }}-rpms"
+
   - activation_key: AK-CV-RHOSP
     content_view: "CV-RHOSP"
     host_collection: "RHOSP"
@@ -621,6 +660,10 @@ ipa_user:
     first: tower
     last: binduser
     password: "{{ root_password }}"
+  - username: rhsso-bind-user
+    first: rhsso
+    last: binduser
+    password: "{{ root_password }}"
   - username: coolstore-dev
     first: coolstore
     last: Developer
@@ -647,6 +690,7 @@ ipa_group:
       - ose-bind-user
       - osp-bind-user
       - tower-bind-user
+      - rhsso-bind-user
       - coolstore-dev
       - coolstore-ops
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=6
@@ -671,6 +715,7 @@ ipa_group:
       - rhev-bind-user
       - ose-bind-user
       - osp-bind-user
+      - rhsso-bind-user
     pwpolicy: --maxlife=20000 --minlife=0 --history=0 --maxfail=0 --priority=0
 
 osp_domain_name: hailstorm

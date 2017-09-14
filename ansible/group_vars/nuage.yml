@@ -1,0 +1,32 @@
+mem: 4096
+vcpu: 2
+
+disk:
+  path: "{{ inventory_hostname_short }}.qcow2"
+  size: 100
+  format: qcow2
+  # partition_table:
+  #   lvmpv: 29500
+  #   swap: 2048
+  #   home: 2048
+  #   root: 10000
+
+  physvols:
+    boot: 500
+    rhel: 99500
+  logvols:
+    - name: swap
+      fstype: swap
+      mountpoint: swap
+      size: 2048
+    - name: root
+      fstype: "{{ fstype }}"
+      mountpoint: /
+      size: 10000
+    - name: home
+      fstype: "{{ fstype }}"
+      mountpoint: /home
+      size: 2048
+
+packages: git,python
+pool_regex: "{{ rhel_subscription_pool_regex }}"

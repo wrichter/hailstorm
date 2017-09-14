@@ -1,0 +1,5 @@
+Host *
+        ForwardAgent no
+        ControlMaster auto
+        ControlPath binary/%r@%h:%p
+        ControlPersist 60s

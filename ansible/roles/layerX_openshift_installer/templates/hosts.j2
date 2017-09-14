@@ -20,6 +20,34 @@ osm_default_node_selector="region=primary"
 
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+
+# ------ Hailstorm specific:
+# If RH-SSO is available, we use the OICD Auth Provider
+# elseif IPA is availe, we use the LDAP Auth Provider
+# else we use AllowAll as fallback:
+#
+#{% if ssoClientSecret.stdout is defined and ssoClientSecret.stdout != "" %}
+#openshift_master_identity_providers=[{
+#  'name': 'oidc_rhsso',
+#  'challenge': 'true',
+#  'login': 'true',
+#  'mappingInfo': 'add',
+#  'kind': 'OpenIDIdentityProvider',
+#  'clientID': 'ocp-master',
+#  'clientSecret': '{{ ssoClientSecret.stdout }}',
+#  'ca': 'ipa-ca.crt',
+#  'urls': {
+#      'authorize': 'https://rh-sso.{{ hailstorm_dns_domain }}:8443/auth/realms/infra/protocol/openid-connect/auth',
+#      'token': 'https://rh-sso.{{ hailstorm_dns_domain }}:8443/auth/realms/infra/protocol/openid-connect/token',
+#      'userInfo': 'https://rh-sso.{{ hailstorm_dns_domain }}:8443/auth/realms/infra/protocol/openid-connect/userinfo'
+#  },
+#  'claims': {
+#    'id': ['sub'],
+#    'preferredUsername': ['preferred_username'],
+#    'name': ['name'],
+#    'email': ['email']
+#  }
+#}]
 {% if ipa_available|success and certificate|success %}
 openshift_master_identity_providers=[{'name': 'ldap_ipa', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['uid'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=ose-bind-user,cn=users,cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}', 'bindPassword': '{{ root_password }}', 'ca': 'ipa-ca.crt', 'insecure': 'false', 'url': 'ldap://ipa.{{ hailstorm_dns_domain }}:389/cn=compat,dc={{ hailstorm_dns_domain | regex_replace('\.',',dc=') }}?uid?sub?(&(objectClass=posixAccount))'}]
 # Configuring the ldap ca certificate
