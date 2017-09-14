@@ -4,7 +4,7 @@ ocp_apps_dns_domain: apps.{{ hailstorm_dns_domain }}
 
 disable_registration_against_satellite: false
 satellite_version: 6.2
-stage: TEST
+stage: DEV
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
