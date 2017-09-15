@@ -15,6 +15,9 @@
        - name: wait for vm to become available
          local_action: wait_for host={{ ansible_host }} port=22 timeout=600
          when: vm_exists
+       - include: add_volumes.yml
+       - include: add_interfaces.yml
+         when: vm_exists and mode=="create"
        - name: wait for subscription to finish
          shell: subscription-manager status | awk '/^Overall Status/{ print $3 }'
          register: subscription_status
@@ -28,6 +31,8 @@
 
     - block:
         - include: set_floating_ip_as_fact.yml
+#        - include: remove_volumes.yml
+#          when: vm_exists
         - include: remove_floating_ip.yml
           when: vm_exists
         - include: terminate_vm.yml

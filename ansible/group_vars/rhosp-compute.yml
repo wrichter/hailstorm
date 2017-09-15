@@ -15,7 +15,7 @@ nic_attachments:
   - "{{ infrastructure_network_internal_api }}"
   - "{{ infrastructure_network_tenant }}"
   - "{{ infrastructure_network_admin }}"
-#  - "{{ infrastructure_network_services }}"
+  - "{{ infrastructure_network_services }}"
 #  - "{{ infrastructure_network_guests }}"
 #  - "{{ infrastructure_network_provider1 }}"
 #  - "{{ infrastructure_network_provider2 }}"
