@@ -18,7 +18,8 @@
   when: settings|changed
 
 - name: wait for cfme web ui to become available again
-  wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
+#  wait_for: host={{ hostvars['cloudforms'].vm_nics[0].ip }} port=443 timeout=600
+  wait_for: host="{% for vm_nic in hostvars[inventory_hostname_short].vm_nics %}{% if vm_nic.netname|regex_search('(services)') %}{{ vm_nic.ip }}{% endif %}{% endfor %} }}" port=443 timeout=600
   delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
 
 - name: create export script
