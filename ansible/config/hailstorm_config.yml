@@ -367,6 +367,8 @@ satellite_content_config:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
+        repository: "Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 7 Server RPMs x86_64"
       - product: "Red Hat Virtualization"
         repository: "Red Hat Virtualization Manager 4.1 RHEL 7 Server RPMs x86_64"
