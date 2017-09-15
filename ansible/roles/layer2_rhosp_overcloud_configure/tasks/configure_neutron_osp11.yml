@@ -8,7 +8,7 @@
       shell: >
         . ~/overcloudrc_v3 &&
         neutron net-create services --shared --router:external --provider:network_type flat --provider:physical_network datacentre &&
-        neutron subnet-create --name sub_services --enable-dhcp --allocation-pool=start={{ infrastructure_network_services.floating_start }},end={{ infrastructure_network_services.floating_end }} --gateway={{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }} services {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('prefix') }}
+        neutron subnet-create --name sub_services --disable-dhcp --allocation-pool=start={{ infrastructure_network_services.floating_start }},end={{ infrastructure_network_services.floating_end }} --gateway={{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }} services {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('prefix') }}
       when: '"services" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create guests aka external aka public network (in admin project)
@@ -22,7 +22,7 @@
       shell: >
         . ~/overcloudrc_v3 &&
         neutron net-create admin --shared --router:external --provider:network_type flat --provider:physical_network admin &&
-        neutron subnet-create --name sub_admin --enable-dhcp --allocation-pool=start={{ infrastructure_network_admin.floating_start }},end={{ infrastructure_network_admin.floating_end }} --gateway={{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} admin {{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('prefix') }}
+        neutron subnet-create --name sub_admin --disable-dhcp --allocation-pool=start={{ infrastructure_network_admin.floating_start }},end={{ infrastructure_network_admin.floating_end }} --gateway={{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }} admin {{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('prefix') }}
       when: 'infrastructure_network_admin is defined and "admin" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create provisioning network (in admin project)
@@ -30,7 +30,7 @@
         . ~/overcloudrc_v3 &&
         neutron net-create provisioning --shared --router:external --provider:network_type flat --provider:physical_network provisioning &&
         neutron subnet-create --name sub_provisioning --disable-dhcp --allocation-pool=start={{ infrastructure_network_rhosp_provisioning.floating_start }},end={{ infrastructure_network_rhosp_provisioning.floating_end }} --gateway={{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix | ipaddr('address') }} provisioning {{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_rhosp_provisioning.default_gw_host_prefix | ipaddr('prefix') }}
-      when: 'infrastructure_network_rhosp_provisioning is defined and "prov" not in networks.stdout | from_json | map(attribute="Name") | list'
+      when: 'infrastructure_network_rhosp_provisioning is defined and "provisioning" not in networks.stdout | from_json | map(attribute="Name") | list'
 
     - name: create provider1 network (in admin project)
       shell: >
