@@ -3,6 +3,9 @@
 #sleep 60
 #systemctl stop sshd
 
+# set root pw
+echo "{{ root_password }}" | passwd root --stdin
+
 #add subscription manager
 #yum -t -y -e 0 install subscription-manager
 rpm -ivh http://{{ hostvars['satellite'].hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
