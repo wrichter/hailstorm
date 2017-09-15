@@ -189,6 +189,7 @@ lookbusy
 dev-client
 tower
 cloudforms
+cloudforms-osp
 ansible-jump-host
 storage-console
 
