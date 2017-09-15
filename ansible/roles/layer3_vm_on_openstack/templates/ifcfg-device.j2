@@ -1,0 +1,10 @@
+DEVICE={{ item.dev }}
+HWADDR={{ item.mac }}
+ONBOOT=yes
+TYPE=Ethernet
+USERCTL=no
+IPV6INIT=no
+BOOTPROTO=none
+IPADDR={{ item.ip }}
+PREFIX={{ item.prefix }}
+{% if (item.default_gw is defined) and (item.dev == 'eth0') %}GATEWAY={{ item.default_gw }}{% endif %}
