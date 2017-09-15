@@ -1,0 +1,42 @@
+- block:
+  - name: read instance data
+    shell: >
+      . ~/overcloudrc_v3_hailstorm &&
+      OS_TENANT_NAME={{ osp_tenant }}
+      OS_PROJECT_NAME={{ osp_tenant }}
+      OS_PASSWORD={{ root_password }}
+      openstack server show -f json {{ inventory_hostname_short }}
+    register: instance_data2
+    failed_when: instance_data2.stdout == ""
+    changed_when: false
+
+  - block:
+    - name: create additional volumes
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack volume create --size {{ (item.0/1024/1024/1024)|int|abs }} {{ inventory_hostname_short }}-{{ item.1 }} | grep "^| id " | cut -d\| -f3 | awk '{print $1}'
+      register: vm_additional_volumes_ids
+      when: "{{ (item.0 != None) and (item.1 != None) }}"
+      with_together:
+        - "{{ vm_additional_disks }}"
+        - ['vdb','vdc','vdd']
+    - debug: var=vm_additional_volumes_ids
+
+    - name: attach additional volumes
+      shell: >
+        . ~/overcloudrc_v3_hailstorm &&
+        OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
+        OS_PASSWORD={{ root_password }}
+        openstack server add volume {{ inventory_hostname_short }} {{ item.stdout }}
+      when: (item.stdout is defined)
+      with_items: "{{ vm_additional_volumes_ids.results }}"
+
+    when: ((instance_data2.stdout | from_json )["volumes_attached"]) == ""
+
+  become: yes
+  become_user: "{{ hostvars['rhosp-director'].rhosp_stack_user }}"
+  delegate_to: rhosp-director
