@@ -289,6 +289,21 @@ external_network_config:
           - from_port: 22
             to_port: 22
             proto: tcp
+      # cloudforms-osp is on rh-sso IP as they use distinct ports
+      # cloudforms-osp is special in the sense that we will not have the needed vm_nics configuration for DNAT
+      # from the start as it is created dynamically within OSP; by using the tag cfme_on_osp the vm_nics can be
+      # created for IPA/DNS and DNAT settings after creation of the cloudforms-osp VM
+      - expose_machine: cloudforms-osp
+        on_host_prefix: 10.32.105.178/32
+        via_network: services
+        ports:
+          # ssh port 22 not needed as we can come in via floating IP in guest network
+          - from_port: 80
+            to_port: 80
+            proto: tcp
+          - from_port: 443
+            to_port: 443
+            proto: tcp
       - expose_machine: install-host
         on_host_prefix: 10.32.105.178/32
         via_network: services
