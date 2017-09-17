@@ -1,53 +1,25 @@
-- name: check if instance already exists
-  shell: >
-    . ~/overcloudrc_v3_hailstorm &&
-    OS_TENANT_NAME={{ osp_tenant }}
-    OS_PROJECT_NAME={{ osp_tenant }}
-    OS_PASSWORD={{ root_password }}
-    openstack server list -f json --name {{ inventory_hostname_short }}
-  register: instance_data
-  failed_when: instance_data.stdout == ""
-  changed_when: false
-  become: yes
-  become_user: "{{ hostvars['rhosp-director'].rhosp_stack_user }}"
-  delegate_to: rhosp-director
-#- debug: var=instance_data.stdout|from_json
-
-- name: get interfaces from the VM
-  shell: 'ip addr show primary|grep "state"|cut -d: -f2|grep -v lo|sed -e "s/\ //"'
-  register: nics
-- debug: var=nics
-
-- name: get mac addresses from the VM
-  shell: 'ip addr show primary|grep "link/ether"|cut -d: -f1-6|grep -v lo|awk "{print \$2}"'
-  register: macs
-- debug: var=macs
-
-- name: get default GW IP
-  shell: 'ip r|grep "default via"|awk "{print \$3}"'
-  register: gwip
-
-- name: save VMs IPs as facts in vm_nics
-  set_fact:
-#    vm_nics: "{{ vm_nics|default([]) + [ {'ip': (instance_data.stdout|from_json)[0]['Networks']|regex_replace('.*'+item.0+'=','')|regex_replace('[,;].*',''), 'prefix': '24', 'dev': item.1, 'mac': item.2, 'netname': item.0{% if item.1 == 'eth0' %}, 'default_gw': gwip{% endif %} } ] }}"
-    vm_nics: "{{ vm_nics|default([]) + [ {'ip': (instance_data.stdout|from_json)[0]['Networks']|regex_replace('.*'+item.0+'=','')|regex_replace('[,;].*',''), 'prefix': '24', 'dev': item.1, 'mac': item.2, 'netname': item.0, 'default_gw': gwip.stdout } ] }}"
-  with_together: 
-    - "{{ vm_networks }}"
-    - "{{ nics.stdout_lines }}"
-    - "{{ macs.stdout_lines }}"
-  when: vm_exists
-- debug: var=vm_nics
-
-#- name: set default GW IP for nic0
-#  set_fact:
-#    vm_nics.0: "{{ vm_nics.0 | combine({'default_gw': 'gwip'}) }}"
-
 - name: make ifcfg files in the vm
   template: src=ifcfg-device.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.dev }}
   with_items: "{{ vm_nics }}"
   register: ifcfg
 
+- name: make rule files in the vm
+  template: src=rule-device.j2 dest=/etc/sysconfig/network-scripts/rule-{{ item.dev }}
+  when: item.dev != "eth0"
+  with_items: "{{ vm_nics }}"
+  register: rule
+
+- name: make route files in the vm
+  template: src=route-device.j2 dest=/etc/sysconfig/network-scripts/route-{{ item.dev }}
+  when: item.dev != "eth0"
+  with_items: "{{ vm_nics }}"
+  register: route
+
+- name: make rt_tables file in the vm
+  template: src=rt_tables.j2 dest=/etc/iproute2/rt_tables
+  register: rt_tables
+
 - name: enable interfaces
   shell: ifup {{ item.dev }}
   with_items: "{{ vm_nics }}"
-  when: ifcfg|changed
+  when: ifcfg|changed or rule|changed or route|changed or rt_tables|changed

@@ -16,6 +16,7 @@
          local_action: wait_for host={{ ansible_host }} port=22 timeout=600
          when: vm_exists
        - include: add_volumes.yml
+       - include: set_vm_nics_facts.yml
        - include: add_interfaces.yml
          when: vm_exists and mode=="create"
        - name: wait for subscription to finish
