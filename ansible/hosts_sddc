@@ -221,6 +221,7 @@ storage-console
 [accessible_via_admin_network:children]
 layer2
 cloudforms
+cloudforms-osp
 vips
 lookbusy-rhev
 

@@ -13,6 +13,8 @@ vm_secgroups:
   - "webserver"
   - "default"
 
+default_route_via: "{{ infrastructure_network_services }}"
+
 repos: "{{ cloudforms_repos }}"
 pool_regex: "{{ cloudforms_subscription_pool_regex }}"
 packages: git
