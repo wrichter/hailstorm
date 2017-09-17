@@ -24,6 +24,21 @@
       prompt: "what is your Red Hat Subscription Manager password?"
       private: yes
 
+- hosts: cloudforms-osp
+  remote_user: root
+  gather_facts: false
+  # TODO: this is ugly as we first have to look for running OSP and running CFME, before we should continue here to avoid unneeded --skip-tags and --tags
+  tasks:
+    - include: roles/layer3_vm_on_openstack/tasks/set_floating_ip_as_fact.yml
+      tags:
+        - cfme_on_osp
+    - include: roles/layer3_vm_on_openstack/tasks/set_vm_nics_facts.yml
+      tags:
+        - cfme_on_osp
+    - debug: var=vm_nics
+      tags:
+        - cfme_on_osp
+
 - hosts: layer1
   remote_user: root
   gather_facts: false
