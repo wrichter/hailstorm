@@ -5,10 +5,14 @@
       failed_when: false
       with_items: "['{{ certcn|default(hostname) }}']{% if cert_san is defined %}+{{ cert_san }}{% endif %}"
       register: existing_host
+#    - debug: var=existing_host
+#    - debug: var=existing_host.results
+#    - debug: var=existing_host.results.item
 
     - name: create host in IPA DB
       shell: echo "{{ hostvars['ipa'].ipa_admin_password }}" | kinit admin 1>/dev/null && ipa host-add {{ item.item }}
-      when: item.item == ""
+      #when: item.item == ""
+      when: item.stdout == ""
       with_items: "{{ existing_host.results }}"
 
     - name: get principal for host
