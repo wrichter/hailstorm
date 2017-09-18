@@ -3,6 +3,7 @@
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack server list -f json --name {{ inventory_hostname_short }}
       register: instance_data
@@ -13,6 +14,7 @@
       shell: >
         . ~/overcloudrc_v3_hailstorm &&
         OS_TENANT_NAME={{ osp_tenant }}
+        OS_PROJECT_NAME={{ osp_tenant }}
         OS_PASSWORD={{ root_password }}
         openstack server delete
         {{ inventory_hostname_short }}

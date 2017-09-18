@@ -2,6 +2,7 @@
   shell: >
     . ~/overcloudrc_v3_hailstorm &&
     OS_TENANT_NAME={{ osp_tenant }}
+    OS_PROJECT_NAME={{ osp_tenant }}
     OS_PASSWORD={{ root_password }}
     openstack server list -f json --name {{ inventory_hostname_short }}
   register: instance_data
@@ -10,6 +11,7 @@
   become: yes
   become_user: "{{ hostvars['rhosp-director'].rhosp_stack_user }}"
   delegate_to: rhosp-director
+#- debug: var=instance_data.stdout
 
 - name: save vm existence as fact
   set_fact:
@@ -17,6 +19,6 @@
 
 - name: save floating IP as fact ansible_host
   set_fact:
-    ansible_host: "{{ (instance_data.stdout|from_json)[0]['Networks']|regex_replace('internal_'+osp_tenant+'=\\d+\\.\\d+\\.\\d+\\.\\d+,?\\s*','') }}"
+    ansible_host: "{{ (instance_data.stdout|from_json)[0]['Networks']|regex_replace('.*internal_'+osp_tenant+'=\\d+\\.\\d+\\.\\d+\\.\\d+,?\\s*','')|regex_replace(';.*','') }}"
     ansible_ssh_common_args: "-i ./binary/{{ hailstorm_ssh_priv_key_file }} -o StrictHostKeyChecking=no"
   when: vm_exists
