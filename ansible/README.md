@@ -53,12 +53,12 @@ Run all commands on your laptop from the ansible directory. Since the server mig
      configured module search path = Default w/o overrides
 
    $ wget -O /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
-  
+
    $ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
-  
+
    $ sudo yum clean all
    $ sudo yum install -y python-devel libffi-devel openssl-devel gcc python-pip
-  
+
    $ pip install --upgrade pip
    $ pip install paramiko
    $ pip install ansible==2.1.2
@@ -100,7 +100,7 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 
 ### Tower License
 in case you roll out a new tower installation, you need a tower license file in
-ansible/binary//tower_license.json
+ansible/binary/tower_license.json
 You can get it from: https://store.ansible.com/redhat/tower_license/
 
 ## Network Connectivity
@@ -130,4 +130,3 @@ To debug installation processes, a connection to the VM console might be require
   $ ssh -i binary/hailstorm -L 5901:localhost:5901 root@<NAME_OF_IP_OF_THE_LAYER1_HOST>
   ```
 - connect your VNC viewer to localhost:5901
-
