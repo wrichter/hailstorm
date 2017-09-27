@@ -67,7 +67,7 @@ $ LC_LANG=C ansible-playbook -i hosts -e "@config/storm2.coe.muc.redhat.com.yml"
 
 ### Tower License
 in case you roll out a new tower installation, you need a tower license file in
-ansible/binary//tower_license.json
+ansible/binary/tower_license.json
 You can get it from: https://store.ansible.com/redhat/tower_license/
 
 
