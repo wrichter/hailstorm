@@ -438,6 +438,8 @@ satellite_content_config:
         repository: "Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64"
       - product: "Red Hat Gluster Storage Server for On-premise"
         repository: "Red Hat Gluster Storage 3 Server RPMs x86_64 7Server"
+      - product: "Red Hat Enterprise Linux Fast Datapath"
+        repository: "Red Hat Enterprise Linux Fast Datapath RHEL 7 Server RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSE3-CLIENT"
     content:
