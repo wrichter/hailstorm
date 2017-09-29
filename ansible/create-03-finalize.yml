@@ -40,31 +40,19 @@
   gather_facts: false
   roles:
     - { role: layer3_cloudforms_rhev_template, tags: [ 'layer3', 'cf', 'cf-template' ], mode: create }
-    - { role: layer3_vm_on_rhev, tags: [ 'layer3', 'cf' ], mode: create }
-    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf', 'cfme-config' ], mode: create }
+    - { role: layer3_vm_on_rhev, tags: [ 'layer3', 'cf', 'vm', 'cf-vm' ], mode: create }
+    - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer3', 'cf', 'dns', 'cf-dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+    - { role: layer3_cloudforms_config, tags: [ 'layer3', 'cf', 'cf-config' ], mode: create }
 # RHEL after cloudforms config, to ensure the hostname is set before subscribing
-    - { role: layer2_rhel, tags: [ 'layer3', 'cf', 'rhel'], mode: create }
-    - { role: layer2_tdagent, tags: [ 'layer3', 'cf', 'tdagent'], mode: create }
-    - { role: layer3_cloudforms_osp, tags: [ 'layer3', 'cf', 'cfme-osp-provider' ], mode: create }
-    - { role: layer3_cloudforms_tower, tags: [ 'layer3', 'cf', 'cfme-tower-provider' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'cf', 'rhel', 'cf-rhel'], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer3', 'cf', 'tdagent', 'cf-tdagent'], mode: create }
     - { role: layer2_ipa_certificate, tags: ['layer2', 'cf', 'cf-certificate'], mode: create }
     - { role: layer3_cloudforms_certificate, tags: ['layer2', 'cf', 'cf-certificate'], mode: create }
+    - { role: layer3_cloudforms_osp_provider, tags: [ 'layer3', 'cf', 'cf-provider', 'cf-provider-osp' ], mode: create }
+    - { role: layer3_cloudforms_tower_provider, tags: [ 'layer3', 'cf', 'cf-provider', 'cf-provider-tower' ], mode: create }
+    - { role: layer3_cloudforms_rhev_provider, tags: [ 'layer3', 'cf', 'cf-provider', 'cf-provider-rhev' ], mode: create }
+    - { role: layer3_cloudforms_openshift_provider, tags: [ 'layer3', 'cf','cf-provider', 'cf-provider-ocp' ], mode: create }
 
-
-
-- hosts: ose3-installer
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layerX_openshift_cfme_enablement, tags: [layer2, 'cf', 'ose3', 'cfme-ose3-provider'], mode: create }
-
-- hosts: cloudforms
-  remote_user: root
-  gather_facts: false
-  roles:
-    - { role: layer3_cloudforms_openshift, tags: [ 'layer3', 'cf', 'cfme-ose3-provider' ], mode: create }
-#    - { role: layer3_cloudforms_content, tags: [ 'layer3', 'cf', 'cfme-content' ], mode: create, content_location: "../CloudForms-Internals" }
 
 #### EFK ####
 

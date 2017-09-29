@@ -1,5 +1,4 @@
 - block:
     - include: basic_config.yml
-    - include: rhev_provider.yml
     - include: cfme_config.yml
   when: mode=="create"

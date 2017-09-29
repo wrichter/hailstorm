@@ -1,7 +1,0 @@
-- block:
-#    - local_action: template src=ose_provider_new.json.j2 dest=/tmp/ose_provider.json
-    - name: create ose providers
-      shell: curl -k -u admin:{{ root_password }} -XPOST -d'{{ lookup('template', 'ose_provider_new.json.j2') | to_json }}' https://{{ vm_nics[0].ip }}/api/providers
-      register: ose_provider
-    - debug: var=ose_provider
-  when: mode=="create"
