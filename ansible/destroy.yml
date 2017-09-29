@@ -193,6 +193,7 @@
     - role: layer2_rhosp_overcloud_deploy
       tags: [ 'layer2', 'rhosp', 'overcloud' ]
       mode: destroy
+      when: vm_exists is defined and vm_exists == true
     - role: layer2_rhosp_director
       tags: [ 'layer2', 'rhosp', 'undercloud' ]
       mode: destroy
