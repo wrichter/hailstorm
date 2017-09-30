@@ -18,6 +18,7 @@ default_route_via: "{{ infrastructure_network_services }}"
 repos: "{{ cloudforms_repos }}"
 pool_regex: "{{ cloudforms_subscription_pool_regex }}"
 packages: git
+packages_uninstall: cloud-init
 ntp_client: will_be_configured_in_the_cf_config_role
 
 cfme_settings:

@@ -79,6 +79,22 @@
   delay: 10
   when: not prerequisites|skipped
 
+#- debug: msg={{packages_uninstall.split(',')}}
+- name: uninstall uneccessary packages
+  yum: name="{{ packages_uninstall }}" state=absent
+  register: prerequisites_un
+  async: 600
+  poll: 0
+  when: not (packages_uninstall is undefined or packages_uninstall is none or packages_uninstall | trim == '')
+  #with_items: "{% if packages_uninstall is defined %}{{packages_uninstall.split(',')}}{% else %}[]{% endif %}"
+- name: poll for uninstall uneccessary packages complete
+  async_status: jid={{ prerequisites_un.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 60
+  delay: 10
+  when: not prerequisites_un|skipped
+
 # next tasks error message is probably the same as this: https://github.com/ansible/ansible/issues/14383
 - name: enable services
   service: name={{ item }} enabled=yes state=started
