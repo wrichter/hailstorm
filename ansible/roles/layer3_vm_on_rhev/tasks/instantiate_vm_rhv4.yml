@@ -71,6 +71,14 @@
           value: "{{ mem|default(0)*1024*1024 }}"
       when: mem is defined
 
+    - name: set CFME CPU Cores
+      shell: ovirt-shell -E 'update vm {{ inventory_hostname_short }} --{{ item.param }} {{ item.value }}'
+      with_items:
+        - param: cpu-topology-cores
+          value: "{{ vcpu }}"
+      when: vcpu is defined
+      delegate_to: rhevm
+
     - name: pause for rhevm to react
       pause: seconds=15
 

@@ -110,6 +110,14 @@
       when: mem is defined
       delegate_to: rhevm
 
+    - name: set CFME CPU Cores
+      shell: rhevm-shell -E 'update vm {{ inventory_hostname_short }} --{{ item.param }} {{ item.value }}'
+      with_items:
+        - param: cpu-topology-cores
+          value: "{{ vcpu }}"
+      when: vcpu is defined
+      delegate_to: rhevm
+
     - name: pause for rhevm to react
       pause: seconds=15
 
