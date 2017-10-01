@@ -16,6 +16,8 @@
 
 # TODO: ensure proper subscription & configure channels
 # see layer2_rhel
+- name: install package-cleanup
+  yum: name=yum-utils state=present
 - name: remove old kernels
   shell: package-cleanup --oldkernels --count=2
 
