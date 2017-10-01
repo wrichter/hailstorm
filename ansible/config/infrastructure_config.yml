@@ -5,6 +5,7 @@ infrastructure_delegate_nfs_server: "layer1"
 infrastructure_delegate_kvm_host: "layer1"
 infrastructure_delegate_rhel7_host_used_to_perform_xpath_select_on_curl_results: "layer1"
 infrastructure_delegate_local_content_host: "layer1"
+infrastructure_delegate_kickstart_nfs_server: "layer1"
 #the following hosts are not used for delegation, but used directly
 infrastructure_address_ssh_jump_host: "{{ layer1_ansible_host }}"
 infrastructure_address_ntp_server: "{{ infrastructure_network_admin.default_gw_host_prefix | ipaddr('address') }}"
