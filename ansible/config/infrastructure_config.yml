@@ -12,6 +12,12 @@ infrastructure_address_ntp_server: "{{ infrastructure_network_admin.default_gw_h
 infrastructure_address_default_dns: "{{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}"
 infrastructure_address_nfs_server: "{{ infrastructure_network_storage.default_gw_host_prefix | ipaddr('address') }}"
 
+hailstorm_dns_domain: "{{ node_hailstorm_dns_domain }}"
+ocp_apps_dns_domain: "apps.{{ hailstorm_dns_domain }}"
+disable_registration_against_satellite: "{{ node_disable_registration_against_satellite }}"
+satellite_version: "{{ node_satellite_version }}"
+stage: "{{ node_stage }}"
+
 infrastructure_network_services:
   netname: 'services'
   bridge: 'virbr1'
