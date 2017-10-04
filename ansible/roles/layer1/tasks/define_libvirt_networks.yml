@@ -7,7 +7,12 @@
 
 - name: delete networks that need to be reconfigured
   virt_net: uri=qemu:///system name={{ item.netname }} command=destroy state=absent
-  when: (item.forward_mode|default('nat')!='bridge' or (hostvars[inventory_hostname]['ansible_' + item.bridge].ipv4) is defined) and hostvars[inventory_hostname]['ansible_' + item.bridge].ipv4.address != item.default_gw_host_prefix | ipaddr('address')
+  when: >
+    item.forward_mode|default('nat',true)!='bridge'
+    or
+    ((((hostvars[inventory_hostname]['ansible_' + item.bridge]|default({},true)).ipv4|default({},true)).address|default(false,true))
+    and
+    hostvars[inventory_hostname]['ansible_' + item.bridge].ipv4.address != item.default_gw_host_prefix | ipaddr('address'))
   with_items: "{{ infrastructure_networks }}"
 # - name: start firewalld to ensure the define networks command will not fail
 #   service: name=firewalld state=started
