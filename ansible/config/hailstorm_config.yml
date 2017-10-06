@@ -272,6 +272,7 @@ satellite_product_config:
       - name: "Red Hat OpenShift Container Platform 3.3 (RPMs)"
       - name: "Red Hat OpenShift Container Platform 3.4 (RPMs)"
       - name: "Red Hat OpenShift Container Platform 3.5 (RPMs)"
+      - name: "Red Hat OpenShift Container Platform 3.6 (RPMs)"
   - product: Red Hat Virtualization
     basearch: x86_64
     repos:
@@ -430,6 +431,8 @@ satellite_content_config:
         repository: "Red Hat OpenShift Container Platform 3.4 RPMs x86_64"
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Container Platform 3.5 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.6 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
@@ -449,6 +452,8 @@ satellite_content_config:
         repository: "Red Hat OpenShift Container Platform 3.4 RPMs x86_64"
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Container Platform 3.5 RPMs x86_64"
+      - product: "Red Hat OpenShift Container Platform"
+        repository: "Red Hat OpenShift Container Platform 3.6 RPMs x86_64"
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
       - product: "Red Hat Enterprise Linux Server"
