@@ -74,7 +74,7 @@
   gather_facts: false
   roles:
     - { role: layer3_vm_on_openstack, tags: [ 'layer3', 'vm', 'tower', 'tower-inventory-l3', 'tower-inventory-l3-openstack', 'vm'], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer3', 'tower', 'rhel', 'tower-inventory-l3', 'tower-inventory-l3-openstack', 'rhel'], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer3', 'tower', 'rhel', 'tower-inventory-l3', 'tower-inventory-l3-openstack', 'rhel'], mode: create, when: "vm_exists is defined and vm_exists == true"}
 
 
 - hosts: tower
