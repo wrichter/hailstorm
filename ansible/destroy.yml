@@ -188,7 +188,7 @@
   remote_user: root
   roles:
     - role: layer2_vms
-      tags: [ 'layer2','rhosp', 'rhel' ]
+      tags: [ 'layer2','rhosp', 'rhel', 'overcloud' ]
       mode: start
     - role: layer2_rhosp_overcloud_deploy
       tags: [ 'layer2', 'rhosp', 'overcloud' ]
