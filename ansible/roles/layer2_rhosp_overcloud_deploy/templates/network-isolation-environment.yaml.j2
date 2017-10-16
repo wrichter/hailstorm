@@ -43,8 +43,8 @@ parameter_defaults:
   ExternalInterfaceDefaultRoute: {{ infrastructure_network_services.default_gw_host_prefix | ipaddr('address') }}
 
   ManagementNetCidr: {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('network') }}/{{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('prefix') }}
-  ManagementAllocationPools: [{'start': '{{ infrastructure_network_guests.infra_start }}', 'end': '{{ infrastructure_network_guests.infra_end }}'}]
-  ManagementInterfaceDefaultRoute: {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('address') }}
+#  ManagementAllocationPools: [{'start': '{{ infrastructure_network_guests.infra_start }}', 'end': '{{ infrastructure_network_guests.infra_end }}'}]
+#  ManagementInterfaceDefaultRoute: {{ infrastructure_network_guests.default_gw_host_prefix | ipaddr('address') }}
 
   # Add in configuration for the Control Plane - see http://docs.openstack.org/developer/tripleo-docs/advanced_deployment/network_isolation.html#updating-existing-configuration-templates-to-support-new-parameters
   # CIDR subnet mask length for provisioning network

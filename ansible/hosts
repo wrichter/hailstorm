@@ -203,6 +203,8 @@ cloudforms
 vips
 lookbusy-rhev
 
+[automated_vmnics_calculation:children]
+accessible_via_admin_network
 
 # A group to capture all nodes with standard 3-NIC network layout (services, admin, storage)
 [niclayout-standard:children]

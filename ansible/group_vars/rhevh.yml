@@ -25,7 +25,7 @@ disk:
       fstype: "{{ fstype }}"
       mountpoint: /home
       size: 2048
-      
+
 repos: "{{ rhevh_repos }}"
 pool_regex: "{{ rhev_subscription_pool_regex }}"
 
@@ -39,7 +39,7 @@ nic_attachments:
   - "{{ infrastructure_network_services }}"
   - "{{ infrastructure_network_admin }}"
   - "{{ infrastructure_network_storage }}"
-  - "{{ infrastructure_network_guests }}"
+  - "{{ infrastructure_network_guests|combine({'no_ip_assignment': true}) }}"
   - "{{ infrastructure_network_rhosp_provisioning }}"
 default_route_via: "{{ infrastructure_network_services }}"
 name_service_via: "{{ infrastructure_network_services }}"

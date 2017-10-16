@@ -3,7 +3,7 @@ node_hailstorm_dns_domain: hailstorm3.coe.muc.redhat.com
 
 node_disable_registration_against_satellite: false
 node_satellite_version: 6.2
-node_stage: DEV
+node_stage: TEST
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
@@ -64,7 +64,7 @@ external_network_config:
     layer1_dev: em1
     mapping:
       - expose_machine: satellite
-        on_host_prefix: 10.32.105.30/32
+        on_host_prefix: 10.32.105.40/32
         via_network: services
         ports:
           - from_port: 80
@@ -97,7 +97,7 @@ external_network_config:
             to_port: 9090
             proto: tcp
       - expose_machine: ipa
-        on_host_prefix: 10.32.105.31/32
+        on_host_prefix: 10.32.105.41/32
         via_network: services
         ports:
           - from_port: 22
@@ -110,7 +110,7 @@ external_network_config:
             to_port: 443
             proto: tcp
       - expose_machine: infrastructure
-        on_host_prefix: 10.32.105.32/32
+        on_host_prefix: 10.32.105.42/32
         via_network: services
         ports:
           - from_port: 22
@@ -135,7 +135,7 @@ external_network_config:
             to_port: 465
             proto: tcp
       - expose_machine: rhevm
-        on_host_prefix: 10.32.105.33/32
+        on_host_prefix: 10.32.105.43/32
         via_network: services
         ports:
           - from_port: 22
@@ -151,7 +151,7 @@ external_network_config:
             to_port: 6100
             proto: tcp
       - expose_machine: cloudforms
-        on_host_prefix: 10.32.105.34/32
+        on_host_prefix: 10.32.105.44/32
         via_network: services
         ports:
           - from_port: 22
@@ -164,7 +164,7 @@ external_network_config:
             to_port: 443
             proto: tcp
       - expose_machine: ose3-lb
-        on_host_prefix: 10.32.105.35/32
+        on_host_prefix: 10.32.105.45/32
         via_network: services
         ports:
           - from_port: 22
@@ -180,7 +180,7 @@ external_network_config:
             to_port: 8443
             proto: tcp
       - expose_machine: ose3-infranode1
-        on_host_prefix: 10.32.105.36/32
+        on_host_prefix: 10.32.105.46/32
         via_network: services
         ports:
           - from_port: 22
@@ -193,7 +193,7 @@ external_network_config:
             to_port: 443
             proto: tcp
       - expose_machine: efk
-        on_host_prefix: 10.32.105.37/32
+        on_host_prefix: 10.32.105.47/32
         via_network: services
         ports:
           - from_port: 22
@@ -209,14 +209,14 @@ external_network_config:
             to_port: 9200
             proto: tcp
       - expose_machine: rhosp-director
-        on_host_prefix: 10.32.105.38/32
+        on_host_prefix: 10.32.105.48/32
         via_network: rhosp_provisioning
         ports:
           - from_port: 22
             to_port: 22
             proto: tcp
       - expose_machine: undercloud-public
-        on_host_prefix: 10.32.105.38/32
+        on_host_prefix: 10.32.105.48/32
         via_network: rhosp_provisioning
         ports:
           # webui
@@ -248,7 +248,7 @@ external_network_config:
             to_port: 9000
             proto: tcp
       - expose_machine: openstack
-        on_host_prefix: 10.32.105.39/32
+        on_host_prefix: 10.32.105.49/32
         via_network: services
         ports:
           - from_port: 80
@@ -266,7 +266,7 @@ external_network_config:
             to_port: 13080
             proto: tcp
       - expose_machine: tower
-        on_host_prefix: 10.32.105.7/32
+        on_host_prefix: 10.32.105.50/32
         via_network: services
         ports:
           - from_port: 80

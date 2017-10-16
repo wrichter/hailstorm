@@ -21,7 +21,13 @@ selinux --{{ selinux_mode }}
 # Network information
 #network  --bootproto=dhcp --device=eth0 --ipv6=auto --activate
 {% for nic in vm_nics %}
-network  --bootproto=static --device={{ nic.dev }} --ipv6=auto --ip={{ nic.ip }} --netmask={{ nic.netmask}} {% if default_route_via.netname == nic.netname %} --gateway={{ nic.default_gw }}{% endif %} {% if name_service_via.netname == nic.netname %} --nameserver={{ nic.default_gw }} {% endif %} --activate
+{% if nic.ip is defined and nic.ip|length > 0 %}
+network --device={{ nic.dev }} --bootproto=static --ipv6=auto --ip={{ nic.ip }} --netmask={{ nic.netmask}} {% if default_route_via.netname == nic.netname %} --gateway={{ nic.default_gw }}{% endif %} {% if name_service_via.netname == nic.netname %} --nameserver={{ nic.default_gw }} {% endif %} --activate
+{% elif nic.dhcp|default(false,true) %}
+network --device={{ nic.dev }} --bootproto=dhcp --ipv6=auto --activate
+{% else %}
+network --device={{ nic.dev }} --noipv4 --noipv6 --activate
+{% endif %}
 {% endfor %}
 
 network  --hostname={{ hostname }}
