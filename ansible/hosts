@@ -19,9 +19,9 @@ rhevm           ansible_host=192.168.103.12 activation_key="AK-CV-RHEV-MANAGER-{
 
 # the nodes that are RHEV-Hypervisor
 [rhevh]
-rhevh1          ansible_host=192.168.103.13 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh1 }}{% endif %}"
-rhevh2          ansible_host=192.168.103.14 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh2 }}{% endif %}"
-rhevh3          ansible_host=192.168.103.15 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms.rhevh3 }}{% endif %}"
+rhevh1          ansible_host=192.168.103.13 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}"
+rhevh2          ansible_host=192.168.103.14 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}"
+rhevh3          ansible_host=192.168.103.15 activation_key="AK-CV-RHEV-HYPERVISOR-{{ stage }}"
 
 # the CloudForms management engine
 [cloudforms]
@@ -66,9 +66,9 @@ rhosp-compute3  ansible_host=192.168.103.33 activation_key="AK-CV-RHOSP-{{ stage
 
 # The group of all osp control nodes
 [rhosp-control]
-rhosp-control1  ansible_host=192.168.103.34 activation_key="AK-CV-RHOSP-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control1'] }}{% endif %}"
-rhosp-control2  ansible_host=192.168.103.35 activation_key="AK-CV-RHOSP-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control2'] }}{% endif %}"
-rhosp-control3  ansible_host=192.168.103.36 activation_key="AK-CV-RHOSP-{{ stage }}" bridged_nw_config="{% if external_network_config is defined and external_network_config.guest_network_bridging is defined %}{{ external_network_config.guest_network_bridging.bridged_vms['rhosp-control3'] }}{% endif %}"
+rhosp-control1  ansible_host=192.168.103.34 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-control2  ansible_host=192.168.103.35 activation_key="AK-CV-RHOSP-{{ stage }}"
+rhosp-control3  ansible_host=192.168.103.36 activation_key="AK-CV-RHOSP-{{ stage }}"
 
 [dev-client]
 dev-client     ansible_host=192.168.103.37 activation_key="AK-CV-RHOSE3-CLIENT-{{ stage }}"

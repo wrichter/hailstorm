@@ -282,32 +282,33 @@ external_network_config:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
     dns_server: 10.32.96.1
-    osp_infra_start: 10.32.105.163
-    osp_infra_end: 10.32.105.179
-    osp_floating_start: 10.32.105.180
-    osp_floating_end: 10.32.105.219
-    bridged_vms:
-      rhevh1:
-        guests:
-          mac: "52:54:00:48:03:01"
-          ip: 10.32.105.160
-      rhevh2:
-        guests:
-          mac: "52:54:00:48:03:02"
-          ip: 10.32.105.161
-      rhevh3:
-        guests:
-          mac: "52:54:00:48:03:03"
-          ip: 10.32.105.162
-      "rhosp-control1":
-        guests:
-          mac: "52:54:00:48:03:04"
-          ip:
-      "rhosp-control2":
-        guests:
-          mac: "52:54:00:48:03:05"
-          ip:
-      "rhosp-control3":
-        guests:
-          mac: "52:54:00:48:03:06"
-          ip:
+    # osp_infra_start: 10.32.105.163
+    # osp_infra_end: 10.32.105.179
+    osp_floating_start: 10.32.105.140
+    osp_floating_end: 10.32.105.159
+    mac_prefix: "52:54:00:48:03:"
+    # bridged_vms:
+    #   rhevh1:
+    #     guests:
+    #       mac: "52:54:00:48:03:01"
+    #       ip: 10.32.105.160
+    #   rhevh2:
+    #     guests:
+    #       mac: "52:54:00:48:03:02"
+    #       ip: 10.32.105.161
+    #   rhevh3:
+    #     guests:
+    #       mac: "52:54:00:48:03:03"
+    #       ip: 10.32.105.162
+    #   "rhosp-control1":
+    #     guests:
+    #       mac: "52:54:00:48:03:04"
+    #       ip:
+    #   "rhosp-control2":
+    #     guests:
+    #       mac: "52:54:00:48:03:05"
+    #       ip:
+    #   "rhosp-control3":
+    #     guests:
+    #       mac: "52:54:00:48:03:06"
+    #       ip:

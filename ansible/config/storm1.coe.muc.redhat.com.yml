@@ -291,28 +291,29 @@ external_network_config:
     osp_infra_end: 10.32.105.59
     osp_floating_start: 10.32.105.60
     osp_floating_end: 10.32.105.99
-    bridged_vms:
-      rhevh1:
-        guests:
-          mac: "52:54:00:48:01:01"
-          ip: 10.32.105.40
-      rhevh2:
-        guests:
-          mac: "52:54:00:48:01:02"
-          ip: 10.32.105.41
-      rhevh3:
-        guests:
-          mac: "52:54:00:48:01:03"
-          ip: 10.32.105.42
-      "rhosp-control1":
-        guests:
-          mac: "52:54:00:48:01:04"
-          ip:
-      "rhosp-control2":
-        guests:
-          mac: "52:54:00:48:01:05"
-          ip:
-      "rhosp-control3":
-        guests:
-          mac: "52:54:00:48:01:06"
-          ip:
+    mac_prefix: "52:54:00:48:01:"
+    # bridged_vms:
+    #   rhevh1:
+    #     guests:
+    #       mac: "52:54:00:48:01:01"
+    #       ip: 10.32.105.40
+    #   rhevh2:
+    #     guests:
+    #       mac: "52:54:00:48:01:02"
+    #       ip: 10.32.105.41
+    #   rhevh3:
+    #     guests:
+    #       mac: "52:54:00:48:01:03"
+    #       ip: 10.32.105.42
+    #   "rhosp-control1":
+    #     guests:
+    #       mac: "52:54:00:48:01:04"
+    #       ip:
+    #   "rhosp-control2":
+    #     guests:
+    #       mac: "52:54:00:48:01:05"
+    #       ip:
+    #   "rhosp-control3":
+    #     guests:
+    #       mac: "52:54:00:48:01:06"
+    #       ip:
