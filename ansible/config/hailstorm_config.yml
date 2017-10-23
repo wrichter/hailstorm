@@ -128,13 +128,13 @@ current_lifecycle_env: "{{ lifecycle_environments|selectattr('name','match','^'+
 
 # RED HAT SUBSCRIPTIONS
 satellite_subscription_pool_regex: "^(Red Hat Satellite Employee Subscription|Red Hat Satellite)$"
-rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux.*(Unlimited guests|Company-Wide).*)$"
+rhel_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat Enterprise Linux.*(Unlimited guests|Company-Wide).*)$"
 #sap_subscription_pool_regex: "^(Employee SKU|Red Hat Enterprise Linux Server for SAP HANA.*)$"
 rhev_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat Enterprise Virtualization.*|Red Hat Enterprise Linux Server.*Unlimited guests.*)$"
 rhosp_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat (Enterprise Linux )?OpenStack Platform.*)$"
 ose_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|OpenShift Enterprise.*|Red Hat Gluster Storage.*)$"
 cloudforms_subscription_pool_regex: "^(CloudForms Employee Subscription|Red Hat Cloud Suite.*|Red Hat Enterprise Linux OpenStack Platform.*)$"
-ceph_subscription_pool_regex: "^(Employee SKU|Red Hat Ceph Storage.*|Red Hat Satellite - Add-Ons for Providers.*)$"
+ceph_subscription_pool_regex: "^(Employee SKU|Red Hat Cloud Suite.*|Red Hat Ceph Storage.*|Red Hat Satellite - Add-Ons for Providers.*)$"
 
 # REPOSITORIES
 rhosp_undercloud_repos:
