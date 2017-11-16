@@ -1,0 +1,10 @@
+vm_nics: >
+  [{% if nic_attachments is defined %}{% for nic_attachment in nic_attachments %}{
+  "mac":        "{% if ansible_host is defined and nic_attachment.mac_prefix|default(false,true) %}{{ nic_attachment.mac_prefix }}{{ "%02X" % (ansible_host.split('.')[3]|int) }}{% endif %}",
+  "ip":         "{% if ansible_host is defined and not (nic_attachment.no_ip_assignment|default(false,true) or (nic_attachment.dhcp|default(false,true))) %}{{ nic_attachment.default_gw_host_prefix | regex_replace('^(.*\.).*$','\1') }}{{ ansible_host.split('.')[3] }}{% endif %}",
+  "dev":        "eth{{ loop.index0 }}",
+  "default_gw": "{{ nic_attachment.default_gw_host_prefix|default('0.0.0.0/0') | ipaddr('address') }}",
+  "netmask":    "{{ nic_attachment.default_gw_host_prefix|default('0.0.0.0/0') | ipaddr('netmask') }}",
+  "netname":    "{{ nic_attachment.netname }}",
+  "dhcp":       "{{ nic_attachment.dhcp|default(false,true) }}"
+  }{% if not loop.last %},{% endif %}{% endfor %}{% endif %}]

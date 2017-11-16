@@ -1,10 +1,9 @@
 layer1_ansible_host: storm3.coe.muc.redhat.com
-hailstorm_dns_domain: hailstorm3.coe.muc.redhat.com
-ocp_apps_dns_domain: apps.{{ hailstorm_dns_domain }}
+node_hailstorm_dns_domain: hailstorm3.coe.muc.redhat.com
 
-disable_registration_against_satellite: false
-satellite_version: 6.2
-stage: DEV
+node_disable_registration_against_satellite: false
+node_satellite_version: 6.2
+node_stage: TEST
 
 # if this attribute is present, the binaries (except for the SSH keys)
 # will be copied from the layer1 host instead of the control host
@@ -65,7 +64,7 @@ external_network_config:
     layer1_dev: em1
     mapping:
       - expose_machine: satellite
-        on_host_prefix: 10.32.105.30/32
+        on_host_prefix: 10.32.105.40/32
         via_network: services
         ports:
           - from_port: 80
@@ -98,7 +97,7 @@ external_network_config:
             to_port: 9090
             proto: tcp
       - expose_machine: ipa
-        on_host_prefix: 10.32.105.31/32
+        on_host_prefix: 10.32.105.41/32
         via_network: services
         ports:
           - from_port: 22
@@ -111,7 +110,7 @@ external_network_config:
             to_port: 443
             proto: tcp
       - expose_machine: infrastructure
-        on_host_prefix: 10.32.105.32/32
+        on_host_prefix: 10.32.105.42/32
         via_network: services
         ports:
           - from_port: 22
@@ -136,7 +135,7 @@ external_network_config:
             to_port: 465
             proto: tcp
       - expose_machine: rhevm
-        on_host_prefix: 10.32.105.33/32
+        on_host_prefix: 10.32.105.43/32
         via_network: services
         ports:
           - from_port: 22
@@ -152,7 +151,7 @@ external_network_config:
             to_port: 6100
             proto: tcp
       - expose_machine: cloudforms
-        on_host_prefix: 10.32.105.34/32
+        on_host_prefix: 10.32.105.44/32
         via_network: services
         ports:
           - from_port: 22
@@ -165,7 +164,7 @@ external_network_config:
             to_port: 443
             proto: tcp
       - expose_machine: ose3-lb
-        on_host_prefix: 10.32.105.35/32
+        on_host_prefix: 10.32.105.45/32
         via_network: services
         ports:
           - from_port: 22
@@ -181,7 +180,7 @@ external_network_config:
             to_port: 8443
             proto: tcp
       - expose_machine: ose3-infranode1
-        on_host_prefix: 10.32.105.36/32
+        on_host_prefix: 10.32.105.46/32
         via_network: services
         ports:
           - from_port: 22
@@ -194,7 +193,7 @@ external_network_config:
             to_port: 443
             proto: tcp
       - expose_machine: efk
-        on_host_prefix: 10.32.105.37/32
+        on_host_prefix: 10.32.105.47/32
         via_network: services
         ports:
           - from_port: 22
@@ -210,14 +209,14 @@ external_network_config:
             to_port: 9200
             proto: tcp
       - expose_machine: rhosp-director
-        on_host_prefix: 10.32.105.38/32
+        on_host_prefix: 10.32.105.48/32
         via_network: rhosp_provisioning
         ports:
           - from_port: 22
             to_port: 22
             proto: tcp
       - expose_machine: undercloud-public
-        on_host_prefix: 10.32.105.38/32
+        on_host_prefix: 10.32.105.48/32
         via_network: rhosp_provisioning
         ports:
           # webui
@@ -249,7 +248,7 @@ external_network_config:
             to_port: 9000
             proto: tcp
       - expose_machine: openstack
-        on_host_prefix: 10.32.105.39/32
+        on_host_prefix: 10.32.105.49/32
         via_network: services
         ports:
           - from_port: 80
@@ -267,7 +266,7 @@ external_network_config:
             to_port: 13080
             proto: tcp
       - expose_machine: tower
-        on_host_prefix: 10.32.105.7/32
+        on_host_prefix: 10.32.105.50/32
         via_network: services
         ports:
           - from_port: 80
@@ -283,32 +282,33 @@ external_network_config:
     layer1_dev: em2
     default_gw_host_prefix: 10.32.111.254/20
     dns_server: 10.32.96.1
-    osp_infra_start: 10.32.105.163
-    osp_infra_end: 10.32.105.179
-    osp_floating_start: 10.32.105.180
-    osp_floating_end: 10.32.105.219
-    bridged_vms:
-      rhevh1:
-        guests:
-          mac: "52:54:00:48:03:01"
-          ip: 10.32.105.160
-      rhevh2:
-        guests:
-          mac: "52:54:00:48:03:02"
-          ip: 10.32.105.161
-      rhevh3:
-        guests:
-          mac: "52:54:00:48:03:03"
-          ip: 10.32.105.162
-      "rhosp-control1":
-        guests:
-          mac: "52:54:00:48:03:04"
-          ip:
-      "rhosp-control2":
-        guests:
-          mac: "52:54:00:48:03:05"
-          ip:
-      "rhosp-control3":
-        guests:
-          mac: "52:54:00:48:03:06"
-          ip:
+    # osp_infra_start: 10.32.105.163
+    # osp_infra_end: 10.32.105.179
+    osp_floating_start: 10.32.105.140
+    osp_floating_end: 10.32.105.159
+    mac_prefix: "52:54:00:48:03:"
+    # bridged_vms:
+    #   rhevh1:
+    #     guests:
+    #       mac: "52:54:00:48:03:01"
+    #       ip: 10.32.105.160
+    #   rhevh2:
+    #     guests:
+    #       mac: "52:54:00:48:03:02"
+    #       ip: 10.32.105.161
+    #   rhevh3:
+    #     guests:
+    #       mac: "52:54:00:48:03:03"
+    #       ip: 10.32.105.162
+    #   "rhosp-control1":
+    #     guests:
+    #       mac: "52:54:00:48:03:04"
+    #       ip:
+    #   "rhosp-control2":
+    #     guests:
+    #       mac: "52:54:00:48:03:05"
+    #       ip:
+    #   "rhosp-control3":
+    #     guests:
+    #       mac: "52:54:00:48:03:06"
+    #       ip:

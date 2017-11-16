@@ -37,16 +37,28 @@ Run all commands on your laptop from the ansible directory. Since the server mig
    $ yum localinstall 'http://fedora.mirrors.romtelecom.ro/pub/epel/7/x86_64/a/ansible-2.1.0.0-1.el7.noarch.rpm'
    ```
 1. Install Ansible 2.1 on RHEL 7 CSB (local install)
-   ```bash
-   $ yum-config-manager --add-repo=https://dl.fedoraproject.org/pub/epel/7/x86_64/
+ - # yum-config-manager --add-repo=https://dl.fedoraproject.org/pub/epel/7/x86_64/
+ - # wget -O /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+ - # sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+ - # sudo yum clean all
+ - # sudo yum install -y python-devel libffi-devel openssl-devel gcc python-pip
+ - # pip install --upgrade pip
+ - # pip install paramiko
+ - # pip install ansible
+ - # pip install passlib
+ - # ansible --version
+    [mreinke@mreinke-t540 yum]# ansible --version
+     ansible 2.1.0.0
+     config file =
+     configured module search path = Default w/o overrides
 
    $ wget -O /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
-  
+
    $ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
-  
+
    $ sudo yum clean all
    $ sudo yum install -y python-devel libffi-devel openssl-devel gcc python-pip
-  
+
    $ pip install --upgrade pip
    $ pip install paramiko
    $ pip install ansible==2.1.2
@@ -85,6 +97,11 @@ Run all commands on your laptop from the ansible directory. Since the server mig
 1. If necessary, copy & adapt the software-driven configuration from the sample `config/hailstorm_config.yml`
 
 1. If you encounter any issues please report it and edit this page if you think it can improve the process.
+
+### Tower License
+in case you roll out a new tower installation, you need a tower license file in
+ansible/binary/tower_license.json
+You can get it from: https://store.ansible.com/redhat/tower_license/
 
 ## Network Connectivity
 

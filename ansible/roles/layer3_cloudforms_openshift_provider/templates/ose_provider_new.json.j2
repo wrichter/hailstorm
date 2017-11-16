@@ -11,7 +11,7 @@
       },
       "authentication": {
         "role": "bearer",
-        "auth_key": "{{ hostvars[groups['ose3-installer'][0]].ose_cmfe_token }}"
+        "auth_key": "{{ ose_cmfe_token }}"
       }
     },
     {
@@ -22,7 +22,7 @@
       },
       "authentication": {
         "role": "hawkular",
-        "auth_key": "{{ hostvars[groups['ose3-installer'][0]].ose_cmfe_token }}"
+        "auth_key": "{{ ose_cmfe_token }}"
       }
     }
   ]

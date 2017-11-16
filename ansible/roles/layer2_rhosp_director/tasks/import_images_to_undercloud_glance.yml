@@ -50,7 +50,7 @@
 - block:
     # VARIANT 3 - copy IPA images from rpms
     - name: find rhosp images
-      find: paths="/usr/share/rhosp-director-images" patterns="*latest*.tar"
+      find: paths="/usr/share/rhosp-director-images" patterns="*latest*.tar" file_type=any
       register: rhosp_director_images
 
     - name: unpack rhosp image

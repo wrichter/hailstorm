@@ -14,7 +14,7 @@
 
 - name: delete kickstart files
   file: path={{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg  state=absent
-  delegate_to: "{{ infrastructure_delegate_nfs_server }}"
+  delegate_to: "{{ infrastructure_delegate_kickstart_nfs_server }}"
 
 - block:
     - name: destroy vms

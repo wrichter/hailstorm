@@ -38,7 +38,10 @@
             export OS_TENANT_NAME={{ item.0.item }} &&
             export OS_PROJECT_DOMAIN_NAME={{ osp_domain_name }} &&
             openstack security group rule create --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ security_group_info.stdout | from_json | selectattr("Project","match", "(" + item.0.item + "|" +  projects.stdout | from_json | selectattr("Name","match","^" + item.0.item + "$") | map(attribute="ID") | join('|') + ")" ) | map(attribute="ID") | first }}
-          when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
+          when: >
+            (item.1.port_range is not defined and (item.0.stdout_lines | select("search", item.1.protocol )| select("search", item.1.port_range) | list | length) == 0)
+            or
+            (item.1.port_range is defined and (item.0.stdout_lines | select("search", item.1.protocol ) | list | length) == 0)
           with_nested:
             - "{{ existing_security_group_rules.results }}"
             -
@@ -71,7 +74,10 @@
           shell: >
             . ~/overcloudrc_v3 &&
             openstack security group rule create --project {{ item.0.item }} --project-domain {{ osp_domain_name }} --proto {{ item.1.protocol }}{% if item.1.port_range is defined %} --dst-port {{ item.1.port_range }}{% endif %} {{ security_group_info2.stdout|from_json|selectattr('project_id','match','^(' +  projects.stdout | from_json | selectattr("Name","match","^" + item.0.item + "$") | map(attribute="ID") | join('|') + ')$') | map(attribute='id') | first }}
-          when: (item.0.stdout_lines | select("search", item.1.protocol ) {% if item.1.port_range is defined %}| select("search", item.1.port_range) {% endif %} | list | length) == 0
+          when: >
+            (item.1.port_range is not defined and (item.0.stdout_lines | select("search", item.1.protocol )| select("search", item.1.port_range) | list | length) == 0)
+            or
+            (item.1.port_range is defined and (item.0.stdout_lines | select("search", item.1.protocol ) | list | length) == 0)
           with_nested:
             - "{{ existing_security_group_rules2.results }}"
             -

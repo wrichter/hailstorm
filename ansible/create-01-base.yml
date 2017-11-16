@@ -47,8 +47,8 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel' ], mode: create }
+    - { role: layer2_vms, tags: [ 'layer2', 'satellite', 'vm', 'satellite-vm' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2','satellite', 'rhel','satellite-rhel' ], mode: create }
     - { role: layer2_satellite, tags: [ 'layer2','satellite' ], mode: create }
 
 # - hosts: test-rhel
@@ -64,12 +64,12 @@
   remote_user: root
   gather_facts: false
   roles:
-    - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm' ], mode: create }
-    - { role: layer2_ipa_etc_hosts, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
-    - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel' ], mode: create }
-    - { role: layer2_ipa_etc_hosts, tags: [ 'layer2', 'ipa', 'rhel' ], mode: destroy }
+    - { role: layer2_vms, tags: [ 'layer2', 'ipa', 'vm', 'ipa-vm' ], mode: create }
+    - { role: layer2_ipa_etc_hosts, tags: [ 'layer2', 'ipa', 'rhel', 'ipa-rhel' ], mode: create }
+    - { role: layer2_rhel, tags: [ 'layer2', 'ipa', 'rhel', 'ipa-rhel' ], mode: create }
+    - { role: layer2_ipa_etc_hosts, tags: [ 'layer2', 'ipa', 'rhel', 'ipa-rhel' ], mode: destroy }
     - { role: layer2_ipa, tags: [ 'layer2', 'ipa' ], mode: create }
-    - { role: layer2_tdagent, tags: [ 'layer2', 'ipa', 'tdagent'], mode: create }
+    - { role: layer2_tdagent, tags: [ 'layer2', 'ipa', 'tdagent', 'ipa-tdagent'], mode: create }
     #- { role: layer2_ipa_openssl_ca, tags: [ 'layer2', 'ipa', 'ca' ], mode: create }
 
 #### SATELLITE (again) ####
@@ -81,8 +81,8 @@
   #  - setup:
   #    tags: [ 'layer2','satellite' ]
   roles:
-   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
-   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'tdagent' ], mode: create }
+   - { role: layer2_rhel_reconfigure_dns, tags: [ 'layer2', 'satellite', 'dns', 'satellite-dns' ], mode: create, nameserver: "{{ hostvars['ipa'].vm_nics[0].ip }}" }
+   - { role: layer2_tdagent, tags: [ 'layer2', 'satellite', 'tdagent', 'satellite-tdagent' ], mode: create }
 #   - { role: layer2_ipa_certificate, tags: ['layer2', 'satellite', 'satellite_cert'], mode: create }
 #   - { role: layer2_satellite_certificate, tags: ['layer2', 'satellite', 'satellite_cert'], mode: create }
 

@@ -16,9 +16,13 @@
 
 # TODO: ensure proper subscription & configure channels
 # see layer2_rhel
-
-- name: system-upgrade
-  yum: name=* state=latest
+# - name: install package-cleanup
+#   yum: name=yum-utils state=present
+# - name: remove old kernels
+#   shell: package-cleanup --oldkernels --count=2
+#
+# - name: system-upgrade
+#   yum: name=* state=latest
 - name: ensure prerequisite packages are present
   yum: name=libvirt,libvirt-client,qemu-kvm,qemu-img,libvirt-python,virt-install,nfs-utils,iptables-services state=latest
   #reboot machine if necessary https://bugzilla.redhat.com/show_bug.cgi?id=950436

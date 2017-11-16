@@ -1,3 +1,4 @@
+#Script used to export data from a live environment
 #As described in https://github.com/rhtconsulting/cfme-rhconsulting-scripts
 
 BUILDDIR=/tmp/exports

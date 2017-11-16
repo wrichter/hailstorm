@@ -1,27 +1,27 @@
 - block:
     - include: install-satellite6.yml
-      tags: ['install']
+      tags: ['install','satellite-install']
     - include: import_manifest.yml
-      tags: ['manifest']
+      tags: ['manifest','satellite-manifest']
     - include: enable_repo_and_sync.yml
-      tags: ['sync']
+      tags: ['sync','satellite-sync']
     - include: wait-for-sync-tasks.yml
-      tags: ['wait']
+      tags: ['wait','satellite-wait']
     - include: lifecycle-environments.yml
-      tags: ['lifecycle']
+      tags: ['lifecycle','satellite-lifecycle']
     - include: content_views.yml
-      tags: ['cv']
+      tags: ['cv','satellite-cv']
     - include: publish_and_promote_cv.yml
-      tags: ['publish']
+      tags: ['publish','satellite-publish']
       static: no
     - include: host-collections.yml
-      tags: ['hc']
+      tags: ['hc','satellite-hc']
     - include: sync_plan.yml
-      tags: ['sp']
+      tags: ['sp','satellite-sp']
   when: mode=="create"
 
 - block:
     # must happen after CV is promoted into LC envs
     - include: activation_keys.yml
-      tags: ['ak']
+      tags: ['ak','satellite-ak']
   when: mode=="create" or mode=="refresh_subscriptions"

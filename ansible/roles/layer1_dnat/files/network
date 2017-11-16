@@ -24,8 +24,8 @@ syslog.syslog('libvirt hook ' + action + ' for network ' + network)
 
 rules = etree.parse("/etc/hailstorm_iptables.xml").xpath('//hs:iptables/network[@name="' + network + '"]/rule', namespaces={'hs': 'https://github.com/wrichter/hailstorm'})
 
-if action == 'stopped':
+if (action == 'stopped' or action == 'reconnect'):
 	apply(False, rules)
 
-if action == 'started':
+if (action == 'started' or action == 'reconnect'):
 	apply(True, rules)

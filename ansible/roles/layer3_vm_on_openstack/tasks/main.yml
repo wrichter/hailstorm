@@ -34,3 +34,7 @@
           when: vm_exists
       when: mode=="destroy"
   when: openstack_response.stdout|length > 0
+
+- set_fact:
+    vm_exists: false
+  when: openstack_response.stdout|length == 0 

@@ -1,5 +1,5 @@
 [{% set needscomma = [false] %}
-{% if content_view_version_info.results is defined %}
+{% if content_view_version_info is defined and content_view_version_info.results is defined %}
 {% for content_view_date_filter in lifecycle_environments|reverse|map(attribute='content_view_date_filter') %}
 {% if content_view_date_filter is defined %}
 {% for created_filter_rule_result in created_filter_rules.results %}

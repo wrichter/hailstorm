@@ -5,7 +5,7 @@
 - name: create kickstart files
   template: src=kickstart.cfg.j2 dest={{ nfs_kickstart_folder }}/{{ inventory_hostname_short }}.cfg  mode=0644
   when: inventory_hostname_short not in virt_vms.list_vms and (skip_install is not defined or skip_install != true)
-  delegate_to: "{{ infrastructure_delegate_nfs_server }}"
+  delegate_to: "{{ infrastructure_delegate_kickstart_nfs_server }}"
 - name: create vms
   command: "{{ lookup('template','virt-install-command.j2') }}"
   when: inventory_hostname_short not in virt_vms.list_vms and (skip_install is not defined or skip_install != true)
@@ -25,7 +25,7 @@
 - name: ensure that VMs are running
   virt: name="{{ inventory_hostname_short }}" state=running uri=qemu:///system
   when: skip_install is not defined or skip_install != true
-  delegate_to: "{{ infrastructure_delegate_host_used_to_test_if_layer2_host_is_available }}"
+  delegate_to: "{{ infrastructure_delegate_kvm_host }}"
 - name: wait for VMs finishing (re)booting
   wait_for: host={{ ansible_host }} port=22 delay=0 timeout=900
   when: skip_install is not defined or skip_install != true

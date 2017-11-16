@@ -1,4 +1,0 @@
-- block:
-    - include: create_cfme_service_account.yml
-    - include: retrieve_cfme_service_account_token.yml
-  when: mode=="create"
