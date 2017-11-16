@@ -22,17 +22,31 @@
   command: >
     hammer content-view filter create
     --content-view {{ item.item.content_view }}
-    --name "Staging"
+    --name "Staging-erratum"
     --description "Staging Filter"
-    --inclusion false
+    --inclusion true
     --organization "{{ organization }}"
     --type erratum
     --repositories "{{ item.item.content|map(attribute="repository")|join('\",\"') }}"
-  when: "'Staging' not in (item.stdout | from_json | map(attribute='Name') | list)"
+  when: "'Staging-erratum' not in (item.stdout | from_json | map(attribute='Name') | list)"
+  with_items: "{{ existing_filters.results }}"
+
+- name: create staging filter
+  command: >
+    hammer content-view filter create
+    --content-view {{ item.item.content_view }}
+    --name "Staging-rpms"
+    --description "Staging Filter"
+    --inclusion true
+    --organization "{{ organization }}"
+    --original-packages true
+    --type rpm
+    --repositories "{{ item.item.content|map(attribute="repository")|join('\",\"') }}"
+  when: "'Staging-rpms' not in (item.stdout | from_json | map(attribute='Name') | list)"
   with_items: "{{ existing_filters.results }}"
 
 - name: retrieve existing filter rules
-  command: hammer --output json content-view filter rule list --content-view-filter "Staging" --content-view "{{ item.content_view }}" --organization "{{ organization }}"
+  command: hammer --output json content-view filter rule list --content-view-filter "Staging-erratum" --content-view "{{ item.content_view }}" --organization "{{ organization }}"
   with_items: "{{ satellite_content_config }}"
   register: existing_filter_rules
   changed_when: false
@@ -44,9 +58,10 @@
     hammer --output json content-view filter rule create
     --organization "{{ organization }}"
     --content-view  "{{ item.item.content_view }}"
-    --content-view-filter "Staging"
+    --content-view-filter "Staging-erratum"
     --date-type updated
-    --start-date "{{ ansible_date_time.date }}"
+    --types enhancement,bugfix,security
+    --end-date "{{ ansible_date_time.date }}"  
   with_items: "{{ existing_filter_rules.results }}"
   when: item.stdout|from_json|length == 0
   register: created_filter_rules

@@ -4,9 +4,9 @@
     hammer --output json content-view filter rule update
     --organization "{{ organization }}"
     --content-view "{{ item.content_view }}"
-    --content-view-filter "Staging"
+    --content-view-filter "Staging-erratum"
     --id "{{ item.filter_rule_id }}"
-    --start-date "{{ item.content_view_date_filter }}"
+    --end-date "{{ item.content_view_date_filter }}"
 - name: publish content view
   command: >
     hammer content-view publish
