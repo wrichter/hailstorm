@@ -130,3 +130,4 @@ To debug installation processes, a connection to the VM console might be require
   $ ssh -i binary/hailstorm -L 5901:localhost:5901 root@<NAME_OF_IP_OF_THE_LAYER1_HOST>
   ```
 - connect your VNC viewer to localhost:5901
+
