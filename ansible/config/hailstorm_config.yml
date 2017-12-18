@@ -333,6 +333,15 @@ satellite_content_config:
         repository: "Red Hat Satellite Tools {{ satellite_version }} for RHEL 6 Server RPMs x86_64"
 
   - content_view: "CV-OS-RHEL7-SERVER"
+    filter:
+      - name: "Packages"
+        description: "Packages"
+        include: "false"
+        type: "rpm"
+        rules:
+          - name: "python-gobject-base"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
@@ -380,6 +389,15 @@ satellite_content_config:
 
 
   - content_view: "CV-RHEV-HYPERVISOR"
+    filter:
+      - name: "Packages"
+        description: "Packages"
+        include: "false"
+        type: "rpm"
+        rules:
+          - name: "python-gobject-base"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:
       - product: "Red Hat Enterprise Linux Server"
         repository: "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
@@ -391,6 +409,15 @@ satellite_content_config:
         repository: "Red Hat Virtualization 4 Management Agents for RHEL 7 RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSP"
+    filter:
+      - name: "Packages"
+        description: "Packages"
+        include: "false"
+        type: "rpm"
+        rules:
+          - name: "python-gobject-base"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:
       - product: "Red Hat OpenStack"
         repository: "Red Hat OpenStack Platform 9 director for RHEL 7 RPMs x86_64 7Server"
@@ -424,6 +451,15 @@ satellite_content_config:
         repository: "Red Hat Enterprise Linux High Availability for RHEL 7 Server RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSE3"
+    filter:
+      - name: "Packages"
+        description: "Packages"
+        include: "false"
+        type: "rpm"
+        rules:
+          - name: "python-gobject-base"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
@@ -445,6 +481,15 @@ satellite_content_config:
         repository: "Red Hat Enterprise Linux Fast Datapath RHEL 7 Server RPMs x86_64 7Server"
 
   - content_view: "CV-RHOSE3-CLIENT"
+    filter:
+      - name: "Packages"
+        description: "Packages"
+        include: "false"
+        type: "rpm"
+        rules:
+          - name: "python-gobject-base"
+        apply_to:
+          - "Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server"
     content:
       - product: "Red Hat OpenShift Container Platform"
         repository: "Red Hat OpenShift Container Platform 3.3 RPMs x86_64"
