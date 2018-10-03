@@ -20,6 +20,8 @@ miqexport alerts /tmp/exports/alerts
 miqexport alertsets /tmp/exports/alertsets
 miqexport policies /tmp/exports/policies
 
+#new stuff
+
 cd /var/www/miq/vmdb
 bin/rake rhconsulting:miq_schedules:export[${BUILDDIR}/schedules]
 bin/rake rhconsulting:provision_dialogs:export[${BUILDDIR}/provision_dialogs]
